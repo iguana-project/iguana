@@ -53,7 +53,7 @@ class SlackTest(StaticSeleniumTestCase):
 
     @patch('integration.models.SlackClient')
     def test_issue_create(self, slackmock):
-        # TODO TESTCASE broken test
+        # TODO TESTCASE broken test - api calls are broken
         return
         self.selenium.get('{}{}'.format(self.live_server_url, reverse('issue:create',
                                         kwargs={'project': self.short})))
@@ -78,7 +78,7 @@ class SlackTest(StaticSeleniumTestCase):
 
     @patch('integration.models.SlackClient')
     def test_issue_modify(self, slackmock):
-        # TODO TESTCASE broken test
+        # TODO TESTCASE broken test - api calls are broken
         return
         issue = Issue()
         issue.title = "This is title"

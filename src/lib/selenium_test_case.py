@@ -192,22 +192,15 @@ def WebElement_click(self):
     """
     if element.click() fails with selenium.common.exceptions.WebDriverException, scroll down and try again
     """
-    self.parent.execute_script("window.scrollTo(0, 0);")
-    scroll = 20
-    while scroll > 0:
-        try:
-            time.sleep(500.0 / 1000.0)
-            WebElement.old_click(self)
-            break
-        except WebDriverException as e:
-            if "Element is not clickable at point" in str(e):
-                self.parent.execute_script("window.scrollBy(0, 100);")
-                scroll = scroll - 1
-                continue
-            else:
-                # reraise exception after enough tries
-                self.parent.get_screenshot_as_file('screenshot.png')
-                raise
+    try:
+        WebElement.old_click(self)
+    except WebDriverException as e:
+        if "Element is not clickable at point" in str(e):
+            self.parent.execute_script("arguments[0].scrollIntoView();", self)
+        else:
+            # reraise exception after enough tries
+            self.parent.get_screenshot_as_file('screenshot.png')
+            raise
 
 # monkey patch the WebElement class
 WebElement.old_click = WebElement.click
