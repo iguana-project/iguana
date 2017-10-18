@@ -1,0 +1,18 @@
+.wmd-panel {
+	margin-left: 0%;
+	margin-right: 0%;
+	width:100%;
+	min-width: 300px;
+}
+.wmd-preview {
+	background-color: #FFFFFF;
+	border: 1px solid #dddddd;
+	border-radius: 5px;
+	padding: 5px 10px;
+    word-wrap: break-word;
+    word-break: break-all;
+}
+
+.wmd-input {
+	background-color: #FFFFFF
+}

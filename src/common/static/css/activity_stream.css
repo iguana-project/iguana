@@ -1,0 +1,56 @@
+/* apply a natural box layout model to all elements, but allowing components to change */
+
+.activity-feed {
+    padding: 15px;
+}
+.activity-feed .feed-item {
+    position: relative;
+    padding-bottom: 20px;
+    padding-left: 30px;
+    border-left: 2px solid #e4e8eb;
+}
+.activity-feed .feed-item:last-child {
+    border-color: transparent;
+}
+.activity-feed .feed-item:after {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 0;
+    left: -6px;
+    width: 10px;
+    height: 10px;
+    border-radius: 6px;
+    background: #fff;
+    border: 1px solid #00e5ff;
+}
+
+.activity-feed .feed-item .image {
+    float: left;
+}
+.activity-feed .feed-item .content {
+    margin-left: 40px;
+}
+.activity-feed .feed-item .content .date {
+    position: relative;
+    top: -5px;
+    color: #8c96a3;
+    font-size: 13px;
+}
+.activity-feed .feed-item .content .text {
+    position: relative;
+    top: -3px;
+}
+
+.activity-feed .feed-item:hover .unfollow_btn {
+    opacity: 1;
+}
+
+.activity-feed .feed-item .unfollow_btn {
+    float: right;
+    position: relative;
+    top: -3px;
+    z-index: 1;
+    opacity: 0;
+    transition: opacity .5s ease;
+}

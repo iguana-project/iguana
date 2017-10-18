@@ -1,0 +1,113 @@
+/* Cal-HeatMap CSS */
+
+.cal-heatmap-container {
+	display: block;
+}
+
+.graph
+{
+	font-family: "Lucida Grande", Lucida, Verdana, sans-serif;
+}
+
+.graph-label
+{
+	fill: #999;
+	font-size: 10px
+}
+
+.graph, .graph-legend rect {
+	shape-rendering: crispedges
+}
+
+.graph-rect
+{
+	fill: #ededed
+}
+
+.graph-subdomain-group rect:hover
+{
+	stroke: #000;
+	stroke-width: 1px
+}
+
+.subdomain-text {
+	font-size: 8px;
+	fill: #999;
+	pointer-events: none
+}
+
+.hover_cursor:hover {
+	cursor: pointer
+}
+
+.qi {
+	background-color: #999;
+	fill: #999
+}
+
+/*
+R8demove comment to apply this style to date with value equal to 0
+.q0
+{
+	background-color: #fff;
+	fill: #fff;
+	stroke: #ededed
+}
+*/
+
+.q1
+{
+	background-color: #E9FCFF;
+	fill: #E9FCFF
+}
+
+.q2
+{
+	background-color: #AAF6FF;
+	fill: #AAF6FF
+}
+
+.q3
+{
+	background-color: #00e5ff;
+	fill: #00e5ff
+}
+
+.q4
+{
+	background-color: #00BCD1;
+	fill: #00BCD1
+}
+
+.q5
+{
+	background-color: #006773;
+	fill: #006773
+}
+
+rect.highlight
+{
+	stroke:#444;
+	stroke-width:1
+}
+
+text.highlight
+{
+	fill: #444
+}
+
+rect.now
+{
+	stroke: red
+}
+
+text.now
+{
+	fill: red;
+	font-weight: 800
+}
+
+.domain-background {
+	fill: none;
+	shape-rendering: crispedges
+}
