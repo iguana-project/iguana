@@ -197,6 +197,7 @@ def WebElement_click(self):
     except WebDriverException as e:
         if "Element is not clickable at point" in str(e):
             self.parent.execute_script("arguments[0].scrollIntoView();", self)
+            WebElement.old_click(self)
         else:
             # reraise exception after enough tries
             self.parent.get_screenshot_as_file('screenshot.png')
