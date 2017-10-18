@@ -1,0 +1,74 @@
+<!--
+Iguana (c) by Marc Ammon, Moritz Fickenscher, Lukas Fridolin,
+Michael Gunselmann, Katrin Raab, Christian Strate
+
+Iguana is licensed under a
+Creative Commons Attribution-ShareAlike 4.0 International License.
+
+You should have received a copy of the license along with this
+work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
+-->
+{% load i18n %}
+{% load cache %}
+{% cache 86400 backlog_issue_template issue.project.name_short issue.number request.user.username %}
+<tr id="{% if issue.sprint %}sprint{% else %}backlog{% endif %}_issue_{{issue.number}}" class="backlog-issue">
+	<td style="white-space: nowrap;" title={{issue.type}}>
+		<div class="issue-type text-muted {{issue.type|lower}}">
+			{{ issue.type|slice:":1" }}
+		</div>
+		<a href="{% url 'issue:detail' project=project.name_short sqn_i=issue.number %}" title="{{issue.description}}" style="vertical-align:top" class="issue-id-link">{{ issue.get_ticket_identifier }}</a>
+		<br \>
+		{% if issue.get_priority_display == "Critical" %}
+			<span class="glyphicon glyphicon-arrow-up red" title="{% trans "Priority" %}: {% trans "Critical" %}"></span>
+		{% elif issue.get_priority_display == "High" %}
+			<span class="glyphicon glyphicon-arrow-up gly-rotate-45 red" title="{% trans "Priority" %}: {% trans "High" %}"></span>
+		{% elif issue.get_priority_display == "Low" %}
+			<span class="glyphicon glyphicon-arrow-up gly-rotate-145 green" title="{% trans "Priority" %}: {% trans "Low" %}"></span>
+		{% elif issue.get_priority_display == "Unimportant" %}
+			<span class="glyphicon glyphicon-arrow-up gly-rotate-180 green" title="{% trans "Priority" %}: {% trans "Unimportant" %}"></span>
+		{% endif %}
+	{% if issue.assignee %}
+			{% for dev in issue.assignee.all|slice:"2" %}
+				<img src={{ dev.avatar.url }} title="{{ dev }}" style="width: 15px" alt="{% trans "Avatar" %} {{ dev }}"/>
+			{% endfor %}
+			{% if issue.assignee.count == 3 %}
+				<span title="{% trans "There is " %}{{issue.assignee.count|add:"-1"}}{% trans " other assignee not listed here." %}"><strong>...</strong>
+				</span>
+			{% elif issue.assignee.count > 3 %}
+				<span title="{% trans "There are " %}{{issue.assignee.count|add:"-1"}}{% trans " other assignees not listed here." %}"><strong>...</strong>
+				</span>
+			{% endif %}
+	{% endif %}
+	</td>
+	<td style="">
+		<span class="issue-title">{{issue.title}}</span>
+		{% if issue.storypoints %}
+			<span class="story-points" title="{% trans "Storypoints" %}">{{issue.storypoints}}</span>
+		{% endif %}
+		{% for tag in issue.tags.all %}
+			<span class="issue-tag" style="background: #{{tag.color}}; color:#{{tag.font_color}};" title="{{tag.tag_text}}">{{tag.tag_text}}</span>
+		{% endfor %}
+	</td>
+	<td style="padding-left:5px">
+		<div class="pull-right">
+			{% include "issue_option_template.html" %}
+		</div>
+	</td>
+	{% if view.get_sqn_s != -1 %}
+		<td style="padding-left: 0px">
+		<div class="pull-right">
+				<form style="display:inline-block" id="ats{{issue.number}}" method="post" action="{% url 'issue:assigntosprint' project=project.name_short %}" >{% csrf_token %}
+					<input type="hidden" name="sqn_i" value={{issue.number}} />
+					<button style="padding:0px" type="submit" class="btn btn-link">
+						{% if issue.sprint %}
+							<span class="glyphicon glyphicon-minus" title="{% trans "Remove from sprint" %}"></span>
+						{% else %}
+							<span class="glyphicon glyphicon-plus" title="{% trans "Add to sprint" %}"></span>
+						{% endif %}
+					</button>
+				</form>
+		</div>
+		</td>
+	{% endif %}
+</tr>
+{% endcache %}

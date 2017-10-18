@@ -1,0 +1,46 @@
+<!--
+Iguana (c) by Marc Ammon, Moritz Fickenscher, Lukas Fridolin,
+Michael Gunselmann, Katrin Raab, Christian Strate
+
+Iguana is licensed under a
+Creative Commons Attribution-ShareAlike 4.0 International License.
+
+You should have received a copy of the license along with this
+work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
+-->
+{% extends "_base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}{% trans "Filter" %}{% endblock title %}
+
+{% block content %}
+{% trans "settings" as viewpoint %}
+{% include "projectnavi.html" %}
+<div class="row">
+	<div class="col-md-2">
+		{% trans "search" as viewpoint %}
+		{% include "settingsnavi.html" %}
+	</div>
+	<div class="col-md-10">
+		<ul class="list-group">
+			<li class="list-group-item list-first">
+				{% trans "Filters shared with project" %}
+			</li>
+			{% if not searches %}
+			<li class="list-group-item">{% trans "No filters shared yet." %}</li>
+			{% else %}
+			{% for search in searches %}
+			<li class="list-group-item">
+				<form method="post" action="{% url 'search:resultpage' %}" >
+					{% csrf_token %}
+					<input type="hidden" name="expression" value="{{search.searchexpression}}" />
+					<button type="submit" class="btn btn-link">{{search.description}}</button>
+				</form>
+			</li>
+			{% endfor %}
+			{% endif %}
+		</ul>
+	</div>
+</div>
+{% endblock content %}

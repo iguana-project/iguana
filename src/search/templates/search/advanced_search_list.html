@@ -1,0 +1,67 @@
+<!--
+Iguana (c) by Marc Ammon, Moritz Fickenscher, Lukas Fridolin,
+Michael Gunselmann, Katrin Raab, Christian Strate
+
+Iguana is licensed under a
+Creative Commons Attribution-ShareAlike 4.0 International License.
+
+You should have received a copy of the license along with this
+work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
+-->
+{% extends "_base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}{% trans "Edit searches" %}{% endblock title %}
+
+{% block content %}
+<div class="row">
+	<div class="col-md-6">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				{% trans "Your last search expressions:" %}
+			</div>
+			<table class="table">
+				{% for search in npsearches %}
+				<tr id="nonperSearch{{forloop.counter}}">
+					<td>
+						{{search.searchexpression}}
+					</td>
+					<td>
+						<form method="post" action="{% url 'search:makepersistent' %}" style="display: inline">{% csrf_token %}
+							<input type="hidden" name="pk" value="{{search.pk}}" />
+							<button type="submit" class="btn btn-link"><span class="glyphicon glyphicon-chevron-right"></span></button>
+						</form>
+					</td>
+				</tr>
+				{% endfor %}
+			</table>
+		</div>
+	</div>
+	<div class="col-md-6">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				{% trans "Saved search expressions:" %}
+			</div>
+			<table class="table">
+				{% for search in psearches %}
+				<tr id="perSearch{{forloop.counter}}">
+					<td>
+						{{search.description}}
+					</td>
+					<td>
+						<a href={% url 'search:edit' sqn_sh=search.pk %}><span class="glyphicon glyphicon-pencil"></span></a>
+					</td>
+					<td>
+						<form id="perSearchForm{{forloop.counter}}" method="post" action="{% url 'search:delpersistent' %}" style="display: inline">{% csrf_token %}
+							<input type="hidden" name="pk" value="{{search.pk}}" />
+							<button type="submit" class="btn btn-link"><span class="glyphicon glyphicon-remove"></span></button>
+						</form>
+					</td>
+				</tr>
+				{% endfor %}
+			</table>
+		</div>
+	</div>
+</div>
+{% endblock content %}

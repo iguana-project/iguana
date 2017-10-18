@@ -1,0 +1,74 @@
+<!--
+Iguana (c) by Marc Ammon, Moritz Fickenscher, Lukas Fridolin,
+Michael Gunselmann, Katrin Raab, Christian Strate
+
+Iguana is licensed under a
+Creative Commons Attribution-ShareAlike 4.0 International License.
+
+You should have received a copy of the license along with this
+work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
+-->
+{% load i18n %}
+{% load filter %}
+<div class="dropdown" style="display:inline-block; ">
+	<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
+		{% trans "Order by" %}
+		<span class="caret"></span>
+	</button>
+	<ul class="dropdown-menu">
+		<li>
+			<a href="{{ request.path }}{% query_string request.META.QUERY_STRING order_by='number' filt-'true'%}">{% trans "Number" %}
+				{% if request.session.order_by != 'title' and request.session.order_by != 'type' and request.session.order_by != 'priority' and request.session.order_by != 'kanbancol' and request.session.order_by != 'storypoints' %}
+					<span class="glyphicon glyphicon-ok"></span>
+				{% endif %}
+			</a>
+		</li>
+		<li>
+			<a href="{{ request.path }}{% query_string request.META.QUERY_STRING order_by='title' filt-'true'%}">{% trans "Title" %}
+				{% if request.session.order_by == 'title' %}
+					<span class="glyphicon glyphicon-ok"></span>
+				{% endif %}
+			</a>
+		</li>
+		<li>
+			<a href="{{ request.path }}{% query_string request.META.QUERY_STRING order_by='type' filt-'true'%}">{% trans "Type" %}
+				{% if request.session.order_by == 'type' %}
+					<span class="glyphicon glyphicon-ok"></span>
+				{% endif %}
+			</a>
+		</li>
+		<li>
+			<a href="{{ request.path }}{% query_string request.META.QUERY_STRING order_by='priority' filt-'true'%}">{% trans "Priority" %}
+				{% if request.session.order_by == 'priority' %}
+					<span class="glyphicon glyphicon-ok"></span>
+				{% endif %}
+			</a>
+		</li>
+		<li>
+			<a href="{{ request.path }}{% query_string request.META.QUERY_STRING order_by='storypoints' filt-'true'%}">{% trans "Storypoints" %}
+				{% if request.session.order_by == 'storypoints' %}
+					<span class="glyphicon glyphicon-ok"></span>
+				{% endif %}
+			</a>
+		</li>
+		{% if viewpoint != 'projlist' %}
+		<li>
+			<a href="{{ request.path }}{% query_string request.META.QUERY_STRING order_by='kanbancol' filt-'true'%}">{% trans "Status" %}
+				{% if request.session.order_by == 'kanbancol' %}
+					<span class="glyphicon glyphicon-ok"></span>
+				{% endif %}
+			</a>
+		</li>
+		{% endif %}
+		<li class="divider"></li>
+		<li>
+			{% if request.session.reverse == 'true' %}
+				<a href="{{ request.path }}{% query_string request.META.QUERY_STRING reverse='false' filt-'true'%}">{% trans "Reverse order" %}
+					<span class="glyphicon glyphicon-ok"></span>
+				</a>
+			{% else %}
+				<a  href="{{ request.path }}{% query_string request.META.QUERY_STRING reverse+'true' filt-'true'%}">{% trans "Reverse order" %}</a>
+			{% endif %}
+		</li>
+	</ul>
+</div>

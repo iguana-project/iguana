@@ -1,0 +1,6 @@
+-r common.req
+
+django-redis==4.7.0
+gunicorn==19.6.0
+psycopg2==2.6.2
+sendgrid-django==4.0.4

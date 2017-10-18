@@ -1,0 +1,10 @@
+{% load i18n %}
+{% blocktrans %}Hi {{ username }}{% endblocktrans %},
+{% blocktrans %}you receive this mail because you are member of the project "{{ project }}"{% endblocktrans %}.
+
+{% blocktrans %}{{ editor }} {{ action }} issue "{{ issue_name }}"{% endblocktrans %}.
+{% blocktrans %}If you want to see it, visit {{ url }}{% endblocktrans %}
+
+
+{% blocktrans %}Best regards{% endblocktrans %},
+{% blocktrans %}Your team from Iguana project{% endblocktrans %}

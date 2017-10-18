@@ -1,0 +1,15 @@
+[Unit]
+Description=gunicorn daemon
+After=network.target
+
+[Service]
+User=iguana
+PIDFile=/run/gunicorn/pid
+WorkingDirectory=/home/iguana/sites/{{host}}/src
+ExecStart=/home/iguana/sites/{{host}}/virtualenv/bin/gunicorn -w 8 common.wsgi:application
+PrivateTmp=true
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s TERM $MAINPID
+
+[Install]
+WantedBy=multi-user.target

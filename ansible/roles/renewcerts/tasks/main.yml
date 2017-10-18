@@ -1,0 +1,6 @@
+---
+  - name: renew certificate
+    command: letsencrypt -n --rsa-key-size 4096 renew --webroot -w /var/www/{{host}}
+
+  - name: restart nginx
+    service: name=nginx state=restarted

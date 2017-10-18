@@ -1,0 +1,96 @@
+<!--
+Iguana (c) by Marc Ammon, Moritz Fickenscher, Lukas Fridolin,
+Michael Gunselmann, Katrin Raab, Christian Strate
+
+Iguana is licensed under a
+Creative Commons Attribution-ShareAlike 4.0 International License.
+
+You should have received a copy of the license along with this
+work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
+-->
+{% extends "_base.html" %}
+{% load i18n %}
+{% load bootstrap3 %}
+{% block title %}{% trans "Edit" %} {{ project.name }}{% endblock title %}
+
+{% block content %}
+{% trans "settings" as viewpoint %}
+{% include "projectnavi.html" %}
+
+<div class="row">
+<div class="col-md-2">
+	{% trans "general" as viewpoint %}
+	{% include "settingsnavi.html" %}
+</div>
+<div class="col-md-10">
+<div class="panel panel-default">
+	<div class="panel-heading">{% trans "General Settings" %}</div>
+	<div class="panel-body">
+		<form method="POST" id="id_edit_form" class="post-form">{% csrf_token %}
+			{% bootstrap_form form %}
+			{% buttons %}
+				<button type="submit" class="save btn btn-default" id="id_submit_edit">
+					{% trans "Save" %}
+				</button>
+			{% endbuttons %}
+		</form>
+	</div>
+</div>
+
+<div class="panel panel-default">
+	<div class="panel-heading">{% trans "Columns" %}</div>
+	<div class="panel-body">
+		<ul class="list-group">
+		{% for kc in columns %}
+			<li class="list-group-item"><a href= {% url 'kanbancol:update' project.name_short kc.position %}>{{ kc.name }}</a>
+				<form method="POST" action="{% url "kanbancol:delete" project.name_short kc.position %}" style="display:inline">
+					{% csrf_token %}
+					<button class="btn btn-danger btn-xs pull-right" type="submit" name="delete"><span class="glyphicon glyphicon-remove"></span></button>
+				</form>
+				{% if kc.position != 0 %}
+				<form method="POST" action="{% url "kanbancol:moveup" project.name_short kc.position %}" style="display:inline">
+					{% csrf_token %}
+					<button class="btn btn-default btn-xs pull-right" type="submit"><span class="glyphicon glyphicon-arrow-up"></span></button>
+				</form>
+				{% endif %}
+				{% if kc.position != columns|length|add:"-1" %}
+				<form method="POST" action="{% url "kanbancol:movedown" project.name_short kc.position %}" style="display:inline">
+					{% csrf_token %}
+					<button class="btn btn-default btn-xs pull-right" type="submit"><span class="glyphicon glyphicon-arrow-down"></span></button>
+				</form>
+				{% endif %}
+			</li>
+			{% empty %}
+			<li class="list-group-item">{% trans "No Columns yet." %}</li>
+		{% endfor %}
+		</ul>
+
+		<a class="btn btn-default" href={% url 'kanbancol:create' project.name_short %}>{% trans "Create new column" %}</a>
+	</div>
+</div>
+
+<div class="panel panel-default">
+	<div class="panel-heading">{% trans "Integrations" %}</div>
+	<div class="panel-body">
+		<ul>
+		{% for si in integration_slack %}
+		<li><a href= {% url 'integration:slack:update' pk=si.pk project=project.name_short %}>Slack #{{ si.channel }}</a></li>
+		{% endfor %}
+		</ul>
+
+		<a href="https://slack.com/oauth/authorize?scope=chat:write:bot,commands&client_id=107083334228.139249070005&redirect_uri={% filter urlencode:"" %}https://{{host}}{% url "integration:slack:auth" project.name_short %}{% endfilter %}"><img alt="Add to Slack" height="40" width="139" src="https://platform.slack-edge.com/img/add_to_slack.png" srcset="https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x" /></a>
+	</div>
+</div>
+
+<div class="panel panel-danger">
+	<div class="panel-heading">{% trans "Danger Zone" %}</div>
+	<div class="panel-body">
+		<p><a class="btn btn-danger" href="{% url 'project:delete' project=project.name_short %}"> {% trans "Delete" %} {{project.name}}</a></p>
+	</div>
+</div>
+</div>
+</div>
+{% endblock %}
+{% block extra_script %}
+	{{ form.media }}
+{% endblock %}

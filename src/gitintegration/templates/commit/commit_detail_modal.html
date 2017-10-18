@@ -1,0 +1,76 @@
+<!--
+Iguana (c) by Marc Ammon, Moritz Fickenscher, Lukas Fridolin,
+Michael Gunselmann, Katrin Raab, Christian Strate
+
+Iguana is licensed under a
+Creative Commons Attribution-ShareAlike 4.0 International License.
+
+You should have received a copy of the license along with this
+work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
+-->
+{% load i18n %}
+{% load static %}
+
+<div id="modal_{{ c.pk }}" class="modal fade" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h3 id="title_commit_{{c.pk}}" class="modal-title">{{ c.get_title }} ({{ c.get_name_short }})</h3>
+				<h5 class="modal-title">{{ c.author }}</h5>
+				<h5 class="modal-title">{{ c.date }}</h5>
+				{% if c.get_tags %}
+					{% for tag in c.get_tags %}
+						<span class="label label-primary">{{ tag }}</span>
+					{% endfor %}
+				{% endif %}
+			</div>
+			<div class="modal-body">
+				<div class="panel panel-default">
+					<div class="panel-heading">{% trans "Commit message" %}</div>
+					<div class="panel-body">
+						{{ c.message|urlize|linebreaksbr }}
+					</div>
+				</div>
+				{% if c.get_changes %}
+					<div class="panel panel-default">
+						<div class="panel-heading">{% trans "Changes" %}</div>
+						<div class="panel-body">
+							<table class="table">
+								<thead>
+									<tr>
+										<th>{% trans "File" %}</th>
+										<th>{% trans "Insertions" %}</th>
+										<th>{% trans "Deletions" %}</th>
+									</tr>
+								</thead>
+								<tbody>
+									{% for file, changes in c.get_changes.items %}
+										<tr>
+											<td>
+												<form style="display:inline-block" method="post" action="{% url 'issue:commit_diff' project=c.repository.project.name_short sqn_i=c.issue.number %}">
+													{% csrf_token %}
+														<input type="hidden" name="filename" value={{file}} />
+														<input type="hidden" name="repository" value={{c.repository.pk}} />
+														<input type="hidden" name="commit_sha" value={{c.get_name_short}} />
+														<button id="diff_btn_{{forloop.counter}}" style="text-align:left;white-space:normal;word-wrap:break-word;word-break:break-all" type="submit" class="btn btn-link">
+															{{ file }}
+														</button>
+												</form>
+											</td>
+											<td><span class="label label-success">{{ changes.insertions }}</span></td>
+											<td><span class="label label-danger">{{ changes.deletions }}</span></td>
+										</tr>
+									{% endfor %}
+								</tbody>
+							</table>
+						</div>
+					</div>
+				{% endif %}
+			</div>
+			<div class="modal-footer">
+				<button type="button" id="close_commit_{{c.pk}}" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
+			</div>
+		</div>
+	</div>
+</div>

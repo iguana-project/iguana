@@ -1,0 +1,12 @@
+---
+  groupname: "staging"
+  host: "{{inventory_hostname}}"
+  home: "/home/iguana/sites/{{host}}"
+  wwwdir: "/var/www/{{host}}"
+  virtualenv: "{{home}}/virtualenv"
+  pip: "{{virtualenv}}/bin/pip"
+  src: "{{home}}/src"
+  requirements: "{{home}}/requirements/{{groupname}}.req"
+  git_checkout_version: "master"
+  letsencrypt_domains: "-d {{host}}"
+  nginx_domains: "{{host}}"

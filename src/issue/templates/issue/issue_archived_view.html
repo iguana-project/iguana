@@ -1,0 +1,89 @@
+<!--
+Iguana (c) by Marc Ammon, Moritz Fickenscher, Lukas Fridolin,
+Michael Gunselmann, Katrin Raab, Christian Strate
+
+Iguana is licensed under a
+Creative Commons Attribution-ShareAlike 4.0 International License.
+
+You should have received a copy of the license along with this
+work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
+-->
+{% extends "_base.html" %}
+{% load i18n %}
+{% load static %}
+{% load filter %}
+{% block title %}{% trans "Archived Issues" %}{% endblock title %}
+
+{% block content %}
+	{% include "projectnavi.html" %}
+	<h1 class="page-header"> {% trans "Archived Issues" %} </h1>
+	<div class="row">
+		<div class="col-md-12">
+			{% if archived_issues_without_sprint.all %}
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						{% trans "Issues without Sprint" %}
+					</div>
+					<table class="table">
+						{% for issue in page_items_nosprint %}
+							<tr id="archive_issue_{{issue.number}}">
+								<td>
+									<div class="issue-type text-muted {{issue.type|lower}}" title={{issue.type}}>
+										{{ issue.type|slice:":1" }}
+									</div>
+									<a href="{% url 'issue:detail' project=project.name_short sqn_i=issue.number %}" title="{{issue.description}}">{{ issue.get_ticket_identifier }}</a></td>
+								<td style="width:55%">{{issue.title}}</td>
+								<td><div style="float:right">{% include "issue_option_template.html"%}</div></td>
+							</tr>
+						{% endfor %}
+					</table>
+					{% if page_items_nosprint.has_next %}
+						<div class="panel-footer">
+							<a href="?page_nosprint={{ page_items_nosprint.next_page_number }}#id_item_{{ page_items_nosprint|length|add:"1" }}">
+								{% trans "More issues without sprint" %}
+							</a>
+						</div>
+					{% endif %}
+				</div>
+			{% endif %}
+			{% for sprint in page_items %}
+				{% if sprint.issue.archived %}
+					<div class="panel panel-default" id="id_sprint_{{ forloop.counter }}">
+						<div class="panel-heading">
+							{% trans "Sprint" %}{{sprint.seqnum}}
+							{% if sprint.startdate %}
+								{% trans "from " %}{{sprint.startdate}}
+							{% endif %}
+							{% if sprint.enddate %}
+								{% trans "to " %} {{sprint.enddate}}
+							{% endif %}
+						</div>
+						<table class="table">
+							{% for issue in sprint.issue.archived %}
+								<tr id="archive_issue_{{issue.number}}">
+									<td>
+										<div class="issue-type text-muted {{issue.type|lower}}" title={{issue.type}}>
+											{{ issue.type|slice:":1" }}
+										</div>
+										<a href="{% url 'issue:detail' project=project.name_short sqn_i=issue.number %}" title="{{issue.description}}">{{ issue.get_ticket_identifier }}</a></td>
+									<td style="width:55%">{{issue.title}}</td>
+									<td><div style="float:right">{% include "issue_option_template.html"%}</div></td>
+								</tr>
+							{% endfor %}
+						</table>
+					</div>
+				{% endif %}
+			{% endfor %}
+			{% if page_items.has_next %}
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<a href="?page={{ page_items.next_page_number }}#id_item_{{ page_items|length|add:"1" }}">
+							{% trans "More Sprints" %}
+						</a>
+					</div>
+					<table class="table"></table>
+				</div>
+			{% endif %}
+		</div>
+	</div>
+{% endblock content %}

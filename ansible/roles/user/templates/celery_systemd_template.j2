@@ -1,0 +1,15 @@
+[Unit]
+Description=celery daemon
+After=network.target
+
+[Service]
+User=iguana
+PIDFile=/run/celery/pid
+WorkingDirectory=/home/iguana/sites/{{host}}/src
+ExecStart=/home/iguana/sites/{{host}}/virtualenv/bin/celery -A common worker -l info
+PrivateTmp=true
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s TERM $MAINPID
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,29 @@
+<!--
+Iguana (c) by Marc Ammon, Moritz Fickenscher, Lukas Fridolin,
+Michael Gunselmann, Katrin Raab, Christian Strate
+
+Iguana is licensed under a
+Creative Commons Attribution-ShareAlike 4.0 International License.
+
+You should have received a copy of the license along with this
+work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
+-->
+{% extends "_base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Confirm" %}{% endblock title %}
+
+{% block content %}
+<form action="{{ request.path }}" method="post">
+	{% csrf_token %}
+	<div class="panel panel-danger">
+		<div class="panel-heading">
+			<p>{% blocktrans with name=object %}Are you sure you want to delete "{{ name }}"?{% endblocktrans %}</p>
+		</div>
+		<div class="panel-body">
+			<button class="btn btn-danger" type="submit" id="id_submit_delete" name="delete">{% trans 'Confirm' %}</button>
+			<button class="btn btn-primary" style="margin-left:2em" type="submit" id="id_submit_keep" name="keep">{% trans "No, I want to keep it" %}</button>
+		</div>
+	</div>
+</form>
+{% endblock content %}

@@ -1,0 +1,135 @@
+<!--
+Iguana (c) by Marc Ammon, Moritz Fickenscher, Lukas Fridolin,
+Michael Gunselmann, Katrin Raab, Christian Strate
+
+Iguana is licensed under a
+Creative Commons Attribution-ShareAlike 4.0 International License.
+
+You should have received a copy of the license along with this
+work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
+-->
+{% extends "_base.html" %}
+{% load i18n %}
+{% load static %}
+{% load bootstrap3 %}
+{% block title %}
+	{% trans "Finish sprint" %} {{ sprint.seqnum }}
+{% endblock title %}
+
+{% block content %}
+
+	<h1 class="page-header">
+		{% trans "Finish sprint" %} {{ sprint.seqnum }}
+	</h1>
+	<div class="alert alert-info">
+		{% trans "Select the issues you want to move to another sprint. The unselected issues will be moved to backlog." %}
+	</div>
+	<form  method="post" action="{% url 'issue:stopsprint' project=project.name_short sqn_s=sprint.seqnum %}">
+		{% csrf_token %}
+		<div class="panel panel-default">
+			<div class="panel-heading" style="padding-left:8px">
+				<label style="margin-right:10px">
+					<input type="checkbox" name="select-all" id="select_all" />
+					<strong>{% trans "All" %}</strong>
+				</label>
+				<label style="margin-right:10px">
+					<input type="checkbox" name="select-todo" id="select_todo" />
+					<strong>{% trans "Todo" %}</strong>
+				</label>
+				<label style="margin-right:10px">
+					<input type="checkbox" name="select-progress" id="select_progress" />
+					<strong>{% trans "In progress" %}</strong>
+				</label>
+			</div>
+			<table class="table">
+				{% for issue in sprint.issues_left.all %}
+					<tr>
+						<td><input name="move_to_new_sprint" class="{{issue.kanbancol.type|lower}}" type="checkbox" value="{{ issue.number }}">
+						</td>
+						<td>
+									<div class="issue-type text-muted {{issue.type|lower}}" title={{issue.type}}>
+										{{ issue.type|slice:":1" }}
+									</div>
+							<a href="{% url 'issue:detail' project=project.name_short sqn_i=issue.number %}" title="{{issue.description}}" class="issue-id-link">{{ issue.get_ticket_identifier }}</a>
+							{% if issue.get_priority_display == "Critical" %}
+								<span class="glyphicon glyphicon-arrow-up red" title="{% trans "Priority" %}: {% trans "Critical" %}"></span>
+							{% elif issue.get_priority_display == "High" %}
+								<span class="glyphicon glyphicon-arrow-up gly-rotate-45 red" title="{% trans "Priority" %}: {% trans "High" %}"></span>
+							{% elif issue.get_priority_display == "Low" %}
+								<span class="glyphicon glyphicon-arrow-up gly-rotate-145 green" title="{% trans "Priority" %}: {% trans "Low" %}"></span>
+							{% elif issue.get_priority_display == "Unimportant" %}
+								<span class="glyphicon glyphicon-arrow-up gly-rotate-180 green" title="{% trans "Priority" %}: {% trans "Unimportant" %}"></span>
+							{% endif %}
+						</td>
+						<td>
+							<span class="issue-title">{{issue.title}}</span>
+							{% if issue.storypoints %}
+								<span class="story-points" title="{% trans "Storypoints" %}">{{issue.storypoints}}</span>
+							{% endif %}
+							{% for tag in issue.tags.all %}
+								<span class="issue-tag" style="background: #{{tag.color}}; color:#{{tag.font_color}};" title="{{tag.tag_text}}">{{tag.tag_text}}</span>
+							{% endfor %}
+						</td>
+						<td>
+							{% if issue.assignee %}
+								{% for dev in issue.assignee.all %}
+									<img src={{ dev.avatar.url }} title="{{ dev }}" width="15" alt="{% trans "Avatar" %} {{ dev }}"/>
+								{% endfor %}
+							{% endif %}
+						</td>
+					</tr>
+				{% endfor %}
+			</table>
+		</div>
+		<div class="form-group"><label class="control-label" for="id_sprint">{% trans "Move to" %}</label><select class="form-control" id="id_sprint" name="sprint" title="" required="">
+				{% for sprint in project.sprint.get_new_sprints %}
+					<option value="{{ sprint.seqnum }}">Sprint {{ sprint.seqnum }}</option>
+				{% endfor %}
+				<option value="new">{% trans "New sprint" %}</option>
+			</select></div>
+			<button type="submit" id="finish_sprint" class="btn btn-success" title="{% trans "Move to archive" %}">
+				<span class="glyphicon glyphicon-ok"></span> {% trans "Finish"%}
+			</button>
+			<a class="btn btn-default" href="{% url 'issue:backlog' project=project.name_short sqn_s=sprint.seqnum %}">{% trans "Go back" %}</a>
+	</form>
+
+{% endblock %}
+{% block extra_script %}
+	<script>
+$( document ).ready(function() {
+	$("#select_all").change(function(){  //"select all" change
+		$("[name=move_to_new_sprint]").prop('checked', $(this).prop("checked")); //change all ".checkbox" checked status
+		$("#select_todo").prop('checked', false); //change all ".checkbox" checked status
+		$("#select_progress").prop('checked', false); //change all ".checkbox" checked status
+	});
+	$("#select_todo").change(function(){  //"select all" change
+		$("[name=move_to_new_sprint]").prop('checked', false); //change all ".checkbox" checked status
+		$(".todo").prop('checked', $(this).prop("checked")); //change all ".checkbox" checked status
+		$("#select_all").prop('checked', false); //change all ".checkbox" checked status
+		$("#select_progress").prop('checked', false); //change all ".checkbox" checked status
+	});
+	$("#select_progress").change(function(){  //"select all" change
+		$("[name=move_to_new_sprint]").prop('checked', false); //change all ".checkbox" checked status
+		$(".inprogress").prop('checked', $(this).prop("checked")); //change all ".checkbox" checked status
+		$("#select_all").prop('checked', false); //change all ".checkbox" checked status
+		$("#select_todo").prop('checked', false); //change all ".checkbox" checked status
+	});
+
+	//".checkbox" change
+	$('[name=move_to_new_sprint]').change(function(){
+		//uncheck "select all", if one of the listed checkbox item is unchecked
+		if(!$(this).prop("checked")){ //if this item is unchecked
+			$("#select_all").prop('checked', false); //change "select all" checked status to false
+		}
+			$("#select_todo").prop('checked', false); //change all ".checkbox" checked status
+			$("#select_progress").prop('checked', false); //change all ".checkbox" checked status
+		//check "select all" if all checkbox items are checked
+		if ($('[name=move_to_new_sprint]:checked').length == $('[name=move_to_new_sprint]').length ){
+			$("#select_all").prop('checked', true);
+			$("#select_todo").prop('checked', false); //change all ".checkbox" checked status
+			$("#select_progress").prop('checked', false); //change all ".checkbox" checked status
+		}
+	});
+});
+	</script>
+{% endblock %}

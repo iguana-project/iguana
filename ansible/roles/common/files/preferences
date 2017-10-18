@@ -1,0 +1,19 @@
+Package: *
+Pin: release a=xenial
+Pin-Priority: 700
+
+Package: *
+Pin: release a=xenial-updates
+Pin-Priority: 700
+
+Package: *
+Pin: release a=xenial-security
+Pin-Priority: 700
+
+Package: *
+Pin: release a=xenial-backports
+Pin-Priority: 700
+
+Package: *
+Pin: release a=yakkety
+Pin-Priority: 300

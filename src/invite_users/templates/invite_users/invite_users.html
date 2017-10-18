@@ -1,0 +1,58 @@
+<!--
+Iguana (c) by Marc Ammon, Moritz Fickenscher, Lukas Fridolin,
+Michael Gunselmann, Katrin Raab, Christian Strate
+
+Iguana is licensed under a
+Creative Commons Attribution-ShareAlike 4.0 International License.
+
+You should have received a copy of the license along with this
+work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
+-->
+{% extends "_base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Invite new User via email" %}{% endblock title %}
+
+{% block content %}
+<h2>{% trans "Invite new User via email" %}</h2>
+
+{% if form.errors %}
+	{% for field in form %}
+		{% for error in field.errors %}
+			<div class="alert alert-danger">
+			<strong>{{ error|escape }}</strong>
+			</div>
+		{% endfor %}
+		{% for error in form.non_field_errors %}
+			<div class="alert alert-danger">
+			<strong>{{ error|escape }}</strong>
+			</div>
+		{% endfor %}
+	{% endfor %}
+{% endif %}
+{% if formset.non_form_errors %}
+	<div class="alert alert-danger">
+	{{ formset.non_form_errors }}
+	</div>
+{% endif %}
+
+<p> {% blocktrans with platform=platform %}Do you want to invite some of your friends to {{ platform }}? We can invite them via email.{% endblocktrans %}</p>
+<div class="alert alert-info">
+{% trans "You have to enter at least one email-address." %}
+</div>
+
+{# TODO display missing-field message in a better way #}
+<form method="post" id="invite_friend_form" class="post-form">
+	{% csrf_token %}
+<table>
+	{{ form.as_table }}
+</table>
+
+<input type ="submit" id="submit_invite_more_friends" value="{% trans "invite more" %}" name="invite_more"/>
+<table>
+	{{ formset }}
+</table>
+
+<input type ="submit" id="submit_invite_friends" value="{% trans "invite friend/s" %}" />
+</form>
+{% endblock content %}

@@ -1,0 +1,41 @@
+{
+    "django": {
+        "required_settings": {
+            "SECRET_KEY": "",
+            "HOST": "",
+            "ALLOWED_HOSTS": [
+                ""
+            ]
+        },
+        "optional_settings": {
+            "PLATFORM_NAME": "",
+            "LANGUAGE_CODE": "",
+            "TIME_ZONE": "",
+            "CAPTCHA_LENGTH": ""
+        }
+    },
+    "database": {
+        "HOST": "",
+        "PORT": "",
+        "DATABASE_NAME": "",
+        "USER": "",
+        "PASSWORD": ""
+    },
+    "redis": {
+        "HOST": "",
+    },
+    "email": {
+        "HOST": "",
+        "PORT": "",
+        "USER": "",
+        "PASSWORD": "",
+        "FROM_EMAIL_ADDRESS": "",
+        "USE_TLS": "",
+        "SENDGRID_API_KEY": ""
+    },
+    "slack": {
+        "ID": "",
+        "SECRET": "",
+        "VERIFICATION": ""
+    }
+}

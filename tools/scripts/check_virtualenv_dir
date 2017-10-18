@@ -1,0 +1,12 @@
+# Source this file from bash.
+
+# exit if a command produces an error
+set -e
+
+# check if the first parameter is set
+if [ -n "$1" ]; then
+    VIRTUALENV_DIR="$1"
+else
+    echo "The first parameter must be the virtualenv root directory!"
+    exit 1
+fi

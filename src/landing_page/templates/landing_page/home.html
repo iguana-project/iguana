@@ -1,0 +1,21 @@
+<!--
+Iguana (c) by Marc Ammon, Moritz Fickenscher, Lukas Fridolin,
+Michael Gunselmann, Katrin Raab, Christian Strate
+
+Iguana is licensed under a
+Creative Commons Attribution-ShareAlike 4.0 International License.
+
+You should have received a copy of the license along with this
+work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
+-->
+{% extends "_base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Home" %}{% endblock title %}
+
+{% block content %}
+	<div class="jumbotron">
+		<h1>{% trans "Welcome to iguana" %}</h1>
+		<p>{% trans "the board to organize your issues and projects and to log your work time." %}</p>
+	</div>
+{% endblock content %}

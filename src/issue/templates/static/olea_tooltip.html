@@ -1,0 +1,23 @@
+{% load i18n %}{% trans "&lt;Issue&gt; &lt;change-expression&gt;" %}
+
+{% trans "Issue can either be the title of a new issue or the identifier of an existing issue starting with '&gt;'" %}
+{% trans "Supported change expressions are: " %}
+  !&lt;prio&gt;
+  @&lt;user&gt;
+  :&lt;Issue-Type&gt;
+  #&lt;tag&gt;
+  +&lt;timelog&gt;
+  ~&lt;dependsOn&gt;
+  $&lt;storypoints&gt;
+  ;&lt;description&gt;
+  &amp;&lt;Kanban column&gt;
+
+{% trans "Examples: " %}
+  Title of new issue ;with fancy description @wayne !4 :Task #mytag ~PROJ-42
+  &gt;PROJ-42 +4h2m &amp;Done
+  &gt;42 +4h2m
+
+{% trans "Please note: " %}
+  - {% trans "When setting one or more assignees, all previous assignees are removed from the issue" %}
+  - {% trans "It's sufficient to provide enough information to uniqueliy identify an object within the current project for all kinds of elements" %}
+  - {% trans "When modifying issues or setting it to dependsOn another issue, the project name can be omitted for issues in the project you're currently working in" %}

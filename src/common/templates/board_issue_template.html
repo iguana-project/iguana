@@ -1,0 +1,101 @@
+<!--
+Iguana (c) by Marc Ammon, Moritz Fickenscher, Lukas Fridolin,
+Michael Gunselmann, Katrin Raab, Christian Strate
+
+Iguana is licensed under a
+Creative Commons Attribution-ShareAlike 4.0 International License.
+
+You should have received a copy of the license along with this
+work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
+-->
+{% load i18n %}
+{% load cache %}
+{% trans "Priority: " as priority_string %}
+{% cache 86400 board_issue_template issue.project.name_short issue.number request.user.username %}
+<div id="board_issue_{{ issue.number }}" class="panel panel-default issuecard {% if request.user.punched_on.all.first.issue == issue %} punched-in {% endif %}" data-title="{{ issue.title }}" data-priority="{{ issue.priority }}" data-type="{{issue.type }}" data-storypoints="{{ issue.storypoints }}">
+	<div class="panel-body panel-body-nopad">
+		{% if issue.get_left_kCol_for_issue != -1 %}
+		<div class="issue-move">
+		{% else %}
+		<div class="issue-move notvisible">
+		{% endif %}
+			<form id="lcol{{issue.number}}" method="post" action="{% url 'issue:setkanbancol' project=project.name_short %}">
+				{% csrf_token %}
+				<input type="hidden" name="sqn_k" value={{ issue.get_left_kCol_for_issue }} />
+				<input type="hidden" name="sqn_i" value={{issue.number}} />
+				<input type="hidden" name="next" value={{request.get_full_path}}/>
+				<button type="submit" class="btn btn-link btn-move"><span class="glyphicon glyphicon-chevron-left"></span></button>
+			</form>
+		</div>
+		<div class="issue-body">
+			<div id="issue_title_{{issue.number}}" class="issue-header">
+				{% include "issue_option_template.html" %}
+				<span class="issue-title">{{issue.title}}</span>
+			</div>
+			<div id="issue_tags_{{issue.number}}">
+				{% if issue.get_priority_display == "Critical" %}
+				<span class="glyphicon glyphicon-arrow-up red" title="{{priority_string}}{% trans "Critical" %}"></span>
+				{% elif issue.get_priority_display == "High" %}
+				<span class="glyphicon glyphicon-arrow-up gly-rotate-45 red" title="{{priority_string}}{% trans "High" %}"></span>
+				{% elif issue.get_priority_display == "Low" %}
+				<span class="glyphicon glyphicon-arrow-up gly-rotate-145 green"  title="{{priority_string}}{% trans "Low" %}"></span>
+				{% elif issue.get_priority_display == "Unimportant" %}
+				<span class="glyphicon glyphicon-arrow-up gly-rotate-180 green" title="{{priority_string}}{% trans "Unimportant" %}"></span>
+				{% endif %}
+				{% for tag in issue.tags.all %}
+				<span class="issue-tag" style="background: #{{tag.color}}; color:#{{tag.font_color}}" title="{{tag.tag_text}}">{{tag.tag_text}}</span>
+				{% endfor %}
+			</div>
+
+			<div class="issue-footer text-muted" id="issue_footer_{{issue.number}}_{{issue.priority}}">
+				<span class="issue-footer-text">
+				<span id="issue_type_{{issue.number}}">
+					{% if issue.type == "Bug" %}
+					Bug
+					{% endif %}
+					{% if issue.type == "Story" %}
+					Story
+					{% endif %}
+					{% if issue.type == "Task" %}
+					Task
+					{% endif %}
+				</span>
+					{% if issue.storypoints %}
+					<span class="story-points"  title="{% trans "Storypoints" %}">{{issue.storypoints}}</span>
+					{% endif %}
+				</span>
+				<div class="pull-right">
+					<span class="issue-footer-text">
+						<a class="issue-id-link" href="{% url 'issue:detail' project=project.name_short sqn_i=issue.number %}" title="{{issue.description}}" style="z-index:999;position:relative">{{issue.get_ticket_identifier}}</a>
+					</span>
+					<span class="issue-footer-text">
+					{% for dev in issue.assignee.all|slice:"1" %}
+						<img src={{ dev.avatar.url }} title="{{ dev }}" width="15" alt="{% trans "Avatar" %} {{ dev }}"/>
+					{% endfor %}
+					{% if issue.assignee.count == 2 %}
+						<span title="{% trans "There is " %}{{issue.assignee.count|add:"-1"}}{% trans " other assignee not listed here." %}"><strong>...</strong>
+						</span>
+					{% elif issue.assignee.count > 2 %}
+						<span title="{% trans "There are " %}{{issue.assignee.count|add:"-1"}}{% trans " other assignees not listed here." %}"><strong>...</strong>
+						</span>
+					{% endif %}
+					</span>
+				</div>
+			</div>
+		</div>
+		{% if issue.get_right_kCol_for_issue != -1 %}
+		<div class="issue-move">
+		{% else %}
+		<div class="issue-move notvisible">
+		{% endif %}
+			<form id="rcol{{issue.number}}" method="post" action="{% url 'issue:setkanbancol' project=project.name_short %}">
+				{% csrf_token %}
+				<input type="hidden" name="sqn_k" value={{ issue.get_right_kCol_for_issue }} />
+				<input type="hidden" name="sqn_i" value={{issue.number}} />
+				<input type="hidden" name="next" value={{request.get_full_path}} />
+				<button type="submit" class="btn btn-link btn-move"><span class="glyphicon glyphicon-chevron-right"></span></button>
+			</form>
+		</div>
+	</div>
+</div>
+{% endcache %}

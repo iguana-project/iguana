@@ -1,0 +1,53 @@
+<!--
+Iguana (c) by Marc Ammon, Moritz Fickenscher, Lukas Fridolin,
+Michael Gunselmann, Katrin Raab, Christian Strate
+
+Iguana is licensed under a
+Creative Commons Attribution-ShareAlike 4.0 International License.
+
+You should have received a copy of the license along with this
+work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
+-->
+{% extends "_base.html" %}
+{% load i18n %}
+{% load bootstrap3 %}
+{% block title %}{% trans "Edit" %} {{ project.name }}{% endblock title %}
+
+{% block content %}
+{% trans "settings" as viewpoint %}
+{% include "projectnavi.html" %}
+
+<div class="row">
+	<div class="col-md-2">
+		{% trans "repos" as viewpoint %}
+		{% include "settingsnavi.html" %}
+	</div>
+	<div class="col-md-10">
+		<p></p>
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				{% trans "Repository links" %}
+				<div style="float:right">
+					<a href="{% url 'project:gitintegration:create' project=project.name_short %}"><span class="glyphicon glyphicon-plus"></span></a>
+				</div>
+			</div>
+			<div class="panel-body">
+				<ul class="list-group">
+					{% for repo in repositories %}
+					<li class="list-group-item">
+						<div class=row>
+							<div class="col-md-10" id="repo_name_{{ forloop.counter }}">
+								<a href={% url 'project:gitintegration:detail' project=project.name_short repository=repo.pk %}>{{ repo }}</a>
+							</div>
+							<div class="col-md-2">
+								<a id="edit_repo_{{ forloop.counter }}" class="btn btn-success" href="{% url 'project:gitintegration:edit' project=project.name_short repository=repo.pk %}"><span class="glyphicon glyphicon-pencil" style="color:black"></span> {% trans "Edit" %}</a>
+							</div>
+						</div>
+					</li>
+					{% endfor %}
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}

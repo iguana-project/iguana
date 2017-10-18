@@ -1,0 +1,11 @@
+---
+  - name: copy badges script to server
+    copy: src=download_badges.sh dest=/tmp/download_badges.sh
+
+  - name: make script executable
+    file:
+        path: /tmp/download_badges.sh
+        mode: 500
+
+  - name: execute script
+    command: /tmp/download_badges.sh

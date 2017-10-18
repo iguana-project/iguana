@@ -1,0 +1,3 @@
+---
+  host: "{{inventory_hostname}}"
+  wwwdir: "/var/www/jenkins"

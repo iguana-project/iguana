@@ -1,0 +1,7 @@
+---
+  - name: Download badges to wwwdir
+    hosts: jenkins
+    remote_user: user
+    sudo: yes
+    roles:
+        - badges

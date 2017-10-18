@@ -1,0 +1,39 @@
+# python files
+__pycache__/
+*.py[cod]
+
+# eclipse files
+/.project
+/.pydevproject
+
+# vim-template
+[._]*.s[a-w][a-z]
+[._]s[a-w][a-z]
+
+# other temp files
+*.swp
+*.log
+
+# project specific files
+BAD_MSG
+parser.out
+parsetab.py
+linkgraph.*
+.coverage
+.makeSettings
+*.mo
+*.sqlite3
+/ansiblevenv
+ansible/*.retry
+src/htmlcov
+src/celerybeat-schedule.db
+/src/common/settings/__init__.py
+/src/common/static/css/*.css
+/src/common/settings/webdriver.py
+/src/common/media/avatars/*/*
+/src/common/media/attachments/*/*
+/src/common/media/git_sshkeys/*/*
+/src/common/media/repos/*
+/tools/scripts/tools/bin/vnu.jar
+/validation/*
+/virtualenv

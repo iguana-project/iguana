@@ -1,0 +1,154 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-12-13 22:53+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: issue/models.py:24
+msgid "Title"
+msgstr ""
+
+#: issue/models.py:25
+msgid "Project"
+msgstr ""
+
+#: issue/models.py:25
+msgid "issue"
+msgstr ""
+
+#: issue/models.py:26
+msgid "Ticket number"
+msgstr ""
+
+#: issue/models.py:27
+msgid "Kanban Column"
+msgstr ""
+
+#: issue/models.py:29
+msgid "Bug"
+msgstr ""
+
+#: issue/models.py:30
+msgid "Story"
+msgstr ""
+
+#: issue/models.py:31
+msgid "Task"
+msgstr ""
+
+#: issue/models.py:34
+msgid "Type"
+msgstr ""
+
+#: issue/models.py:40
+msgid "Assignee"
+msgstr ""
+
+#: issue/models.py:41
+msgid "assignee"
+msgstr ""
+
+#: issue/models.py:45
+msgid "Due Date"
+msgstr ""
+
+#: issue/models.py:49
+msgid "Enter a date starting from today"
+msgstr ""
+
+#: issue/models.py:56
+msgid "Unimportant"
+msgstr ""
+
+#: issue/models.py:57
+msgid "Low"
+msgstr ""
+
+#: issue/models.py:58
+msgid "Medium"
+msgstr ""
+
+#: issue/models.py:59
+msgid "High"
+msgstr ""
+
+#: issue/models.py:60
+msgid "Critical"
+msgstr ""
+
+#: issue/models.py:63
+msgid "Priority"
+msgstr ""
+
+#: issue/models.py:68
+msgid "Description"
+msgstr ""
+
+#: issue/models.py:72
+msgid "Story Points"
+msgstr ""
+
+#: issue/models.py:74
+msgid "Enter a storypoints amount greater than 0!"
+msgstr ""
+
+#: issue/templates/issue/issue_create_view.html:4
+#: issue/templates/issue/issue_project_list.html:21
+msgid "Create new Issue"
+msgstr ""
+
+#: issue/templates/issue/issue_create_view.html:7
+msgid "New Issue"
+msgstr ""
+
+#: issue/templates/issue/issue_create_view.html:10
+#: issue/templates/issue/issue_edit.html:10
+msgid "Save"
+msgstr ""
+
+#: issue/templates/issue/issue_detail_view.html:7
+msgid "Issue:"
+msgstr ""
+
+#: issue/templates/issue/issue_detail_view.html:11
+msgid "Description:"
+msgstr ""
+
+#: issue/templates/issue/issue_detail_view.html:22
+msgid "Edit Issue"
+msgstr ""
+
+#: issue/templates/issue/issue_detail_view.html:23
+msgid "Back to project"
+msgstr ""
+
+#: issue/templates/issue/issue_edit.html:4
+#: issue/templates/issue/issue_edit.html:7
+msgid "Edit"
+msgstr ""
+
+#: issue/templates/issue/issue_project_list.html:5
+msgid "Issues List"
+msgstr ""
+
+#: issue/templates/issue/issue_project_list.html:9
+msgid "Issues associated with project"
+msgstr ""
+
+#: issue/templates/issue/issue_project_list.html:18
+msgid "No issues present in project."
+msgstr ""

@@ -1,0 +1,9 @@
+---
+  - name: update packages
+    apt: update_cache=yes
+
+  - name: upgrade all packages to the latest version
+    apt: upgrade=dist
+
+  - name: reload systemd conf
+    command: systemctl daemon-reload

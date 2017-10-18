@@ -1,0 +1,59 @@
+<!--
+Iguana (c) by Marc Ammon, Moritz Fickenscher, Lukas Fridolin,
+Michael Gunselmann, Katrin Raab, Christian Strate
+
+Iguana is licensed under a
+Creative Commons Attribution-ShareAlike 4.0 International License.
+
+You should have received a copy of the license along with this
+work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
+-->
+{% extends "_base.html" %}
+{% load i18n %}
+{% load filter %}
+
+{% block title %}{% trans "Repository link's details" %}{% endblock title %}
+
+{% block content %}
+<h1 class="page-header">{% trans "Repository link's details" %}</h1>
+
+<div class="row">
+	<div class="col-md-12">
+		<a class="btn btn-success" id="button_edit" href="{% url 'project:gitintegration:edit' project=repository.project.name_short repository=repository.pk %}"><span class="glyphicon glyphicon-pencil" style="color:black"></span> {% trans "Edit" %}</a>
+		<a class="btn btn-danger" id="button_delete" href="{% url 'project:gitintegration:delete' project=repository.project.name_short repository=repository.pk %}"><span class="glyphicon glyphicon-remove" style="color:black"></span> {% trans "Delete" %}</a>
+		<p></p>
+		<div class="panel panel-default">
+			<div class="panel-heading">{% trans "URL" %}</div>
+			<div class="panel-body">
+				{{ repository.url }}
+			</div>
+		</div>
+		<div class="panel panel-default">
+			<div class="panel-heading">{% trans "Repository state" %}</div>
+			<div class="panel-body">
+				<div class="row">
+					<div class="col-md-2">
+						{% trans "Connection state" %}<br />
+						{% trans "Imported issues" %}
+					</div>
+					<div id="repo_state" class="col-md-10">
+						{% if repository.conn_ok %}
+						<span class="glyphicon glyphicon-ok" style="color:green"></span>
+						{% else %}
+						<span class="glyphicon glyphicon-remove" style="color:red"></span>
+						{% endif %}
+						<br />
+						{{ repository.commits.count }}
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="panel panel-default">
+			<div class="panel-heading">{% trans "RSA public key" %}</div>
+			<div class="panel-body" style="white-space:normal;word-wrap:break-word">
+				{{ repository.rsa_pub_path.read|linebreaksbr }}
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock content %}

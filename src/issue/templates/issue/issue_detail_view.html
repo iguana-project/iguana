@@ -1,0 +1,410 @@
+<!--
+Iguana (c) by Marc Ammon, Moritz Fickenscher, Lukas Fridolin,
+Michael Gunselmann, Katrin Raab, Christian Strate
+
+Iguana is licensed under a
+Creative Commons Attribution-ShareAlike 4.0 International License.
+
+You should have received a copy of the license along with this
+work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
+-->
+{% extends "_base.html" %}
+{% load i18n %}
+{% load static %}
+{% load bootstrap3 %}
+{% load filter %}
+{% block title %}
+	{{ issue.title }}
+{% endblock title %}
+
+{% block content %}
+	{% include "projectnavi.html" %}
+	<h1 class="page-header">
+		{{issue.get_ticket_identifier}} <small>
+			{% if issue.get_priority_display == "Critical" %}
+				<span class="glyphicon glyphicon-arrow-up red" title="{% trans "Priority" %}: {% trans "Critical" %}"></span>
+			{% elif issue.get_priority_display == "High" %}
+				<span class="glyphicon glyphicon-arrow-up gly-rotate-45 red" title="{% trans "Priority" %}: {% trans "High" %}"></span>
+			{% elif issue.get_priority_display == "Low" %}
+				<span class="glyphicon glyphicon-arrow-up gly-rotate-145 green" title="{% trans "Priority" %}: {% trans "Low" %}"></span>
+			{% elif issue.get_priority_display == "Unimportant" %}
+				<span class="glyphicon glyphicon-arrow-up gly-rotate-180 green" title="{% trans "Priority" %}: {% trans "Unimportant" %}"></span>
+			{% endif %}
+			{{issue.title}}</small>
+	</h1>
+	{% for tag in issue.tags.all %}
+		<span class="issue-tag" target="tag" style="background-color: #{{tag.color}}; color: #{{tag.font_color}}">{{ tag }}</span>
+	{% endfor %}
+	<p></p>
+	<a class="btn btn-default" id="issue_detail_edit_link" href="{% url 'issue:edit' project=issue.project.name_short sqn_i=issue.number %}" title="{% trans "Edit this issue" %}">
+		<span class="glyphicon glyphicon-pencil"></span> {% trans "Edit"%}
+	</a>
+
+	{% if issue.archived %}
+		<form style="display:inline-block" method="post" action="{% url 'issue:unarchiveissue' project=project.name_short %}" >{% csrf_token %}
+			<input type="hidden" name="sqn_i" value="{{issue.number}}" />
+			<button type="submit" class="btn btn-default" title="{% trans "Move back to backlog" %}">
+				<span class="glyphicon glyphicon-book"></span> {% trans "Unarchive"%}
+			</button>
+		</form>
+		<a class="btn btn-default" id="issue_delete_link" href="{% url 'issue:delete' project=issue.project.name_short sqn_i=issue.number %}" title="{% trans "If no time is logged" %}">
+			<span class="glyphicon glyphicon-trash"></span> {% trans "Delete"%}
+		</a>
+	{% else %}
+		{% if not issue.sprint.is_active %}
+			<form style="display:inline-block" method="post" action="{% url 'issue:archiveissue' project=project.name_short %}" >{% csrf_token %}
+				<input type="hidden" name="sqn_i" value="{{issue.number}}" />
+				<button type="submit" class="btn btn-default" title="{% trans "Move to archive" %}">
+					<span class="glyphicon glyphicon-book"></span> {% trans "Archive"%}
+				</button>
+			</form>
+		{% endif %}
+	{% endif %}
+	{% if request.user in issue.participant.all %}
+		<form style="display:inline-block" method="post" action="{% url 'discussion:mute' project.name_short issue.number %}">
+			{% csrf_token %}
+			<button type="submit" class="btn btn-default" title="{% trans "Turn off notifications for this issue" %}">
+				<span class="glyphicon glyphicon-eye-close"></span> {% trans "Mute"%}
+			</button>
+		</form>
+	{% else %}
+		<form style="display:inline-block" method="post" action="{% url 'discussion:follow' project.name_short issue.number %}">
+			{% csrf_token %}
+			<button type="submit" class="btn btn-default"  title="{% trans "Turn on notifications for this issue" %}">
+				<span class="glyphicon glyphicon-eye-open"></span> {% trans "Follow"%}
+			</button>
+		</form>
+	{% endif %}
+	{% if request.user in issue.assignee.all %}
+		<form style="display:inline-block" id="atm{{issue.number}}" method="post" action="{% url 'issue:rmfromme' project=issue.project.name_short %}" >{% csrf_token %}
+			<input type="hidden" name="next" value={{request.get_full_path}} />
+			<input type="hidden" name="sqn_i" value={{issue.number}} />
+			<button type="submit" class="btn btn-default" title="{% trans "Remove me from assignees" %}">
+				<span class="glyphicon glyphicon-star"></span>{% trans "Remove from me" %}
+			</button>
+		</form>
+	{% else %}
+		<form style="display:inline-block" id="atm{{issue.number}}" method="post" action="{% url 'issue:assigntome' project=issue.project.name_short %}" >{% csrf_token %}
+			<input type="hidden" name="next" value={{request.get_full_path}} />
+			<input type="hidden" name="sqn_i" value={{issue.number}} />
+			<button type="submit" class="btn btn-default" title="{% trans "Assign to me" %}">
+				<span class="glyphicon glyphicon-star-empty"></span>{% trans "Assign to me" %}
+			</button>
+		</form>
+	{% endif %}
+	<form style="display:inline-block" id="punch{{issue.number}}"  method="post" action="{% url 'issue:punch' project=issue.project.name_short sqn_i=issue.number %}" >{% csrf_token %}
+		<input type="hidden" name="next" value={{request.get_full_path}} />
+		{% if request.user.punched_on.all.first.issue == issue %}
+			<button type="submit" class="btn btn-default" title="{% trans "Punch out" %}">
+				<span class="glyphicon glyphicon-record" style="color:red"></span> {% trans "Punch out" %}
+			{% else %}
+				<button type="submit" class="btn btn-default" title="{% trans "Punch in" %}">
+					<span class="glyphicon glyphicon-record"></span> {% trans "Punch in" %}
+				{% endif %}
+				</button>
+	</form>
+	<p></p>
+	<div class="row">
+		<div class="col-md-8">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<div class="row">
+						<div class="col-md-3">
+							{% trans "Type: " %} <strong>{{issue.get_type_display}}</strong>
+						</div>
+						<div class="col-md-3
+						{% if issue.kanbancol.type == 'ToDo' %}
+							text-danger
+						{% elif issue.kanbancol.type == 'Done' %}
+							text-success
+						{% endif %}
+						">
+							{% trans "Status: " %}<strong>{{issue.kanbancol.name}}</strong>
+						</div>
+						<div class="col-md-4">
+							{% if issue.due_date %}
+								{% trans "Due date: " %}<strong>{{issue.due_date}}</strong>
+							{% endif %}
+						</div>
+						<div class="col-md-2">
+							{% if issue.storypoints %}
+								<div class="block" title="{% trans "Storypoints" %}">
+									<span class="badge pull-right">
+										<strong>{{issue.storypoints}}</strong>
+									</span>
+								</div>
+							{% endif %}
+						</div>
+					</div>
+				</div>
+					<div class="panel-body">
+				{% if issue.description %}
+						{{issue.description|autolink:issue.project|markdownify|safe}}
+					</div>
+				<div class="panel-footer text-muted" style="background-color: white">
+				{% endif %}
+					{% if issue.creator %}
+					<p>
+					<img src="{{ issue.creator.avatar.url }}" title="{{ issue.creator }}" width="20" alt="{% trans "Creator avatar" %} {{ issue.creator }}" />
+					<strong><a href="{% url 'user_profile:user_profile_page' issue.creator.username %}">
+							{{issue.creator}}</a></strong>
+					{% trans "created this issue " %}
+					<span title="{{issue.created}}">{{ issue.created|timesince }}{% trans " ago"%}</span>
+					</p>
+					{% endif %}
+					{% if issue.assignee.all %}
+						<p>
+						{% for dev in issue.assignee.all %}
+							{% if forloop.last and not forloop.first %}
+								{% trans "and" %}
+							{% endif %}
+							<img src="{{ dev.avatar.url }}" title="{{ dev }}" width="20" alt="{% trans "Avatar" %} {{ dev }}" />
+							<strong><a href="{% url 'user_profile:user_profile_page' dev.username %}">{{dev}}</a></strong>{% if not forloop.counter >= issue.assignee.all|length|add:"-1"%},{% endif %}
+						{% endfor %}
+						{% if issue.assignee.count == 1 %}
+							{% trans "is currently working on this issue" %}
+						{% else %}
+							{% trans "are currently working on this issue" %}
+						{% endif %}
+						</p>
+					{% endif %}
+					{% if issue.sprint %}
+						{% trans "Planned in Sprint " %} {{issue.sprint.seqnum}}
+						{% if issue.sprint.plandate %}
+							({% trans "hopefully finished on " %} {{issue.sprint.plandate}})
+						{% endif %}
+					{% endif %}
+				</div>
+			</div>
+			<div class="panel panel-default">
+				<div class="panel-heading clearfix">
+					<div class="pull-left" style="padding-top:7px;">
+						<span class="glyphicon glyphicon-comment"></span>
+						{% trans "Comments" %}
+					</div>
+					<div class="dropdown pull-right" style="display:inline-block;">
+						<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
+							{% trans "Order by" %}
+							<span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu">
+							<li>
+								<a href="{{ request.path }}{% query_string request.META.QUERY_STRING order_by='oldest' %}">{% trans "Oldest first" %}
+									{% if comment_order != 'newest' %}
+										<span class="glyphicon glyphicon-ok"></span>
+									{% endif %}
+								</a>
+							</li>
+							<li>
+								<a href="{{ request.path }}{% query_string request.META.QUERY_STRING order_by='newest' %}">{% trans "Newest first" %}
+									{% if comment_order == 'newest' %}
+										<span class="glyphicon glyphicon-ok"></span>
+									{% endif %}
+								</a>
+							</li>
+						</ul>
+					</div>
+				</div>
+				<div class="panel-body">
+					{% if comment_order == 'newest' %}
+						<form class="post-form" method="POST" enctype="multipart/form-data">{% csrf_token %}
+							{% bootstrap_form forms.comment layout='inline' %}
+							{% bootstrap_form forms.attachmentCom layout='inline'%}
+							{% buttons %}
+								<button name='action' value='commentAtt' type="submit" class="save btn btn-default">{% trans "Add" %}</button>
+							{% endbuttons %}
+						</form>
+					{% endif %}
+					{% for comment in comments %}
+						<div class="comment" id="comment{{comment.seqnum}}">
+							<div class="comment-header">
+								<img src="{{comment.creator.avatar.url}}" width="15" alt="{% trans "Commentator avatar" %} {{ comment.creator }}" />
+								<strong>{{comment.creator}}</strong>
+								<span class="text-muted" title="{{comment.when}}">
+									{{comment.when|timesince}} ago
+								</span>
+								{% if request.user == comment.creator %}
+									<a id="issue_detail_comment_edit_{{ forloop.counter }}" href="{% url 'issue:edit_comment' project=issue.project.name_short sqn_i=issue.number pk_c=comment.seqnum %}">Edit</a>,
+									<a id="issue_detail_comment_delete_{{ forloop.counter }}" href="{% url 'issue:delete_comment' project=issue.project.name_short sqn_i=issue.number pk_c=comment.seqnum %}">Delete</a>
+								{% endif %}
+							</div>
+							<div class="comment-content" style="word-wrap:break-word">
+								{{comment.text|autolink:comment.issue.project|markdownify|safe}}
+								{% if comment.modified %}
+									<span class="text-muted" title="{{comment.modified}}"><small><em>{% trans "last modified " %}{{comment.modified|timesince}}{% trans " ago"%}</em></small></span>
+								{% endif %}
+							</div>
+							{% if comment.attachment %}
+								<div class="comment-footer">
+									{% trans "Attached file:" %}
+									<a id="issue_detail_comment_attach_get_{{ forloop.counter }}" href="{% url 'issue:download_attachment' project=issue.project.name_short sqn_i=issue.number sqn_a=comment.attachment.seqnum %}">
+										{{ comment.attachment }}
+									</a>
+								</div>
+							{% endif %}
+						</div>
+					{% endfor %}
+					{% if comment_order != 'newest' %}
+						<form class="post-form" method="POST" enctype="multipart/form-data">{% csrf_token %}
+							{% bootstrap_form forms.comment layout='inline' %}
+							{% bootstrap_form forms.attachmentCom layout='inline'%}
+							{% buttons %}
+								<button name='action' value='commentAtt' type="submit" class="save btn btn-default">{% trans "Add" %}</button>
+							{% endbuttons %}
+						</form>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+		<div class="col-md-4">
+			{% if issue.dependsOn.all %}
+				<div class="panel panel-default">
+					<div class ="panel-heading">
+						{% trans "Depends on" %}
+					</div>
+					<table class="table">
+						<tbody>
+							{% for depIssue in issue.dependsOn.all %}
+								{% if depIssue.kanbancol.type == 'Done' or depIssue.archived %}
+									<tr style="text-decoration: line-through">
+								{% else %}
+									<tr>
+								{% endif %}
+									<td><small>{{ depIssue.get_ticket_identifier }}</small></td>
+									<td>
+										<a href="{% url 'issue:detail' project=issue.project.name_short sqn_i=depIssue.number %}">{{depIssue}}</a>
+									</td>
+								</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			{% endif %}
+			{% if issue.dependent.all %}
+				<div class="panel panel-default">
+					<div class ="panel-heading">
+						{% trans "Dependent issues" %}
+					</div>
+					<table class="table">
+						<tbody>
+							{% for depIssue in issue.dependent.all %}
+								{% if depIssue.kanbancol.type == 'Done' or depIssue.archived %}
+									<tr style="text-decoration: line-through">
+								{% else %}
+									<tr>
+								{% endif %}
+									<td><small>{{ depIssue.get_ticket_identifier }}</small></td>
+									<td>
+										<a href="{% url 'issue:detail' project=issue.project.name_short sqn_i=depIssue.number %}">{{depIssue}}</a>
+									</td>
+								</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			{% endif %}
+			<div class="panel panel-default">
+				<div class ="panel-heading">
+					<span class="glyphicon glyphicon-paperclip"></span>
+					{% trans "Attachments" %}
+				</div>
+				<ul class="list-group">
+					{% for attachment in issue.attachments.all %}
+						<li class ="list-group-item">
+							<a id="issue_detail_attach_get_{{ forloop.counter }}" href="{% url 'issue:download_attachment' project=issue.project.name_short sqn_i=issue.number sqn_a=attachment.seqnum %}">{{attachment}}</a>
+							{% if request.user == attachment.creator %}
+								<div style="float:right">
+									<a href="{% url 'issue:delete_attachment' project=issue.project.name_short sqn_i=issue.number sqn_a=attachment.seqnum %}">
+										<span class="glyphicon glyphicon-minus"></span>
+									</a>
+								</div>
+							{% endif %}
+						</li>
+					{% endfor %}
+					<li class ="list-group-item">
+						<form id="attachment-form" class="post-form" method="POST" enctype="multipart/form-data">{% csrf_token %}
+							{% bootstrap_form forms.attachment layout='inline' %}
+							{% buttons %}
+							<button id='attachment-btn' name='action' value='attachment' type="submit" class="save btn btn-default">{% trans "Add" %}</button>
+							{% endbuttons %}
+						</form>
+					</li>
+				</ul>
+			</div>
+			<div class="panel panel-default">
+				<div class ="panel-heading">
+					<span class="glyphicon glyphicon-time"></span>
+					{% trans "Logs" %}
+				</div>
+				<ul class="list-group">
+					{% for log in issue.logs.all %}
+						<li id="issue_detail_log_{{forloop.counter}}" class ="list-group-item">
+							{{ log.time|duration }}
+							<br>
+							<small>
+								{{log.user}} - {{log.created_at}}
+							</small>
+							{% if request.user == log.user %}
+								<div style="float:right">
+									<a href="{% url 'issue:logedit' project=log.issue.project.name_short sqn_i=log.issue.number sqn_l=log.number  %}?next={{ request.path }}">
+										<span class="glyphicon glyphicon-pencil"></span>
+									</a>
+								</div>
+							{% endif %}
+						</li>
+					{% endfor %}
+					<li class="list-group-item">
+						<form class="post-form" style="display:inline-block" method="POST">{% csrf_token %}
+							{% bootstrap_form forms.timelog layout='inline' exclude='created_at' %}
+							{% buttons %}
+							<button name='action' value='timelog' type="submit" class="save btn btn-default">{% trans "Add" %}</button>
+							<a href="{% url 'issue:log' project.name_short issue.number %}" class="btn btn-default" id="extended_timelog"> {% trans 'Log for a different period' %}</a>
+							{% endbuttons %}
+						</form>
+					</li>
+				</ul>
+			</div>
+			{% if issue.commits.all %}
+				<div class="panel panel-default">
+					<div class ="panel-heading">
+						<span class="glyphicon glyphicon-check"></span>
+						{% trans "Commits" %}
+					</div>
+					<ul class="list-group">
+						{% for c in issue.commits.all %}
+							<button id=commit_{{ forloop.counter }} type="button" class="btn list-group-item" style="white-space:normal" data-toggle="modal" data-target="#modal_{{ c.pk }}">({{ c.get_name_short }}) {{ c.get_title }}
+							{% if c.get_tags %}
+								<span class="pull-right glyphicon glyphicon-tags"></span>
+							{% endif %}
+							</button>
+							{% include "commit/commit_detail_modal.html" with c=c %}
+						{% endfor %}
+					</ul>
+				{% endif %}
+				</div>
+	</div>
+{% endblock content %}
+{% block extra_script %}
+	{{ forms.comment.media }}
+	<script src="{% static "js/bootstrap3-typeahead.min.js" %}"></script>
+	<script src="{% static "js/caret.js" %}"></script>
+	<script src="{% static "js/mention.js" %}"></script>
+	<script>
+$(document).ready(function(){
+	var url = window.location.href;
+	var hash = url.substring(url.indexOf("#"));
+	if (hash.includes('#comment'))
+		$(hash).css('border', '2px solid #00e5ff').css('border-radius', '5px');
+	var list = JSON.parse('{{ issue.project.get_members|mention_list|safe }}')
+		console.log(list)
+		$("#id_text").mention({
+			delimiter: '@',
+			users: list,
+			emptyQuery: true,
+			typeaheadOpts: {
+				items: 10,
+			},
+		})
+});
+	</script>
+{% endblock extra_script %}

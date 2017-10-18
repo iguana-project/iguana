@@ -1,0 +1,29 @@
+<!--
+Iguana (c) by Marc Ammon, Moritz Fickenscher, Lukas Fridolin,
+Michael Gunselmann, Katrin Raab, Christian Strate
+
+Iguana is licensed under a
+Creative Commons Attribution-ShareAlike 4.0 International License.
+
+You should have received a copy of the license along with this
+work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
+-->
+{% extends "_base.html" %}
+{% load i18n %}
+{% load bootstrap3 %}
+
+{% block title %}{% trans "log Time" %}{% endblock title %}
+
+{% block content %}
+	<h1 class="page-header">{% trans "Edit" %} {{object}}</h1>
+	<form method="POST" class="post-form">{% csrf_token %}
+	{% bootstrap_form form %}
+		{% buttons %}
+			<button class="save btn btn-default" type="submit" id="id_submit_save_timelog_change" name="save_timelog_change">{% trans "Save" %}</button>
+			<button class="save btn btn-warning" type="submit" id="id_delete_timelog" >{% trans "Delete" %}</button>
+		{% endbuttons %}
+	</form>
+{% endblock %}
+{% block extra_script %}
+	{{ form.media }}
+{% endblock %}

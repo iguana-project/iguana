@@ -1,0 +1,26 @@
+<!--
+Iguana (c) by Marc Ammon, Moritz Fickenscher, Lukas Fridolin,
+Michael Gunselmann, Katrin Raab, Christian Strate
+
+Iguana is licensed under a
+Creative Commons Attribution-ShareAlike 4.0 International License.
+
+You should have received a copy of the license along with this
+work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
+-->
+{% if show %}
+	<ol class="breadcrumb">
+		<li><a href="/"><div class="glyphicon glyphicon-home"></div></a></li>
+		{% for bc in breadcrumbs %}
+			{% if forloop.last %}
+				<li class="active">{{ bc.label }}</li>
+			{% else %}
+				{% if bc.url %}
+					<li><a href="{{ bc.url }}">{{ bc.label }}</a></li>
+				{% else %}
+					<li class="active">{{ bc.label }}</li>
+				{% endif %}
+			{% endif %}
+		{% endfor %}
+	</ol>
+{% endif %}

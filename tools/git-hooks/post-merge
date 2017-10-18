@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# only run with active virtualenv
+if [ -n "$VIRTUAL_ENV" ]
+then
+	pip install -q -r requirements/development.req
+fi

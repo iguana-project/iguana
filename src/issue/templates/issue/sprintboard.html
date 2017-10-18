@@ -1,0 +1,284 @@
+<!--
+Iguana (c) by Marc Ammon, Moritz Fickenscher, Lukas Fridolin,
+Michael Gunselmann, Katrin Raab, Christian Strate
+
+Iguana is licensed under a
+Creative Commons Attribution-ShareAlike 4.0 International License.
+
+You should have received a copy of the license along with this
+work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
+-->
+{% extends "_base.html" %}
+{% load i18n %}
+{% load static %}
+{% load filter %}
+
+{% block title %}{% trans "Sprintboard" %}{% endblock title %}
+
+{% block content %}
+{% trans "projlist" as viewpoint %}
+{% include "projectnavi.html" %}
+
+<p></p>
+<div class="row" style="margin-bottom:10px">
+	<div class="col-sm-12 olea-container">
+		<form id="olea" method="post" action="{% url 'issue:processOlea' project=project.name_short %}">
+			{% csrf_token %}
+			<input type="text" id="expression" title="{% include "static/olea_tooltip.html" %}" class="form-control" name="expression" {{oleafocus}} value="{{oleaexpression}}" placeholder="{% trans 'Place your change expression here' %}" autocomplete="off" />
+			{% if project.has_active_sprint %}
+				<input type="hidden" name="currentsprint" value="{{project.currentsprint.seqnum}}">
+			{% else %}
+				<input type="hidden" name="currentsprint" value="">
+			{% endif %}
+			<input type="hidden" name="next" value="{{request.get_full_path}}">
+		</form>
+		<form class="olea-flex-element">
+			<input type="text" id="text-filter" onkeyup="filter_issues('issuecard')" placeholder="Filter issues" class="form-control">
+		</form>
+
+		{% if issuelist %}
+			<div>
+				{% if request.GET.myissues == 'true' %}
+					<a class="btn btn-default active" href="{{ request.path }}{% query_string request.META.QUERY_STRING myissues-'true'%}">{% trans "My issues" %}</a>
+				{% else %}
+					<a class="btn btn-default" href="{{ request.path }}{% query_string request.META.QUERY_STRING myissues+'true'%}">{% trans "My issues" %}</a>
+				{% endif %}
+				{% include "orderby.html" %}
+			</div>
+		{% endif %}
+	</div>
+</div>
+{% if issuelist %}
+<div class="progress" style="margin: 10px 2px 10px 2px;">
+	<div class="progress-bar progress-bar-{% if progress < 34 %}danger{% elif progress < 67 %}warning{% else %}success{% endif %}" role="progressbar" aria-valuenow="{{progress}}"
+																		   aria-valuemin="0" aria-valuemax="100" style="width:{{progress}}%; color:black">
+		<span style="margin-left:5px">{{issue_done}}/{{issue_all}}</span>
+	</div>
+</div>
+{% endif %}
+<div class="row">
+	<div class="col-md-12">
+		{% if issuelist %}
+		<div class="board-container">
+			{% for column in project.kanbancol.all %}
+			<div class="panel panel-default board-col">
+				<div class="panel-heading">{{ column.name }}
+					{% if not project.has_active_sprint and column.type == 'Done' %}
+					<form {% if not column.issues.without_sprint.not_archived %} class="notvisible" {% endif %}
+						id="column_archive_{{column.position}}" style="display:inline-block; float:right" method="post" action="{% url 'issue:archivecol' project=project.name_short %}" >{% csrf_token %}
+						<input type="hidden" name="next" value={{request.get_full_path}} />
+						<input type="hidden" name="filter" value={{request.GET.myissues}} />
+						<input type="hidden" name="pos_c" value={{column.position}} />
+						<button type="submit" class="btn btn-warning btn-xs">{% trans "Archive all"%}</button>
+					</form>
+					{% endif %}
+				</div>
+				<div id="sortable{{column.position}}" data-type="{{column.type}}" class="connectedSortable">
+					{% for issue in issuelist %}
+					{% if issue.archived == False %}
+					{% if issue.kanbancol.name == column.name %}
+					{% if request.GET.myissues == 'true' %}
+					{% if request.user in issue.assignee.all  %}
+					{% include "board_issue_template.html" %}
+					{% endif %}
+					{% else %}
+					{% include "board_issue_template.html" %}
+					{% endif %}
+					{% endif %}
+					{% endif %}
+					{% endfor %}
+				</div>
+			</div>
+			{% endfor %}
+		</div>
+		{% else %}
+		{% if project.has_active_sprint %}
+		{% trans "There are currently no issues in the sprint, which is running." %}
+		{% else %}
+		{% trans "There are currently no unarchived issues present in this project. Maybe there are some assigned to future sprints." %}
+		{% endif %}
+		{% endif %}
+	</div>
+</div>
+{% endblock content %}
+{% block extra_script %}
+<script type="text/javascript" src="{% static 'js/jquery-ui.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/bootstrap-progressbar.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/filter-issues.js' %}"></script>
+
+<script>
+function getCookie(name) {
+	var cookieValue = null;
+	if (document.cookie && document.cookie !== '') {
+		var cookies = document.cookie.split(';');
+		for (var i = 0; i < cookies.length; i++) {
+			var cookie = jQuery.trim(cookies[i]);
+			// Does this cookie string begin with the name we want?
+			if (cookie.substring(0, name.length + 1) === (name + '=')) {
+				cookieValue = decodeURIComponent(cookie.substring(name.length + 1))
+					break;
+			}
+		}
+	}
+	return cookieValue;
+}
+
+var csrftoken = getCookie('csrftoken');
+
+function csrfSafeMethod(method) {
+	return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+}
+
+
+$.ajaxSetup({
+	beforeSend: function(xhr, settings) {
+		if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+			xhr.setRequestHeader("X-CSRFToken", csrftoken);
+		}
+	}
+});
+$( function() {
+	// remove column archive button if myissues filter active and no issues in col
+	var columns = $('.board-col')
+		columns.each(function(index){
+			d = $(this)
+				e = d.find('[id^=sortable]')
+				if (e[0].attributes[1].value === 'Done' && e[0].children.length === 0){
+					d.find('[id^=column_archive_]').addClass('notvisible')
+				}
+		});
+	var done_iss = parseInt({{issue_done}})
+		var all_iss = parseInt({{issue_all}})
+		var progress = parseInt({{progress}})
+		$("[id^=sortable]").sortable({
+			connectWith: ".connectedSortable",
+			receive: function( event, ui ) {
+				var to = parseInt(event.target.id.replace(/[^0-9\.]/g, ''), 10);
+				var from = parseInt(ui.sender[0].id.replace(/[^0-9\.]/g, ''), 10);
+				var to_type = event.target.attributes[1].value
+					var from_type = ui.sender[0].attributes[1].value
+					var cols = $('[id^=sortable]').length - 1
+					var from_count = ui.sender[0].children.length
+					var to_count = event.target.children.length
+					var issue = parseInt(ui.item[0].id.replace(/[^0-9\.]/g, ''), 10);
+				project  = '{{project.name_short}}'
+					$.ajax({
+						url: '/project/' + '{{project.name_short}}' +'/issue/setkanbancol',
+						data: {'sqn_i': issue , 'sqn_k': to,'csrfmiddlewaretoken': csrftoken },
+						type: 'post',
+						cache: false,
+						success: function (data) {
+						},
+						error: function(data) {
+						}
+					});
+
+				// arrow manipulation
+				if ( to === cols) {
+					$('#'+ui.item[0].id).find(".issue-move").last().addClass("notvisible")
+					$('#'+ui.item[0].id).find(".issue-move").first().removeClass("notvisible")
+					$('#'+ui.item[0].id).find('[id^=lcol]').find('[name=sqn_k]').attr("value", to-1);
+				}
+				else if (to === 0) {
+					$('#'+ui.item[0].id).find(".issue-move").first().addClass("notvisible")
+					$('#'+ui.item[0].id).find(".issue-move").last().removeClass("notvisible")
+					$('#'+ui.item[0].id).find('[id^=rcol]').find('[name=sqn_k]').attr("value", to+1);
+				}
+				else {
+					$('#'+ui.item[0].id).find(".issue-move").first().removeClass("notvisible")
+					$('#'+ui.item[0].id).find(".issue-move").last().removeClass("notvisible")
+					$('#'+ui.item[0].id).find('[id^=lcol]').find('[name=sqn_k]').attr("value", to-1);
+					$('#'+ui.item[0].id).find('[id^=rcol]').find('[name=sqn_k]').attr("value", to+1);
+				}
+				// change progressbar
+				var old = progress
+					if(to_type == 'Done')
+						done_iss += 1;
+				if(from_type == 'Done')
+					done_iss -= 1;
+				progress = parseInt(100*done_iss/all_iss)
+					$('.progress .progress-bar').attr('data-transitiongoal', progress).progressbar({
+						display_text: 'fill',
+						use_percentage: false,
+						amount_format: function(amount_part, amount_total) { return done_iss + '/' + all_iss; },
+					});
+
+				if(old < 34 && progress > 33 && progress < 67)
+					$('.progress .progress-bar').switchClass('progress-bar-danger', 'progress-bar-warning', 1000)
+						if(old < 34 && progress > 66)
+							$('.progress .progress-bar').switchClass('progress-bar-danger', 'progress-bar-success', 1000)
+								if(old > 33 && old < 67 && progress > 66)
+									$('.progress .progress-bar').switchClass('progress-bar-warning', 'progress-bar-success', 1000)
+										if(old > 33 && old < 67 && progress < 34)
+											$('.progress .progress-bar').switchClass('progress-bar-warning', 'progress-bar-danger', 1000)
+												if(old > 66  && progress > 33 && progress < 67)
+													$('.progress .progress-bar').switchClass('progress-bar-success', 'progress-bar-warning', 1000)
+														if(old > 66  && progress < 34)
+															$('.progress .progress-bar').switchClass('progress-bar-success', 'progress-bar-danger', 1000)
+
+																// manipulate column archiv button
+																if (from_count === 0)
+																	$('#column_archive_'+from).addClass("notvisible")
+																		if (to_count === 1)
+																			$('#column_archive_'+to).removeClass("notvisible")
+			},
+
+
+			stop: function(event,ui) {
+				var $wrapper = $('#'+ui.item[0].parentElement.id);
+				$wrapper.find('[id^=board_issue]').sort(function(a, b) {
+					var reverse = '{{ request.session.reverse }}' === 'true'
+						var a_val = parseInt(a.getAttribute('id').replace(/[^0-9\.]/g, ''), 10);
+					var b_val = parseInt(b.getAttribute('id').replace(/[^0-9\.]/g, ''), 10);
+					var order_by = '{{ request.session.order_by }}'
+						if (order_by === '')
+							return reverse ? b_val-a_val : a_val-b_val;
+						else if (order_by === 'type') {
+							var aa = a.getAttribute('data-type')
+								var bb = b.getAttribute('data-type')
+								if (aa === bb) {
+									return a_val-b_val
+								} else if (aa < bb) {
+									return reverse ? 1 : -1;
+								} else if (aa > bb) {
+									return reverse ? -1 : 1;
+								}
+						} else if (order_by === 'title') {
+							var aa = a.getAttribute('data-title').toLowerCase()
+								var bb = b.getAttribute('data-title').toLowerCase()
+								if (aa === bb) {
+									return a_val-b_val
+								} else if (aa < bb) {
+									return reverse ? 1 : -1;
+								} else if (aa > bb) {
+									return reverse ? -1 : 1;
+								}
+						} else if (order_by === 'priority') {
+							var aa = a.getAttribute('data-priority')
+								var bb = b.getAttribute('data-priority')
+								if (aa === bb) {
+									return a_val-b_val
+								} else if (aa > bb) {
+									return reverse ? 1 : -1;
+								} else if (aa < bb) {
+									return reverse ? -1 : 1;
+								}
+						} else if (order_by === 'storypoints') {
+							var aa = a.getAttribute('data-storypoints')
+								var bb = b.getAttribute('data-storypoints')
+								if (aa === bb) {
+									return a_val-b_val
+								} else if (aa > bb) {
+									return reverse ? 1 : -1;
+								} else if (aa < bb) {
+									return reverse ? -1 : 1;
+								}
+						}
+					return reverse ? b_val-a_val : a_val-b_val;
+				})
+				.appendTo($wrapper);
+			}
+		}).disableSelection();
+});
+</script>
+{% endblock %}

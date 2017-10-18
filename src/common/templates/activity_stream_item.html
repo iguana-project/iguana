@@ -1,0 +1,56 @@
+<!--
+Iguana (c) by Marc Ammon, Moritz Fickenscher, Lukas Fridolin,
+Michael Gunselmann, Katrin Raab, Christian Strate
+
+Iguana is licensed under a
+Creative Commons Attribution-ShareAlike 4.0 International License.
+
+You should have received a copy of the license along with this
+work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
+-->
+{% load i18n %}
+{% load class_name %}
+{% if action_item_id %}
+	<div id="{{ action_item_id }}" class="feed-item">
+{% else %}
+	<div class="feed-item">
+{% endif %}
+	<div class="image">
+		<img src={{ action.actor.avatar.url }} title="{{ action.actor }}" alt="{% trans "Actor avatar" %} {{ action.actor }}" width="30"/>
+	</div>
+	{% if action.target|get_class_name == 'Project' and not 'user' in request.path %}
+		<div class="unfollow_btn">
+			<a href="{{request.path}}?unfollow={{action.target.pk}}" title="{% trans "Remove project" %} {{action.target}} {% trans "from the activity stream" %}"><span class="glyphicon glyphicon-remove-sign"/></a>
+		</div>
+	{% endif %}
+	<div class="content">
+		<div class="text">
+			{% if action.actor.get_absolute_url %}
+				<a href="{{ action.actor.get_absolute_url }}">{{ action.actor }}</a>
+			{% else %}
+				<a href="{{ action.actor_url }}">{{ action.actor }}</a>
+			{% endif %}
+			{{ action.verb }}
+			{% if action.action_object %}
+				{% if action.action_object.get_absolute_url %}
+					<a href="{{ action.action_object.get_absolute_url }}" title="{{ action.action_object.activity_stream_long_name }}">{{ action.action_object.activity_stream_short_name }}</a>
+				{% else %}
+					<a href="{{ action.action_object_url }}" title="{{ action.action_object.activity_stream_long_name }}">{{ action.action_object.activity_stream_short_name }}</a>
+				{% endif %}
+			{% endif %}
+			{% if action.action_object and action.target %}
+				{% trans "on" %}
+			{% endif %}
+			{% if action.target %}
+				{% if action.target.get_absolute_url %}
+					<a href="{{ action.target.get_absolute_url }}" title="{{ action.target.activity_stream_long_name }}">{{ action.target.activity_stream_short_name }}</a>
+				{% else %}
+					<a href="{{ action.target_url }}" title="{{ action.target.activity_stream_long_name }}">{{ action.target.activity_stream_short_name }}</a>
+				{% endif %}
+			{% endif %}
+		</div>
+		<div class="date">
+			{{ action.timestamp|timesince }} {% trans "ago" %}
+		</div>
+	</div>
+</div>

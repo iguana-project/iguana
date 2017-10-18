@@ -1,0 +1,21 @@
+---
+
+  - name: create database
+    become: yes
+    become_user: postgres
+    postgresql_db: name=iguana encoding=UTF-8
+
+  - name: create database user for django
+    become: yes
+    become_user: postgres
+    postgresql_user: db=iguana name=iguana password="{{secrets_file.DATABASE_PASSWORD}}" priv=ALL
+
+  - name: drop unnecessary privilege
+    become: yes
+    become_user: postgres
+    postgresql_user: name=iguana role_attr_flags=NOSUPERUSER,NOCREATEDB
+
+  - name: limit access to database to user for django
+    become: yes
+    become_user: postgres
+    postgresql_privs: db=iguana role=PUBLIC type=database priv=ALL state=absent

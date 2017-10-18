@@ -1,0 +1,162 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-12-13 22:53+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: user_management/models.py:14
+msgid "email address"
+msgstr "Mailadresse"
+
+#: user_management/models.py:14
+msgid "email@address.domain"
+msgstr ""
+
+#: user_management/templates/registration/login.html:9
+msgid "Your username and password didn't match. Please try again."
+msgstr ""
+
+#: user_management/templates/registration/login.html:14
+msgid ""
+"Your account doesn't have access to this page. To proceed, please login with "
+"an account that has access."
+msgstr ""
+
+#: user_management/templates/registration/login.html:16
+msgid "Please login to see this page."
+msgstr ""
+
+#: user_management/templates/registration/login.html:33
+#: user_management/templates/registration/sign_up.html:52
+#: user_management/testcases/test_sign_up.py:206
+msgid "Login"
+msgstr ""
+
+#: user_management/templates/registration/login.html:38
+msgid "Lost password?"
+msgstr ""
+
+#: user_management/templates/registration/password_reset_confirm.html:4
+msgid "Password Reset Confirm"
+msgstr ""
+
+#: user_management/templates/registration/password_reset_confirm.html:9
+msgid ""
+"Please enter your new password twice so we can verify you typed it in "
+"correctly."
+msgstr ""
+
+#: user_management/templates/registration/password_reset_confirm.html:15
+msgid "New password:"
+msgstr ""
+
+#: user_management/templates/registration/password_reset_confirm.html:20
+msgid "Confirm password:"
+msgstr ""
+
+#: user_management/templates/registration/password_reset_confirm.html:23
+msgid "Change my password"
+msgstr ""
+
+#: user_management/templates/registration/password_reset_confirm.html:29
+msgid ""
+"The password reset link was invalid, possibly because it has already been "
+"used.  Please request a new password reset."
+msgstr ""
+
+#: user_management/templates/registration/password_reset_done.html:4
+msgid "Password Reset sent"
+msgstr ""
+
+#: user_management/templates/registration/password_reset_done.html:8
+msgid ""
+"We've emailed you instructions for setting your password, if an account "
+"exists with the email you entered. You should receive them shortly."
+msgstr ""
+
+#: user_management/templates/registration/password_reset_done.html:10
+msgid ""
+"If you don't receive an email, please make sure you've entered the address "
+"you registered with, and check your spam folder."
+msgstr ""
+
+#: user_management/templates/registration/password_reset_form.html:4
+#: user_management/testcases/test_sign_up.py:213
+msgid "Password Reset"
+msgstr ""
+
+#: user_management/templates/registration/password_reset_form.html:8
+msgid ""
+"Forgotten your password? Enter your email address below, and we'll email "
+"instructions for setting a new one."
+msgstr ""
+
+#: user_management/templates/registration/password_reset_form.html:14
+msgid ">Email address:"
+msgstr ""
+
+#: user_management/templates/registration/password_reset_form.html:17
+msgid "Reset my password"
+msgstr ""
+
+#: user_management/templates/registration/sign_up.html:10
+#: user_management/testcases/test_sign_up.py:57
+#: user_management/testcases/test_sign_up.py:124
+msgid "Sign Up"
+msgstr ""
+
+#: user_management/templates/registration/sign_up.html:50
+#: user_management/testcases/test_sign_up.py:204
+#: user_management/testcases/test_sign_up.py:211
+msgid "Already a member?"
+msgstr ""
+
+#: user_management/templates/registration/sign_up.html:53
+msgid "Forgot your password?"
+msgstr ""
+
+#: user_management/testcases/test_sign_up.py:56
+msgid "Not Found"
+msgstr ""
+
+#: user_management/testcases/test_sign_up.py:125
+msgid "Home"
+msgstr ""
+
+#: user_management/testcases/test_sign_up.py:166
+#: user_management/testcases/test_sign_up.py:179
+msgid "User with this Email address already exists."
+msgstr ""
+
+#: user_management/testcases/test_sign_up.py:167
+#: user_management/testcases/test_sign_up.py:173
+msgid "A user with that username already exists."
+msgstr ""
+
+#: user_management/testcases/test_sign_up.py:199
+msgid "The two password fields didn't match."
+msgstr ""
+
+#: user_management/testcases/test_sign_up.py:214
+msgid ""
+"Forgotten your password? Enter your email address below, and we'll email "
+"instructions for setting a new one"
+msgstr ""
+
+#: user_management/views.py:38
+msgid "Thanks for registering. You are now logged in."
+msgstr ""

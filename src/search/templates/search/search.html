@@ -1,0 +1,46 @@
+<!--
+Iguana (c) by Marc Ammon, Moritz Fickenscher, Lukas Fridolin,
+Michael Gunselmann, Katrin Raab, Christian Strate
+
+Iguana is licensed under a
+Creative Commons Attribution-ShareAlike 4.0 International License.
+
+You should have received a copy of the license along with this
+work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
+-->
+{% extends "_base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}{% trans "Search result" %}{% endblock title %}
+
+{% block content %}
+<form id="search" method="post" action="{% url 'search:resultpage' %}" class="form-inline">
+	{% csrf_token %}
+	<input class="form-control search-term" type="text" id="uinputxpr" name="expression" placeholder={% trans "Search" %} style="width:100%" autocomplete="off"/><br \>
+	<button type="submit" class="btn btn-default">{% trans "Go" %}</button>
+</form>
+
+{% if user.searches.all %}
+	<br \>
+	{# The span prevents bootstrap from styling this weirdly #}
+	<span>{% trans "Or use " %}<a id="recent-searches-link" href="{% url 'search:advanced' %}">{% trans "recent expressions" %}</a>:</span>
+{% endif %}
+
+{% for search in user.searches.all %}
+		<form id="search{{forloop.counter}}" method="post" action="{% url 'search:resultpage' %}" class="form-inline">
+			{% csrf_token %}
+			<input class="form-control search-term" type="text" name="expression" readonly style="width:100%" value='{{search.searchexpression}}' />
+			<br \>
+			<button type="submit" class="btn btn-default">{% trans "Go" %}</button>
+		</form>
+{% endfor %}
+{% endblock content %}
+
+{% block extra_script %}
+	<script>
+		$("#searchmenu").on('click', function() {
+			setTimeout('$("#uinputxpr").focus()', 100)
+		})
+	</script>
+{% endblock extra_script %}

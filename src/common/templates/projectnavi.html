@@ -1,0 +1,41 @@
+<!--
+Iguana (c) by Marc Ammon, Moritz Fickenscher, Lukas Fridolin,
+Michael Gunselmann, Katrin Raab, Christian Strate
+
+Iguana is licensed under a
+Creative Commons Attribution-ShareAlike 4.0 International License.
+
+You should have received a copy of the license along with this
+work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
+-->
+{% load i18n %}
+<ul class="nav nav-tabs projectnav">
+	<li class="{% if viewpoint == 'overview' %}active{% endif %}">
+		<a href="{% url 'project:detail' project=project.name_short%}"><i class="glyphicon glyphicon-paperclip"></i> {% trans "Overview" %}</a>
+	</li>
+	<li class="{% if viewpoint == 'projlist' %}active{% endif %}">
+		<a href="{% url 'issue:projList' project=project.name_short %}">
+			<i class="glyphicon glyphicon-align-left gly-rotate-90"></i>
+			{% if project.has_active_sprint %}
+				{% trans "Sprintboard" %}
+			{% else %}
+				{% trans "Board" %}
+			{% endif %}
+		</a>
+	</li>
+	<li class="{% if viewpoint == 'backlog' %}active{% endif %}">
+		<a href="{% url 'issue:backlog' project=project.name_short%}"><i class="glyphicon glyphicon-list"></i> {% trans "Backlog" %}</a>
+	</li>
+	<li class="{% if viewpoint == 'timelogging' %}active{% endif %}">
+		<a href="{% url 'project:timelog' project.name_short %}"><i class="glyphicon glyphicon-time"></i> {% trans "Timelogging" %}</a>
+	</li>
+	<li class="{% if viewpoint == 'settings' %}active{% endif %}">
+		{% if user in project.manager.all %}
+		<a id="project_edit" href="{% url 'project:edit' project.name_short %}">
+		{% else %}
+		<a id="project_edit" href="{% url 'tag:tag' project.name_short %}">
+		{% endif %}
+			<i class="glyphicon glyphicon-cog"></i> {% trans "Settings" %}
+		</a>
+	</li>
+</ul>

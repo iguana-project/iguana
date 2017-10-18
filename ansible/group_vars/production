@@ -1,0 +1,11 @@
+---
+  groupname: "production"
+  host: "{{inventory_hostname}}"
+  home: "/home/iguana/sites/{{host}}"
+  wwwdir: "/var/www/{{host}}"
+  virtualenv: "{{home}}/virtualenv"
+  pip: "{{virtualenv}}/bin/pip"
+  src: "{{home}}/src"
+  requirements: "{{home}}/requirements/{{groupname}}.req"
+  letsencrypt_domains: "-d {{host}} -d iguana-project.me"
+  nginx_domains: "{{host}} iguana-project.me"

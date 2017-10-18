@@ -1,0 +1,41 @@
+<!--
+Iguana (c) by Marc Ammon, Moritz Fickenscher, Lukas Fridolin,
+Michael Gunselmann, Katrin Raab, Christian Strate
+
+Iguana is licensed under a
+Creative Commons Attribution-ShareAlike 4.0 International License.
+
+You should have received a copy of the license along with this
+work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
+-->
+{% extends "_base.html" %}
+{% load i18n %}
+{% load filter %}
+
+{% block title %}{% blocktrans with filename=filename %}Diff {{filename}}{% endblocktrans %}{% endblock title %}
+
+{% block additional_stuff %}
+	<style type="text/css">
+		div:after {
+			content: attr(data-value)
+		}
+		div[data-value^="-"]:after {
+			color: red;
+		}
+		div[data-value^="+"]:after {
+			color: green;
+		}
+		div[data-value^="@"]:after {
+			color: #67466d;
+		}
+	</style>
+{% endblock %}
+
+{% block content %}
+<h1 class="page-header">
+	({{commit_sha}}) {{filename}}
+</h1>
+{% if diff %}
+	<pre>{% for line in diff %}<div data-value="{{line}}"></div>{% endfor %}</pre>
+{% endif %}
+{% endblock content %}

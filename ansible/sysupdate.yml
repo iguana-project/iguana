@@ -1,0 +1,7 @@
+---
+  - name: Upgrade all system packages
+    hosts: jenkins,staging,production
+    remote_user: user
+    sudo: yes
+    roles:
+        - sysupdate

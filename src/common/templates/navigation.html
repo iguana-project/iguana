@@ -1,0 +1,85 @@
+<!--
+Iguana (c) by Marc Ammon, Moritz Fickenscher, Lukas Fridolin,
+Michael Gunselmann, Katrin Raab, Christian Strate
+
+Iguana is licensed under a
+Creative Commons Attribution-ShareAlike 4.0 International License.
+
+You should have received a copy of the license along with this
+work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
+-->
+{% load i18n %}
+{% load static %}
+{% load filter %}
+<div class="navbar navbar-inverse">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<div class="navbar-header">
+					<a href="{% url 'landing_page:home' %}">
+						<img border="0" alt="iguana-project" src={% static "css/logo.svg"%} width="100" height="50" />
+					</a>
+					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+				</div>
+				<div class="collapse navbar-collapse">
+					{% if request.user.is_authenticated %}
+					<ul class="nav navbar-nav">
+						<li><a href="{% url 'issue:issue_global_view' %}">{% trans "Issues" %}</a></li>
+						<li><a href="{% url 'project:list' %}">{% trans "Projects" %}</a></li>
+						<li><a id="timelog" href="{% url 'timelog:loginfo' %}">{% trans "Timelog" %}</a></li>
+					</ul>
+					{% endif %}
+					<ul class="nav navbar-nav navbar-right">
+						{% if request.user.is_authenticated %}
+						{% if request.user.punched_on.all %}
+						<li class="dropdown">
+							<a href="#" id="punchmenu" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-record" style="color:red"></span></a>
+							<ul id="punch-dp" class="dropdown-menu" role="menu">
+								{% for punch in request.user.punched_on.all %}
+								<li style="padding:10px"><b>{{ punch.issue.get_ticket_identifier }}</b><br>
+									{% trans "Punched in " %}{{ punch.created_at|diff }}{% trans " ago" %}<br>
+									<form style="display:inline-block" id="punch{{punch.issue.number}}" method="post" action="{% url 'issue:punch' project=punch.issue.project.name_short sqn_i=punch.issue.number %}" >{% csrf_token %}
+										<input type="hidden" name="sqn_i" value={{punch.issue.number}} />
+										<input type="hidden" name="next" value={{request.get_full_path}} />
+										<button type="submit" class="btn btn-default">
+											<span class="glyphicon glyphicon-record"></span>
+											{% trans "Punch out" %}
+										</button>
+									</form>
+								</li>
+								{% endfor %}
+							</ul>
+						</li>
+						{% endif %}
+						{% if request.user.notifications.all %}
+							<li><a href="{% url 'discussion:list' %}"><i class="glyphicon glyphicon-bell"></i></a></li>
+						{% else %}
+							<li><a href="{% url 'discussion:list' %}"><i class="glyphicon glyphicon-bell inactive"></i></a></li>
+						{% endif %}
+						<li class="dropdown">
+							<a href="{% url 'search:search' %}" id="searchmenu" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-search"><span class="caret"></span></span></a>
+							<ul id="search-dp" class="dropdown-menu search-dropdown" role="menu">
+								{% include "search/list_view.html" %}
+							</ul>
+						</li>
+						<li class="dropdown">
+							<a href="{% url 'user_profile:user_profile_page' request.user.username %}" id="usermenu" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-user"></i><i class="caret"></i></a>
+							<ul class="dropdown-menu">
+								<li><a href="{% url 'user_profile:user_profile_page' request.user.username %}"><span class="glyphicon glyphicon-user"></span> {% trans "Profile" %}</a></li>
+								<li><a href="{% url 'logout' %}"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+							</ul>
+						</li>
+						{% else %}
+						<li><a href="{% url 'login' %}"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+						<li><a href="{% url 'sign_up' %}"><span class="glyphicon glyphicon-log-in"></span> Sign up</a></li>
+						{% endif %}
+					</ul>
+				</div><!--/.nav-collapse -->
+			</div>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,58 @@
+<!--
+Iguana (c) by Marc Ammon, Moritz Fickenscher, Lukas Fridolin,
+Michael Gunselmann, Katrin Raab, Christian Strate
+
+Iguana is licensed under a
+Creative Commons Attribution-ShareAlike 4.0 International License.
+
+You should have received a copy of the license along with this
+work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
+-->
+{% extends "_base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block content %}
+<noscript>
+	<div class="alert alert-info">
+		{% trans "Please Note: You need to enable javascript to see your activity." %}<br />
+		{% trans "Necessary sources are d3js.org and jsdelivr.net" %}
+	</div>
+</noscript>
+{% trans "heatmap" as viewpoint %}
+{% include "timelog_navi.html" %}
+<div class="dropdown" style="margin-top:10px; margin-bottom:10px;">
+	<button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+		{% trans "Project" %}
+		<span class="caret"></span>
+	</button>
+	<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+		{% for project in request.user.get_projects %}
+			<li>
+				<a href="{% url 'timelog:activity' %}?project={{project.name_short}}">
+					<small>{{project.name_short}}</small>
+					<b>{{project.name}}</b>
+				</a>
+			</li>
+		{% endfor %}
+		<li class="divider"></li>
+		<li>
+			<a href="{% url 'timelog:activity' %}">
+				<b>All</b>
+			</a>
+		</li>
+	</ul>
+	<button class="btn btn-default" id="cal-heatmap-previous"><i class="glyphicon glyphicon-chevron-left"></i> {% trans "Back" %}</button>
+	<button class="btn btn-default" id="cal-heatmap-next">{% trans "Forward" %} <i class="glyphicon glyphicon-chevron-right"></i></button>
+</div>
+<div id="cal-heatmap"></div>
+<div id="onClick-placeholder" class="cal-heatmap"></div>
+<script>draw_activity_heatmap("{{request.user.username}}", true)</script>
+{% endblock content %}
+
+{% block extra_script %}
+<script src="{% static "js/d3.v3.min.js" %}"></script>
+<script src="{% static "js/cal-heatmap.min.js" %}"></script>
+<script src="{% static "js/draw_activity_heatmap.js" %}"></script>
+<link rel="stylesheet" href="{% static "css/cal-heatmap.css" %}"/>
+{% endblock extra_script %}

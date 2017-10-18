@@ -1,0 +1,87 @@
+<!--
+Iguana (c) by Marc Ammon, Moritz Fickenscher, Lukas Fridolin,
+Michael Gunselmann, Katrin Raab, Christian Strate
+
+Iguana is licensed under a
+Creative Commons Attribution-ShareAlike 4.0 International License.
+
+You should have received a copy of the license along with this
+work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
+-->
+{% extends "_base.html" %}
+{% load i18n %}
+{% load bootstrap3 %}
+{% load filter %}
+
+{% block title %}{% trans "Timelog" %}{% endblock title %}
+
+{% block content %}
+{% trans "overview" as viewpoint %}
+{% include "timelog_navi.html" %}
+
+<p></p>
+<div class="row">
+	<div class="col-md-5">
+		<div class="panel panel-default">
+			<div class="panel-heading">{% trans "Log Time" %}</div>
+			<div class="panel-body">
+				<form method="POST" class="post-form">{% csrf_token %}
+				{% bootstrap_form form %}
+				{% buttons %}
+					<button type="submit" class="save btn btn-default" id="id_submit_create">
+						{% trans "Save" %}
+					</button>
+				{% endbuttons %}
+				</form>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-7">
+		<div class="panel panel-default">
+			<div class ="panel-heading">
+				<div class="row">
+					<div class="col-xs-5">{%trans "Time" %}</div>
+					<div class="col-xs-5">{%trans "Issue" %}</div>
+					<div class="col-xs-2"></div>
+				</div>
+			</div>
+			<ul class="list-group">
+			{% for l in logs %}
+				<li id="log_{{forloop.counter}}" class ="list-group-item">
+					<div class="row">
+						<div class="col-xs-5">{{ l.time|duration }}
+							<br /><small> {{ l.created_at }} </small>
+						</div>
+						<div class="col-xs-5">
+							{% if request.user in l.issue.project.get_members %}
+								<a href="{% url 'issue:detail' project=l.issue.project.name_short sqn_i=l.issue.number %}" title="{{ l.issue.title }}">
+								{{ l.issue.title|issue_title }}</a>
+							{% else %}
+								{{ l.issue.title|issue_title }}
+							{% endif %}
+						</div>
+						<div class="col-xs-1">
+							<a id="log_edit_link_{{forloop.counter}}" href="{% url 'issue:logedit' project=l.issue.project.name_short sqn_i=l.issue.number sqn_l=l.number %}">
+								<span class="glyphicon glyphicon-pencil"></span>
+							</a>
+						</div>
+						<div class="col-xs-1">
+							<a id="log_delete_link_{{forloop.counter}}" href="{% url 'issue:logdelete' project=l.issue.project.name_short sqn_i=l.issue.number sqn_l=l.number  %}">
+								<span class="glyphicon glyphicon-remove"></span>
+							</a>
+						</div>
+					</div>
+				</li>
+			{% endfor %}
+			<li class ="list-group-item">
+				<a href="{% url 'timelog:archiv' %}?page=2">{% trans "Timelog Archiv" %}</a>
+			</li>
+			</ul>
+		</div>
+	</div>
+</div>
+{% endblock content %}
+
+{% block extra_script %}
+	{{ form.media }}
+{% endblock %}

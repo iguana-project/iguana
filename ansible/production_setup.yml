@@ -1,0 +1,15 @@
+---
+  - name: Deploy iguana - Production application
+    hosts: production
+    remote_user: user
+    sudo: yes
+    vars:
+      settings_file: "{{ lookup('file','roles/user/files/settings.json') | from_json }}"
+
+    roles:
+      - common
+      - postgresql
+      - nginx_initial
+      - letsencrypt
+      - nginx_secure
+      - user

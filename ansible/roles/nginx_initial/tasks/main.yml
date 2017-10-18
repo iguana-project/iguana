@@ -1,0 +1,20 @@
+---
+  - name: install nginx
+    apt: name=nginx state=present
+
+  - name: remove default site
+    file: path=/etc/nginx/sites-enabled/default state=absent
+
+  - name: does nginx-site already exist
+    stat: path=/etc/nginx/sites-available/{{host}}
+    register: site
+
+  - name: create site
+    template: src=nginx_template_http_only.j2 dest=/etc/nginx/sites-available/{{host}}
+    when: site.stat.exists == False
+
+  - name: create symlink
+    file: src=/etc/nginx/sites-available/{{host}} dest=/etc/nginx/sites-enabled/{{host}} state=link
+
+  - name: restart nginx
+    service: name=nginx state=restarted

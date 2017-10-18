@@ -1,0 +1,60 @@
+<!--
+Iguana (c) by Marc Ammon, Moritz Fickenscher, Lukas Fridolin,
+Michael Gunselmann, Katrin Raab, Christian Strate
+
+Iguana is licensed under a
+Creative Commons Attribution-ShareAlike 4.0 International License.
+
+You should have received a copy of the license along with this
+work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
+-->
+{% extends "_base.html" %}
+{% load i18n %}
+{% load bootstrap3 %}
+
+{% block title %}{% trans "Sign Up" %}{% endblock title %}
+
+{% block content %}
+<h2>{% trans "Sign Up" %}</h2>
+<div class="alert alert-info">
+	{% trans "The Password should contain at least 8 characters, be not entirely numeric, be not too common and be not to similar to your name." %}
+</div>
+
+{% if user.is_authenticated %}
+	<p>{% blocktrans with username=user.username %}Welcome {{ username }}, you are already a member and logged in. Do you want to logout? {% endblocktrans %}</p>
+	<form action={% url 'logout' %}>
+		<input class="btn btn-primary" type="submit" id="submit_logout" value="{% trans "Logout" %}" />
+	</form>
+{% else %}
+
+	<li class="list-group-item">
+		<form method="POST" id="id_register_form">{% csrf_token %}
+			{% bootstrap_form form%}
+			{% buttons %}
+				<button type="submit" class="save btn btn-default" id="id_submit_sign_up" action="{% url 'sign_up' %}">{% trans "Sign up" %}</button>
+				{# allows copy of entered elements with js #}
+				<body onload="showButton()">
+				<a href="#" onclick="document.forms[0].submit();return false;" class="btn btn-default" id="id_submit_refresh_captcha_js" name="submit_refresh_captcha" style="display: none;">{% trans "Refresh" %}</a>
+				<noscript>
+					<a href="{% url 'sign_up'%}" class="btn btn-default" id="id_submit_refresh_captcha" name="id_submit_refresh_captcha_no_js">{% trans "Refresh" %}</a>
+				</noscript>
+			{% endbuttons %}
+		</form>
+	</li>
+	<br />
+	<p>{% trans "Already a member?" %}</p>
+	<p>
+		<a class="btn btn-default" id="id_login_ref" href="{% url 'login' %}">{% trans "Login" %}</a>
+		<a class="btn btn-default" id="id_reset_ref" href="{% url 'password_reset' %}">{% trans "Forgot your password?" %}</a>
+	</p>
+{% endif %}
+{% endblock content %}
+
+
+{% block extra_script %}
+<script type="text/javascript">
+function showButton(){
+	document.getElementById("id_submit_refresh_captcha_js").style.display="inline";
+}
+</script>
+{% endblock extra_script %}

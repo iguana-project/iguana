@@ -1,0 +1,89 @@
+<!--
+Iguana (c) by Marc Ammon, Moritz Fickenscher, Lukas Fridolin,
+Michael Gunselmann, Katrin Raab, Christian Strate
+
+Iguana is licensed under a
+Creative Commons Attribution-ShareAlike 4.0 International License.
+
+You should have received a copy of the license along with this
+work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
+-->
+{% extends "_base.html" %}
+{% load i18n %}
+{% load static %}
+{% block title %}Project List{% endblock title %}
+
+{% block content %}
+	<h1 class="page-header">{% trans "Your projects" %}
+				<div class="dropdown pull-right">
+					<button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+						{% trans "Show" %}
+						<span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+						<li>
+								<a href="?data=timelog">
+									{% trans "Timelogs" %}
+									{% if chart_type == "timelog" %}
+										<span class="glyphicon glyphicon-ok"></span>
+									{% endif %}
+								</a>
+							</li>
+						<li>
+								<a href="?data=actions">
+									{% trans "Actions" %}
+									{% if chart_type == "actions" %}
+										<span class="glyphicon glyphicon-ok"></span>
+									{% endif %}
+								</a>
+							</li>
+					</ul>
+				</div>
+	</h1>
+<br>
+{% if latest_project_list %}
+	<div class="row" style="border-bottom: 2px solid grey; padding-bottom:10px; margin-bottom:10px">
+		<div class="col-xs-3">
+			{% trans "Handle" %}
+		</div>
+		<div class="col-xs-3">
+			{% trans "Name" %}
+		</div>
+		<div class="col-xs-2">
+			{% trans "Creator" %}
+		</div>
+		<div class="col-xs-4">
+			{% trans "Activity" %}
+		</div>
+	</div>
+		{% for project in latest_project_list %}
+		<div class="row" style="border-bottom: 1px solid grey; margin-bottom:10px; padding:10px; padding-top:0px">
+			<div class="col-xs-3" style="padding-top:22px">
+				<span>{{ project.name_short }}</span>
+			</div>
+			<div class="col-xs-3" style="padding-top:22px">
+				<a href="{% url 'project:detail' project=project.name_short %}">{{ project.name }}</a>
+			</div>
+			<div class="col-xs-2" style="padding-top:22px">
+				{{ project.creator }}
+			</div>
+			<div class="col-xs-4" style="padding-top:0px">
+				<div id="project_activity_{{ project.name_short }}" title="Activity past month" style="padding-top:0px"></div>
+			</div>
+		</div>
+		{% endfor %}
+{% else %}
+	<p>No Projects created yet.</p>
+{% endif %}
+
+<p><a class="btn btn-default" href="{% url 'project:create' %}">{% trans "Create new project" %}</a></p>
+{% for project in latest_project_list %}
+	<script>
+		create_project_activity('{{project.name_short}}')
+	</script>
+{% endfor %}
+{% endblock content %}
+{% block extra_script %}
+<script src="{% static "js/d3.min.js" %}"></script>
+<script src="{% static "js/draw_spark.js" %}"></script>
+{% endblock %}

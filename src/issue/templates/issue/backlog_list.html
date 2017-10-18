@@ -1,0 +1,150 @@
+<!--
+Iguana (c) by Marc Ammon, Moritz Fickenscher, Lukas Fridolin,
+Michael Gunselmann, Katrin Raab, Christian Strate
+
+Iguana is licensed under a
+Creative Commons Attribution-ShareAlike 4.0 International License.
+
+You should have received a copy of the license along with this
+work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
+-->
+{% extends "_base.html" %}
+{% load static %}
+{% load i18n %}
+{% load filter %}
+
+{% block title %}{% trans "Backlog" %}{% endblock title %}
+
+{% block content %}
+{% trans "backlog" as viewpoint %}
+{% include "projectnavi.html" %}
+	<div class="olea-container">
+		<form id="olea" method="post" class="olea-flex-element" action="{% url 'issue:processOlea' project=project.name_short %}">
+			{% csrf_token %}
+			<input type="text" id="expression" title="{% include "static/olea_tooltip.html" %}" class="form-control" name="expression" {{oleafocus}} value="{{oleaexpression}}" placeholder="{% trans 'Place your change expression here' %}" autocomplete="off" />
+			<input type="hidden" name="currentsprint" value="">
+			<input type="hidden" name="next" value="{{request.get_full_path}}">
+		</form>
+		<a class="btn btn-default olea-flex-element" href="{% url 'issue:newsprint' project=project.name_short %}"><span class="glyphicon glyphicon-plus"></span> {% trans "New sprint" %}</a>
+		<form class="olea-flex-element">
+			<input type="text" id="text-filter" onkeyup="filter_issues('backlog-issue')" placeholder="Filter issues" class="form-control">
+		</form>
+		{% if request.GET.myissues == 'true' %}
+			<a class="btn btn-default active olea-flex-element" href="{{ request.path }}{% query_string request.META.QUERY_STRING myissues-'true'%}">{% trans "My issues" %}</a>
+		{% else %}
+			<a class="btn btn-default olea-flex-element" href="{{ request.path }}{% query_string request.META.QUERY_STRING myissues+'true'%}">{% trans "My issues" %}</a>
+		{% endif %}
+		{% include "orderby.html" %}
+	</div>
+
+<div class="row">
+	<div class="col-md-{% if view.get_sqn_s != -1 %}6{% else %}12{% endif %}">
+		<div class="panel panel-default" id="backlog_backlog" style="margin-top:10px">
+			<div class="panel-heading">
+				<span class="backlog-nondropdown">{% trans "Backlog" %} <span title="{% trans "Remaining issues" %}">({{ view.get_backlog_issues|length }})</span></span>
+				<div class="btn-group pull-right">
+					<a class="btn btn-default" href="{% url 'issue:create' project=project.name_short %}"><span class="glyphicon glyphicon-plus"></span> {% trans "New issue" %}</a>
+				</div>
+			</div>
+			<table class="table">
+				{% for issue in view.get_backlog_issues %}
+					{% include "backlog_issue_template.html" %}
+				{% empty %}
+					<tr><td>{% trans "Congratulations! Your backlog is empty." %}</td></tr>
+				{% endfor %}
+			</table>
+			<div class="panel-footer"><a href="{% url 'issue:archive' project=project.name_short %}" title="{% trans "Past issues" %}"><span class="glyphicon glyphicon-book"></span> {% trans "Archive" %}</a></div>
+		</div>
+	</div>
+
+	{% if view.get_sqn_s != -1 %}
+	<div class="col-md-6">
+		<div class="panel panel-default" id="backlog_sprint" style="margin-top:10px">
+			<div class="panel-heading clearfix" style="{% if view.is_old_sprint %} color: red{% endif %}">
+				<div class="dropdown dropdown-sprints">
+					{% if project.sprint.unstopped.all|length > 1 %}
+						<button class="dropdown-toggle dropdown-toggle-sprints" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+							{% trans "Sprint" %} {{view.get_sqn_s}} <span  title="{% trans "Issues in this sprint" %}">({{ view.get_sprint_issues|length }})</span>
+							<span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+							{% for sprint in project.sprint.get_current_sprints %}
+								<li>
+									<a href="{% url 'issue:backlog' project=project.name_short sqn_s=sprint.seqnum%}">Sprint {{sprint.seqnum}} (running)</a>
+								</li>
+							{% endfor %}
+							{% for sprint in project.sprint.get_new_sprints %}
+								<li>
+									<a href="{% url 'issue:backlog' project=project.name_short sqn_s=sprint.seqnum%}">Sprint {{sprint.seqnum}}</a>
+								</li>
+							{% endfor %}
+						</ul>
+					{% else %}
+						<span class="backlog-nondropdown">{% trans "Sprint" %} {{view.get_sqn_s}} <span  title="{% trans "Issues in this sprint" %}">({{ view.get_sprint_issues|length }})</span></span>
+					{% endif %}
+					{% if storypoints_total %}
+					<span class="story-points" title="{% trans "Total amount of storypoints in this sprint" %}">{{ storypoints_total }}</span>
+					{% endif %}
+				</div>
+				<div class="btn-group pull-right">
+					{% if not view.is_old_sprint %}
+					{% if view.is_sprint_current %}
+                                                {% if view.get_sprint_issues_left.all %}
+                                                        <a class="btn btn-default" href="{% url 'issue:stopsprint' project=project.name_short sqn_s=view.get_sqn_s %}" title="{% trans "Stop sprint" %}"><span class="glyphicon glyphicon-stop"></span> {% trans "Stop" %}</a>
+                                                {% else %}
+                                                        <form class="btn-group" method="post" action="{% url 'issue:stopsprint' project=project.name_short sqn_s=view.get_sqn_s %}" >
+                                                                {% csrf_token %}
+                                                                <button type="submit" style="border-bottom-left-radius: 4px; border-top-left-radius: 4px" class="btn btn-default" id="stopsprint">
+                                                                        <span class="glyphicon glyphicon-stop"></span> {% trans "Stop" %}
+                                                                </button>
+                                                        </form>
+                                                {% endif %}
+					{% else %}
+                                                <form class="btn-group" method="post" action="{% url 'issue:startsprint' project=project.name_short sqn_s=view.get_sqn_s %}" >
+                                                        {% csrf_token %}
+                                                        <button type="submit" style="border-bottom-left-radius: 4px; border-top-left-radius: 4px" class="btn btn-default" id="startsprint">
+                                                                <span class="glyphicon glyphicon-play"></span> {% trans "Start" %}
+                                                        </button>
+                                                </form>
+                                                <form class="btn-group" method="post" action="{% url 'issue:stopsprint' project=project.name_short sqn_s=view.get_sqn_s %}" >
+                                                        {% csrf_token %}
+                                                        <button type="submit" class="btn btn-default" id="stopsprint">
+                                                                <span class="glyphicon glyphicon-minus"></span> {% trans "Remove" %}
+                                                        </button>
+                                                </form>
+					{% endif %}
+					<a class="btn btn-default" href="{% url 'issue:editsprint' project=project.name_short sqn_s=view.get_sqn_s %}" title="{% trans "Edit sprint" %}"><span class="glyphicon glyphicon-pencil"></span> {% trans "Edit" %}</a>
+					{% else %}
+						{% trans "Finished sprint" %}
+					{% endif %}
+				</div>
+			</div>
+
+			{% if view.get_sprint_issues.all %}
+				<table class="table">
+					{% if storypoints %}
+						<tr>
+						<td colspan="5">
+						<b>{% trans "Storypoints:" %}</b>
+							{% for item in storypoints %}
+								{{item.0}}: {{item.1}} {% if not forloop.last %} / {% endif %}
+							{% endfor %}
+						</td>
+						</tr>
+					{% endif %}
+					{% for issue in view.get_sprint_issues %}
+						{% include "backlog_issue_template.html" %}
+					{% endfor %}
+				</table>
+			{% else %}
+				<div class="panel-body">{% trans "No issues in this sprint." %}</div>
+			{% endif %}
+			</div>
+		</div>
+	{% endif %}
+	</div>
+{% endblock content %}
+
+{% block extra_script %}
+<script type="text/javascript" src="{% static 'js/filter-issues.js' %}"></script>
+{% endblock extra_script %}

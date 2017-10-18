@@ -1,0 +1,72 @@
+<!--
+Iguana (c) by Marc Ammon, Moritz Fickenscher, Lukas Fridolin,
+Michael Gunselmann, Katrin Raab, Christian Strate
+
+Iguana is licensed under a
+Creative Commons Attribution-ShareAlike 4.0 International License.
+
+You should have received a copy of the license along with this
+work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
+-->
+{% extends "_base.html" %}
+{% load i18n %}
+{% load bootstrap3 %}
+
+{% block title %}Login{% endblock title %}
+
+{% block content %}
+{% if form.errors %}
+	<div class="alert alert-danger">
+	<p>{% trans "Your username and password didn't match. Please try again." %}</p>
+	</div>
+{% endif %}
+
+{% if next %}
+	<div class="alert alert-warning">
+	{% if user.is_authenticated %}
+			<p>{% trans "Your account doesn't have access to this page. To proceed, please login with an account that has access." %}</p>
+	{% else %}
+		<p>{% trans "Please login to see this page." %}</p>
+	{% endif %}
+	</div>
+{% endif %}
+
+{% if logged_out %}
+	<p>{% trans "You have been successfully logged out." %}</p>
+{% endif %}
+
+{# Remind the user with which account s/he is currently logged in to be able to log into the correct account, that has access to the page. #}
+{% if user.is_authenticated %}
+	<p>{% blocktrans with username=user.username %}Welcome {{ username }}, you are already a member and logged in. Do you want to logout? {% endblocktrans %}</p>
+	<form action={% url 'logout' %}>
+		<input class="btn btn-default" type="submit" id="submit_logout" value="{% trans 'logout' %}" />
+	</form>
+	<p>{% trans "Or do you want to go to your home?" %}</p>
+	<form action={% url 'landing_page:home' %}>
+		<input class="btn btn-primary" type="submit" id="submit_home" value="{% trans "home" %}" />
+	</form>
+{% endif %}
+
+<form method="post" id="id_login_form" action="{% url 'login' %}">
+{% csrf_token %}
+	<div class="form-group">
+		<label class="control-label" for="id_username">{% trans 'Username or mail address' %}</label>
+		<input autofocus="" class="form-control" id="id_username" maxlength="254" name="username" placeholder="{% trans 'Username' %}" title="" type="text" required />
+	</div>
+	<div class="form-group">
+		<label class="control-label" for="id_password">{% trans 'Password' %}</label>
+		<input class="form-control" id="id_password" name="password" placeholder="{% trans 'Password' %}" title="" type="password" required />
+	</div>
+	{% buttons %}
+		<button type="submit" class="save btn btn-default" id="id_submit_login">
+			{% trans "Login" %}
+		</button>
+	{% endbuttons %}
+	<input type="hidden" name="next" value="{{ next }}" />
+</form>
+<br />
+
+{# Assumes you setup the password_reset view in your URLconf #}
+<p><a class="btn btn-default" id="id_lost_password_ref" href="{% url 'password_reset' %}">{% trans "Lost password?" %}</a>
+<a class="btn btn-default" id="id_not_yet_a_member_ref" href="{% url 'sign_up' %}">{% trans "Not yet a member?" %}</a></p>
+{% endblock content %}

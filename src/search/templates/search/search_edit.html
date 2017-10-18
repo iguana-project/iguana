@@ -1,0 +1,33 @@
+<!--
+Iguana (c) by Marc Ammon, Moritz Fickenscher, Lukas Fridolin,
+Michael Gunselmann, Katrin Raab, Christian Strate
+
+Iguana is licensed under a
+Creative Commons Attribution-ShareAlike 4.0 International License.
+
+You should have received a copy of the license along with this
+work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
+-->
+{% extends "_base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Edit filter" %}{% endblock title %}
+
+{% block content %}
+<div class="panel panel-default">
+	<div class="panel-heading">{% trans "Edit filter" %}</div>
+	<div class="panel-body">
+		<form method="POST" class="post-form">{% csrf_token %}
+			<table>
+				{{ form.as_table }}
+				<tr><td colspan="2">
+					<button type="submit" class="save btn btn-default">{% trans "Save" %}</button>
+				</td></tr>
+			</table>
+		</form>
+	</div>
+</div>
+{% endblock content %}
+{% block extra_script %}
+	{{ form.media }}
+{% endblock %}

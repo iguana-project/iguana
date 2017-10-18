@@ -1,0 +1,74 @@
+<!--
+Iguana (c) by Marc Ammon, Moritz Fickenscher, Lukas Fridolin,
+Michael Gunselmann, Katrin Raab, Christian Strate
+
+Iguana is licensed under a
+Creative Commons Attribution-ShareAlike 4.0 International License.
+
+You should have received a copy of the license along with this
+work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
+-->
+{% extends "_base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Your discussions" %}{% endblock title %}
+
+
+{% block content %}
+{% for project, notifications in notifications.items %}
+<div class="panel panel-default">
+	<div class="panel-heading">
+		{{ project.name }}
+		<form method="post" action="{% url "discussion:seen" project.name_short%}" class="pull-right" style="display:inline-block">
+			{% csrf_token %}
+			<button type="submit" class="btn btn-link btn-move"><span class="glyphicon glyphicon-ok"></span></button>
+			<input type="hidden" name="issue" value="-1">
+		</form>
+	</div>
+	<table class="table">
+		{% for notification in notifications %}
+			<tr>
+				<td>
+					{% for t in notification.type.all %}
+						{% if t.comment %}
+								<a href="{{ notification.issue.get_absolute_url }}#comment{{t.comment.seqnum}}">
+									<span class="notification">
+									{{ t.get_type_display }}
+									</span>
+								</a>
+						{% else %}
+							<span class="notification">{{ t.get_type_display }}</span>
+						{% endif %}
+					{% endfor %}
+					<a href="{{ notification.issue.get_absolute_url }}">{{ notification.issue.title }}</a></td>
+				{% if user in notification.issue.participant.all %}
+					<td class="discussion-list-buttion">
+						<form style="display:inline-block" method="post" action="{% url 'discussion:mute' project.name_short notification.issue.number %}">
+							{% csrf_token %}
+							<button type="submit" class="btn btn-link btn-move"><span class="glyphicon glyphicon-eye-close"></span></button>
+							<input type="hidden" name="next" value="{% url "discussion:list" %}">
+						</form>
+					</td>
+				{% else %}
+					<td class="discussion-list-button">
+						<form style="display:inline-block" method="post" action="{% url 'discussion:follow' project.name_short notification.issue.number %}">
+							{% csrf_token %}
+							<button type="submit" class="btn btn-link btn-move"><span class="glyphicon glyphicon-eye-open"></span></button>
+							<input type="hidden" name="next" value="{% url "discussion:list" %}">
+						</form>
+					</td>
+				{% endif %}
+				<td class="discussion-list-button">
+					<form method="post" action="{% url "discussion:seen" project.name_short %}">
+						{% csrf_token %}
+						<button type="submit" class="btn btn-link btn-move"><span class="glyphicon glyphicon-ok"></span></button>
+						<input type="hidden" name="issue" value="{{ notification.issue.number }}">
+					</form>
+				</td>
+			</tr>
+		{% endfor %}
+	</table>
+</div>
+{% empty %}
+No unread messages.
+{% endfor %}
+{% endblock content %}

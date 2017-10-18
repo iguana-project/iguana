@@ -1,0 +1,121 @@
+<!--
+Iguana (c) by Marc Ammon, Moritz Fickenscher, Lukas Fridolin,
+Michael Gunselmann, Katrin Raab, Christian Strate
+
+Iguana is licensed under a
+Creative Commons Attribution-ShareAlike 4.0 International License.
+
+You should have received a copy of the license along with this
+work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
+-->
+{% extends "_base.html" %}
+{% load i18n %}
+{% load static %}
+{% load filter %}
+{% load activity_tags %}
+{% block title %}{{ project.name }}{% endblock title %}
+{% block content %}
+{% trans "overview" as viewpoint %}
+{% include "projectnavi.html" %}
+
+<h1 class="page-header">
+	{{ project.name }} <small> {{ project.name_short }} </small>
+</h1>
+<div class="row">
+	<div class="col-md-9">
+		{% if project.description %}
+		<div class="panel panel-default">
+			<div class="panel-heading">{% trans "Description" %}</div>
+			<div class="panel-body">{{project.description|markdownify|safe}}</div>
+		</div>
+		{% endif %}
+		<div class="panel panel-default">
+			<div class="panel-heading clearfix">
+				{% trans "Activity" %}
+				<button class="btn btn-default" id="project-detail-previous-week" title="{% trans "previous week" %}"><i class="glyphicon glyphicon-chevron-left"></i>7</button>
+				<button class="btn btn-default" id="project-detail-previous-day" title="{% trans "previous day" %}"><i class="glyphicon glyphicon-chevron-left"></i>1</button>
+				<button class="btn btn-default disabled" id="project-detail-next-day" title="{% trans "next day" %}">1<i class="glyphicon glyphicon-chevron-right"></i></button>
+				<button class="btn btn-default disabled" id="project-detail-next-week" title="{% trans "next week" %}">7<i class="glyphicon glyphicon-chevron-right"></i></button>
+				<div class="dropdown pull-right">
+					<button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+						{% trans "Show" %}
+						<span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+						<li>
+								<a href="?data=timelog">
+									{% trans "Timelogs" %}
+									{% if chart_type == "timelog" %}
+										<span class="glyphicon glyphicon-ok"></span>
+									{% endif %}
+								</a>
+							</li>
+						<li>
+								<a href="?data=actions">
+									{% trans "Actions" %}
+									{% if chart_type == "actions" %}
+										<span class="glyphicon glyphicon-ok"></span>
+									{% endif %}
+								</a>
+							</li>
+					</ul>
+				</div>
+			</div>
+			<div class="panel-body">
+				<div id="project_activity">
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-3">
+		<div class="btn-group-vertical panel-like">
+			<a class="btn btn-danger" href="{% url 'project:leave' project=project.name_short %}" title="{% trans "Leave project" %}">{% trans "Leave project" %}</a>
+		{% if request.user|is_following:project %}
+			<a class="btn btn-default" href="{{request.path}}?follow=false" title="{% trans "on the dashboard" %}">
+				<span class="glyphicon glyphicon-list" style="top:10px;"></span>
+				{% trans "Remove events from the" %}</br>{% trans "Activity Stream" %}
+			</a>
+		{% else %}
+			<a class="btn btn-default" href="{{request.path}}?follow=true" title="{% trans "on the dashboard" %}">
+				<span class="glyphicon glyphicon-list" style="top:10px;"></span>
+				{% trans "Show events in the" %}</br>{% trans "Activity Stream" %}
+			</a>
+		{% endif %}
+		<a class="btn btn-default" href="{% url 'issue:archive' project=project.name_short %}" title="{% trans "Past issues" %}"><span class="glyphicon glyphicon-book"></span> {% trans "Archive" %}</a>
+		</div>
+		<div class="panel panel-default">
+			<div class ="panel-heading">
+				{% trans "Developer" %}
+			</div>
+			<ul class="list-group">
+				{% for dev in project.developer.all %}
+							<li class="list-group-item">
+					<img src="{{ dev.avatar.url}}" width="25" alt="{% trans "Avatar" %} {{ dev }}">
+					<a href="{% url 'user_profile:user_profile_page' dev.username %}">  {{ dev.username}}</a>
+				</li>
+				{% endfor %}
+			</ul>
+		</div>
+				<div class="panel panel-default">
+						<div class ="panel-heading">
+				{% trans "Managers" %}
+			</div>
+						<ul class="list-group">
+			{% for dev in project.manager.all %}
+								<li class="list-group-item">
+					<img src="{{ dev.avatar.url}}" width="25" alt="{% trans "Avatar" %} {{ dev }}">
+					<a href="{% url 'user_profile:user_profile_page' dev.username %}">  {{ dev.username}}</a>
+				</li>
+			{% endfor %}
+						</ul>
+		</div>
+	</div>
+</div>
+{% endblock content %}
+{% block extra_script %}
+<script src="{% static "js/d3.min.js" %}"></script>
+<script src="{% static "js/draw_bars_project_detail.js" %}"></script>
+					<script>
+						create_project_activity('{{project.name_short}}')
+					</script>
+{% endblock %}

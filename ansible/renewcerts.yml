@@ -1,0 +1,7 @@
+---
+  - name: Renew all letsencrypt certificates
+    hosts: jenkins,staging,production
+    remote_user: user
+    sudo: yes
+    roles:
+        - renewcerts

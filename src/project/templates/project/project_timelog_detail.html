@@ -1,0 +1,70 @@
+<!--
+Iguana (c) by Marc Ammon, Moritz Fickenscher, Lukas Fridolin,
+Michael Gunselmann, Katrin Raab, Christian Strate
+
+Iguana is licensed under a
+Creative Commons Attribution-ShareAlike 4.0 International License.
+
+You should have received a copy of the license along with this
+work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
+-->
+{% extends "_base.html" %}
+{% load i18n %}
+{% load filter %}
+
+{% block title %}Timelog{% endblock title %}
+
+{% block content %}
+	{% trans "timelogging" as viewpoint %}
+	{% include "projectnavi.html" %}
+	<h1 class="page-header"><img src="{{ava_url}}" width="40" alt"{% trans "Avatar" %} {{ user }}"/>  {{ user }}</h1>
+	<ul class="list-group">
+		{% for l in logs %}
+			<li class ="list-group-item">
+				<div class="row">
+					<div class="col-xs-10">
+						{{l.time|duration}} {% trans "on" %}
+						<a href="{% url 'issue:detail' project=l.issue.project.name_short sqn_i=l.issue.number %}">
+							{{ l.issue.title }}
+						</a>
+						<br /><small>
+							{{ l.created_at }}
+						</small>
+					</div>
+					{% if request.user == l.user %}
+						<div class="col-xs-1">
+							<a id="log_edit_link_{{forloop.counter}}" href="{% url 'issue:logedit' project=l.issue.project.name_short sqn_i=l.issue.number sqn_l=l.number %}?next={{ request.get_full_path }}">
+								<span class="glyphicon glyphicon-pencil"></span>
+							</a>
+						</div>
+						<div class="col-xs-1">
+							<a id="log_delete_link_{{forloop.counter}}" href="{% url 'issue:logdelete' project=l.issue.project.name_short sqn_i=l.issue.number sqn_l=l.number  %}?next={{ request.get_full_path}}">
+								<span class="glyphicon glyphicon-remove"></span>
+							</a>
+						</div>
+					{% endif %}
+				</div>
+			</li>
+		{% empty %}
+			<li class ="list-group-item">
+				{% trans "No logs yet" %}
+			</li>
+		{% endfor %}
+	</ul>
+	<div class="pagination">
+		<span class="step-links">
+			{% if logs.has_previous %}
+				<a href="?page={{ logs.previous_page_number }}">previous</a>
+			{% endif %}
+
+			<span class="current">
+				Page {{ logs.number }} of {{ logs.paginator.num_pages }}.
+			</span>
+
+			{% if logs.has_next %}
+				<a href="?page={{ logs.next_page_number }}">next</a>
+			{% endif %}
+		</span>
+	</div>
+	</div>
+{% endblock content %}

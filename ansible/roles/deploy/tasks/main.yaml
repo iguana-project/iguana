@@ -1,0 +1,47 @@
+---
+  - name: get current repo
+    git: >
+        repo=git@github.com:iguana-project/iguana.git
+        dest={{home}}
+        accept_hostkey=yes
+        force=yes
+        version={{git_checkout_version}}
+
+  - name: create directory structure
+    file: path={{home}} state=directory
+    file: path={{home}}/{{item}} state=directory
+    with_items:
+        - virtualenv
+
+  - name: is virtenv present?
+    stat: path={{virtualenv}}/bin/pip
+    register: pip
+
+  - name: create virtenv
+    command: virtualenv --python=python3 {{virtualenv}}
+    when: pip.stat.exists == False
+
+  - name: update requirements via pip
+    command: /home/iguana/sites/{{host}}/virtualenv/bin/pip install -r {{requirements}}
+
+  - name: update static files
+    command: /home/iguana/sites/{{host}}/virtualenv/bin/python3 manage.py collectstatic --noinput --settings=common.settings
+    args:
+        chdir: "{{src}}"
+
+  - name: run migrations
+    command: /home/iguana/sites/{{host}}/virtualenv/bin/python3 manage.py migrate --noinput --settings=common.settings
+    args:
+        chdir: "{{src}}"
+
+  - name: update CSS files
+    command: make css
+    args:
+        chdir: "{{home}}"
+
+  - name: restart services
+    command: sudo service {{item}} restart
+    with_items:
+        - gunicorn
+        - celery
+        - celery-beat

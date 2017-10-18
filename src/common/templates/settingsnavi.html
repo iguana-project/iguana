@@ -1,0 +1,21 @@
+<!--
+Iguana (c) by Marc Ammon, Moritz Fickenscher, Lukas Fridolin,
+Michael Gunselmann, Katrin Raab, Christian Strate
+
+Iguana is licensed under a
+Creative Commons Attribution-ShareAlike 4.0 International License.
+
+You should have received a copy of the license along with this
+work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
+-->
+{% load i18n %}
+<ul class="nav nav-pills nav-stacked">
+	{% if user in project.manager.all %}
+		<li role="presentation" class="{% if viewpoint == 'general' %}active{% endif %}"><a href="{% url 'project:edit' project.name_short%}">{% trans "General" %}</a></li>
+	{% endif %}
+	<li class="{% if viewpoint == 'tags' %}active{% endif %}"><a href="{% url 'tag:tag' project.name_short %}">{% trans "Tags" %}</a></li>
+	{% if user in project.manager.all %}
+        <li class="{% if viewpoint == 'repos' %}active{% endif %}"><a href="{% url 'project:gitintegration:list' project.name_short %}">{% trans "Repositories" %}</a></li>
+	{% endif %}
+	<li class="{% if viewpoint == 'search' %}active{% endif %}"><a href="{% url 'project:search' project.name_short %}">{% trans "Search filters" %}</a></li>
+</ul>

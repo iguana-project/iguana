@@ -1,0 +1,14 @@
+---
+  - name: install letsencrypt
+    apt: name=letsencrypt state=present
+
+  - name: create webfolder for letsencrypt
+    file: path=/var/www/{{host}} state=directory
+
+  - name: key-file
+    stat: path=/etc/letsencrypt/live/{{host}}/cert.pem
+    register: key
+
+  - name: generate certificate
+    command: letsencrypt -n --rsa-key-size 4096 --agree-tos -m hostmaster@computermokel.de certonly --webroot -w /var/www/{{host}} {{letsencrypt_domains}}
+    when: key.stat.exists == False

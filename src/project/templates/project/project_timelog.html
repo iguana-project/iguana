@@ -1,0 +1,75 @@
+<!--
+Iguana (c) by Marc Ammon, Moritz Fickenscher, Lukas Fridolin,
+Michael Gunselmann, Katrin Raab, Christian Strate
+
+Iguana is licensed under a
+Creative Commons Attribution-ShareAlike 4.0 International License.
+
+You should have received a copy of the license along with this
+work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
+-->
+{% extends "_base.html" %}
+{% load i18n %}
+{% load filter %}
+{% block title %}Timelog{% endblock title %}
+
+{% block content %}
+{% trans "timelogging" as viewpoint %}
+{% include "projectnavi.html" %}
+<h1 class="page-header">{% trans "Recent Activity" %}</h1>
+{% for dev in developer %}
+	{% if forloop.counter0|divisibleby:"3" %}
+		{% if forloop.first %}
+			{# open row-tag for three devs #}
+			<div class="row">
+		{% else %}
+			{# there shall only be the timelog of three devs in a row, the following ones are in a new line #}
+			</div>
+			{# In case this is the last dev of the last row - the tag is closed in the end of the for-loop #}
+			<div class="row">
+		{% endif %}
+	{% endif %}
+	<div class="col-xs-12 col-md-4">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<img src="{{ dev.fields.ava_url}}" width="25" alt="{% trans "Avatar" %} {{ dev }}"/>
+				<a href="{% url 'user_profile:user_profile_page' dev.fields.username %}">  <b>{{ dev.fields.username}}</b></a>
+			</div>
+			<ul class="list-group">
+			{% for l in dev.fields.logs%}
+				<li class ="list-group-item">
+					{{l.time|duration}} {% trans "on" %}
+					<a href="{% url 'issue:detail' project=l.issue.project.name_short sqn_i=l.issue.number %}">
+						{{ l.issue.get_ticket_identifier }}
+					</a>
+
+					<br><small>
+						{{ l.created_at }}
+					</small>
+				</li>
+				{% if forloop.last %}
+					<li class ="list-group-item">
+						<b>{% trans "total" %}: {{ dev.fields.total|duration }}</b>
+					</li>
+					{% if dev.fields.logs|length == 5 %}
+						<li class ="list-group-item">
+						<a href="{% url 'project:usertimelog' l.issue.project.name_short dev.fields.username %}">
+							more
+						</a>
+						</li>
+					{% endif %}
+				{% endif %}
+				{% empty %}
+				<li class ="list-group-item">
+					{% trans "No logs yet" %}
+				</li>
+			{% endfor %}
+			</ul>
+		</div>
+	</div>
+	{% if forloop.last %}
+		{# The last closing row-tag #}
+		</div>
+	{% endif %}
+{% endfor %}
+{% endblock content %}

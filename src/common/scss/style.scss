@@ -1,0 +1,653 @@
+/*
+Iguana (c) by Marc Ammon, Moritz Fickenscher, Lukas Fridolin,
+Michael Gunselmann, Katrin Raab, Christian Strate
+
+Iguana is licensed under a
+Creative Commons Attribution-ShareAlike 4.0 International License.
+
+You should have received a copy of the license along with this
+work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
+*/
+$iguana-color: "#b3ff01";
+$text-color: rgb(50,50,50);
+$text-grey: rgb(119, 119, 119);
+$dark-background: rgb(50, 50, 50);
+$light-foreground: #eeeeee;
+
+
+// Prevent scrollbar jumping; https://aykevl.nl/2014/09/fix-jumping-scrollbar
+@media screen and (min-width: 300px) {
+	html {
+		margin-left: calc(100vw - 100%);
+	}
+	.navbar {
+		margin-left: calc(100% - 100vw);
+		padding-left: calc(100vw - 100%);
+	}
+}
+
+.container {
+	max-width: 1200px;
+}
+
+// Space below the tabs and extend line
+.projectnav {
+	margin-bottom: 10px;
+}
+
+// Bar graph in project overview
+.bar {
+	fill: #00e5ff;
+}
+
+.bar:hover {
+	fill: #c4c4c4;
+}
+
+//copied the bootstrap-button-settings which is a ugly solution, a better way would be the usage of the bootstrap-mixins and use real LESS, but therefore it seems like we need the boostrap-SASS version.
+.tags {
+	//btn-settings
+	//formatting
+	display: inline-block;
+	margin-bottom: 0;
+	font-weight: normal;
+	text-align: center;
+	vertical-align: middle;
+	-ms-touch-action: manipulation;
+	touch-action: manipulation;
+
+	background-image: none;
+	white-space: nowrap;
+	font-size: 14px;
+	line-height: 1.42857143;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+
+	//border
+	border: 1px solid transparent;
+	//border-radius: 3px;
+	//border-radius: 10px;
+	border-radius: 10px 38px 15px;
+
+	//colors
+	color: #333333;
+	// default color
+	background-color: rgba(0, 0, 0, 0.0); //TODO
+	//btn-xs settings
+	border-color: #aaaaaa;
+	padding: 1px 5px;
+	font-size: 12px;
+	line-height: 1.5;
+	top: 0;
+	min-width: 15px;
+	min-height: 15px;
+}
+
+input.tags[type="checkbox"] {
+	margin-left: 10px;
+}
+
+.tags[color="red"]{
+	background-color: rgba(255, 0, 0, 0.2); //TODO
+}
+.tags[color="green"]{
+	background-color: rgba(0, 128, 0, 0.2); //TODO
+}
+.tags[color="blue"]{
+	background-color: rgba(0, 0, 255, 0.2); //TODO
+}
+.tags[color="yellow"]{
+	background-color: rgba(255, 255, 0, 0.2); //TODO
+}
+.tags[color="orange"]{
+	background-color: rgba(255, 102, 0, 0.2); //TODO
+}
+
+.board-container {
+	display: flex;
+}
+
+.board-col {
+	float: left;
+	margin-left: 2px;
+	margin-right: 2px;
+	flex:1;
+}
+
+.stretch {
+	width: 100%;
+	display: inline-block;
+	font-size: 0;
+	line-height: 0;
+}
+.gly-rotate-45 {
+	filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1);
+	-webkit-transform: rotate(45deg);
+	-moz-transform: rotate(45deg);
+	-ms-transform: rotate(45deg);
+	-o-transform: rotate(45deg);
+	transform: rotate(45deg);
+}
+.gly-rotate-90 {
+	filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=2);
+	-webkit-transform: rotate(90deg);
+	-moz-transform: rotate(90deg);
+	-ms-transform: rotate(90deg);
+	-o-transform: rotate(90deg);
+	transform: rotate(90deg);
+}
+.gly-rotate-145 {
+	filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+	-webkit-transform: rotate(145deg);
+	-moz-transform: rotate(145deg);
+	-ms-transform: rotate(145deg);
+	-o-transform: rotate(145deg);
+	transform: rotate(145deg);
+}
+.gly-rotate-180 {
+	filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=4);
+	-webkit-transform: rotate(180deg);
+	-moz-transform: rotate(180deg);
+	-ms-transform: rotate(180deg);
+	-o-transform: rotate(180deg);
+	transform: rotate(180deg);
+}
+.gly-rotate-270 {
+	filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=6);
+	-webkit-transform: rotate(270deg);
+	-moz-transform: rotate(270deg);
+	-ms-transform: rotate(270deg);
+	-o-transform: rotate(270deg);
+	transform: rotate(270deg);
+}
+
+
+.list-first {
+	background-color: #f5f5f5;
+}
+
+
+// for tags in backlog/sprintboard
+.issue-tag {
+	border-radius: 3px;
+	bottom: -1pt;
+	padding: 3px;
+	padding-bottom: 2px;
+	color: white;
+	display: inline-block;
+	font-style: normal;
+	font-weight: normal;
+	line-height: 1;
+}
+
+.story-points {
+	background-color: rgb(125,125,125);
+	border-radius: 0.5em;
+	bottom: -1pt;
+	padding: 3px;
+	padding-bottom: 2px;
+	color: white;
+	display: inline-block;
+	font-style: normal;
+	font-weight: normal;
+	line-height: 1;
+}
+
+.issuecard {
+	margin: 5px;
+	padding: 0px;
+}
+
+// overlays a link onto the card body
+.btn-issuecard {
+	position: absolute;
+	height: 100%;
+	width: 100%;
+	top: 0; bottom: 0; right: 0; left: 0;
+	background: white;
+	opacity: 0;
+}
+
+.punched-in {
+	border-color: red;
+}
+
+.btn-issuecard:hover {
+	opacity: .2;
+}
+
+.panel-body-nopad {
+	padding: 0px;
+	display: flex;
+}
+
+.issue-move {
+	flex-basis:16px;
+	display: flex;
+	justify-content: center;
+	flex-direction: column;
+}
+
+.btn-move {
+	padding: 0px;
+	margin: 0px;
+}
+
+.issue-body {
+	position:relative;
+	display:block;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	padding-left: 5px;
+	padding-right: 5px;
+	flex:1;
+}
+
+.issue-footer {
+	height: 2em;
+}
+
+.issue-footer-text {
+	position: relative;
+	top: 0.5em;
+}
+
+.issue-avatar {
+	height: 2em;
+	float:right;
+	padding-left: 4px;
+}
+
+.issue-body div a {
+	position:relative;
+	z-index: 1001;
+}
+
+.issue-title {
+}
+
+.issuecard:hover .issue-title a {
+	visibility: visible;
+}
+
+.connectedSortable {
+	height:100%;
+	align-items: stretch;
+	padding-bottom:50px;
+}
+
+.notvisible {
+	visibility:hidden;
+}
+
+.dropdown-menu > li > form > button {
+	text-align:left;
+	padding: 3px 20px;
+	clear: both;
+	font-weight: normal;
+	line-height: 1.42857143;
+	color: #333;
+	white-space: nowrap;
+	width:100%;
+}
+.dropdown-menu > li > form > button:hover,
+.dropdown-menu > li > form > button:focus {
+	color: #262626;
+	text-decoration: none;
+	background-color: #f5f5f5;
+}
+
+textarea { resize:vertical; }
+
+.breadcrumb {
+	background-color: #fff;
+	padding-left: 0px;
+	margin-bottom: 10px;
+}
+
+.navbar {
+	margin-bottom: 10px;
+	box-shadow: 0px -4px 5px 5px #888888;
+	-webkit-border-radius: 0;
+	-moz-border-radius: 0;
+	border-radius: 0;
+}
+
+.navbar-nav > li > a {
+	color: $light-foreground !important;
+}
+
+.navbar-nav > li > a > i.inactive {
+	color: $text-grey !important;
+}
+
+.nav-tabs > li > a {
+	color: $text-grey;
+}
+
+.nav-tabs > li > a:hover {
+	color: $text-color;
+	background-color: white;
+}
+
+.nav-tabs > li.active > a {
+	color: $text-color;
+}
+
+.nav-tabs > li.active > a:hover {
+	color: $text-color;
+}
+
+.search-dropdown {
+	min-width: 305px !important;
+	padding: 10px;
+	padding-bottom:0px;
+}
+
+.search-go {
+	float: right;
+}
+
+.search-term {
+	margin-bottom: 10px;
+	margin-right: 5px;
+}
+
+.discussion-list-button {
+	width: 39px;
+}
+
+.btn-group-sm > form > .btn {
+	padding: 5px 10px;
+	font-size: 12px;
+	line-height: 1.5;
+	border-radius: 3px;
+}
+.btn-group-sm > form > .btn {
+	position: relative;
+	float: left;
+	margin-left: -3px;
+	z-index:0;
+}
+
+.btn-group-sm > form > .btn:hover {
+	color: red;
+}
+.btn-group-sm > .btn {
+	z-index:1;
+}
+
+.backlog-counter {
+	font-weight: bold;
+}
+
+.dropdown-toggle.dropdown-toggle-sprints {
+	border: none;
+	background: none;
+	padding: 7px; //6 plus one for border
+}
+
+.dropdown.dropdown-sprints {
+	display: inline-block;
+}
+
+.backlog-nondropdown {
+	display: inline-block;
+	padding: 7px;
+}
+
+.olea-container {
+	display: flex;
+	flex-wrap:wrap;
+
+}
+
+#olea {
+	flex-grow: 1;
+	margin-right: 4px;
+}
+
+.olea-flex-element {
+	margin-right: 4px;
+	margin-bottom: 4px;
+}
+#text-filter {
+	width: 130px;
+}
+
+.mention_name{
+	font-size:12px;
+}
+.mention_username{
+	font-size:12px;
+	color:#999;
+}
+.mention_image{
+	float: left;
+	margin-right: 5px;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	width: 20px;
+	height: 20px;
+}
+.active .mention_username{
+	color:#fff;
+}
+.notification {
+	background-color: DarkBlue;
+	border-radius: 5px;
+	color:white;
+	padding: 5px;
+	margin-right:12px;
+}
+.comment {
+	border: 1px solid #dddddd;
+	border-radius: 5px;
+	margin-bottom: 25px;
+}
+.comment-content {
+	padding: 15px 10px;
+}
+
+.comment-header {
+	border-bottom:1px solid #dddddd;
+	padding: 3px 10px;
+}
+.comment-footer {
+	border-top:1px solid #dddddd;
+	padding: 3px 10px;
+}
+
+.comment-content table, .comment-content th, .comment-content td {
+	border-collapse: collapse !important;
+	border: 1px solid #ddd !important;
+	padding:2px 5px;
+}
+
+.wmd-preview table, .wmd-preview th, .wmd-preview td {
+	border-collapse: collapse !important;
+	border: 1px solid #ddd !important;
+	padding:2px 5px;
+}
+/*! Generated by Font Squirrel (https://www.fontsquirrel.com) on April 25, 2017 */
+
+@font-face {
+	font-family: 'robotoregular';
+	src: url('../fonts/Webfonts-Roboto/roboto-regular-webfont.eot');
+	src: url('../fonts/Webfonts-Roboto/roboto-regular-webfont.eot?#iefix') format('embedded-opentype'),
+	     url('../fonts/Webfonts-Roboto/roboto-regular-webfont.woff2') format('woff2'),
+	     url('../fonts/Webfonts-Roboto/roboto-regular-webfont.woff') format('woff'),
+	     url('../fonts/Webfonts-Roboto/roboto-regular-webfont.ttf') format('truetype'),
+	     url('../fonts/Webfonts-Roboto/roboto-regular-webfont.svg#robotoregular') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'robotomedium_italic';
+	src: url('../fonts/Webfonts-Roboto/roboto-mediumitalic-webfont.eot');
+	src: url('../fonts/Webfonts-Roboto/roboto-mediumitalic-webfont.eot?#iefix') format('embedded-opentype'),
+	     url('../fonts/Webfonts-Roboto/roboto-mediumitalic-webfont.woff2') format('woff2'),
+	     url('../fonts/Webfonts-Roboto/roboto-mediumitalic-webfont.woff') format('woff'),
+	     url('../fonts/Webfonts-Roboto/roboto-mediumitalic-webfont.ttf') format('truetype'),
+	     url('../fonts/Webfonts-Roboto/roboto-mediumitalic-webfont.svg#robotomedium_italic') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'robotomedium';
+	src: url('../fonts/Webfonts-Roboto/roboto-medium-webfont.eot');
+	src: url('../fonts/Webfonts-Roboto/roboto-medium-webfont.eot?#iefix') format('embedded-opentype'),
+	     url('../fonts/Webfonts-Roboto/roboto-medium-webfont.woff2') format('woff2'),
+	     url('../fonts/Webfonts-Roboto/roboto-medium-webfont.woff') format('woff'),
+	     url('../fonts/Webfonts-Roboto/roboto-medium-webfont.ttf') format('truetype'),
+	     url('../fonts/Webfonts-Roboto/roboto-medium-webfont.svg#robotomedium') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'robotolight_italic';
+	src: url('../fonts/Webfonts-Roboto/roboto-lightitalic-webfont.eot');
+	src: url('../fonts/Webfonts-Roboto/roboto-lightitalic-webfont.eot?#iefix') format('embedded-opentype'),
+	     url('../fonts/Webfonts-Roboto/roboto-lightitalic-webfont.woff2') format('woff2'),
+	     url('../fonts/Webfonts-Roboto/roboto-lightitalic-webfont.woff') format('woff'),
+	     url('../fonts/Webfonts-Roboto/roboto-lightitalic-webfont.ttf') format('truetype'),
+	     url('../fonts/Webfonts-Roboto/roboto-lightitalic-webfont.svg#robotolight_italic') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'robotolight';
+	src: url('../fonts/Webfonts-Roboto/roboto-light-webfont.eot');
+	src: url('../fonts/Webfonts-Roboto/roboto-light-webfont.eot?#iefix') format('embedded-opentype'),
+	     url('../fonts/Webfonts-Roboto/roboto-light-webfont.woff2') format('woff2'),
+	     url('../fonts/Webfonts-Roboto/roboto-light-webfont.woff') format('woff'),
+	     url('../fonts/Webfonts-Roboto/roboto-light-webfont.ttf') format('truetype'),
+	     url('../fonts/Webfonts-Roboto/roboto-light-webfont.svg#robotolight') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'robotoitalic';
+	src: url('../fonts/Webfonts-Roboto/roboto-italic-webfont.eot');
+	src: url('../fonts/Webfonts-Roboto/roboto-italic-webfont.eot?#iefix') format('embedded-opentype'),
+	     url('../fonts/Webfonts-Roboto/roboto-italic-webfont.woff2') format('woff2'),
+	     url('../fonts/Webfonts-Roboto/roboto-italic-webfont.woff') format('woff'),
+	     url('../fonts/Webfonts-Roboto/roboto-italic-webfont.ttf') format('truetype'),
+	     url('../fonts/Webfonts-Roboto/roboto-italic-webfont.svg#robotoitalic') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'robotobold_italic';
+	src: url('../fonts/Webfonts-Roboto/roboto-bolditalic-webfont.eot');
+	src: url('../fonts/Webfonts-Roboto/roboto-bolditalic-webfont.eot?#iefix') format('embedded-opentype'),
+	     url('../fonts/Webfonts-Roboto/roboto-bolditalic-webfont.woff2') format('woff2'),
+	     url('../fonts/Webfonts-Roboto/roboto-bolditalic-webfont.woff') format('woff'),
+	     url('../fonts/Webfonts-Roboto/roboto-bolditalic-webfont.ttf') format('truetype'),
+	     url('../fonts/Webfonts-Roboto/roboto-bolditalic-webfont.svg#robotobold_italic') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'robotobold';
+	src: url('../fonts/Webfonts-Roboto/roboto-bold-webfont.eot');
+	src: url('../fonts/Webfonts-Roboto/roboto-bold-webfont.eot?#iefix') format('embedded-opentype'),
+	     url('../fonts/Webfonts-Roboto/roboto-bold-webfont.woff2') format('woff2'),
+	     url('../fonts/Webfonts-Roboto/roboto-bold-webfont.woff') format('woff'),
+	     url('../fonts/Webfonts-Roboto/roboto-bold-webfont.ttf') format('truetype'),
+	     url('../fonts/Webfonts-Roboto/roboto-bold-webfont.svg#robotobold') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+.issue-type {
+	border: 2px black solid;
+	border-radius: 2px;
+	box-sizing: border-box;
+	min-width:18px;
+	max-width:18px;
+	margin-right: 3px;
+	text-align:center;
+	font-size:12px;
+	display:inline-block;
+	font-weight:bold;
+}
+
+.bug {
+	border-color: rgba(255,204,96 ,1)
+}
+.story {
+	border-color: rgba(249, 255, 96 ,1)
+}
+.task {
+	border-color: rgba(0,229,255 ,1)
+}
+
+.red{
+	color: rgba(255, 79, 167, 1);
+	margin: 2px
+}
+.green{
+	color: rgba(179,255,1 ,1);
+	margin: 2px
+}
+.blue{
+	color: rgba(0,229, 255, 1);
+	margin: 2px
+}
+.yellow{
+	color: rgba(249, 255, 96, 1);
+	margin: 2px
+}
+.orange{
+	color: rgba(255,204,96 ,1);
+	margin: 2px
+}
+
+.ch-tooltip {
+	padding: 5px;
+	background: #fff;
+	color: #000;
+	font-size: 12px;
+	line-height: 1.4;
+	width: 125px;
+	position: absolute;
+	z-index: 99999;
+	text-align: center;
+	border-width: 3px;
+	border-color: #00e5ff;
+	border-style: solid;
+	border-radius: 5px;
+	display: none;
+	box-sizing: border-box;
+}
+
+.ch-tooltip::after{
+	position: absolute;
+	width: 0;
+	height: 0;
+	border-color: transparent;
+	border-style: solid;
+	content: "";
+	padding: 0;
+	display: "block";
+	bottom: -6px;
+	left: 50%;
+	margin-left: -6px;
+	border-width: 6px 6px 0;
+	border-top-color: #00e5ff;
+}
+
+.panel-like {
+	width: 100%;
+	margin-bottom: 20px;
+}
+
+.cal-heatmap {
+	padding: 10px;
+	margin-top: 10px;
+	visibility: hidden;
+}

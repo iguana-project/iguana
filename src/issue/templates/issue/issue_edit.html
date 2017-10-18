@@ -1,0 +1,95 @@
+<!--
+Iguana (c) by Marc Ammon, Moritz Fickenscher, Lukas Fridolin,
+Michael Gunselmann, Katrin Raab, Christian Strate
+
+Iguana is licensed under a
+Creative Commons Attribution-ShareAlike 4.0 International License.
+
+You should have received a copy of the license along with this
+work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
+-->
+{% extends "_base.html" %}
+{% load i18n %}
+{% load bootstrap3 %}
+
+{% block title %}{% trans "Edit" %} {{ Issue.get_ticket_identifier }}{% endblock title %}
+
+{% block content %}
+<h1 class="page-header">{% trans "Edit" %} {{ Issue.get_ticket_identifier }}</h1>
+	<form method="POST" class="post-form">{% csrf_token %}
+		{% bootstrap_form form %}
+		{% buttons %}
+			<button type="submit" class="save btn btn-default" id="id_submit_edit">
+				{% trans "Save" %}
+			</button>
+		{% endbuttons %}
+	</form>
+{% endblock %}
+
+{% block extra_script %}
+	{# TODO in dem form.media muss noch irgendwo ein closing p-tag sein, dass da nicht hingehört, da das p-tag bereits implizit durch den öffnenden div-tag geschlossen wurde #}
+	{{ form.media }}
+<script>
+$(function () {
+	$('<div class="form-group panel panel-body" style="border: 1px solid rgba(0,0,0,0.25)"><form action="" id="create_new_tag"><input type="text" id="new_tag" autofocus="autofocus" placeholder="New Tag" class="form-control" style="margin-right:10px; display:inline-block"></input><button type="button" class="btn btn-default btn-sm" id="send" style="display:inline-block; margin-right:10px">Add new Tag!</button><span id="done"></span></form></div>').insertBefore($(".form-group").last());
+	$("#new_tag").bind('keydown', 'return', function (e) {
+		if (e.which == 13){
+			$("#send").trigger("click");
+			return true;
+		}
+
+	});
+	$("#create_new_tag").on("submit", function (e) {
+		e.preventDefault();
+	});
+	function getCookie(name) {
+		var cookieValue = null;
+		if (document.cookie && document.cookie !== '') {
+			var cookies = document.cookie.split(';');
+			for (var i = 0; i < cookies.length; i++) {
+				var cookie = jQuery.trim(cookies[i]);
+				// Does this cookie string begin with the name we want?
+				if (cookie.substring(0, name.length + 1) === (name + '=')) {
+					cookieValue = decodeURIComponent(cookie.substring(name.length + 1))
+					break;
+				}
+			}
+		}
+		return cookieValue;
+	}
+
+	var csrftoken = getCookie('csrftoken');
+
+	function csrfSafeMethod(method) {
+		return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+	}
+
+
+	$.ajaxSetup({
+		beforeSend: function(xhr, settings) {
+			if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+				console.log(csrftoken)
+				xhr.setRequestHeader("X-CSRFToken", csrftoken);
+			}
+		}
+	});
+
+	$("#send").click(function () {
+		$.ajax({
+			url: '/project/' +'{{ object.project.name_short }}' + '/tag/',
+			data: { 'tag_text': $("#new_tag").val(), 'create_tag': '', 'color': '', 'csrfmiddlewaretoken': csrftoken },
+			type: 'post',
+			cache: false,
+			success: function (data) {
+				$("#done").attr('style', 'color: green').html($("#new_tag").val()+ " successfully added").fadeIn("slow").delay(1000).fadeOut("slow");
+				$("#new_tag").val("");
+			},
+			error: function(data) {
+				$("#done").attr('style','color: red').html("").delay(5000).fadeOut(2000);
+				$("#done").append(data.responseJSON.tag_text[0].message);
+			}
+			})
+	});
+});
+</script>
+{% endblock %}

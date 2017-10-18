@@ -1,0 +1,11 @@
+[staging]
+staging.iguana-project.me
+
+[production]
+www.iguana-project.me
+
+[deploy]
+staging.iguana-project.me
+
+[jenkins]
+jenkins.computermokel.de

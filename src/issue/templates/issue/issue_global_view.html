@@ -1,0 +1,171 @@
+<!--
+Iguana (c) by Marc Ammon, Moritz Fickenscher, Lukas Fridolin,
+Michael Gunselmann, Katrin Raab, Christian Strate
+
+Iguana is licensed under a
+Creative Commons Attribution-ShareAlike 4.0 International License.
+
+You should have received a copy of the license along with this
+work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
+-->
+{% extends "_base.html" %}
+{% load i18n %}
+{% load filter %}
+
+{% block title %}{% trans "All your Issues" %}{% endblock title %}
+
+{% block content %}
+	<h1 class="page-header">{% trans "Your issues" %}</h1>
+	<div id="issue_filter" style="margin-bottom:10px;">
+		<div class="dropdown" style="display:inline-block; ">
+			<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
+				{% trans "Project" %}
+				<span class="caret"></span>
+			</button>
+			<ul class="dropdown-menu">
+				{% for proj in request.user.get_projects %}
+					<li>
+						{% if request.GET.project == proj.name_short %}
+							<a href="{{ request.path }}{% query_string request.META.QUERY_STRING project-proj.name_short%}"><small>{{proj.name_short}}</small> <b>{{proj.name}}</b>
+								<span class="glyphicon glyphicon-ok"></span>
+							{% else %}
+								<a href="{{ request.path }}{% query_string request.META.QUERY_STRING project=proj.name_short%}"><small>{{proj.name_short}}</small> <b>{{proj.name}}</b>
+								{% endif %}
+								</a>
+					</li>
+				{% endfor %}
+			</ul>
+		</div>
+		{% include "orderby.html" %}
+		<div style="display:inline-block">
+			{% if request.GET.show_done == 'true' %}
+				<a class="btn btn-default active" href="{{ request.path }}{% query_string request.META.QUERY_STRING show_done-'true' filt-'true'%}">{% trans "Include done issues" %}</a>
+			{% else %}
+				<a class="btn btn-default" href="{{ request.path }}{% query_string request.META.QUERY_STRING show_done+'true' filt-'true'%}">{% trans "Include done issues" %}</a>
+			{% endif %}
+		</div>
+		<div style="display:inline-block">
+			{% if request.GET.show_archived == 'true' %}
+				<a class="btn btn-default active" href="{{ request.path }}{% query_string request.META.QUERY_STRING show_archived-'true' filt-'true'%}">{% trans "Include archived issues" %}</a>
+			{% else %}
+				<a class="btn btn-default" href="{{ request.path }}{% query_string request.META.QUERY_STRING show_archived+'true' filt-'true' %}">{% trans "Include archived issues" %}</a>
+			{% endif %}
+		</div>
+		<div style="display:inline-block">
+			{% if request.GET.sprint_only == 'true' %}
+				<a class="btn btn-default active" href="{{ request.path }}{% query_string request.META.QUERY_STRING sprint_only-'true' filt-'true'%}">{% trans "In running sprint" %}</a>
+			{% else %}
+				<a class="btn btn-default" href="{{ request.path }}{% query_string request.META.QUERY_STRING sprint_only+'true' filt-'true' %}">{% trans "In running sprint" %}</a>
+			{% endif %}
+		</div>
+		<div style="display:inline-block">
+			{% if request.GET.followed == 'true' %}
+				<a class="btn btn-default active" href="{{ request.path }}{% query_string request.META.QUERY_STRING followed-'true' filt-'true'%}">{% trans "I'm following" %}</a>
+			{% else %}
+				<a class="btn btn-default" href="{{ request.path }}{% query_string request.META.QUERY_STRING followed+'true' filt-'true'%}">{% trans "I'm following" %}</a>
+			{% endif %}
+		</div>
+		<div style="display:inline-block;">
+			{% if request.META.QUERY_STRING and request.GET.filt != 'true' %}
+				<form class="form-inline" method="post" action="{% url 'common:create_filter' %}">
+					{% csrf_token %}
+					<div class="input-group" style="width:150px" >
+						<input class="form-control"  id="name" maxlength="99" name="name" placeholder="Save filter" title="" type="text" required="">
+						<div class="input-group-btn">
+							<button class="btn btn-default" type="submit">
+								<span class="glyphicon glyphicon-ok" \>
+							</button>
+						</div>
+					</div>
+					<input type="hidden" name="typ" value="issue_global_view" />
+					<input type="hidden" name="string" value={{request.META.QUERY_STRING}} />
+					<input type="hidden" name="next" value="{{request.get_full_path}}&filt=true" />
+				</form>
+			{% endif %}
+		</div>
+	</div>
+	{% for filt in request.user.filters.all %}
+		{% if filt.typ == 'issue_global_view' %}
+			<div class="btn-group btn-group-sm">
+				<a class="btn btn-default {% if filt.queryset|add:"&filt=true" == request.META.QUERY_STRING %} active{% endif %}" href="{{request.path}}{% if filt.queryset|add:"&filt=true" != request.META.QUERY_STRING %}?{{ filt.queryset }}&filt=true{% endif %}">{{ filt.name}}</a>
+				</button>
+				<form  method="post" style="display:inline-block" action="{% url 'common:create_filter' %}">
+					{% csrf_token %}
+					<button class="btn btn-default" type="submit">
+						<span class="glyphicon glyphicon-remove"\>
+					</button>
+					<input type="hidden" name="delete" value="true" />
+					<input type="hidden" name="string" value={{filt.queryset}} />
+					<input type="hidden" name="next" value={{request.path}} />
+				</form>
+			</div>
+		{% endif %}
+	{% endfor %}
+	{% if issues %}
+		<table class="table">
+			<thead>
+				<tr>
+					<th>{% trans "Shortname" %}</th>
+					<th>{% trans "Project" %}</th>
+					<th>{% trans "Issue" %}</th>
+					<th>{% trans "Status" %}</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for issue in issues%}
+					<tr {% if issue.archived %} style="text-decoration: line-through" {% endif %}>
+					<td>
+						<div class="issue-type text-muted {{issue.type|lower}}" title={{issue.type}}>
+			{{ issue.type|slice:":1" }}
+		</div>
+							{{ issue.get_ticket_identifier }}
+							{% if issue.get_priority_display == "Critical" %}
+								<span class="glyphicon glyphicon-arrow-up red" title="{% trans "Priority" %}: {% trans "Critical" %}"></span>
+							{% elif issue.get_priority_display == "High" %}
+								<span class="glyphicon glyphicon-arrow-up gly-rotate-45 red" title="{% trans "Priority" %}: {% trans "High" %}"></span>
+							{% elif issue.get_priority_display == "Low" %}
+								<span class="glyphicon glyphicon-arrow-up gly-rotate-145 green" title="{% trans "Priority" %}: {% trans "Low" %}"></span>
+							{% elif issue.get_priority_display == "Unimportant" %}
+								<span class="glyphicon glyphicon-arrow-up gly-rotate-180 green" title="{% trans "Priority" %}: {% trans "Unimportant" %}"></span>
+							{% endif %}
+						</td>
+						<td><a href="{% url 'project:detail' project=issue.project.name_short %}">{{ issue.project.name_short }}</a></td>
+						<td><a href="{% url 'issue:detail' project=issue.project.name_short sqn_i=issue.number %}">{{issue.title}}</a>
+							{% if request.user in issue.assignee.all %}
+								<i class="glyphicon glyphicon-star" title=" {% trans "I'm working on" %}"></i>
+							{% endif %}
+							{% if request.user in issue.participant.all %}
+								<i class="glyphicon glyphicon-bell" title=" {% trans "Notifications on" %}"></i>
+							{% endif %}
+							{% if issue.storypoints %}
+								<span class="story-points" title="{% trans "Storypoints" %}">{{issue.storypoints}}</span>
+							{% endif %}
+						</td>
+						<td>{{issue.kanbancol.name}}</td>
+						<td><div style="float:right">{% include "issue_option_template.html"%}</div></td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	{% else %}
+		<p>{% trans "No issues at the moment" %}</p>
+	{% endif %}
+	<div class="pagination">
+		<span class="step-links">
+			{% if issues.has_previous %}
+				<a href="{{ request.path }}{% query_string request.META.QUERY_STRING page=issues.previous_page_number %}">{% trans "previous" %}</a>
+			{% endif %}
+
+			{% if issues.has_previous or issues.has_next %}
+				<span class="current">
+					Page {{ issues.number }} of {{ issues.paginator.num_pages }}.
+				</span>
+			{% endif %}
+
+			{% if issues.has_next %}
+				<a href="{{ request.path }}{% query_string request.META.QUERY_STRING page=issues.next_page_number %}">{% trans "next" %}</a>
+			{% endif %}
+		</span>
+	</div>
+{% endblock content %}

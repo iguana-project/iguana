@@ -1,0 +1,147 @@
+<!--
+Iguana (c) by Marc Ammon, Moritz Fickenscher, Lukas Fridolin,
+Michael Gunselmann, Katrin Raab, Christian Strate
+
+Iguana is licensed under a
+Creative Commons Attribution-ShareAlike 4.0 International License.
+
+You should have received a copy of the license along with this
+work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
+-->
+{% extends "_base.html" %}
+{% load i18n %}
+{% load bootstrap3 %}
+{% block title %}{% trans "Manage Tags" %}{% endblock title %}
+
+
+{% block content %}
+{% trans "settings" as viewpoint %}
+{% include "projectnavi.html" %}
+<div class="row">
+<div class="col-md-2">
+	{% trans "tags" as viewpoint %}
+	{% include "settingsnavi.html" %}
+</div>
+<div class="col-md-10">
+<div class="panel panel-default">
+	<div class="panel-heading">{% trans "Create new Tag" %}</div>
+	<div class="panel-body">
+		<form method="post" id="id_create-tags" class="post-form">{% csrf_token %}
+			{% if form.errors %}
+				{% for field in form %}
+					{% for error in field.errors %}
+						<div class="alert alert-danger">
+						{{ error|escape }}
+						</div>
+					{% endfor %}
+					{% for error in form.non_field_errors %}
+						<div class="alert alert-danger">
+						{{ error|escape }}
+						</div>
+					{% endfor %}
+				{% endfor %}
+				{# this is somhow an ugly solution for the swallowed Validation-Errors #}
+				<div class="form-group"><label class="control-label" for "id_tag_text", style="color:#a94442">Text</label><input class="form-control" id="id_tag_text" maxlength="32" name="tag_text" placeholder="Text" title="" type="text" required="" style="border-color:#a94442;"></div>
+			{% else %}
+				<div class="form-group"><label class="control-label" for "id_tag_text">Text</label><input class="form-control" id="id_tag_text" maxlength="32" name="tag_text" placeholder="Text" title="" type="text" required=""></div>
+			{% endif %}
+			<div class="form-group"><label class="control-label" for="id_color">Color</label>
+				<select class="form-control" id="id_color" name="color" title="">
+					{% for color, text in form.color.field.choices %}
+						{% if color|is_bright_color %}
+							<option value="{{color}}" style="background: #{{color}}; color: black;font-size: 130%"> {{text}} </option>
+						{% else %}
+							<option value="{{color}}" style="background: #{{color}}; color: white;font-size: 130%"> {{text}} </option>
+						{% endif %}
+					{% endfor %}
+				</select>
+			</div>
+			<div class="form-group">
+				<button type="submit" class="btn btn-default" id="id_submit_create_tag" name="create_tag">{% trans "Save" %}</button>
+			</div>
+
+			{# TODO a better fix would the usage of this with widget-adjustment instead of the above solution.#}
+			{#{% bootstrap_form form %}#}
+				{#{% buttons %}#}
+					{#<button type="submit" class="btn btn-default" id="id_submit_create_tag" name="create_tag">#}
+						{#{% trans "Save" %}#}
+					{#</button>#}
+			{#{% endbuttons %}#}
+
+
+		</form>
+	</div>
+</div>
+
+{% if tags %}
+<form method="post" id="id_delete-tags" class="post-form">
+	{% csrf_token %}
+	<ul class="list-group">
+		<li class="list-group-item list-first">
+			<div class="row">
+				<div class="col-md-3 col-xs-5">
+					{% trans "Tags" %}
+				</div>
+				<div class="col-md-8 col-xs-5">
+					{% trans "Issues" %}
+				</div>
+				<div class="col-md-1 col-xs-2">
+					{# NOTE: please do not rename the id of select_all to id_select_all - cuz then somehow it stops to work #}
+					<input type="checkbox" name="select-all" id="select_all" />
+				</div>
+			</div>
+		</li>
+		{% for tag in tags %}
+		<li class="list-group-item">
+			<div class="row">
+				<div class="col-md-3 col-xs-5">
+					<div class="issue-tag" style="background: #{{tag.color}}; color:#{{tag.font_color}};">
+						{{ tag }}
+					</div>
+				</div>
+				<div class="col-md-8 col-xs-5">
+					{% for issue in tag.issues.not_archived %}
+					<a href="{% url 'issue:detail' project=issue.project.name_short sqn_i=issue.number %}" title="{{ issue.title }}">
+						{{ issue }}</a>
+					{% if not forloop.last %}
+					,
+					{% endif %}
+					{% endfor %}
+				</div>
+				<div class="col-md-1 col-xs-2">
+					<input class="checkbox" type='checkbox' value="{{ tag }}" name=delete_tags id='id_tag_checkbox_{{ tag|slugify }}'>
+				</div>
+			</div>
+		</li>
+		{% endfor %}
+	</ul>
+	<input style="margin-top:10px" class="btn btn-danger" type="submit" id="id_submit_delete_tags" value="{% trans 'Delete selected Tags' %}" name="delete_tags"/>
+<p>
+</form>
+{% endif %}
+
+</div>
+</div>
+{% endblock content %}
+{# TODO find a no-js-solution #}
+{% block extra_script %}
+<script>
+$( document ).ready(function() {
+$("#select_all").change(function(){  //"select all" change
+	$(".checkbox").prop('checked', $(this).prop("checked")); //change all ".checkbox" checked status
+});
+
+//".checkbox" change
+$('.checkbox').change(function(){
+	//uncheck "select all", if one of the listed checkbox item is unchecked
+	if(false == $(this).prop("checked")){ //if this item is unchecked
+		$("#select_all").prop('checked', false); //change "select all" checked status to false
+	}
+	//check "select all" if all checkbox items are checked
+	if ($('.checkbox:checked').length == $('.checkbox').length ){
+		$("#select_all").prop('checked', true);
+	}
+});
+});
+</script>
+{% endblock %}

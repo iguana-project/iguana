@@ -1,0 +1,32 @@
+<!--
+Iguana (c) by Marc Ammon, Moritz Fickenscher, Lukas Fridolin,
+Michael Gunselmann, Katrin Raab, Christian Strate
+
+Iguana is licensed under a
+Creative Commons Attribution-ShareAlike 4.0 International License.
+
+You should have received a copy of the license along with this
+work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
+-->
+{% extends "_base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Success" %}{% endblock title %}
+
+{% block content %}
+<h2>{% trans "Success" %}</h2>
+
+{% if invite_list %}
+	<div class="alert alert-success">
+		{% trans "You successfully invited:" %}
+	</div>
+	<ul>
+	{% for invite in invite_list %}
+		<li>{{ invite }}</li>
+	{% endfor %}
+	</ul>
+{% else %}
+	<div class="alert alert-warning">
+		{% trans "You didn't even invite anyone. Maybe something went wrong. :/" %}
+	</div>
+{% endif %}
+{% endblock content %}

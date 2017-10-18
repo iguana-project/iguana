@@ -1,0 +1,96 @@
+<!--
+Iguana (c) by Marc Ammon, Moritz Fickenscher, Lukas Fridolin,
+Michael Gunselmann, Katrin Raab, Christian Strate
+
+Iguana is licensed under a
+Creative Commons Attribution-ShareAlike 4.0 International License.
+
+You should have received a copy of the license along with this
+work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
+-->
+{% load i18n %}
+<div class="dropdown" style=" display:inline-block;">
+	<a href="#" class="dropdown-toggle" data-toggle="dropdown" style="positin:relative; z-index:999"><span class="glyphicon glyphicon-option-vertical"></span></a>
+	<ul class="dropdown-menu {% if "issue" in request.get_full_path %}dropdown-menu-right{% endif %}" role="menu" style="position:absolute; z-index:1001">
+		<li>
+			<a href="{% url 'issue:detail' project=issue.project.name_short sqn_i=issue.number %}"><span class="glyphicon glyphicon-leaf"></span> Details </a>
+		</li>
+		<li>
+			<a href="{% url 'issue:edit' project=issue.project.name_short sqn_i=issue.number %}"><span class="glyphicon glyphicon-pencil"></span> Edit issue </a>
+		</li>
+		<li>
+			{% if request.user in issue.participant.all %}
+				<form method="post" action="{% url 'discussion:mute' issue.project.name_short issue.number %}">
+					{% csrf_token %}
+					<input type="hidden" name="next" value={{request.get_full_path}} />
+					<button type="submit" class="btn btn-link">
+						<span class="glyphicon glyphicon-eye-close"></span> {% trans "Mute"%}
+					</button>
+				</form>
+			{% else %}
+				<form method="post" action="{% url 'discussion:follow' issue.project.name_short issue.number %}">
+					{% csrf_token %}
+					<input type="hidden" name="next" value={{request.get_full_path}} />
+					<button type="submit" class="btn btn-link">
+						<span class="glyphicon glyphicon-eye-open"></span> {% trans "Follow"%}
+					</button>
+				</form>
+			{% endif %}
+		</li>
+		{% if issue.archived %}
+			<li>
+				<form  method="post" action="{% url 'issue:unarchiveissue' project=issue.project.name_short %}" >{% csrf_token %}
+					<input type="hidden" name="next" value={{request.get_full_path}} />
+					<input type="hidden" name="sqn_i" value= {{issue.number}} />
+					<button type="submit" class="btn btn-link"><span class="glyphicon glyphicon-book"></span> {% trans "Unarchive"%}</button>
+				</form>
+			</li>
+			<li>
+				<a id="issue_delete_link" href="{% url 'issue:delete' project=issue.project.name_short sqn_i=issue.number %}">
+					<span class="glyphicon glyphicon-trash"></span> {% trans "Delete"%}
+				</a>
+			</li>
+		{% else %}
+			<li>
+				{% if request.user in issue.assignee.all %}
+					<form id="atm{{issue.number}}" method="post" action="{% url 'issue:rmfromme' project=issue.project.name_short %}" >{% csrf_token %}
+						<input type="hidden" name="next" value={{request.get_full_path}} />
+						<input type="hidden" name="sqn_i" value={{issue.number}} />
+						<button type="submit" class="btn btn-link">
+							<span class="glyphicon glyphicon-star"></span> Remove from me
+						</button>
+					</form>
+				{% else %}
+					<form id="atm{{issue.number}}" method="post" action="{% url 'issue:assigntome' project=issue.project.name_short %}" >{% csrf_token %}
+						<input type="hidden" name="next" value={{request.get_full_path}} />
+						<input type="hidden" name="sqn_i" value={{issue.number}} />
+						<button type="submit" class="btn btn-link">
+							<span class="glyphicon glyphicon-star-empty"></span> Assign to me
+						</button>
+					</form>
+				{% endif %}
+				<li>
+					<li>
+						<form id="punch{{issue.number}}"  method="post" action="{% url 'issue:punch' project=issue.project.name_short sqn_i=issue.number %}" >{% csrf_token %}
+							<input type="hidden" name="next" value={{request.get_full_path}} />
+							<button type="submit" class="btn btn-link">
+								{% if request.user.punched_on.all.first.issue == issue %}
+									<span class="glyphicon glyphicon-record" style="color:red"></span> Punch out
+								{% else %}
+									<span class="glyphicon glyphicon-record" title="Punch in"></span> Punch in
+								{% endif %}
+							</button>
+						</form>
+					</li>
+					{% if not issue.sprint.is_active %}
+						<li>
+							<form  method="post" action="{% url 'issue:archiveissue' project=issue.project.name_short %}" >{% csrf_token %}
+								<input type="hidden" name="next" value={{request.get_full_path}} />
+								<input type="hidden" name="sqn_i" value= {{issue.number}} />
+								<button type="submit" class="btn btn-link"><span class="glyphicon glyphicon-book"></span> {% trans "Archive"%}</button>
+							</form>
+						</li>
+					{% endif %}
+				{% endif %}
+	</ul>
+</div>

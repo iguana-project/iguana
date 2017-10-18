@@ -1,0 +1,38 @@
+---
+  - name: add yakkety repository
+    apt_repository:
+      repo: deb http://ftp.fau.de/ubuntu yakkety universe
+      state: present
+
+  - name: set pinning to xenial
+    copy: src=preferences dest=/etc/apt/preferences
+
+  - name: update packages
+    apt: update_cache=yes
+
+  - name: install virtualenv
+    apt: name=python-virtualenv state=present
+
+  - name: install make
+    apt: name=make state=present
+
+  - name: install redis
+    apt: name=redis-server state=present
+
+  - name: restart redis
+    service: name=redis-server state=restarted
+
+  - name: install sassc
+    apt: name=sassc state=present
+
+  - name: install packages for postgresql integration
+    apt: name={{item}}
+    with_items:
+        - postgresql
+        - libpq-dev
+        - python-psycopg2
+        - gcc
+        - python3-dev
+
+  - name: reload systemd conf
+    command: systemctl daemon-reload

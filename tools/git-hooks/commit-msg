@@ -1,0 +1,13 @@
+#!/bin/bash
+
+if ! (head -n1 "$1" | grep '^IGU-' >/dev/null)
+then
+	echo 'Make sure your commit message starts with the issue number ("IGU-XY")'
+	echo 'To edit your previous commit message run:'
+	echo '	git commit -e -F BAD_MSG'
+	grep -v '#' $1 > BAD_MSG
+	exit 1
+else
+	rm BAD_MSG 2>/dev/null
+	exit 0
+fi

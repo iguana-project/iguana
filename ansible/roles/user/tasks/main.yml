@@ -1,0 +1,63 @@
+---
+  - name: generate user
+    user: >
+      name=iguana
+      shell=/bin/bash
+      generate_ssh_key=yes
+      ssh_key_bits=4096
+      ssh_key_file=.ssh/id_rsa
+      ssh_key_comment=iguana@{{host}}
+
+  - name: update authorized keys
+    authorized_key: user=iguana key="{{item}}"
+    with_file:
+      - authorized_user_keys
+
+  - name: Copy ssh key for further use
+    fetch: >
+      src="/home/iguana/.ssh/id_rsa.pub"
+      dest="./keys/{{host}}.pub"
+      flat=yes
+
+  - name: enable sudo commands for user
+    lineinfile: >
+      dest=/etc/sudoers
+      state=present
+      line='iguana ALL=(ALL) NOPASSWD: {{item}}' validate='visudo -cf %s'
+    with_items:
+      - /usr/sbin/service nginx restart
+      - /usr/sbin/service gunicorn restart
+      - /usr/sbin/service celery restart
+      - /usr/sbin/service celery-beat restart
+      - /bin/systemctl daemon-reload
+
+  - name: add gunicorn systemd service
+    template: >
+      src=gunicorn_systemd_template.j2
+      dest=/etc/systemd/system/gunicorn.service
+
+  - name: add gunicorn to autostart
+    command: systemctl enable gunicorn.service
+
+  - name: add celery systemd service
+    template: >
+      src=celery_systemd_template.j2
+      dest=/etc/systemd/system/celery.service
+
+  - name: add celery to autostart
+    command: systemctl enable celery.service
+
+  - name: add celery-beat systemd service
+    template: >
+      src=celery-beat_systemd_template.j2
+      dest=/etc/systemd/system/celery-beat.service
+
+  - name: add celery-beat to autostart
+    command: systemctl enable celery-beat.service
+
+
+  - name: create folder for settings
+    file: path=/var/lib/iguana/settings state=directory
+
+  - name: copy settings
+    copy: src=settings.json dest=/var/lib/iguana/settings/settings.json mode=0644

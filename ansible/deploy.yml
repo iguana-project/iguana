@@ -1,0 +1,6 @@
+---
+  - name: Deploy application
+    hosts: deploy
+    remote_user: iguana
+    roles:
+        - deploy
