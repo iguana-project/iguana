@@ -3,11 +3,10 @@ version: '2'
 services:
   web:
     build: .
-    command: ./docker/run_web.sh
     volumes:
       - .:/code
       - ./docker/settings.json:/var/lib/iguana/settings/settings.json
-    entrypoint: /code/docker/docker-entrypoint.sh
+    command: ["/code/docker/wait_for_db.sh", "db", "--", "/code/docker/docker-entrypoint.sh", "--", "/code/docker/run_web.sh"]
     ports:
       - "8000:8000"
     depends_on:
@@ -21,7 +20,7 @@ services:
 
   celery_worker:
     build: .
-    command: ./docker/run_celery_worker.sh
+    command: ["/code/docker/wait_for_db.sh", "db", "--", "/code/docker/run_celery_worker.sh"]
     volumes_from:
       - web
     depends_on:
@@ -30,7 +29,7 @@ services:
 
   celery_beat:
     build: .
-    command: ./docker/run_celery_beat.sh
+    command: ["/code/docker/wait_for_db.sh", "db", "--", "/code/docker/run_celery_beat.sh"]
     volumes_from:
       - web
     depends_on:
