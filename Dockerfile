@@ -8,4 +8,3 @@ FROM python:3
  RUN apt-get update
  RUN apt-get install -y postgresql-client
  RUN adduser --disabled-password --gecos '' iguana
- RUN chown -R iguana:iguana /code/
