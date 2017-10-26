@@ -115,7 +115,7 @@ for file in `find . -name "*.html"`; do
 	if [ "$start_line_of_license" != 0 ]; then
 		# NOTE: don't set overwrite to false at initialisation - this is bash!
 		if [ $overwrite ]; then
-			# unfortunately it doesn't seems like there is a non-greedy replace in sed, so we the vim-version to do the trick for us
+			# unfortunately it doesn't seems like there is a non-greedy replace in sed, so we use the vim-version to do the trick for us
 			ex -n +"${start_line_of_license},s/$LICENSE_START_0_HTML\n$LICENSE_START_1_ALL\(.*\n*\)\{-\}$LICENSE_END_HTML/$LICENSE_TEXT_HTML_REPLACE/" -cx $file
 		fi
 	else
@@ -133,7 +133,7 @@ for file in `find . -name "*.py"`; do
 	if [ "$start_line_of_license" != 0 ]; then
 		# NOTE: don't set overwrite to false at initialisation - this is bash!
 		if [ $overwrite ]; then
-			# unfortunately it doesn't seems like there is a non-greedy replace in sed, so we the vim-version to do the trick for us
+			# unfortunately it doesn't seems like there is a non-greedy replace in sed, so we use the vim-version to do the trick for us
 			ex -n +"${start_line_of_license},s/$LICENSE_START_0_PY\n$LICENSE_START_1_ALL\(.*\n*\)\{-\}$LICENSE_END_PY/$LICENSE_TEXT_PY_REPLACE/" -cx $file
 		fi
 	else
@@ -152,7 +152,7 @@ for file in `find .. -name "*.sh"`; do
 	if [ "$start_line_of_license" != 0 ]; then
 		# NOTE: don't set overwrite to false at initialisation - this is bash!
 		if [ $overwrite ]; then
-			# unfortunately it doesn't seems like there is a non-greedy replace in sed, so we the vim-version to do the trick for us
+			# unfortunately it doesn't seems like there is a non-greedy replace in sed, so we use the vim-version to do the trick for us
 			ex -n +"${start_line_of_license},s/$LICENSE_START_0_SH\n$LICENSE_START_1_ALL\(.*\n*\)\{-\}$LICENSE_END_SH/$LICENSE_TEXT_SH_REPLACE/" -cx $file
 		fi
 	else
@@ -167,7 +167,7 @@ for file in `find . -name "*.scss"`; do
 	if [ "$start_line_of_license" != 0 ]; then
 		# NOTE: don't set overwrite to false at initialisation - this is bash!
 		if [ $overwrite ]; then
-			# unfortunately it doesn't seems like there is a non-greedy replace in sed, so we the vim-version to do the trick for us
+			# unfortunately it doesn't seems like there is a non-greedy replace in sed, so we use the vim-version to do the trick for us
 			ex -n +"1,s/$LICENSE_START_0_SCSS_ESCAPED\n$LICENSE_START_1_ALL\(.*\n*\)\{-\}$LICENSE_END_SCSS/${LICENSE_TEXT_SCSS_REPLACE}/" -cx $file
 		fi
 	else
@@ -187,7 +187,7 @@ for file_name in ${js_files[@]}; do
 	if [ "$start_line_of_license" != 0 ]; then
 		# NOTE: don't set overwrite to false at initialisation - this is bash!
 		if [ $overwrite ]; then
-			# unfortunately it doesn't seems like there is a non-greedy replace in sed, so we the vim-version to do the trick for us
+			# unfortunately it doesn't seems like there is a non-greedy replace in sed, so we use the vim-version to do the trick for us
 			ex -n +"1,s/$LICENSE_START_0_SCSS_ESCAPED\n$LICENSE_START_1_ALL\(.*\n*\)\{-\}$LICENSE_END_SCSS/${LICENSE_TEXT_SCSS_REPLACE}/" -cx $file
 		fi
 	else
@@ -201,7 +201,7 @@ is_license_present $file start_line_of_license "html"
 if [ "$start_line_of_license" != 0 ]; then
 	# NOTE: don't set overwrite to false at initialisation - this is bash!
 	if [ $overwrite ]; then
-		# unfortunately it doesn't seems like there is a non-greedy replace in sed, so we the vim-version to do the trick for us
+		# unfortunately it doesn't seems like there is a non-greedy replace in sed, so we use the vim-version to do the trick for us
 		ex -n +"${start_line_of_license},s/$LICENSE_START_0_HTML\n$LICENSE_START_1_ALL\(.*\n*\)\{-\}$LICENSE_END_HTML/$LICENSE_TEXT_HTML_REPLACE/" -cx $file
 	fi
 else
