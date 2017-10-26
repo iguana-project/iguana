@@ -208,7 +208,7 @@ Iguana was mainly developed with the Django framework (https://www.djangoproject
 
 ### Main license
 **Iguana is licensed under the CC-BY-SA license:**
-<a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.
+<a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>. Since we use the version 4 of CC-BY-SA there is not necessarily an incompatibility with GPL - see <a href="https://creativecommons.org/faq/#can-i-apply-a-creative-commons-license-to-software">Can I apply a Creative Commons license to software?</a> and <a href="https://wiki.creativecommons.org/wiki/ShareAlike_compatibility:_GPLv3">ShareAlike compatibility: GPLv3</a>. If you see any problems that are caused by that CC-BY-SA license tell us and we might find a solution.
 
 <!-- Header for all source files -->
 <!-- Iguana (c) by Marc Ammon, Moritz Fickenscher, Lukas Fridolin,
