@@ -9,6 +9,14 @@ For more detailed documentation including a list of features see our github docu
 
 ## Installation
 
+### Docker
+You can use docker to run iguana in production. The docker-compose file comes with automated letsecnrypt certificate generation.
+* adapt `docker/settings.json`:
+  * SECRET_KEY and HOST/ALLOWED_HOSTS
+  * email: either use a sendgrid api key or a normal mail server
+* adapt the env variables of the web service in `docker-compose.yml`
+* run `sudo docker-compose up`
+
 ### Production
 To setup Iguana in a production environment you simply have to call:
 
