@@ -627,6 +627,7 @@ class IssueDetailView(LoginRequiredMixin, UserPassesTestMixin, MultiFormsView):
         newAttachment = form.save(commit=False)
         newAttachment.creator = self.request.user
         newAttachment.issue = self.get_object()
+
         newAttachment.save()
 
         return super(IssueDetailView, self).form_valid(forms, form)

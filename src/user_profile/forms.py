@@ -23,6 +23,8 @@ from common.settings import MEDIA_ROOT
 
 from django.utils.translation import ugettext_lazy as _
 
+from image_strip.image_strip import strip_img_metadata
+
 
 class CustomClearableFileInput(ClearableFileInput):
     defaultAvatar = None
@@ -96,6 +98,10 @@ class CustomUserChangeForm(ModelForm):
         # f = self.fields.get('user_permissions')
         # if f is not None:
         #     f.queryset = f.queryset.select_related('content_type')
+
+    def clean_avatar(self):
+        avatar = self.cleaned_data['avatar']
+        return strip_img_metadata(avatar)
 
     def save(self, *args, **kwargs):
         """
