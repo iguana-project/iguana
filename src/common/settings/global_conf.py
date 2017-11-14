@@ -113,6 +113,7 @@ else:
 
 # see https://docs.djangoproject.com/en/1.11/ref/settings/#std:setting-DEFAULT_FROM_EMAIL
 DEFAULT_FROM_EMAIL = get_setting(["email", "FROM_EMAIL_ADDRESS"])
+SERVER_EMAIL = get_setting(["email", "FROM_EMAIL_ADDRESS"])
 
 EMAIL_RECIPIENT_IN_TO_HEADER = False
 
