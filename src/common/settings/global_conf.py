@@ -53,6 +53,11 @@ HOST = get_setting(["django", "required_settings", "HOST"])
 ALLOWED_HOSTS = get_setting(["django", "required_settings", "ALLOWED_HOSTS"])
 
 
+# Admins
+# https://docs.djangoproject.com/en/1.11/ref/settings/#admins
+ADMINS = [tuple(user) for user in get_setting(["django", "optional_settings", "ADMINS"], False, [])]
+
+
 # The settings for the database that should be used by django
 # Iguana uses a Postgres SQL database
 # see https://docs.djangoproject.com/en/1.11/ref/settings/#databases

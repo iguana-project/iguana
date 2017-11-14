@@ -12,6 +12,9 @@
 			"LANGUAGE_CODE": "",
 			"TIME_ZONE": "",
 			"CAPTCHA_LENGTH": ""
+			"ADMINS": [
+				["user", "email@example.com"]
+			]
 		}
 	},
 	"database": {
