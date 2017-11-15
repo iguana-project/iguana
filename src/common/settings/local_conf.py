@@ -22,7 +22,8 @@ ADMIN_ENABLED = True
 
 
 HOST = 'localhost:8000'
-ALLOWED_HOSTS = ['localhost', 'lh']
+# NOTE: ipv6 requests are rejected even it would be allowed here
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 
 # Database
