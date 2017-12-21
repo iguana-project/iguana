@@ -30,7 +30,7 @@ from .models import Project
 from integration.models import SlackIntegration
 from kanbancol.models import KanbanColumn
 from timelog.models import Timelog
-from common.settings import HOST
+from common.settings import HOST, SLACK_ID
 from landing_page.actstream_util import unfollow_project
 
 # NOTE: ugettext_lazy "is essential when calls to these functions are located in code
@@ -237,6 +237,7 @@ class ProjectEditView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super(ProjectEditView, self).get_context_data(**kwargs)
         context['integration_slack'] = SlackIntegration.objects.filter(project__name_short=self.kwargs['project'])
+        context['slack_id'] = SLACK_ID
         context['columns'] = KanbanColumn.objects.filter(project__name_short=self.kwargs['project'])
         context['host'] = HOST
         return context
