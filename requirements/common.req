@@ -1,4 +1,4 @@
-bleach==2.1.1
+bleach==2.1.2
 celery==4.1.0
 Django==1.10.7
 django-activity-stream==0.6.4
