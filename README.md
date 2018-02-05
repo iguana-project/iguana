@@ -6,11 +6,42 @@ Iguana is a mixture of a ticket system, an issue tracker and an issue management
 
 For more detailed documentation including a list of features see our github documentation page at https://iguana-project.github.io.
 
+### Features
+* [Sprintboard](https://iguana-project.github.io/index.html#sprintboard)<br />
+	Provides possibility for short-term scheduling.
+* [Backlog](https://iguana-project.github.io/index.html#backlog)<br />
+	Provides possibility for long-term scheduling.
+* [Olea-bar](https://iguana-project.github.io/#olea-bar)<br />
+	A command line tool to create and edit existing issues.
+* [Time-logging](https://iguana-project.github.io/#time-logging)<br />
+	For both issues and projects, where the value for the later one is simply the sum of relative issue-time-logs.
+* [Activity charts](https://iguana-project.github.io/demonstration/activity.html#demo-activity_overview) [and](https://iguana-project.github.io/demonstration/time_logging.html#demo-chart)<br />
+	To keep an eye on the progress of a specific project in both aspects, for time management and amount of activities (e.g. commits).
+* [Notifications](https://iguana-project.github.io/demonstration/activity.html#navigation)<br />
+	Present multiple ways to notify you for different events. In the future it will be customizable which notifications shall be shown with which feature.
+  * [Activity stream](https://iguana-project.github.io/#activity_stream)<br />
+	show the latest actions in multiple streams.
+  * [Discussion App](https://iguana-project.github.io/demonstration/activity.html#demo-discussion_app)<br />
+	Get notifications on changes or comments on a specific issue you set a watchpoint for.
+  * [Email notifications](https://iguana-project.github.io/demonstration/activity.html#demo-discussion_app)<br />
+	Sends notifications via email.
+* [Search function](https://iguana-project.github.io/demonstration/search_function.html#navigation)<br />
+	Search any type of a specific data with regex support.
+* [Integrations](https://iguana-project.github.io/index.html#integrations)<br />
+	To simplify your workflow
+  * Git
+  * Slack
+* [REST-API](https://iguana-project.github.io/#rest-api)<br />
+	To extend your possibilities on how to use iguana.
+* [Markdown support](https://iguana-project.github.io/#markdown_support)<br />
+	For nicer formatting of comments and descriptions.
+* [Ansible](#using-ansible-for-deployment)<br />
+	Easy and fast start due to the usage of ansible
 
 ## Installation
 
 ### Docker
-You can use docker to run iguana in production. The docker-compose file comes with automated letsecnrypt certificate generation.
+You can use docker to run iguana in production. The docker-compose file comes with automated letsencrypt certificate generation.
 * adapt `docker/settings.json`:
   * SECRET_KEY and HOST/ALLOWED_HOSTS
   * email: either use a sendgrid api key or a normal mail server
