@@ -15,8 +15,8 @@ For more detailed documentation including a list of features see our github docu
 	A command line tool to create and edit existing issues.
 * [Time-logging](https://iguana-project.github.io/#time-logging)<br />
 	For both issues and projects, where the value for the later one is simply the sum of relative issue-time-logs.
-* [Activity charts](https://iguana-project.github.io/demonstration/activity.html#demo-activity_overview) [and](https://iguana-project.github.io/demonstration/time_logging.html#demo-chart)<br />
-	To keep an eye on the progress of a specific project in both aspects, for time management and amount of activities (e.g. commits).
+* Activity charts<br />
+	To keep an eye on the progress of a specific project in both aspects, for time management and amount of activities (e.g. commits). There is an [acitivty overview](https://iguana-project.github.io/demonstration/activity.html#demo-activity_overview) for a project and a [different chart](https://iguana-project.github.io/demonstration/time_logging.html#demo-chart) for the proportion of issues on a single project.
 * [Notifications](https://iguana-project.github.io/demonstration/activity.html#navigation)<br />
 	Present multiple ways to notify you for different events. In the future it will be customizable which notifications shall be shown with which feature.
   * [Activity stream](https://iguana-project.github.io/#activity_stream)<br />
