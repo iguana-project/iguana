@@ -95,8 +95,8 @@ To start the local Django web server simply run:
 **TODO:** write Ansible instructions
 
 ### Integrations
-**TODO:** write instructions for git integration
-**TODO:** write instructions for slack integration
+* **TODO:** write instructions for git integration
+* **TODO:** write instructions for slack integration
 
 ## Makefile targets
 These targets can be run with:
