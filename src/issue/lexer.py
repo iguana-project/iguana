@@ -130,4 +130,6 @@ def t_TITLE(t):
 
 # error handling
 def t_error(t):
-    raise Exception(u"Not able to parse char: %s" % t.value[0])
+    raise Exception(u"Please note that the usage of control characters is not possible until escaping is implemented." +
+                    u" Also the error might be caused by a neighbouring character." +
+                    u" - Not able to parse char: '%s'" % t.value[0])
