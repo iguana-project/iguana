@@ -186,7 +186,7 @@ class ProcessOleaView(LoginRequiredMixin, View):
                 parser.issue_to_change.save()
         except Exception as e:
             messages.add_message(request, messages.ERROR,
-                                 _("An error occured when processing your request") + ": " + str(e))
+                                 _("An error occurred when processing your request") + ": " + str(e))
             # store expression in session data to give edit ability to user
             self.request.session['oleaexpression'] = self.request.POST.get('expression')
 
