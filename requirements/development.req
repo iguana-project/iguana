@@ -1,11 +1,11 @@
 -r common.req
 
 chromedriver==2.24.1
-coverage==4.4.1
-django-extensions==1.9.6
+coverage==4.5.1
+django-extensions==2.0.0
 django-test-without-migrations==0.6
-model-mommy==1.4.0
-pep8==1.7.0
+model-mommy==1.5.1
+pep8==1.7.1
 piprot==0.9.7
 requests==2.18.4
-selenium==3.6.0
+selenium==3.9.0
