@@ -1,4 +1,4 @@
-bleach==2.1.2
+bleach==2.1.3
 celery==4.1.0
 Django==1.10.8
 django-activity-stream==0.6.5
@@ -22,4 +22,4 @@ ply==3.11
 python-dateutil==2.6.1
 pytz==2018.3
 redis==2.10.6
-slackclient==1.1.2
+slackclient==1.1.3
