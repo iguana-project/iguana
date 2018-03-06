@@ -21,7 +21,8 @@ def jwt_response_payload_handler(token, user=None, request=None):
     try:
         refresh_token = user.refresh_tokens.get(app=app).key
     except RefreshToken.DoesNotExist:
-        refresh_token = RefreshToken(app=app, user=user).save()
+        refresh_token = RefreshToken(app=app, user=user)
+        refresh_token.save()
 
     payload['refresh_token'] = refresh_token
 
