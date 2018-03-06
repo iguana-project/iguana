@@ -26,10 +26,10 @@ else
 fi
 
 # activate virtualenv
-source $VIRTUALENV_DIR/bin/activate
+# source $VIRTUALENV_DIR/bin/activate
 
-# install the chromedriver
-pip install chromedriver
+# install the chromedriver // we did that alreay via refresh-reqs target in Makefile
+# pip install chromedriver
 
 # create the link
-ln -sf ../${LINKSRC} ${VIRTUALENV_DIR}/bin/chromedriver
+ln -sf ../src/chromedriver/chromedriver/bin/${LINKSRC} ${VIRTUALENV_DIR}/bin/chromedriver

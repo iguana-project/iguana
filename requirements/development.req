@@ -1,6 +1,6 @@
 -r common.req
 
-chromedriver==2.24.1
+-e git+git://github.com/asdfkaba/chromedriver.git#egg=chromedriver
 coverage==4.5.1
 django-extensions==2.0.0
 django-test-without-migrations==0.6
