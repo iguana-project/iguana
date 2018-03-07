@@ -1,7 +1,7 @@
 bleach==2.1.3
 celery==4.1.0
 Django==2.0.2
-django-activity-stream==0.6.5
+-e git://github.com/asdfkaba/django-activity-stream.git#egg=django-activity-stream
 django-autocomplete-light==3.2.10
 django-bootstrap3==9.1.0
 django-cuser==2017.3.16
