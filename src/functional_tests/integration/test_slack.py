@@ -39,7 +39,7 @@ class SlackTest(StaticSeleniumTestCase):
         self.selenium.refresh()
 
         self.short = "asdf"
-        self.project = Project(creator=self.user, name="asdf", name_short=self.short)
+        self.project = Project(creator=self.user, name="long_asdf", name_short=self.short)
         self.project.save()
         self.project.developer.set((self.user.pk,))
         self.project.manager.set((self.user.pk,))
@@ -51,24 +51,25 @@ class SlackTest(StaticSeleniumTestCase):
         si.channel = "channel"
         si.save()
 
+        self.title_name = 'This is title'
+        self.comment = "This is comment"
+
     @patch('integration.models.SlackClient')
     def test_issue_create(self, slackmock):
-        # TODO TESTCASE broken test - api calls are broken
-        return
         self.selenium.get('{}{}'.format(self.live_server_url, reverse('issue:create',
                                         kwargs={'project': self.short})))
         f = self.selenium.find_element_by_id('id_title')
-        f.send_keys('This is title')
+        f.send_keys(self.title_name)
         self.selenium.find_element_by_id('id_submit_create').click()
         slackmock().api_call.assert_called_with(
             "chat.postMessage",
             channel="channel",
             attachments=[{
-                'fallback': str(self.user) + " created issue asdf-1 This is title.",
+                'fallback': str(self.user) + " created issue "+self.short+"-1 "+self.title_name+".",
                 'pretext': 'New Issue:',
                 'text': "",
-                'title': "asdf-1 This is title",
-                'title_link': "http://localhost:8000/project/asdf/issue/1/",
+                'title': self.short+"-1 "+self.title_name,
+                'title_link': "http://localhost:8000/project/"+self.short+"/issue/1/",
                 'author_name': str(self.user),
                 'author_link': "http://localhost:8000" + self.user.get_absolute_url(),
                 'author_icon': "http://localhost:8000" + self.user.avatar.url,
@@ -78,10 +79,8 @@ class SlackTest(StaticSeleniumTestCase):
 
     @patch('integration.models.SlackClient')
     def test_issue_modify(self, slackmock):
-        # TODO TESTCASE broken test - api calls are broken
-        return
         issue = Issue()
-        issue.title = "This is title"
+        issue.title = self.title_name
         issue.project = self.project
         issue.save()
 
@@ -99,10 +98,10 @@ class SlackTest(StaticSeleniumTestCase):
             "chat.postMessage",
             channel="channel",
             attachments=[{
-                'fallback': str(self.user) + " changed issue asdf-1 This is title.",
+                'fallback': str(self.user) + " changed issue "+self.short+"-1 "+self.title_name+".",
                 'pretext': 'Issue changed:',
-                'title': "asdf-1 This is title",
-                'title_link': "http://localhost:8000/project/asdf/issue/1/",
+                'title': self.short+"-1 "+self.title_name,
+                'title_link': "http://localhost:8000/project/"+self.short+"/issue/1/",
                 'author_name': str(self.user),
                 'author_link': "http://localhost:8000" + self.user.get_absolute_url(),
                 'author_icon': "http://localhost:8000" + self.user.avatar.url,
@@ -118,7 +117,7 @@ class SlackTest(StaticSeleniumTestCase):
     @patch('integration.models.SlackClient')
     def test_comment(self, slackmock):
         issue = Issue()
-        issue.title = "This is title"
+        issue.title = self.title_name
         issue.project = self.project
         issue.save()
 
@@ -129,20 +128,22 @@ class SlackTest(StaticSeleniumTestCase):
                     )
                 )
         f = self.selenium.find_element_by_id("id_text")
-        f.send_keys("This is comment")
+        f.send_keys(self.comment)
         self.selenium.find_element_by_name("action").click()
         slackmock().api_call.assert_called_with(
             "chat.postMessage",
             channel="channel",
             attachments=[{
-                'fallback': str(self.user) + ' commented on "asdf-1 This is title".',
+                'fallback': str(self.user) + ' commented on \"'+self.short+'-1 '+self.title_name+'\".',
                 'pretext': 'New comment:',
-                'text': 'This is comment',
-                'title': "asdf-1 This is title",
-                'title_link': "http://localhost:8000/project/asdf/issue/1/",
+                'text': self.comment,
+                'title': self.short+"-1 "+self.title_name,
+                'title_link': "http://localhost:8000/project/"+self.short+"/issue/1/",
                 'author_name': str(self.user),
                 'author_link': "http://localhost:8000" + self.user.get_absolute_url(),
                 'author_icon': "http://localhost:8000" + self.user.avatar.url,
                 'color': 'good',
             }]
         )
+
+    # TODO TESTCASE for olea-bar
