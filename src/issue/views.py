@@ -371,6 +371,11 @@ class AddIssueToKanbancolView(LoginRequiredMixin, UserPassesTestMixin, View):
                                  )
         else:
             issue = issue.first()
+            signals.modify.send(sender=Issue,
+                                instance=issue,
+                                changed_data={'kanbancol': str(kanbancol.first())},
+                                user=self.request.user,
+                                )
             issue.kanbancol = kanbancol.first()
             issue.save(update_fields=['kanbancol'])
 
