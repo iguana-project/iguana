@@ -16,11 +16,15 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 
 {% block content %}
 {% if qresult|length == 0 %}
-	<h1>{% trans "No items matching your query found" %}</h1>
+{% if request.method == "POST" %}
+<div class="alert alert-warning" role="alert">
+	{% trans "No items matching your query found" %}
+</div>
+{% endif %}
 <div class="row">
-	<div class="col-md-6">
+	<div class="col-md-7">
 		<div class="panel panel-default">
-			<div class="panel-heading"><h3>{% trans "Searchable Items" %}</h3></div>
+			<div class="panel-heading">{% trans "Searchable Items" %}</div>
 			<div class="panel-body">
 				<table class="table">
 				<thead>
@@ -45,11 +49,11 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 			</div>
 		</div>
 	</div>
-	<div class="col-md-4">
+	<div class="col-md-5">
 		<div class="panel panel-default">
-			<div class="panel-heading"><h3>{% trans "Compare expressions" %}</h3></div>
+			<div class="panel-heading">{% trans "Compare expressions" %}</div>
 			<div class="panel-body">
-				<ul class="list-group">
+				<ul class="list-group" style="margin-left:20px;">
 					{% for operator in compare %}
 						{# TODO need a better separation of key-value-pairs #}
 						<li>{{ operator }} &nbsp;&nbsp; {{compare|get_searchable_items_for_app:operator}}</li>
@@ -58,48 +62,50 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 			</div>
 		</div>
 	</div>
-	<div class="col-md-4">
+	<div class="col-md-5">
 		<div class="panel panel-default">
-			<div class="panel-heading"><h3>{% trans "Combine expressions" %}</h3></div>
+			<div class="panel-heading">{% trans "Combine expressions" %}</div>
 			<div class="panel-body">
 				{% trans "You can combine multiple expressions with" %}
-				<ul class="list-group">
+				<ul class="list-group" style="margin-left:20px;">
 					<li>AND</li>
 					<li>OR</li>
 				</ul>
 			</div>
 		</div>
 	</div>
-	<div class="col-md-5">
+</div>
+<div class="row">
+	<div class="col-md-6">
 		<div class="panel panel-default">
-			<div class="panel-heading"><h3>{% trans "Sort" %}</h3></div>
+			<div class="panel-heading">{% trans "Sort" %}</div>
 			<div class="panel-body">
 				{% trans "You can sort the output with" %}
-				<ul class="list-group">
+				<ul class="list-group" style="margin-left:20px;">
 					<li>ASC</li>
 					<li>DESC</li>
 				</ul>
 			</div>
 		</div>
 	</div>
-	<div class="col-md-5">
+	<div class="col-md-6">
 		<div class="panel panel-default">
-			<div class="panel-heading"><h3>{% trans "Regex" %}</h3></div>
+			<div class="panel-heading">{% trans "Regex" %}</div>
 			<div class="panel-body">
 				{% trans "You can use regex for your search" %}
-				<ul class="list-group">
+				<ul class="list-group" style="margin-left:20px;">
 					{# TODO rules #}
 					TODO rules
 				</ul>
 			</div>
 		</div>
 	</div>
-	<div class="col-md-10">
+	<div class="col-md-12">
 		<div class="panel panel-default">
-			<div class="panel-heading"><h3>{% trans "Fulltext search" %}</h3></div>
+			<div class="panel-heading">{% trans "Fulltext search" %}</div>
 			<div class="panel-body">
 				{% trans "You can perform a fulltext search, linked by AND or OR, where AND links stronger than OR, e.g." %}
-				<ul class="list-group">
+				<ul class="list-group" style="margin-left:20px;">
                     <li>specific text</li>
                     <li>specific AND text AND important</li>
                     <li>specific text OR general text</li>
@@ -108,9 +114,9 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 			</div>
 		</div>
 	</div>
-	<div class="col-md-10">
+	<div class="col-md-12">
 		<div class="panel panel-default">
-			<div class="panel-heading"><h3>{% trans "Examples" %}</h3></div>
+			<div class="panel-heading">{% trans "Examples" %}</div>
 			<div class="panel-body">
 				<table class="table">
 				<thead>
@@ -129,6 +135,10 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 						<td>{% trans "Searches for Comments that contains the 'specific comment'" %}</td>
 					</tr>
 					<tr>
+						<td>Issue.tags__tag_text ~~ "part of a tag"</td>
+						<td>{% trans "Searches for issues which have a tag that contains the 'part of a tag'" %}</td>
+					</tr>
+					<tr>
 						{# TODO #}
 						<td>TODO Regex example</td>
 						<td>{% trans "TODO Regex Result" %}</td>
@@ -143,9 +153,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 		{% if typeset|length > 1 or filterobj != '' %}
 			<div class="col-md-3">
 				<div class="panel panel-default">
-					<div class="panel-heading"><h3>{% trans "Filters" %}</h3></div>
-					<div class="panel-body">
-						<h4>{% trans "Types" %}</h4>
+					<div class="panel-heading">{% trans "Filters" %}</div>
 						<ul class="list-group">
 							{% for i in typeset %}
 								<form id="filter_{{i.0}}" method="post" action="{% url 'search:resultpage' %}" >{% csrf_token %}
@@ -161,10 +169,9 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 									</button>
 								</form>
 							{% endfor %}
-							<br />{% trans "Didn't find the expected result?" %} <a class="btn btn-default" href="{% url 'search:resultpage' %}">{% trans "see help" %}</a>
-
+							<li class="list-group-item">{% trans "Didn't find the expected result?" %} <a class="btn btn-default" href="{% url 'search:resultpage' %}">{% trans "see help" %}</a>
+							</li>
 						</ul>
-					</div>
 				</div>
 			</div>
 		<div class="col-md-9">
@@ -173,19 +180,19 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 		{% endif %}
 			<div class="panel panel-default">
 				<div class="panel-heading">
-					<h3>{% trans "Search results" %}</h3>
+					{% trans "Search results" %}
 				</div>
-				<div class="panel-body">
 					<ul class="list-group">
 					{% for i in qresult %}
 						<li class="list-group-item">
 							{# i.2: Object type #}
 							<h4 class ="list-group-item-heading"><a href={{i.1}}>{{ i.0 }}</a></h4>
-							<p class=list-group-item-text>I'm a placeholder for the matching sequence of this item</p>
+							{% if filterobj|length == 0 %}
+							<p class=list-group-item-text>{{i.2}}</p>
+							{% endif %}
 						</li>
 					{% endfor %}
 					</ul>
-				</div>
 			</div>
 		</div>
 	</div>
