@@ -149,6 +149,14 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 							<td>{% trans "Searches for all Issues that has been created by user their usernames start with 'mo' and are followed by any word without spacing. <b>Please note</b> that spaces are no valid character in the username so the result is equal to the one of the above request." %}</td>
 						</tr>
 						<tr>
+							<td>Issue.kanbancol.name == "Done"</td>
+							<td>{% trans "Searches for all Issues that are set to the kanbancol with the name 'Done', this includes Issues in the archive as well." %}</td>
+						</tr>
+						<tr>
+							<td>Issue.kanbancol.type == "ToDo"</td>
+							<td>{% trans "Searches for all Issues that are set to a kanbancol with the type 'ToDo', this includes Issues in the archive and backlog as well." %}</td>
+						</tr>
+						<tr>
 							{# TODO #}
 							<td>TODO Regex example</td>
 							<td>{% trans "TODO Regex Result" %}</td>
