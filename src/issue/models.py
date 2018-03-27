@@ -314,8 +314,7 @@ class Issue(SearchableMixin, CustomModel):
     archived = models.BooleanField(_("archived"), editable=False, default=False)
     logged_total = models.DurationField(_("Logged time"), default=datetime.timedelta(seconds=0))
 
-    # TODO add kanbancol to searchable fields
-    searchable_fields = ['project', 'sprint', 'description', 'assignee', 'due_date', 'tags',
+    searchable_fields = ['project', 'sprint', 'description', 'kanbancol', 'assignee', 'due_date', 'tags',
                          'number', 'priority', 'storypoints', 'title', 'type', 'creator']
 
     class Meta:

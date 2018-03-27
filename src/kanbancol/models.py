@@ -34,6 +34,7 @@ class KanbanColumn(CustomModel):
         choices=COLUMN_TYPES,
         default='ToDo',
     )
+    searchable_fields = ['name', 'type']
 
     class Meta:
         ordering = ['position']
