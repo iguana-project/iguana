@@ -95,7 +95,9 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 				{% trans "You can use regex for your search" %}
 				<ul class="list-group" style="margin-left:20px;">
 					{# TODO rules #}
-					TODO rules
+					The applied regex-syntax can be found here: <a href="https://docs.python.org/3/library/re.html">python3-re</a>
+					<br>
+					TODO some basic rules
 				</ul>
 			</div>
 		</div>
@@ -137,6 +139,14 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 					<tr>
 						<td>Issue.tags__tag_text ~~ "part of a tag"</td>
 						<td>{% trans "Searches for issues which have a tag that contains the 'part of a tag'" %}</td>
+					</tr>
+					<tr>
+						<td>Issue.creator.username ~ "mo.*"</td>
+						<td>{% trans "Searches for all Issues that has been created by user their usernames start with 'mo' <b>Please note</b> that this is case sensitive!." %}</td>
+					</tr>
+					<tr>
+						<td>Issue.creator.username ~ "mo\w"</td>
+						<td>{% trans "Searches for all Issues that has been created by user their usernames start with 'mo' and are followed by any word without spacing. <b>Please note</b> that spaces are no valid character in the username so the result is equal to the one of the above request." %}</td>
 					</tr>
 					<tr>
 						{# TODO #}
