@@ -313,9 +313,7 @@ def compile(expression, project, user):
                                 creator=glob_user)
         issue_to_change.save()
 
-    if issue_created:
-        signals.create.send(sender=Issue, instance=issue_to_change, user=user)
-    elif issue_changed:
+    if issue_changed:
         changed_data = signals.fields_to_changed_data(issue_to_change, [tup[0] for tup in attrs_to_set])
 
     # handle timelogging separately
@@ -339,6 +337,9 @@ def compile(expression, project, user):
             # no db model field, simply assign value
             issue_to_change.__setattr__(attr[0], attr[1])
             issue_to_change.save()
+
+    if issue_created:
+        signals.create.send(sender=Issue, instance=issue_to_change, user=user)
 
     if not issue_created and issue_changed:
         signals.modify.send(sender=Issue, instance=issue_to_change, user=user, changed_data=changed_data)

@@ -113,22 +113,22 @@ class SearchTest(StaticSeleniumTestCase):
         driver.find_element_by_css_selector("button.btn.btn-default").click()
         self.assertEqual(self.project.name,
                          driver.find_element_by_css_selector(
-                            ".panel-body > ul:nth-child(1) > li:nth-child(2) > h4:nth-child(1) > a:nth-child(1)"
+                            ".list-group > li:nth-child(2) > h4:nth-child(1) > a:nth-child(1)"
                          ).text)
         self.assertEqual(self.project2.name,
                          driver.find_element_by_css_selector(
-                            ".panel-body > ul:nth-child(1) > li:nth-child(1) > h4:nth-child(1) > a:nth-child(1)"
+                            ".list-group > li:nth-child(1) > h4:nth-child(1) > a:nth-child(1)"
                          ).text)
         driver.find_element_by_css_selector("span.caret").click()
         self.assertIn("Project.name_short ~~ &quot;PRJ&quot;", driver.page_source)
         driver.find_element_by_css_selector("#search1 > button.btn.btn-default").click()
         self.assertEqual(self.project.name,
                          driver.find_element_by_css_selector(
-                            ".panel-body > ul:nth-child(1) > li:nth-child(2) > h4:nth-child(1) > a:nth-child(1)"
+                            ".list-group > li:nth-child(2) > h4:nth-child(1) > a:nth-child(1)"
                          ).text)
         self.assertEqual(self.project2.name,
                          driver.find_element_by_css_selector(
-                            ".panel-body > ul:nth-child(1) > li:nth-child(1) > h4:nth-child(1) > a:nth-child(1)"
+                            ".list-group > li:nth-child(1) > h4:nth-child(1) > a:nth-child(1)"
                          ).text)
         driver.find_element_by_css_selector("span.caret").click()
         driver.find_element_by_name("expression").clear()
@@ -136,24 +136,24 @@ class SearchTest(StaticSeleniumTestCase):
         driver.find_element_by_css_selector("button.btn.btn-default").click()
         self.assertEqual("(PRJ-2) Another Issue for Proj1",
                          driver.find_element_by_css_selector(
-                            ".panel-body > ul:nth-child(1) > li:nth-child(2) > h4:nth-child(1) > a:nth-child(1)"
+                            ".list-group > li:nth-child(2) > h4:nth-child(1) > a:nth-child(1)"
                          ).text)
         driver.find_element_by_css_selector("a.dropdown-toggle").click()
         self.assertIn("Issue.title ~~ &quot;Issue for Proj1&quot;", driver.page_source)
         driver.find_element_by_name("expression").clear()
         driver.find_element_by_name("expression").send_keys("User.username == \"michgibtsnicht\"")
         driver.find_element_by_css_selector("button.btn.btn-default").click()
-        self.assertEqual("No items matching your query found", driver.find_element_by_css_selector("h1").text)
+        self.assertEqual("No items matching your query found", driver.find_element_by_css_selector(".alert").text)
         driver.find_element_by_css_selector("span.caret").click()
         driver.find_element_by_name("expression").clear()
         driver.find_element_by_name("expression").send_keys("Comment.invalidfield ~~ \"b\"")
         driver.find_element_by_css_selector("button.btn.btn-default").click()
-        self.assertEqual("No items matching your query found", driver.find_element_by_css_selector("h1").text)
+        self.assertEqual("No items matching your query found", driver.find_element_by_css_selector(".alert").text)
         driver.find_element_by_css_selector("span.glyphicon.glyphicon-search").click()
         driver.find_element_by_name("expression").clear()
         driver.find_element_by_name("expression").send_keys("()aaa")
         driver.find_element_by_css_selector("button.btn.btn-default").click()
-        self.assertEqual("No items matching your query found", driver.find_element_by_css_selector("h1").text)
+        self.assertEqual("No items matching your query found", driver.find_element_by_css_selector(".alert").text)
 
         # full-text search
         driver.find_element_by_css_selector("span.caret").click()
@@ -175,7 +175,7 @@ class SearchTest(StaticSeleniumTestCase):
                       ).text)
 
         self.assertEqual(len(driver.find_element_by_css_selector(
-            ".col-md-9 > div:nth-child(1) > div:nth-child(2)"
+            ".col-md-9 ul"
             ).text.split('\n')), 10)
 
         driver.find_element_by_css_selector("#filter_Issue > button:nth-child(4)").click()
@@ -187,8 +187,8 @@ class SearchTest(StaticSeleniumTestCase):
 
         # check result list lengths for all buttons
         self.assertEqual(len(driver.find_element_by_css_selector(
-            ".col-md-9 > div:nth-child(1) > div:nth-child(2)"
-            ).text.split('\n')), 6)
+            ".col-md-9 ul"
+            ).text.split('\n')), 3)
 
         driver.find_element_by_css_selector("#filter_Project > button:nth-child(4)").click()
         self.assertEqual(driver.find_element_by_css_selector(
@@ -199,8 +199,8 @@ class SearchTest(StaticSeleniumTestCase):
             ).get_attribute('class'), 'list-group-item')
 
         self.assertEqual(len(driver.find_element_by_css_selector(
-            ".col-md-9 > div:nth-child(1) > div:nth-child(2)"
-            ).text.split('\n')), 2)
+            ".col-md-9 ul"
+            ).text.split('\n')), 1)
 
         driver.find_element_by_css_selector("#filter_User > button:nth-child(4)").click()
         self.assertEqual(driver.find_element_by_css_selector(
@@ -214,13 +214,13 @@ class SearchTest(StaticSeleniumTestCase):
             ).get_attribute('class'), 'list-group-item')
 
         self.assertEqual(len(driver.find_element_by_css_selector(
-            ".col-md-9 > div:nth-child(1) > div:nth-child(2)"
-            ).text.split('\n')), 2)
+            ".col-md-9 ul"
+            ).text.split('\n')), 1)
 
         # disable currently selected button and check result list size and highlighting
         driver.find_element_by_css_selector("button.list-group-item:nth-child(3)").click()
         self.assertEqual(len(driver.find_element_by_css_selector(
-            ".col-md-9 > div:nth-child(1) > div:nth-child(2)"
+            ".col-md-9 ul"
             ).text.split('\n')), 10)
         self.assertEqual(driver.find_element_by_css_selector(
             "#filter_User > button:nth-child(4)"
@@ -271,7 +271,7 @@ class SearchTest(StaticSeleniumTestCase):
         elem = driver.find_element_by_css_selector(".btn-link")
         self.assertEqual(elem.text, "Fancy filter")
         elem.click()
-        self.assertEqual(len(driver.find_element_by_css_selector(".panel-body > ul:nth-child(1)").text.split("\n")), 4)
+        self.assertEqual(len(driver.find_element_by_css_selector(".col-md-12 ul").text.split("\n")), 3)
 
         # test delete
         driver.get('{}{}'.format(self.live_server_url, reverse('search:advanced')))

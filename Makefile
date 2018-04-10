@@ -83,7 +83,7 @@ MAKE_SETTINGS_FILE = $(BASE)/.makeSettings
 # Targets
 #########
 
-# TODO update phony targets
+# XXX Don't forget to update the phony targets as soon as the makefile is extended
 # phony targets
 .PHONY: default help $(DJANGO_INSTALLED_APPS) $(DJANGO_INSTALLED_APPS_WILDCARD) $(WEBDRIVERS) production staging development setup-webdriver check-webdriver setup-virtualenv refresh-reqs initialize-settings link-git-hooks run startapp makemigrations migrate test test-ign_imp_errs messages compilemessages coverage coverage-report coverage-html coverage-xml coverage-erase css remove-dev_stage-setting check-dev_staging save-dev_stage-setting make-messages compile-messages list_bugs list_missing_testcases add_license_header check_requirements
 
@@ -303,10 +303,10 @@ css: ##@main Create the CSS files.
 			sassc $(DJANGO_SCSS)/$(file).scss $(DJANGO_STATIC)/css/$(file).css;), \
 		$(warning "Warning: sassc is not installed!"))
 
-list_bugs: ##@other List all occurrence of the tag "TODO BUG".
+list_bugs: ##@other List all occurrences of the tag "TODO BUG".
 	cd src && grep --color -n -i -R -H "TODO BUG" *
 
-list_missing_testcases: ##@other List all occurrence of the tag "TODO TESTCASE".
+list_missing_testcases: ##@other List all occurrences of the tag "TODO TESTCASE".
 	cd src && grep --color -n -i -R -H "TODO TESTCASE" *
 
 add_license_header: ##@other Insert the license header into all source files.

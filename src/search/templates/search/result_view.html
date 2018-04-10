@@ -16,40 +16,44 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 
 {% block content %}
 {% if qresult|length == 0 %}
-	<h1>{% trans "No items matching your query found" %}</h1>
+{% if request.method == "POST" and qstring|length > 2 %}
+<div class="alert alert-warning" role="alert">
+	{% trans "No items matching your query found" %}
+</div>
+{% endif %}
 <div class="row">
-	<div class="col-md-6">
+	<div class="col-md-7">
 		<div class="panel panel-default">
-			<div class="panel-heading"><h3>{% trans "Searchable Items" %}</h3></div>
+			<div class="panel-heading">{% trans "Searchable Items" %}</div>
 			<div class="panel-body">
 				<table class="table">
-				<thead>
-					<tr>
-						<th>{% trans "Class" %}</th>
-						<th>{% trans "Fields" %}</th>
-					</tr>
-				</thead>
-				{% for app in searchable_fields %}
-					<tbody>
+					<thead>
 						<tr>
-							<td>{{ app }}</td>
-							<td>
-							{% for field in searchable_fields|get_searchable_items_for_app:app %}
-									{{ field }}{% if not forloop.last %},{% endif %}
-							{% endfor %}
-							</td>
+							<th>{% trans "Class" %}</th>
+							<th>{% trans "Fields" %}</th>
 						</tr>
-					</tbody>
-				{% endfor %}
+					</thead>
+					{% for app in searchable_fields %}
+						<tbody>
+							<tr>
+								<td>{{ app }}</td>
+								<td>
+								{% for field in searchable_fields|get_searchable_items_for_app:app %}
+										{{ field }}{% if not forloop.last %},{% endif %}
+								{% endfor %}
+								</td>
+							</tr>
+						</tbody>
+					{% endfor %}
 				</table>
 			</div>
 		</div>
 	</div>
-	<div class="col-md-4">
+	<div class="col-md-5">
 		<div class="panel panel-default">
-			<div class="panel-heading"><h3>{% trans "Compare expressions" %}</h3></div>
+			<div class="panel-heading">{% trans "Compare expressions" %}</div>
 			<div class="panel-body">
-				<ul class="list-group">
+				<ul class="list-group" style="margin-left:20px;">
 					{% for operator in compare %}
 						{# TODO need a better separation of key-value-pairs #}
 						<li>{{ operator }} &nbsp;&nbsp; {{compare|get_searchable_items_for_app:operator}}</li>
@@ -58,136 +62,158 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 			</div>
 		</div>
 	</div>
-	<div class="col-md-4">
+	<div class="col-md-5">
 		<div class="panel panel-default">
-			<div class="panel-heading"><h3>{% trans "Combine expressions" %}</h3></div>
+			<div class="panel-heading">{% trans "Combine expressions" %}</div>
 			<div class="panel-body">
 				{% trans "You can combine multiple expressions with" %}
-				<ul class="list-group">
+				<ul class="list-group" style="margin-left:20px;">
 					<li>AND</li>
 					<li>OR</li>
 				</ul>
 			</div>
 		</div>
 	</div>
-	<div class="col-md-5">
+</div>
+<div class="row">
+	<div class="col-md-6">
 		<div class="panel panel-default">
-			<div class="panel-heading"><h3>{% trans "Sort" %}</h3></div>
+			<div class="panel-heading">{% trans "Sort" %}</div>
 			<div class="panel-body">
 				{% trans "You can sort the output with" %}
-				<ul class="list-group">
+				<ul class="list-group" style="margin-left:20px;">
 					<li>ASC</li>
 					<li>DESC</li>
 				</ul>
 			</div>
 		</div>
 	</div>
-	<div class="col-md-5">
+	<div class="col-md-6">
 		<div class="panel panel-default">
-			<div class="panel-heading"><h3>{% trans "Regex" %}</h3></div>
+			<div class="panel-heading">{% trans "Regex" %}</div>
 			<div class="panel-body">
 				{% trans "You can use regex for your search" %}
-				<ul class="list-group">
+				<ul class="list-group" style="margin-left:20px;">
 					{# TODO rules #}
-					TODO rules
+					The applied regex-syntax can be found here: <a href="https://docs.python.org/3/library/re.html">python3-re</a>
+					<br>
+					TODO some basic rules
 				</ul>
 			</div>
 		</div>
 	</div>
-	<div class="col-md-10">
+	<div class="col-md-12">
 		<div class="panel panel-default">
-			<div class="panel-heading"><h3>{% trans "Fulltext search" %}</h3></div>
+			<div class="panel-heading">{% trans "Fulltext search" %}</div>
 			<div class="panel-body">
-				{% trans "You can perform a fulltext search, linked by AND or OR, where AND links stronger than OR, e.g." %}
-				<ul class="list-group">
-                    <li>specific text</li>
-                    <li>specific AND text AND important</li>
-                    <li>specific text OR general text</li>
-                    <li>specific AND text OR general AND text</li>
+				{% trans "You can perform a fulltext search, linked by <i>AND</i> or <i>OR</i>, where <i>AND</i> links stronger than <i>OR</i>, e.g." %}
+				<ul class="list-group" style="margin-left:20px;">
+					<li>specific text</li>
+					<li>specific <i>AND</i> text <i>AND</i> important</li>
+					<li>specific text <i>OR</i> general text</li>
+					<li>specific <i>AND</i> text <i>OR</i> general <i>AND</i> text</li>
 				</ul>
 			</div>
 		</div>
 	</div>
-	<div class="col-md-10">
+	<div class="col-md-12">
 		<div class="panel panel-default">
-			<div class="panel-heading"><h3>{% trans "Examples" %}</h3></div>
+			<div class="panel-heading">{% trans "Examples" %}</div>
 			<div class="panel-body">
 				<table class="table">
-				<thead>
-					<tr>
-						<th>{% trans "Search" %}</th>
-						<th>{% trans "Explanation" %}</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td>Issue.title == "asd"</td>
-						<td>{% trans "Searches for issues with the exact title asd" %}</td>
-					</tr>
-					<tr>
-						<td>Comment.text ~~ "specific comment"</td>
-						<td>{% trans "Searches for Comments that contains the 'specific comment'" %}</td>
-					</tr>
-					<tr>
-						{# TODO #}
-						<td>TODO Regex example</td>
-						<td>{% trans "TODO Regex Result" %}</td>
-					</tr>
-				</tbody>
+					<thead>
+						<tr>
+							<th>{% trans "Search" %}</th>
+							<th>{% trans "Explanation" %}</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>Issue.title == "asd"</td>
+							<td>{% trans "Searches for issues with the exact title asd" %}</td>
+						</tr>
+						<tr>
+							<td>Comment.text ~~ "specific comment"</td>
+							<td>{% trans "Searches for Comments that contains the 'specific comment'" %}</td>
+						</tr>
+						<tr>
+							<td>Issue.tags__tag_text ~~ "part of a tag"</td>
+							<td>{% trans "Searches for issues which have a tag that contains the 'part of a tag'" %}</td>
+						</tr>
+						<tr>
+							<td>Issue.creator.username ~ "mo.*"</td>
+							<td>{% trans "Searches for all Issues that has been created by user their usernames start with 'mo' <b>Please note</b> that this is case sensitive!." %}</td>
+						</tr>
+						<tr>
+							<td>Issue.creator.username ~ "mo\w"</td>
+							<td>{% trans "Searches for all Issues that has been created by user their usernames start with 'mo' and are followed by any word without spacing. <b>Please note</b> that spaces are no valid character in the username so the result is equal to the one of the above request." %}</td>
+						</tr>
+						<tr>
+							<td>Issue.kanbancol.name == "Done"</td>
+							<td>{% trans "Searches for all Issues that are set to the kanbancol with the name 'Done', this includes Issues in the archive as well." %}</td>
+						</tr>
+						<tr>
+							<td>Issue.kanbancol.type == "ToDo"</td>
+							<td>{% trans "Searches for all Issues that are set to a kanbancol with the type 'ToDo', this includes Issues in the archive and backlog as well." %}</td>
+						</tr>
+						<tr>
+							{# TODO #}
+							<td>TODO Regex example</td>
+							<td>{% trans "TODO Regex Result" %}</td>
+						</tr>
+					</tbody>
+				</table>
 			</div>
 		</div>
 	</div>
 </div>
 {% else %}
-	<div class="row">
-		{% if typeset|length > 1 or filterobj != '' %}
-			<div class="col-md-3">
-				<div class="panel panel-default">
-					<div class="panel-heading"><h3>{% trans "Filters" %}</h3></div>
-					<div class="panel-body">
-						<h4>{% trans "Types" %}</h4>
-						<ul class="list-group">
-							{% for i in typeset %}
-								<form id="filter_{{i.0}}" method="post" action="{% url 'search:resultpage' %}" >{% csrf_token %}
-									<input type="hidden" name="expression" value="{{qstring}}" />
-									{% if filterobj == i.0 %}
-										<button type="submit" class="list-group-item active">
-									{% else %}
-										<input type="hidden" name="filterobj" value={{i.0}} />
-										<button type="submit" class="list-group-item">
-									{% endif %}
-										{{i.0}}
-										<span class="badge">{{i.1}}</span>
-									</button>
-								</form>
-							{% endfor %}
-							<br />{% trans "Didn't find the expected result?" %}<a class="btn btn-default" href="{% url 'search:resultpage' %}">{% trans "see help" %}</a>
-
-						</ul>
-					</div>
-				</div>
-			</div>
-		<div class="col-md-9">
-		{% else %}
-		<div class="col-md-12">
-		{% endif %}
+<div class="row">
+	{% if typeset|length > 1 or filterobj != '' %}
+		<div class="col-md-3">
 			<div class="panel panel-default">
-				<div class="panel-heading">
-					<h3>{% trans "Search results" %}</h3>
-				</div>
-				<div class="panel-body">
+				<div class="panel-heading">{% trans "Filters" %}</div>
 					<ul class="list-group">
-					{% for i in qresult %}
-						<li class="list-group-item">
-							{# i.2: Object type #}
-							<h4 class ="list-group-item-heading"><a href={{i.1}}>{{ i.0 }}</a></h4>
-							<p class=list-group-item-text>I'm a placeholder for the matching sequence of this item</p>
+						{% for i in typeset %}
+							<form id="filter_{{i.0}}" method="post" action="{% url 'search:resultpage' %}" >{% csrf_token %}
+								<input type="hidden" name="expression" value="{{qstring}}" />
+								{% if filterobj == i.0 %}
+									<button type="submit" class="list-group-item active">
+								{% else %}
+									<input type="hidden" name="filterobj" value={{i.0}} />
+									<button type="submit" class="list-group-item">
+								{% endif %}
+									{{i.0}}
+									<span class="badge">{{i.1}}</span>
+								</button>
+							</form>
+						{% endfor %}
+						<li class="list-group-item">{% trans "Didn't find the expected result?" %} <a class="btn btn-default" href="{% url 'search:resultpage' %}">{% trans "see help" %}</a>
 						</li>
-					{% endfor %}
 					</ul>
-				</div>
 			</div>
 		</div>
+	<div class="col-md-9">
+	{% else %}
+	<div class="col-md-12">
+	{% endif %}
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				{% trans "Search results" %}
+			</div>
+				<ul class="list-group">
+				{% for i in qresult %}
+					<li class="list-group-item">
+						{# i.2: Object type #}
+						<h4 class ="list-group-item-heading"><a href={{i.1}}>{{ i.0 }}</a></h4>
+						{% if filterobj|length == 0 %}
+						<p class=list-group-item-text>{{i.2}}</p>
+						{% endif %}
+					</li>
+				{% endfor %}
+				</ul>
+		</div>
 	</div>
+</div>
 {% endif %}
 {% endblock content %}
