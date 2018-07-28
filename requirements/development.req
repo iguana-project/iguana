@@ -2,10 +2,10 @@
 
 -e git+git://github.com/asdfkaba/chromedriver.git#egg=chromedriver
 coverage==4.5.1
-django-extensions==2.0.0
+django-extensions==2.1.0
 django-test-without-migrations==0.6
-model-mommy==1.5.1
-pycodestyle==2.3.1
-piprot==0.9.7
-requests==2.18.4
-selenium==3.8.0
+model-mommy==1.6.0
+pycodestyle==2.4.0
+piprot==0.9.10
+requests==2.19.1
+selenium==3.13.0
