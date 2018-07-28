@@ -23,6 +23,16 @@ from timelog.models import Timelog
 from django.contrib.auth import get_user_model
 from django.core.files import File
 
+from user_management.views import LoginView
+from issue.views import IssueCreateView, IssueEditView, IssueDetailView
+
+
+create_template = 'issue/issue_create_view.html'
+edit_template = 'issue/issue_edit.html'
+detail_template = 'issue/issue_detail_view.html'
+
+# TODO TESTCASE are there any testcases for IssueDeleteView?
+
 
 class CreateEditDetailTest(TestCase):
     @classmethod
@@ -43,27 +53,116 @@ class CreateEditDetailTest(TestCase):
         self.column.save()
 
     def test_view_and_template(self):
-        # TODO TESTCASE see invite_users/testcases/test_invite_users.py as example
-        pass
+        # create
+        response = self.client.get(reverse('issue:create', kwargs={'project': self.project.name_short}))
+        self.assertTemplateUsed(response, create_template)
+        self.assertEqual(response.resolver_match.func.__name__, IssueCreateView.as_view().__name__)
+
+        # create issue for edit and detail tests
+        issue = Issue(title="foo")
+        issue.project = self.project
+        issue.save()
+        number = issue.number
+
+        # edit
+        response = self.client.get(reverse('issue:edit', kwargs={'project': self.project.name_short, 'sqn_i': number}))
+        self.assertTemplateUsed(response, edit_template)
+        self.assertEqual(response.resolver_match.func.__name__, IssueEditView.as_view().__name__)
+
+        # detail
+        response = self.client.get(reverse('issue:detail',
+                                           kwargs={'project': self.project.name_short, 'sqn_i': number}))
+        self.assertTemplateUsed(response, detail_template)
+        self.assertEqual(response.resolver_match.func.__name__, IssueDetailView.as_view().__name__)
 
     def test_redirect_to_login_and_login_required(self):
-        # TODO TESTCASE see invite_users/testcases/test_invite_users.py as example
+        self.client.logout()
+        # create
+        response = self.client.get(reverse('issue:create', kwargs={'project': self.project.name_short}))
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response['location'], '/login/?next=' +
+                         reverse('issue:create', kwargs={'project': self.project.name_short}))
+        response = self.client.get(response['location'])
+        # verify the login-required mixin
+        self.assertEqual(response.resolver_match.func.__name__, LoginView.as_view().__name__)
+        self.assertContains(response, 'Please login to see this page.')
+
+        # create issue for edit and detail tests
+        issue = Issue(title="foo")
+        issue.project = self.project
+        issue.save()
+        number = issue.number
+
+        # edit
+        response = self.client.get(reverse('issue:edit', kwargs={'project': self.project.name_short, 'sqn_i': number}))
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response['location'], '/login/?next=' +
+                         reverse('issue:edit', kwargs={'project': self.project.name_short, 'sqn_i': number}))
+        response = self.client.get(response['location'])
+        # verify the login-required mixin
+        self.assertEqual(response.resolver_match.func.__name__, LoginView.as_view().__name__)
+        self.assertContains(response, 'Please login to see this page.')
+
+        # detail
+        response = self.client.get(reverse('issue:detail',
+                                           kwargs={'project': self.project.name_short, 'sqn_i': number}))
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response['location'], '/login/?next=' +
+                         reverse('issue:detail', kwargs={'project': self.project.name_short, 'sqn_i': number}))
+        response = self.client.get(response['location'])
+        # verify the login-required mixin
+        self.assertEqual(response.resolver_match.func.__name__, LoginView.as_view().__name__)
+        self.assertContains(response, 'Please login to see this page.')
         pass
 
     def test_user_passes_test_mixin(self):
         # TODO TESTCASE
+        # TODO create
+        # TODO edit
+        # TODO detail
         pass
 
     def test_create_and_edit_issues_with_get_requests_disabled(self):
-        # TODO TESTCASE
-        pass
+        values = {
+            'title': "Test-Issue",
+            'kanbancol': self.column.pk,
+            'type': "Bug",
+            'assignee': (self.user.pk),
+            'priority': 2,
+        }
+        # create
+        response = self.client.get(reverse('issue:create', kwargs={'project': self.project.name_short}), values)
+        # didn't store something
+        self.assertTemplateUsed(response, create_template)
+        try:
+            self.assertIsNone(Issue.objects.get(title="Test-Issue", assignee=self.user.pk))
+        except Issue.DoesNotExist:
+            pass
+
+        # create issue for edit test
+        issue = Issue(title="foo")
+        issue.project = self.project
+        issue.save()
+        number = issue.number
+
+        # edit
+        response = self.client.get(reverse('issue:edit',
+                                           kwargs={'project': self.project.name_short, 'sqn_i': number}), values)
+        # didn't store something
+        self.assertIsNotNone(Issue.objects.get(title="foo", project=self.project))
 
     def test_title_required(self):
         # TODO TESTCASE
+        # TODO create
+        # TODO edit
+        # TODO detail
         pass
 
     def test_only_issues_of_this_project_visible(self):
         # TODO TESTCASE
+        # TODO create
+        # TODO edit
+        # TODO detail
         pass
 
     def test_detail_view(self):
@@ -318,7 +417,7 @@ class CreateEditDetailTest(TestCase):
                                    kwargs={'project': self.project.name_short, 'sqn_i': 1}))
 
         return
-        # TODO TODO TODO the following doesn't work because t0 doesn't appear in the response anymore
+        # TODO TODO TODO TESTCASE the following doesn't work because t0 doesn't appear in the response anymore
         self.assertContains(response, t0)
         # self.assertIn(t0, str(response.content))
         values = {

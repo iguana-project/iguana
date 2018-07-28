@@ -25,7 +25,7 @@ class InviteUsersTest(TestCase):
     def setUp(self):
         self.client.force_login(self.user)
 
-    def test_invite_users_and_successfully_invited_view_and_template(self):
+    def test_view_and_template(self):
         # invite_users
         response = self.client.get(reverse('invite_users:invite_users'), follow=True)
         self.assertTemplateUsed(response, 'invite_users/invite_users.html')

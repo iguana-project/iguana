@@ -541,6 +541,7 @@ class ArchivedIssuesView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         return items
 
 
+# is accessible via get
 class IssueDetailView(LoginRequiredMixin, UserPassesTestMixin, MultiFormsView):
     template_name = 'issue/issue_detail_view.html'
     context_object_name = 'issue'
