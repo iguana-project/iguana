@@ -77,8 +77,12 @@ class LoginTest(TestCase):
         self.assertEqual(response['location'], "/login/?next=" + tempURL)
 
     def login_with_get_request_disabled(self):
-        # TODO TESTCASE
-        pass
+        response = self.client.get(reverse('login'), {'username': username, 'password': password}, follow=True)
+        self.assertEqual(response.status_code, 200)
+        print(response.text)
+        # didn't login successfully
+        self.assertTemplateUsed(response, 'landing_page:login.html')
+        self.assertFalse(self.user.is_authenticated)
 
     # check whether login process works
     def test_login(self):

@@ -79,6 +79,7 @@ class InviteUsersTest(TestCase):
     def test_get_request_disabled_for_invitation(self):
         response = self.client.get(reverse('invite_users:invite_users'), {'form-0-email': 'b@b.com'})
         self.assertEqual(response.status_code, 200)
+        # didn't invite successfully
         self.assertTemplateUsed(response, 'invite_users/invite_users.html')
 
     # helper function

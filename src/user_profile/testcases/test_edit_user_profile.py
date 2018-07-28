@@ -21,6 +21,7 @@ from user_profile.apps import defaultAvatar
 from django.contrib.auth import get_user_model
 
 from user_management.views import LoginView
+from user_profile.views import EditProfilePageView
 
 user_name = "user_name"
 test_password = "test1234"
@@ -94,8 +95,9 @@ class EditUserProfileTest(TestCase):
             os.remove(file_path_png)
 
     def test_view_and_template(self):
-        # TODO TESTCASE see invite_users/testcases/test_invite_users.py as example
-        pass
+        response = self.client.get(reverse('user_profile:edit_profile', kwargs={"username": user_name}), follow=True)
+        self.assertTemplateUsed(response, edit_template)
+        self.assertEqual(response.resolver_match.func.__name__, EditProfilePageView.as_view().__name__)
 
     def test_redirect_to_login_and_login_required(self):
         self.client.logout()
