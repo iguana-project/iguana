@@ -8,4 +8,4 @@ model-mommy==1.6.0
 pycodestyle==2.4.0
 piprot==0.9.10
 requests==2.19.1
-selenium==3.13.0
+selenium==3.14.0
