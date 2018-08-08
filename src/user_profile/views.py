@@ -226,7 +226,7 @@ class EditProfilePageView(LoginRequiredMixin, UserPassesTestMixin, SingleObjectM
         # NOTE: in this case we shall not call save (super)
         if wrong_password:
             messages.add_message(request, messages.ERROR,
-                                 _('You can not change the email-address without entering the correct password.' +
+                                 _('You can not change the email address without entering the correct password.' +
                                    'All changes have been discarded!'))
             # TODO copy elements? - this might be some pain because we have to split those elements on both forms
             return super(EditProfilePageView, self).get(request, *args, **kwargs)
