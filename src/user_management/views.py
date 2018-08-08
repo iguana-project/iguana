@@ -13,13 +13,21 @@ from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.views import password_reset, password_reset_done
 from django.contrib import messages
+from django.contrib.sites.shortcuts import get_current_site
+from django.core.mail import EmailMessage
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
+from django.template.loader import render_to_string
 from django.utils import translation
-from django.utils.http import is_safe_url
+from django.utils.encoding import force_bytes, force_text
+from django.utils.http import is_safe_url, urlsafe_base64_encode, urlsafe_base64_decode
 from django.urls import reverse
 
+
+from django.conf import settings
+
 from .forms import RegistrationForm
+from .generate_activation_token import account_activation_token
 
 # NOTE: ugettext_lazy "is essential when calls to these functions are located in code
 #       paths that are executed at module load time."
@@ -87,6 +95,7 @@ class LogoutView(View):
 # https://docs.djangoproject.com/en/1.10/topics/forms/
 # https://docs.djangoproject.com/en/1.10/topics/class-based-views/generic-display/
 # TODO FormView might help to simplify this class
+# this view creates an account which is not activated until the confirmation link send via email has been requested
 class SignUpView(View):
     form_class = RegistrationForm
     # "When specifying a custom form class, you must still specify the model,
@@ -114,20 +123,62 @@ class SignUpView(View):
         """
 
         if form.is_valid():
-            new_user = form.save()
-            messages.info(request, _("Thanks for registering. You are now logged in."))
-            new_user = authenticate(username=form.cleaned_data['username'],
-                                    password=form.cleaned_data['password1'],
-                                    )
-            # login before redirect to home is possible
-            login(request, new_user)
-            # there should always be a redirect after post request
-            return HttpResponseRedirect(reverse("landing_page:home"))
+            # the user is not active until the activation url has been requested
+            new_user = form.save(commit=False)
+            new_user.is_active = False
+            # create the user that can be authenticated later on
+            new_user.save()
+            # TODO in case the email address is not verified within the next seven days the user shall be removed
+
+            # content of the email that includes the activation url
+            email = EmailMessage(
+                # subject
+                _('Verify your email address for ' + settings.PLATFORM),
+                # body
+                render_to_string('registration/activate_account_email_template.htm', {
+                    'user': new_user,
+                    'platform': settings.PLATFORM,
+                    # url-elements
+                    'domain': get_current_site(request).domain,
+                    'uid': urlsafe_base64_encode(force_bytes(new_user.pk)),
+                    'token': account_activation_token.make_token(new_user),
+                }),
+                # TODO as soon as there is a parameter in the settings to provide the from field it shall be used here
+                # to
+                to=[form.cleaned_data.get('email')],
+            )
+            email.send()
+
+            return render(request, 'registration/email_confirmation.html')
 
         return render(request, 'registration/sign_up.html', {'form': form})
 
     def get(self, request):
         return render(request, 'registration/sign_up.html', {'form': self.form_class()})
+
+
+# this view verifies the activation url
+# s.a. https://simpleisbetterthancomplex.com/tutorial/2016/08/24/how-to-create-one-time-link.html
+class VerifyEmailAddress(View):
+    model = get_user_model()
+    hide_breadcrumbs = True
+
+    def get(self, request, *args, **kwargs):
+        uidb64 = kwargs['uidb64']
+        token = kwargs['token']
+        try:
+            uid = force_text(urlsafe_base64_decode(uidb64))
+            user = self.model.objects.get(id=uid)
+        except(TypeError, ValueError, OverflowError, self.model.DoesNotExist):
+            user = None
+        if user is not None and account_activation_token.check_token(user, token):
+            messages.info(request, _("Thanks for registering. You are now logged in."))
+            user.is_active = True
+            user.save()
+            login(request, user)
+            return HttpResponseRedirect(reverse("landing_page:home"))
+        else:
+            return render(request, 'registration/invalid_activation_link.html')
 
 
 # TODO reactivate as soon as the bug is fixed

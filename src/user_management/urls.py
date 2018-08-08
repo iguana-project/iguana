@@ -12,8 +12,10 @@ from django.conf.urls import url, include
 from user_management import views
 from django.contrib.auth import views as auth_views
 
-
 urlpatterns = [
+    # user-id/timestamp-generated_token
+    url(r'^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/?$',
+        views.VerifyEmailAddress.as_view(), name='verify_email'),
     url(r'^sign_up/?$', views.SignUpView.as_view(), name='sign_up'),
     url(r'^sign-up/?$', views.SignUpView.as_view(), name='sign_up'),
     url(r'^register/?$', views.SignUpView.as_view(), name='sign_up'),

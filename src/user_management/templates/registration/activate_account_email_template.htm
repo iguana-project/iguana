@@ -1,0 +1,8 @@
+{% load i18n %}
+{% load bootstrap3 %}
+{% blocktrans with username=user.username platform=platform %}Welcome {{ username }}, Please click on the following link to activate your account for {{ platform }}. If you did not try to create an account for this platform you can ignore this email.{% endblocktrans %}
+
+{% autoescape off %}
+
+		https://{{ domain }}{% url 'verify_email' uidb64=uid token=token %}
+{% endautoescape %}
