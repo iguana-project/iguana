@@ -9,8 +9,10 @@ You should have received a copy of the license along with this
 work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 """
 from lib.selenium_test_case import StaticSeleniumTestCase
+from django.core import mail
 from django.urls import reverse
 import os
+import re
 import sqlite3
 
 from django.conf import settings
@@ -85,6 +87,11 @@ class SignUpTest(StaticSeleniumTestCase):
         # create a new user
         self.create_user(test_username, test_email, test_pw, test_pw)
 
+        # TODO fix replacement of example.com as soon as the dev-settings are fixed
+        temp_activation_link = re.findall("https://.*/activate/.*/.*", mail.outbox[0].body)[0][len("https://"):]
+        local_activation_link = temp_activation_link.replace("example.com", "")
+        self.selenium.get("{}{}".format(self.live_server_url, local_activation_link))
+
         self.assertNotIn('Sign Up', self.selenium.title)
         self.assertEqual('Dashboard', self.selenium.title)
 
@@ -105,6 +112,11 @@ class SignUpTest(StaticSeleniumTestCase):
 
         # create a new user
         self.create_user(test_username, test_email, test_pw, test_pw)
+        # TODO fix replacement of example.com as soon as the dev-settings are fixed
+        temp_activation_link = re.findall("https://.*/activate/.*/.*", mail.outbox[0].body)[0][len("https://"):]
+        local_activation_link = temp_activation_link.replace("example.com", "")
+        self.selenium.get("{}{}".format(self.live_server_url, local_activation_link))
+
         self.selenium.get("{}{}".format(self.live_server_url, reverse('logout')))
         self.assertIn("You have been successfully logged out.", self.selenium.page_source)
 
@@ -124,7 +136,7 @@ class SignUpTest(StaticSeleniumTestCase):
                                               (test_username, test_email2, ))
         self.assertTrue(user_doesnt_exists.fetchone() is None)
 
-        # change username, so only the email-address is already in use
+        # change username, so only the email address is already in use
         test_username2 = "testuserName2"
         self.create_user(test_username2, test_email, test_pw, test_pw)
         self.assertIn('User with this Email address already exists.', self.selenium.page_source)
@@ -169,4 +181,4 @@ class SignUpTest(StaticSeleniumTestCase):
         self.selenium.find_element_by_id('id_reset_ref').click()
         self.assertIn('Password Reset', self.selenium.title)
 
-    # TODO check TESTCASE delivered password guidelines
+    # TODO TESTCASE check delivered password guidelines
