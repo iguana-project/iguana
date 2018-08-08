@@ -9,7 +9,9 @@ BASE = $(shell pwd)
 # virtualenv settings
 VIRTUALENV_BASE = $(BASE)/virtualenv
 export PATH := $(VIRTUALENV_BASE)/bin:$(PATH))
-PYTHON = $(VIRTUALENV_BASE)/bin/python
+# the -bb "-b Issue warnings about str(bytes_instance), str(bytearray_instance) and comparing bytes/bytearray  with str. (-bb: issue errors)"
+# s.a. https://docs.djangoproject.com/en/2.0/releases/2.0/#removed-support-for-bytestrings-in-some-places
+PYTHON = $(VIRTUALENV_BASE)/bin/python -bb
 COVERAGE = $(VIRTUALENV_BASE)/bin/coverage
 
 # django settings

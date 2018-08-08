@@ -140,7 +140,7 @@ class SignUpView(View):
                     'platform': settings.PLATFORM,
                     # url-elements
                     'domain': get_current_site(request).domain,
-                    'uid': urlsafe_base64_encode(force_bytes(new_user.pk)),
+                    'uid': urlsafe_base64_encode(force_bytes(new_user.pk)).decode(),
                     'token': account_activation_token.make_token(new_user),
                 }),
                 # TODO as soon as there is a parameter in the settings to provide the from field it shall be used here
@@ -167,7 +167,7 @@ class VerifyEmailAddress(View):
         uidb64 = kwargs['uidb64']
         token = kwargs['token']
         try:
-            uid = force_text(urlsafe_base64_decode(uidb64))
+            uid = urlsafe_base64_decode(uidb64).decode()
             user = self.model.objects.get(id=uid)
         except(TypeError, ValueError, OverflowError, self.model.DoesNotExist):
             user = None
