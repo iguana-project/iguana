@@ -87,7 +87,8 @@ class DurationWidget(Widget):
     def render(self, name, value, attrs=None):
         if value is None:
             value = ''
-        final_attrs = self.build_attrs(attrs, type=self.input_type, name=name)
+        final_attrs = self.build_attrs(attrs, {'type': self.input_type, 'name': name})
+
         if isinstance(value, timedelta):
             final_attrs['value'] = self.format_value(value)
         return format_html('<input{} />', flatatt(final_attrs))

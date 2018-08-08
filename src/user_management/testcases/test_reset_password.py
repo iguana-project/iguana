@@ -42,13 +42,15 @@ class PasswordResetTest(TestCase):
         token = response.context[0]['token']
         uid = response.context[0]['uid']
 
-        response = self.client.get(reverse('password_reset_confirm', kwargs={'token': token, 'uidb64': uid}))
+        response = self.client.get(reverse('password_reset_confirm', kwargs={'token': token, 'uidb64': uid}),
+                                   follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, pw_reset_conf_template)
+        self.assertRedirects(response, '/reset/%s/set-password/' % uid)
 
         new_password = 'new_pass12345'
         response = self.client.post(
-            reverse('password_reset_confirm', kwargs={'token': token, 'uidb64': uid}),
+            '/reset/%s/set-password/' % uid,
             {'new_password1': new_password, 'new_password2': new_password}, follow=True
         )
         self.assertTemplateUsed(response, pw_reset_comp_template)

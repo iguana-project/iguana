@@ -73,6 +73,7 @@ class CustomImageField(ImageField):
     def to_python(self, data):
         # return the data if it is the default avatar
         if CustomClearableFileInput.isDefaultAvatar(data):
+            self.validators = []
             return data
 
         return super(CustomImageField, self).to_python(data)
