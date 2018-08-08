@@ -69,7 +69,7 @@ class AttachmentTest(StaticSeleniumTestCase):
         self.assertIn(driver.find_element_by_id("issue_detail_attach_get_1").text, temp1.name)
         self.assertEqual(issue.attachments.count(), 1)
         attachment = issue.attachments.first()
-        self.assertIn(filecontent1, str(attachment.file.read()))
+        self.assertIn(filecontent1, attachment.file.read().decode())
 
         os.remove(temp1.name)
 
