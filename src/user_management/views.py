@@ -96,6 +96,8 @@ class LogoutView(View):
 # https://docs.djangoproject.com/en/1.10/topics/class-based-views/generic-display/
 # TODO FormView might help to simplify this class
 # this view creates an account which is not activated until the confirmation link send via email has been requested
+# NOTE: This view can be used to leak usernames and email addresses that are already in use.
+#       Those leaks are limited to requests where the captcha has been solved successfully.
 class SignUpView(View):
     form_class = RegistrationForm
     # "When specifying a custom form class, you must still specify the model,
@@ -150,6 +152,17 @@ class SignUpView(View):
             email.send()
 
             return render(request, 'registration/email_confirmation.html')
+
+        # remove errors for email and username if captcha failed so it is only possible
+        # to leak registered usernames and email addresses if the captcha was provided correctly
+        # otherwise this would result in a more harmful privacy leak
+        if form.errors and 'captcha' in form.errors:
+            non_critical_user_err_msg = _("@ is not allowed in username. Username is required as 150 characters or " +
+                                          "fewer. Letters, digits and ./+/-/_ only.")
+            if "username" in form.errors and non_critical_user_err_msg not in form.errors['username']:
+                del form.errors['username']
+            if "email" in form.errors:
+                del form.errors['email']
 
         return render(request, 'registration/sign_up.html', {'form': form})
 
@@ -208,6 +221,7 @@ class PasswordResetSuccessView(View):
 
     def get(self, request):
         # TODO unfortunately the extra_context is omitted and not provided
+        # TODO "The password_reset_done() view is superseded by the class-based PasswordResetDoneView()"
         return password_reset_done(request, 'registration/password_reset_done.html')
 
     def post(self, request):
