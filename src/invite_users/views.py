@@ -83,16 +83,15 @@ class InviteUserView(LoginRequiredMixin, FormView):
                 # subject
                 _('You have been invited to ')+settings.PLATFORM,
                 full_message,
-                # TODO BUG change this!
-                'from@example.com',
+                # TODO as soon as there is a parameter in the settings to provide the from field it shall be used here
                 # to
-                to_header,
+                to=to_header,
                 # bcc
-                invited_list,
+                bcc=invited_list,
             )
             email.send()
 
-            # list all notified email-addresses in succesfully_invited
+            # list all notified email addresses in succesfully_invited
             request.session['invite_list'] = invited_list
             return HttpResponseRedirect('successfully_invited')
 
