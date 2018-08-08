@@ -126,3 +126,55 @@ class SignUpTest(TestCase):
                                                          'captcha_0': "PASSED", 'captcha_1': "PASSED"}, follow=True)
         self.sign_up_used(response)
         self.assertFormError(response, 'form', 'password2', "The two password fields didn't match.")
+
+    # verify that username and email address of registered users are leaked only
+    # if the captcha has been solved correctly
+    def test_username_and_email_protected_with_captcha(self):
+        new_user = get_user_model().objects.create_user(username=username, email=email, password=password)
+        new_user.save()
+
+        # empty captcha tests
+        self.captcha_protects_username_and_email()
+        self.captcha_does_not_hide_forbidden_at_element_in_username()
+
+        # wrong captcha tests
+        wrong_captcha = "WRONG_CAPTCHA"
+        self.captcha_protects_username_and_email(wrong_captcha)
+        self.captcha_does_not_hide_forbidden_at_element_in_username(wrong_captcha)
+
+    def get_csrf_token(self):
+        # extract the csrf token so only the captcha is not valid
+        response = self.client.get(reverse('sign_up'))
+        content = response.content.decode()
+        csrf_token_index = content.index("csrfmiddlewaretoken")
+        csrf_token = re.findall("value='(.*)'", content[csrf_token_index:])[0]
+        return csrf_token
+
+    def captcha_protects_username_and_email(self, captcha=None):
+        csrf_token = self.get_csrf_token()
+        payload = {'username': username, 'email': email, 'password1': password, 'password2': password,
+                   "csrfmiddlewaretoken": csrf_token}
+        if captcha:
+            payload['captcha_0'] = captcha
+            payload['captcha_1'] = captcha
+
+        response = self.client.post(reverse('sign_up'), payload)
+        # neither the email nor the username of the already existing user is leaked as long as
+        # the captcha has not been solved successfully
+        self.assertNotContains(response, "User with this Email address already exists.")
+        self.assertNotContains(response, "A user with that username already exists.")
+
+    def captcha_does_not_hide_forbidden_at_element_in_username(self, captcha=None):
+        csrf_token = self.get_csrf_token()
+        username_with_at = username+"@foo"
+        payload = {'username': username_with_at, 'email': email, 'password1': password, 'password2': password,
+                   "csrfmiddlewaretoken": csrf_token}
+        if captcha:
+            payload['captcha_0'] = captcha
+            payload['captcha_1'] = captcha
+
+        response = self.client.post(reverse('sign_up'), payload)
+        # the error message for forbidden at-elements in the username shall be shown regardless of the wrong captcha
+        non_critical_user_err_msg = ("@ is not allowed in username. Username is required as 150 characters or " +
+                                     "fewer. Letters, digits and ./+/-/_ only.")
+        self.assertContains(response, non_critical_user_err_msg)
