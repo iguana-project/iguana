@@ -264,8 +264,10 @@ test: $(filter $(DJANGO_INSTALLED_APPS),$(MAKECMDGOALS)) $(filter $(DJANGO_INSTA
 #   1. the error-messages are not printed immediately
 #   2. some of those error-codes, like E,F or success-code are dropped, since those lines might contain error-messages of imported packages
 test-ign_imp_errs: ##@django Run the django tests without error-messages from imported packages (perhaps even more). An app can be specified with <appname>.
-test-ign_imp_errs:
-	cd $(DJANGO_BASE) && $(PYTHON) -Wall $(DJANGO_MANAGE) test --noinput $(APPNAME) --settings=$(DJANGO_SETTINGS) |& grep -v virtualenv
+test-ign_imp_errs: $(filter $(DJANGO_INSTALLED_APPS),$(MAKECMDGOALS)) $(filter $(DJANGO_INSTALLED_APPS_WILDCARD),$(MAKECMDGOALS)) check-dev_staging
+	@$(if $(filter $(DEVELOPMENT),true),\
+		cd $(DJANGO_BASE) && $(PYTHON) -Wall $(DJANGO_MANAGE) test --noinput --nomigrations $(APPNAME) --settings=$(DJANGO_SETTINGS),\
+		cd $(DJANGO_BASE) && $(PYTHON) -Wall $(DJANGO_MANAGE) test --noinput $(APPNAME) --settings=$(DJANGO_SETTINGS) |& grep -v virtualenv)
 
 make-messages: ##@django <lang-code> Make the django messages for a specific language.
 	@$(eval LANG := $(filter-out $@,$(MAKECMDGOALS)))
