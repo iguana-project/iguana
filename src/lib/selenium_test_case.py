@@ -21,7 +21,7 @@ from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.remote.webelement import WebElement
 
 
-DEFAULT_WAIT = 5
+DEFAULT_WAIT = 3
 SKIP_WRAPPING_TIMEOUT = False
 
 
@@ -230,7 +230,7 @@ class SeleniumTestCase(LiveServerTestCase):
             cls.selenium = webdriver.Safari()
         else:
             raise Exception("Webdriver not configured probably!")
-        cls.selenium.implicitly_wait(10)
+        cls.selenium.implicitly_wait(5)
 
         # wrap also the find_element(s)_by methods of the webdriver and webelement classes
         decorate(cls.selenium.__class__, wait_for, "find_element_by_")
