@@ -489,7 +489,7 @@ class FormTest(TestCase):
         self.assertRedirects(response, values['next'])
         response = self.client.get(response['location'])
         self.assertEqual(response.status_code, 200)
-        self.assertNotIn(values['expression'], str(response.content))
+        self.assertNotIn(values['expression'], response.content.decode())
         self.assertNotIn('oleafocus', self.client.session)
         issue.refresh_from_db()
         self.assertEqual(issue.sprint, sprint2)
@@ -499,7 +499,7 @@ class FormTest(TestCase):
         response = self.client.post(reverse('issue:processOlea',
                                             kwargs={'project': self.project.name_short}
                                             ), values, follow=True)
-        self.assertIn('&gt;PRJ-1:! @a', str(response.content))
+        self.assertIn('&gt;PRJ-1:! @a', response.content.decode())
         self.assertRedirects(response, values['next'])
         self.assertEqual(len(list(response.context['messages'])), 1)
         self.assertEqual(response.status_code, 200)
@@ -513,7 +513,7 @@ class FormTest(TestCase):
                                             kwargs={'project': self.project.name_short}
                                             ), values, follow=True)
         self.assertRedirects(response, values['next'])
-        self.assertIn(values['expression'], str(response.content))
+        self.assertIn(values['expression'], response.content.decode())
         self.assertNotIn('oleafocus', self.client.session)
         self.assertEqual(len(list(response.context['messages'])), 1)
         self.assertEqual(response.status_code, 200)

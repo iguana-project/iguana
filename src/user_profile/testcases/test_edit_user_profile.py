@@ -181,7 +181,7 @@ class EditUserProfileTest(TestCase):
         new_dict['avatar'] = avatar
         response = self.client.post(reverse('user_profile:edit_profile', kwargs={"username": user_name}),
                                     new_dict, follow=True)
-        self.assertTrue("not an image or a corrupted image" in str(response.content))
+        self.assertTrue("not an image or a corrupted image" in response.content.decode())
 
     # change password tests NOTE: it is pretty important to do all those tests, because the code is very case dependent
     # the numers (one, two, three) show how many of those pw-fields are filled

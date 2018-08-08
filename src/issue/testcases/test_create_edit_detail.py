@@ -406,7 +406,7 @@ class CreateEditDetailTest(TestCase):
                                     kwargs={'project': self.project.name_short, 'sqn_i': 1}), values)
         # please don't ask me why the following (which would be a way better assert) doesn't work
         # self.assertContains(response, t0)
-        self.assertIn(t0, str(response.content))
+        self.assertIn(t0, response.content.decode())
         self.assertEqual(Issue.objects.count(), 1)
         # TODO
         """

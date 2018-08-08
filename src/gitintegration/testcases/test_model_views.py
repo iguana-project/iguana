@@ -116,8 +116,8 @@ class GitIntegrationTest(TestCase):
         repo = self.project.repos.first()
         self.assertEqual(repo.url, 'git://blubber.url')
         self.assertEqual(repo.__str__(), "Repository git://blubber.url")
-        self.assertIn(filecontent1, str(repo.rsa_priv_path.read()))
-        self.assertIn(filecontent2, str(repo.rsa_pub_path.read()))
+        self.assertIn(filecontent1, repo.rsa_priv_path.read().decode())
+        self.assertIn(filecontent2, repo.rsa_pub_path.read().decode())
 
         # check file permissions, we want 600
         self.assertEqual(oct(stat.S_IMODE(os.stat(repo.rsa_priv_path.path).st_mode)), '0o600')
@@ -139,8 +139,8 @@ class GitIntegrationTest(TestCase):
         self.assertEqual(self.project.repos.count(), 1)
         repo = self.project.repos.first()
         self.assertEqual(repo.url, 'git://blubber.url')
-        self.assertIn(filecontent2, str(repo.rsa_priv_path.read()))
-        self.assertIn(filecontent1, str(repo.rsa_pub_path.read()))
+        self.assertIn(filecontent2, repo.rsa_priv_path.read().decode())
+        self.assertIn(filecontent1, repo.rsa_pub_path.read().decode())
 
         # check file permissions after edit, we want 600
         self.assertEqual(oct(stat.S_IMODE(os.stat(repo.rsa_priv_path.path).st_mode)), '0o600')

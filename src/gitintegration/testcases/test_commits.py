@@ -83,8 +83,8 @@ class GitFrontendTest(TestCase):
         repo.save()
 
         self.assertEqual(repo.url, repo_path)
-        self.assertIn(filecontent1, str(repo.rsa_priv_path.read()))
-        self.assertIn(filecontent2, str(repo.rsa_pub_path.read()))
+        self.assertIn(filecontent1, repo.rsa_priv_path.read().decode())
+        self.assertIn(filecontent2, repo.rsa_pub_path.read().decode())
 
         # try importing without valid remote repository
         shutil.rmtree(repo_path, ignore_errors=True)

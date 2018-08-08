@@ -308,7 +308,7 @@ class TagTest(TestCase):
         yellow_red_issue.tags.add(red)
         yellow_red_issue.save()
         response = self.client.get(reverse('tag:tag', kwargs={'project': project_short}), follow=True)
-        text = str(response.content)
+        text = response.content.decode()
         skip_color_choice = text.index("create_tag")
 
         # test yellow
