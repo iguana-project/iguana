@@ -132,4 +132,4 @@ def t_TITLE(t):
 def t_error(t):
     raise Exception(u"Please note that the usage of control characters is not possible until escaping is implemented." +
                     u" Also the error might be caused by a neighbouring character." +
-                    u" - Not able to parse char: '%s'" % t.value[0])
+                    u" - Not able to parse char: '{}' in '{}'".format(t.value[0], t.value))
