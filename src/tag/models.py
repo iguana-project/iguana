@@ -74,10 +74,14 @@ class Tag(SearchableMixin, models.Model):
         self.color = random.choice(list(pool))
         self.save()
 
+    def get_absolute_url(self):
+        return reverse('tag:tag', kwargs={'project': self.project.name_short})
+
+    # SearchableMixin functions
     def search_allowed_for_user(self, user):
         return self.project.developer_allowed(user)
 
-    def get_absolute_url(self):
-        return reverse('tag:tag', kwargs={'project': self.project.name_short})
+    def get_relative_project(self):
+        return self.project.name
 
     searchable_fields = ['tag_text']

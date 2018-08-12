@@ -147,7 +147,8 @@ class SearchFrontend():
             linktext = i.get_search_title()
             link = i.get_absolute_url()
             objname = i.__class__.__name__
+            relative_project = i.get_relative_project()
 
-            retval.append([linktext, link, objname])
+            retval.append([linktext, link, objname, relative_project])
 
         return retval

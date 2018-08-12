@@ -169,34 +169,61 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 </div>
 {% else %}
 <div class="row">
+	<div class="col-md-3">
 	{% if typeset|length > 1 or filterobj != '' %}
-		<div class="col-md-3">
-			<div class="panel panel-default">
-				<div class="panel-heading">{% trans "Filters" %}</div>
-					<ul class="list-group">
-						{% for i in typeset %}
-							<form id="filter_{{i.0}}" method="post" action="{% url 'search:resultpage' %}" >{% csrf_token %}
-								<input type="hidden" name="expression" value="{{qstring}}" />
-								{% if filterobj == i.0 %}
-									<button type="submit" class="list-group-item active">
-								{% else %}
-									<input type="hidden" name="filterobj" value={{i.0}} />
-									<button type="submit" class="list-group-item">
-								{% endif %}
-									{{i.0}}
-									<span class="badge">{{i.1}}</span>
-								</button>
-							</form>
-						{% endfor %}
-						<li class="list-group-item">{% trans "Didn't find the expected result?" %} <a class="btn btn-default" href="{% url 'search:resultpage' %}">{% trans "see help" %}</a>
-						</li>
-					</ul>
-			</div>
-		</div>
-	<div class="col-md-9">
-	{% else %}
-	<div class="col-md-12">
+	<div class="panel panel-default">
+		<div class="panel-heading">{% trans "Type filters" %}</div>
+			<ul class="list-group">
+				{% for i in typeset %}
+					<form id="filter_{{i.0}}" method="post" action="{% url 'search:resultpage' %}" >{% csrf_token %}
+						<input type="hidden" name="expression" value="{{qstring}}" />
+						{% if filterobj == i.0 %}
+							<button type="submit" class="list-group-item active" value="{{i.0}}">
+						{% else %}
+							<input type="hidden" name="filterobj" value="{{i.0}}" />
+							<button type="submit" class="list-group-item">
+						{% endif %}
+							{{i.0}}
+							<span class="badge">{{i.1}}</span>
+						</button>
+					</form>
+				{% endfor %}
+			</ul>
+	</div>
 	{% endif %}
+	{% if projects|length > 1 or filterproj != '' %}
+	<div class="panel panel-default">
+		<div class="panel-heading">{% trans "Select relevant projects" %}</div>
+			<ul class="list-group">
+				{% for i in projects %}
+					{# TODO Filter toggle all-none #}
+					{# TODO is there a way to combine both filters? #}
+					<form id="filterproj_{{i.0}}" method="post" action="{% url 'search:resultpage' %}" >{% csrf_token %}
+						<input type="hidden" name="expression" value="{{qstring}}" />
+						{% if filterproj == i.0 %}
+							<button type="submit" class="list-group-item active" value="{{i.0}}">
+						{% else %}
+							<input type="hidden" name="filterproj" value="{{i.0}}" />
+							<button type="submit" class="list-group-item">
+						{% endif %}
+							{{i.0}}
+							<span class="badge">{{i.1}}</span>
+						</button>
+					</form>
+				{% endfor %}
+			</ul>
+	</div>
+	{% endif %}
+		<div class="panel panel-default">
+			<div class="panel-heading">{% trans "Filter help" %}</div>
+				<ul class="list-group">
+					<li class="list-group-item">{% trans "Didn't find the expected result?" %}<div style="height:10px;"></div><a class="btn btn-default" href="{% url 'search:resultpage' %}">{% trans "see help" %}</a>
+					</li>
+				</ul>
+		</div>
+	</div>
+
+	<div class="col-md-9">
 		<div class="panel panel-default">
 			<div class="panel-heading">
 				{% trans "Search results" %}

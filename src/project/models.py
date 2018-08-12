@@ -127,15 +127,21 @@ class Project(SearchableMixin, CustomModel):
     def __str__(self):
         return self.name
 
+    # SearchableMixin functions
     def search_allowed_for_user(self, user):
         return self.developer_allowed(user)
 
+    def get_relative_project(self):
+        return self.name
+
+    # permission functions
     def user_has_write_permissions(self, user):
         return self.is_manager(user)
 
     def user_has_read_permissions(self, user):
         return self.developer_allowed(user)
 
+    # activity function
     def activity_stream_long_name(self):
         return self.description
 

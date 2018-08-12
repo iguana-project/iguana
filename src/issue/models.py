@@ -344,18 +344,24 @@ class Issue(SearchableMixin, CustomModel):
     def get_absolute_url(self):
         return reverse('issue:detail', kwargs={'project': self.project.name_short, 'sqn_i': self.number})
 
-    def get_search_title(self):
-        return "(" + self.get_ticket_identifier() + ") " + self.title
-
+    # SearchableMixin functions
     def search_allowed_for_user(self, user):
         return self.project.developer_allowed(user)
 
+    def get_search_title(self):
+        return "(" + self.get_ticket_identifier() + ") " + self.title
+
+    def get_relative_project(self):
+        return self.project.name
+
+    # permission functions
     def user_has_write_permissions(self, user):
         return self.project.user_has_write_permissions(user)
 
     def user_has_read_permissions(self, user):
         return self.project.user_has_read_permissions(user)
 
+    # activity functions
     def activity_stream_short_name(self):
         return self.get_ticket_identifier()
 

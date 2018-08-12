@@ -27,6 +27,7 @@ from search.models import Search
 from search.forms import SearchEditForm
 from project.models import Project
 # elements to show for help
+from search.fieldcheckings import NOT_PROJ_RELATED
 from search.frontend import app_list, searchable_fields
 from search.parser import comparatorToQExpression as comp_expressions
 
@@ -110,15 +111,21 @@ class ResultView(LoginRequiredMixin, View):
         # [title, link]
         try:
             result = SearchFrontend.query(request.POST['expression'], self.request.user)
-        except:
+        except ValueError:
             # this can happen when less than three chars were given to fullext search
             messages.add_message(request, messages.ERROR, _('Please search for at least three characters'))
             result = []
 
         # prepare set of types contained in search result
         typeset = defaultdict(lambda: 0)
-        for title, url, model in result:
+        projects = defaultdict(lambda: 0)
+        not_proj_related = defaultdict(lambda: 0)
+        for title, url, model, rel_project in result:
             typeset[model] += 1
+            if _(NOT_PROJ_RELATED) == rel_project:
+                not_proj_related[rel_project] += 1
+            else:
+                projects[rel_project] += 1
 
         # filter result list by object if necessary
         filterobj = ""
@@ -126,12 +133,22 @@ class ResultView(LoginRequiredMixin, View):
             filterobj = request.POST['filterobj']
             result = [x for x in result if x[2] == filterobj]
 
+        # TODO is there a way to combine both filters? - therefore both values needs to be submitted from the template
+        # TODO filter toggle all-none
+        filterproj = ""
+        if 'filterproj' in request.POST:
+            filterproj = request.POST['filterproj']
+            result = [x for x in result if x[3] == filterproj]
+
         return TemplateResponse(request,
                                 self.template_name,
                                 {'qresult': result,
                                  'typeset': sorted(typeset.items()),
+                                 # append the NOT_PROJ_RELATED entry always to the end
+                                 'projects': sorted(projects.items())+list(not_proj_related.items()),
                                  'qstring': request.POST['expression'],
                                  'filterobj': filterobj,
+                                 'filterproj': filterproj,
                                  'searchable_fields': searchable_fields,
                                  'compare': comp_expressions
                                  })

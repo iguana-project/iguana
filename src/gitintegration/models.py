@@ -153,20 +153,25 @@ class Commit(SearchableMixin, CustomModel):
             return json.loads(self.tags)
         return {}
 
-    def user_has_write_permissions(self, user):
-        return self.repository.project.is_manager(user)
+    def get_absolute_url(self):
+        return reverse('issue:detail', kwargs={'project': self.issue.project.name_short, 'sqn_i': self.issue.number})
 
-    def user_has_read_permissions(self, user):
-        return self.repository.project.user_has_read_permissions(user)
-
+    # SearchableMixin functions
     def search_allowed_for_user(self, user):
         return self.user_has_read_permissions(user)
 
     def get_search_title(self):
         return "(" + self.get_name_short() + ") " + self.get_title()
 
-    def get_absolute_url(self):
-        return reverse('issue:detail', kwargs={'project': self.issue.project.name_short, 'sqn_i': self.issue.number})
+    def get_relative_project(self):
+        return self.issue.project.name
+
+    # permission functions
+    def user_has_write_permissions(self, user):
+        return self.repository.project.is_manager(user)
+
+    def user_has_read_permissions(self, user):
+        return self.repository.project.user_has_read_permissions(user)
 
     searchable_fields = ['issue', 'date', 'author', 'name', 'message', 'changes']
 
