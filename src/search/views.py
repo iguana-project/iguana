@@ -128,10 +128,10 @@ class ResultView(LoginRequiredMixin, View):
                 projects[rel_project] += 1
 
         # filter result list by object if necessary
-        filterobj = ""
-        if 'filterobj' in request.POST:
-            filterobj = request.POST['filterobj']
-            result = [x for x in result if x[2] == filterobj]
+        filtertype = ""
+        if 'filtertype' in request.POST:
+            filtertype = request.POST['filtertype']
+            result = [x for x in result if x[2] == filtertype]
 
         # TODO maybe improve by additional numbers for active filter
         filterproj = ""
@@ -146,7 +146,7 @@ class ResultView(LoginRequiredMixin, View):
                                  # append the NOT_PROJ_RELATED entry always to the end
                                  'projects': sorted(projects.items())+list(not_proj_related.items()),
                                  'qstring': request.POST['expression'],
-                                 'filterobj': filterobj,
+                                 'filtertype': filtertype,
                                  'filterproj': filterproj,
                                  'searchable_fields': searchable_fields,
                                  'compare': comp_expressions

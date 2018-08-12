@@ -170,22 +170,22 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 {% else %}
 <div class="row">
 	<div class="col-md-3">
-	{% if typeset|length > 1 or filterobj != '' %}
+	{% if typeset|length > 1 or filtertype != '' %}
 	<div class="panel panel-default">
 		<div class="panel-heading">{% trans "Type filters" %}</div>
 			<ul class="list-group">
 				{% for i in typeset %}
-					<form id="filterobj_{{i.0}}" method="post" action="{% url 'search:resultpage' %}" >{% csrf_token %}
+					<form id="filtertype_{{i.0}}" method="post" action="{% url 'search:resultpage' %}" >{% csrf_token %}
 						<input type="hidden" name="expression" value="{{qstring}}" />
 						{% for j in projects %}
 						{% if filterproj == j.0 %}
 						<input type="hidden" class="list-group-item" name="filterproj" value="{{j.0}}" />
 						{% endif %}
 						{% endfor %}
-						{% if filterobj == i.0 %}
+						{% if filtertype == i.0 %}
 							<button type="submit" class="list-group-item active">
 						{% else %}
-							<input type="hidden" name="filterobj" value="{{i.0}}" />
+							<input type="hidden" name="filtertype" value="{{i.0}}" />
 							<button type="submit" class="list-group-item">
 						{% endif %}
 							{{i.0}}
@@ -205,8 +205,8 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 					<form id="filterproj_{{i.0}}" method="post" action="{% url 'search:resultpage' %}" >{% csrf_token %}
 						<input type="hidden" name="expression" value="{{qstring}}" />
 						{% for j in typeset %}
-						{% if filterobj == j.0 %}
-						<input type="hidden" class="list-group-item" name="filterobj" value="{{j.0}}" />
+						{% if filtertype == j.0 %}
+						<input type="hidden" class="list-group-item" name="filtertype" value="{{j.0}}" />
 						{% endif %}
 						{% endfor %}
 						{% if filterproj == i.0 %}
@@ -242,7 +242,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 					<li class="list-group-item">
 						{# i.2: Object type #}
 						<h4 class ="list-group-item-heading"><a href={{i.1}}>{{ i.0 }}</a></h4>
-						{% if filterobj|length == 0 %}
+						{% if filtertype|length == 0 %}
 						<p class=list-group-item-text>{{i.2}}</p>
 						{% endif %}
 					</li>

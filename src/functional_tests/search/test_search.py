@@ -163,22 +163,22 @@ class SearchTest(StaticSeleniumTestCase):
 
         self.assertIn("Issue",
                       driver.find_element_by_css_selector(
-                        "#filter_Issue > button:nth-child(4)"
+                        "#filtertype_Issue > button:nth-child(4)"
                       ).text)
         self.assertIn("Project",
                       driver.find_element_by_css_selector(
-                        "#filter_Project > button:nth-child(4)"
+                        "#filtertype_Project > button:nth-child(4)"
                       ).text)
         self.assertIn("User",
                       driver.find_element_by_css_selector(
-                        "#filter_User > button:nth-child(4)"
+                        "#filtertype_User > button:nth-child(4)"
                       ).text)
 
         self.assertEqual(len(driver.find_element_by_css_selector(
             ".col-md-9 ul"
             ).text.split('\n')), 10)
 
-        driver.find_element_by_css_selector("#filter_Issue > button:nth-child(4)").click()
+        driver.find_element_by_css_selector("#filtertype_Issue > button:nth-child(4)").click()
 
         # check that Issue button is now active
         self.assertEqual(driver.find_element_by_css_selector(
@@ -190,27 +190,27 @@ class SearchTest(StaticSeleniumTestCase):
             ".col-md-9 ul"
             ).text.split('\n')), 3)
 
-        driver.find_element_by_css_selector("#filter_Project > button:nth-child(4)").click()
+        driver.find_element_by_css_selector("#filtertype_Project > button:nth-child(4)").click()
         self.assertEqual(driver.find_element_by_css_selector(
             "button.list-group-item:nth-child(3)"
             ).get_attribute('class'), 'list-group-item active')
         self.assertEqual(driver.find_element_by_css_selector(
-            "#filter_Issue > button:nth-child(4)"
+            "#filtertype_Issue > button:nth-child(4)"
             ).get_attribute('class'), 'list-group-item')
 
         self.assertEqual(len(driver.find_element_by_css_selector(
             ".col-md-9 ul"
             ).text.split('\n')), 1)
 
-        driver.find_element_by_css_selector("#filter_User > button:nth-child(4)").click()
+        driver.find_element_by_css_selector("#filtertype_User > button:nth-child(4)").click()
         self.assertEqual(driver.find_element_by_css_selector(
             "button.list-group-item:nth-child(3)"
             ).get_attribute('class'), 'list-group-item active')
         self.assertEqual(driver.find_element_by_css_selector(
-            "#filter_Project > button:nth-child(4)"
+            "#filtertype_Project > button:nth-child(4)"
             ).get_attribute('class'), 'list-group-item')
         self.assertEqual(driver.find_element_by_css_selector(
-            "#filter_Issue > button:nth-child(4)"
+            "#filtertype_Issue > button:nth-child(4)"
             ).get_attribute('class'), 'list-group-item')
 
         self.assertEqual(len(driver.find_element_by_css_selector(
@@ -223,7 +223,7 @@ class SearchTest(StaticSeleniumTestCase):
             ".col-md-9 ul"
             ).text.split('\n')), 10)
         self.assertEqual(driver.find_element_by_css_selector(
-            "#filter_User > button:nth-child(4)"
+            "#filtertype_User > button:nth-child(4)"
             ).get_attribute('class'), 'list-group-item')
 
         # test empty search string (should fail)
@@ -280,3 +280,7 @@ class SearchTest(StaticSeleniumTestCase):
             "table:nth-child(2) > tbody:nth-child(1) > tr:nth-child(1) > td:nth-child(3) > " +
             "form:nth-child(1) > button:nth-child(3)").click()
         self.assertEqual(len(Search.objects.filter(searchexpression=qstring)), 0)
+
+    def test_search_combine_proj_and_type_filter(self):
+        # TODO TESTCASE test_search_combine_proj_and_type_filter
+        pass
