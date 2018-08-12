@@ -43,13 +43,13 @@ class OleaTest(StaticSeleniumTestCase):
         driver.find_element_by_id("expression").send_keys("Test-Issue :Task" + Keys.RETURN)
         self.assertEqual("Test-Issue", driver.find_element_by_css_selector("#issue_title_1").text)
         driver.find_element_by_id("expression").clear()
-        driver.find_element_by_id("expression").send_keys("Noch ein Issue :Bug" + Keys.RETURN)
-        self.assertEqual("Noch ein Issue", driver.find_element_by_css_selector("#issue_title_2").text)
+        driver.find_element_by_id("expression").send_keys("Another issue :Bug" + Keys.RETURN)
+        self.assertEqual("Another issue", driver.find_element_by_css_selector("#issue_title_2").text)
         self.assertEqual("Bug", driver.find_element_by_css_selector("#issue_type_2").text)
         driver.find_element_by_id("expression").clear()
         driver.find_element_by_id("expression").send_keys(">BRP-2 :Task" + Keys.RETURN)
         self.assertEqual("Task", driver.find_element_by_css_selector("#issue_type_2").text)
-        driver.find_element_by_id("expression").send_keys("Und noch einer mit trailing whitespace " + Keys.RETURN)
+        driver.find_element_by_id("expression").send_keys("And another one with trailing whitespace " + Keys.RETURN)
         self.assertIn("An error occurred when processing your request: Please note that the usage of control " +
                       "characters is not possible until escaping is implemented. " +
                       "Also the error might be caused by a neighbouring character. - Not able to parse char: ' '",
@@ -57,14 +57,14 @@ class OleaTest(StaticSeleniumTestCase):
 
         # go to backlog and try the same
         driver.find_element_by_link_text("Backlog").click()
-        driver.find_element_by_id("expression").send_keys("Und noch einer mit trailing whitespace " + Keys.RETURN)
+        driver.find_element_by_id("expression").send_keys("And another one with trailing whitespace " + Keys.RETURN)
         self.assertIn("An error occurred when processing your request: Please note that the usage of control " +
                       "characters is not possible until escaping is implemented. " +
                       "Also the error might be caused by a neighbouring character. - Not able to parse char: ' '",
                       driver.find_element_by_css_selector("div.alert.alert-danger").text)
         driver.find_element_by_id("expression").clear()
-        driver.find_element_by_id("expression").send_keys("Und noch einer :Bug" + Keys.RETURN)
-        self.assertIn("BRP-3\nUnd noch einer", driver.find_element_by_id("backlog_issue_3").text)
+        driver.find_element_by_id("expression").send_keys("And another one :Bug" + Keys.RETURN)
+        self.assertIn("BRP-3\nAnd another one", driver.find_element_by_id("backlog_issue_3").text)
 
         # verify that all issues are assigned to given project and no more issues were created
         self.project.refresh_from_db()
