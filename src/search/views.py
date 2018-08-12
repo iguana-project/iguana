@@ -133,8 +133,7 @@ class ResultView(LoginRequiredMixin, View):
             filterobj = request.POST['filterobj']
             result = [x for x in result if x[2] == filterobj]
 
-        # TODO is there a way to combine both filters? - therefore both values needs to be submitted from the template
-        # TODO filter toggle all-none
+        # TODO maybe improve by additional numbers for active filter
         filterproj = ""
         if 'filterproj' in request.POST:
             filterproj = request.POST['filterproj']
