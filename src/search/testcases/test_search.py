@@ -389,3 +389,9 @@ class SearchTest(TestCase):
         self.assertContains(response, "Your account doesn't have access to this page.")
 
         self.assertEqual(Search.objects.filter(creator=self.user, persistent=True).count(), 1)
+
+    def test_filter(self):
+        # TODO TESTCASE test project filter
+        # TODO TESTCASE test type filter
+        # TODO TESTCASE test both filters
+        pass

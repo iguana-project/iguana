@@ -283,4 +283,5 @@ class SearchTest(StaticSeleniumTestCase):
 
     def test_search_combine_proj_and_type_filter(self):
         # TODO TESTCASE test_search_combine_proj_and_type_filter
+        # TODO TESTCASE verify both amount illustrations of results: with and without active filter
         pass
