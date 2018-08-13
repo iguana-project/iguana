@@ -16,6 +16,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.dispatch import receiver
 from django.urls import reverse
 from django.utils import timezone
+from os.path import basename
 
 from common.validators import date_is_present_or_future
 import datetime
@@ -29,7 +30,6 @@ from landing_page.actstream_util import unfollow_issue, follow_issue
 from actstream.models import followers
 
 from search.fieldcheckings import SearchableMixin
-
 
 from django.utils.translation import ugettext_lazy as _
 from lib.custom_model import CustomModel
@@ -107,7 +107,7 @@ class Attachment(SearchableMixin, CustomModel):
         return reverse('issue:detail', kwargs={'project': self.issue.project.name_short, 'sqn_i': self.issue.number})
 
     def __str__(self):
-        return self.file.name.split("/")[2]
+        return basename(self.file.name)
 
     def search_allowed_for_user(self, user):
         return self.issue.project.developer_allowed(user)

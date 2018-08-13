@@ -22,6 +22,7 @@ from django.core.paginator import Paginator
 from django.core.paginator import EmptyPage
 from django.core.paginator import PageNotAnInteger
 from django.db.models import Q
+import os
 
 from itertools import chain
 from lib.custom_model import get_r_object_or_404, get_w_object_or_404
@@ -41,7 +42,6 @@ from django.utils.translation import ugettext as _, ugettext_lazy as _l
 from lib.multiform import MultiFormsView
 from timelog.forms import TimelogCreateForm
 from django.utils import timezone
-import os
 
 
 def process_order_by(request, issues):
