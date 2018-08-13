@@ -245,8 +245,12 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 					<li class="list-group-item">
 						{# i.2: Object type #}
 						<h4 class ="list-group-item-heading"><a href={{i.1}}>{{ i.0 }}</a></h4>
-						{% if filtertype|length == 0 %}
+						{% if filtertype|length == 0 or i.2 == 'Tag' or i.2 == 'Comment' %}
+							{% if i.2 != 'Project' %}
+						<p class=list-group-item-text>{{i.2}} <i>{% trans "- of the project: " %}</i>{{i.3}}</p>
+							{% else %}
 						<p class=list-group-item-text>{{i.2}}</p>
+							{% endif %}
 						{% endif %}
 					</li>
 				{% endfor %}

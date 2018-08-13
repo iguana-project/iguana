@@ -180,15 +180,21 @@ class Comment(SearchableMixin, CustomModel):
     def __str__(self):
         return self.issue.__str__() + ":Comment" + str(self.seqnum)
 
+    # SearchableMixin functions
     def search_allowed_for_user(self, user):
         return self.issue.project.developer_allowed(user)
 
+    def get_relative_project(self):
+        return self.issue.project.name
+
+    # permission functions
     def user_has_write_permissions(self, user):
         return self.creator == user
 
     def user_has_read_permissions(self, user):
         return self.issue.user_has_read_permissions(user)
 
+    # activity functions
     def activity_stream_short_name(self):
         return "Comment"
 

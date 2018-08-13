@@ -395,3 +395,8 @@ class SearchTest(TestCase):
         # TODO TESTCASE test type filter
         # TODO TESTCASE test both filters
         pass
+
+    def test_tag_filter(self):
+        # TODO TESTCASE verify the project of tags and comments is part of the result
+        # TODO TESTCASE verify the type is part of the result as soon as no type filter is active
+        pass
