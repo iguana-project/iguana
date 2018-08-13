@@ -33,6 +33,9 @@ from search.parser import comparatorToQExpression as comp_expressions
 
 from django.utils.translation import ugettext as _, ugettext_lazy as _l
 
+FILTER_PROJ = 'filterproj'
+FILTER_TYPE = 'filtertype'
+
 
 class SearchView(LoginRequiredMixin, TemplateView):
     template_name = 'search/search.html'
@@ -117,26 +120,37 @@ class ResultView(LoginRequiredMixin, View):
             result = []
 
         # prepare set of types contained in search result
-        typeset = defaultdict(lambda: 0)
-        projects = defaultdict(lambda: 0)
-        not_proj_related = defaultdict(lambda: 0)
+        # with/-out project filter
+        typeset = defaultdict(lambda: [0, 0])
+        # with/-out type filter
+        projects = defaultdict(lambda: [0, 0])
+        # with/-out type filter
+        not_proj_related = defaultdict(lambda: [0, 0])
         for title, url, model, rel_project in result:
-            typeset[model] += 1
+            typeset[model][1] += 1
+            if FILTER_PROJ not in request.POST or rel_project == request.POST[FILTER_PROJ]:
+                typeset[model][0] += 1
+            # amount for this project with active type filter
             if _(NOT_PROJ_RELATED) == rel_project:
-                not_proj_related[rel_project] += 1
+                not_proj_related[rel_project][1] += 1
+                # amount for this project with active type filter
+                if FILTER_TYPE not in request.POST or model == request.POST[FILTER_TYPE]:
+                    not_proj_related[rel_project][0] += 1
             else:
-                projects[rel_project] += 1
+                projects[rel_project][1] += 1
+                # amount for this project with active type filter
+                if FILTER_TYPE not in request.POST or model == request.POST[FILTER_TYPE]:
+                    projects[rel_project][0] += 1
 
         # filter result list by object if necessary
         filtertype = ""
-        if 'filtertype' in request.POST:
-            filtertype = request.POST['filtertype']
+        if FILTER_TYPE in request.POST:
+            filtertype = request.POST[FILTER_TYPE]
             result = [x for x in result if x[2] == filtertype]
 
-        # TODO maybe improve by additional numbers for active filter
         filterproj = ""
-        if 'filterproj' in request.POST:
-            filterproj = request.POST['filterproj']
+        if FILTER_PROJ in request.POST:
+            filterproj = request.POST[FILTER_PROJ]
             result = [x for x in result if x[3] == filterproj]
 
         return TemplateResponse(request,
@@ -146,8 +160,8 @@ class ResultView(LoginRequiredMixin, View):
                                  # append the NOT_PROJ_RELATED entry always to the end
                                  'projects': sorted(projects.items())+list(not_proj_related.items()),
                                  'qstring': request.POST['expression'],
-                                 'filtertype': filtertype,
-                                 'filterproj': filterproj,
+                                 FILTER_TYPE: filtertype,
+                                 FILTER_PROJ: filterproj,
                                  'searchable_fields': searchable_fields,
                                  'compare': comp_expressions
                                  })
