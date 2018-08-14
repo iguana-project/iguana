@@ -41,7 +41,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 					{% endfor %}
 					<a href="{{ notification.issue.get_absolute_url }}">{{ notification.issue.title }}</a></td>
 				{% if user in notification.issue.participant.all %}
-					<td class="discussion-list-buttion">
+					<td class="discussion-list-button">
 						<form style="display:inline-block" method="post" action="{% url 'discussion:mute' project.name_short notification.issue.number %}">
 							{% csrf_token %}
 							<button type="submit" class="btn btn-link btn-move"><span class="glyphicon glyphicon-eye-close"></span></button>

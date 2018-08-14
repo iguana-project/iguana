@@ -117,5 +117,7 @@ def comment_delete(sender, instance,  *args, **kwargs):
 
 @receiver(m2m_changed, sender=Notification.type.through)
 def save_notification(sender, instance, *args, **kwargs):
+    # update latest_modification for the notification instance
+    instance.save()
     if kwargs['action'] == 'post_add':
         send_discussion_mail.delay(instance.pk)

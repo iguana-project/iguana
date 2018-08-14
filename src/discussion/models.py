@@ -48,10 +48,19 @@ class Notification(models.Model):
         editable=False,
         )
 
+    # updates the value everytime the object is saved
+    # due to the m2m_changed signal this is saved also in case of an added type etc.
+    latest_modification = models.DateTimeField(auto_now=True)
+
     type = models.ManyToManyField(Notitype,
                                   verbose_name=_("notitype"),
                                   related_name="notifications",
                                   )
 
+    def __str__(self):
+        return "{}: {})".format(self.issue, [str(typ) for typ in self.type.all()])
+
     class Meta:
         unique_together = ('issue', 'user')
+        # latest updates shall be placed on top
+        ordering = ['-latest_modification']
