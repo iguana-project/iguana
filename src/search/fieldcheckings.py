@@ -13,6 +13,7 @@ from django.utils.translation import ugettext_lazy as _
 
 NOT_PROJ_RELATED = "not related to any projects"
 
+
 # This is pretty much just a logical hint for classes to be searchable.
 # In most cases these functionalities are overwritten in the classes mixed this mixin in
 class SearchableMixin():
