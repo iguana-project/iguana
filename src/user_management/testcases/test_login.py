@@ -50,6 +50,7 @@ class TempView(LoginRequiredMixin, View):
     """
     pass
 
+
 username = 'django'
 email = 'django@example.com'
 password = 'unchained'
@@ -88,7 +89,7 @@ class LoginTest(TestCase):
         response = self.client.post(reverse('login'), {'username': username, 'password': password}, follow=True)
         try:
             self.assertRedirects(response, reverse('landing_page:home'))
-        except:
+        except AssertionError:
             self.assertRedirects(response, reverse('landing_page:home')+'/')
 
         response = self.client.get(reverse('landing_page:home'))

@@ -203,6 +203,7 @@ def WebElement_click(self):
             self.parent.get_screenshot_as_file('screenshot.png')
             raise
 
+
 # monkey patch the WebElement class
 WebElement.old_click = WebElement.click
 WebElement.click = WebElement_click

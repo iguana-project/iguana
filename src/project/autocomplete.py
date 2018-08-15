@@ -11,6 +11,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 from dal import autocomplete
 from django.contrib.auth import get_user_model
 from django.db.models import Q
+from django.http import Http404
 
 from issue.models import Issue
 from lib.custom_model import get_r_object_or_404
@@ -31,7 +32,7 @@ class UserAutocompleteView(autocomplete.Select2QuerySetView):
             project = self.kwargs.get('project')
             try:
                 proj = get_r_object_or_404(self.request.user, Project, name_short=project)
-            except:
+            except Http404:
                 return get_user_model().objects.none()
 
             qs = proj.get_members()
@@ -52,7 +53,7 @@ class IssueAutocompleteView(autocomplete.Select2QuerySetView):
         project = self.kwargs.get('project')
         try:
             proj = get_r_object_or_404(self.request.user, Project, name_short=project)
-        except:
+        except Http404:
             return Issue.objects.none()
 
         if self.kwargs.get('issue') is not None:
@@ -78,7 +79,7 @@ class TagAutocompleteView(autocomplete.Select2QuerySetView):
         project = self.kwargs.get('project')
         try:
             proj = get_r_object_or_404(self.request.user, Project, name_short=project)
-        except:
+        except Http404:
             return Tag.objects.none()
 
         qs = Tag.objects.filter(project=proj)

@@ -197,7 +197,7 @@ class InviteUsersTest(StaticSeleniumTestCase):
                 for f in dir_content:
                     file_path = os.path.join(settings.EMAIL_FILE_PATH, f)
                     os.remove(file_path)
-        except:
+        except Exception:
             pass
 
         self.selenium.get("{}{}".format(self.live_server_url, reverse('invite_users:invite_users')))

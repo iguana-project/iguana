@@ -67,6 +67,7 @@ def invalidate_cache(sender, instance, **kwargs):
                                                   [iss.project.name_short, iss.number, user.username])
                 cache.delete(key2)
 
+
 post_save.connect(invalidate_cache, sender=Issue, dispatch_uid="invalidate_issue_template.cards_post_save")
 m2m_changed.connect(invalidate_cache, sender=Issue.tags.through,
                     dispatch_uid="invalidate_issue_template.cards_tags")

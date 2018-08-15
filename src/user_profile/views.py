@@ -16,6 +16,7 @@ from django.contrib import messages
 from django.db import transaction
 from django.urls.base import reverse
 from django.utils import translation
+from django.utils.datastructures import MultiValueDictKeyError
 from django.shortcuts import render, redirect
 from django.core.cache import cache
 from django.http import Http404
@@ -72,7 +73,7 @@ class ToggleNotificationView(LoginRequiredMixin, View):
         props = {}
         try:
             props = json.loads(self.request.user.get_preference(propname))
-        except:
+        except (TypeError, json.JSONDecodeError):
             # currently no settings for property, this is okay
             pass
 
@@ -135,7 +136,7 @@ class ShowProfilePageView(LoginRequiredMixin, ShowMoreMixin, DetailView):
         prefs = {}
         try:
             prefs = json.loads(user.get_preference('notify_mail'))
-        except:
+        except (TypeError, json.JSONDecodeError):
             pass
 
         # there shall be an entry for every project the user is member of
@@ -216,7 +217,7 @@ class EditProfilePageView(LoginRequiredMixin, UserPassesTestMixin, SingleObjectM
             if old_email != new_email:
                 try:
                     provided_password = forms['old_password']
-                except:
+                except (TypeError, MultiValueDictKeyError):
                     provided_password = None
 
                 if(provided_password is None or provided_password == "" or

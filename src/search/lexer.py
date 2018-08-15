@@ -43,8 +43,8 @@ limit_ops = ('LIMIT')
 #   ~~: regex
 t_COMPARATOR = r'[!=]=|[<>]=?|~~?'
 
-t_LPAREN = '\('
-t_RPAREN = '\)'
+t_LPAREN = r'\('
+t_RPAREN = r'\)'
 
 
 # the name of the field to query:

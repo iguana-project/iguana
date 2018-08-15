@@ -8,6 +8,7 @@ Creative Commons Attribution-ShareAlike 4.0 International License.
 You should have received a copy of the license along with this
 work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 """
+from django.http import Http404
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
@@ -74,7 +75,7 @@ class RepositoryDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
                                 project__name_short=self.kwargs.get('project'),
                                 pk=self.kwargs.get('repository'),
                                 )
-        except:
+        except Http404:
             return 0
         return 1
 
@@ -99,7 +100,7 @@ class RepositoryEditView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
                                        project__name_short=self.kwargs.get('project'),
                                        pk=self.kwargs.get('repository'),
                                        )
-        except:
+        except Http404:
             return 0
         return 1
 
@@ -128,7 +129,7 @@ class RepositoryCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
             project = get_w_object_or_404(self.request.user, Project,
                                           name_short=self.kwargs.get('project'),
                                           )
-        except:
+        except Http404:
             return 0
         return 1
 
@@ -153,7 +154,7 @@ class RepositoryDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
             get_w_object_or_404(self.request.user, Project,
                                 name_short=self.kwargs.get('project'),
                                 )
-        except:
+        except Http404:
             return 0
         return 1
 
@@ -187,7 +188,7 @@ class FileDiffView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
             repo = get_r_object_or_404(self.request.user, Project,
                                        name_short=self.kwargs.get('project')
                                        )
-        except:
+        except Http404:
             return 0
         return 1
 

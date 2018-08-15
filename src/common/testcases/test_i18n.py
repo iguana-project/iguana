@@ -10,6 +10,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 """
 from django.test import TestCase
 from django.urls import reverse
+from django.urls.exceptions import NoReverseMatch
 from django.utils.translation import activate
 
 from common import urls
@@ -17,13 +18,13 @@ from django.contrib.auth import get_user_model
 
 
 def list_names():
-    def run(urllist, l=[]):
+    def run(urllist, ln=[]):
         for entry in urllist:
             if hasattr(entry, "name"):
-                l.append(entry.name)
+                ln.append(entry.name)
             if hasattr(entry, 'url_patterns'):
-                run(entry.url_patterns, l)
-        return l
+                run(entry.url_patterns, ln)
+        return ln
     return run(urls.urlpatterns)
 
 
@@ -47,6 +48,6 @@ class GetTest(TestCase):
         for name in list_names():
             try:
                 reverse(name)
-            except:
+            except NoReverseMatch:
                 continue
             self.compare(name)

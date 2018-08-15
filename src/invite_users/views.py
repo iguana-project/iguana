@@ -107,6 +107,6 @@ class SuccessView(LoginRequiredMixin, View):
             invite_list = request.session['invite_list']
             request.session.pop('invite_list', None)
             request.session.modified = True
-        except:
+        except KeyError:
             invite_list = []
         return render(request, 'invite_users/successfully_invited.html', {'invite_list': invite_list})

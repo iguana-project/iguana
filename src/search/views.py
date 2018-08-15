@@ -8,6 +8,7 @@ Creative Commons Attribution-ShareAlike 4.0 International License.
 You should have received a copy of the license along with this
 work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 """
+from django.http import Http404
 from django.views import View
 from django.urls import reverse, reverse_lazy
 from django.views.generic.list import ListView
@@ -75,7 +76,7 @@ class ProjectFilterView(LoginRequiredMixin, UserPassesTestMixin, View):
             project = get_r_object_or_404(self.request.user, Project,
                                           name_short=self.kwargs.get('project'),
                                           )
-        except:
+        except Http404:
             return 0
         return 1
 
@@ -92,7 +93,7 @@ class SearchEditView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         try:
             get_w_object_or_404(self.request.user, Search,
                                 pk=self.kwargs.get('sqn_sh')).creator == self.request.user
-        except:
+        except Http404:
             return 0
         return 1
 
@@ -183,7 +184,7 @@ class MakeSearchPersistentView(LoginRequiredMixin, UserPassesTestMixin, View):
             search = get_w_object_or_404(self.request.user, Search,
                                          creator=self.request.user,
                                          pk=self.request.POST.get('pk'))
-        except:
+        except Http404:
             return 0
         return 1
 
@@ -203,7 +204,7 @@ class DelSearchPersistentView(LoginRequiredMixin, UserPassesTestMixin, View):
             search = get_w_object_or_404(self.request.user, Search,
                                          creator=self.request.user,
                                          pk=self.request.POST.get('pk'))
-        except:
+        except Http404:
             return 0
         return 1
 

@@ -13,6 +13,7 @@ from git import Repo, Git
 import os
 import re
 from django.db import IntegrityError, transaction
+from git.exc import BadName, GitCommandError, NoSuchPathError
 
 from .models import Repository, Commit
 
@@ -33,7 +34,7 @@ class Frontend():
             repo = Repo.clone_from(repository.url, repository.get_local_repo_path(), branch='master')
 
             repository.conn_ok = True
-        except:
+        except Exception:
             repository.conn_ok = False
 
         repository.save()
@@ -52,7 +53,7 @@ class Frontend():
             repo = Repo(repo_path)
             repo.git.pull()
             repository.conn_ok = True
-        except:
+        except Exception:
             repository.conn_ok = False
             repository.save()
             return
@@ -73,7 +74,7 @@ class Frontend():
         # iterate over commits
         for c in repo.iter_commits(iter_str):
             # try to extract issue describer from commit message
-            issue_describer = re.match("^" + repository.project.name_short + "-\d+ ", c.message)
+            issue_describer = re.match("^" + repository.project.name_short + r"-\d+ ", c.message)
             # skip commit if is doesn't match the form "^<prj-name-short>-<digit> "
             if issue_describer is None:
                 continue
@@ -134,14 +135,14 @@ class Frontend():
 
         try:
             repo = Repo(repo_path)
-        except:
+        except NoSuchPathError:
             repository.conn_ok = False
             repository.save()
             return ""
 
         try:
             commit = repo.commit(sha_commit)
-        except:
+        except BadName:
             return ""
 
         if not commit.parents:

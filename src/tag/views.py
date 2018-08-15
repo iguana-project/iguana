@@ -10,7 +10,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 """
 from django.views.generic import View
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import Http404, HttpResponseRedirect, HttpResponse
 from django.template.defaulttags import register
 from django.urls import reverse
 from django.shortcuts import render
@@ -71,7 +71,7 @@ class TagView(LoginRequiredMixin, UserPassesTestMixin, View):
         try:
             get_r_object_or_404(self.request.user, Project,
                                 name_short=self.kwargs.get('project')).developer_allowed(self.request.user)
-        except:
+        except Http404:
             return 0
         return 1
 

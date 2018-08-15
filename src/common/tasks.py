@@ -61,7 +61,7 @@ def send_discussion_mail(notification_pk):
     try:
         prefs = json.loads(noti.user.get_preference("notify_mail"))
 
-    except:
+    except (TypeError, json.JSONDecodeError):
         # already set to default value
         pass
     prefs_proj = prefs.get(noti.issue.project.name_short, [])

@@ -23,6 +23,6 @@ class csrfUpdateMiddleware(MiddlewareMixin):
             content = response.content
             token = get_token(request)
             replace = b"name=\'csrfmiddlewaretoken\' value=\'" + token.encode() + b"\'"
-            regex = re.compile(b"name=\'csrfmiddlewaretoken\'\s*value=\'\w*\'")
+            regex = re.compile(br"name=\'csrfmiddlewaretoken\'\s*value=\'\w*\'")
             response.content = re.sub(regex, replace, content)
         return response

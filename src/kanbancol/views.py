@@ -53,7 +53,7 @@ class KanbanColumnCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView
         try:
             get_w_object_or_404(self.request.user, Project,
                                 name_short=self.kwargs.get('project'))
-        except:
+        except Http404:
             return 0
         return 1
 
@@ -72,7 +72,7 @@ class KanbanColumnUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView
             get_w_object_or_404(self.request.user, KanbanColumn,
                                 project__name_short=self.kwargs.get('project'),
                                 position=self.kwargs.get('position'))
-        except:
+        except Http404:
             return 0
         return 1
 
@@ -96,7 +96,7 @@ class KanbanColumnUpView(LoginRequiredMixin, UserPassesTestMixin, View):
             get_w_object_or_404(self.request.user, KanbanColumn,
                                 project__name_short=self.kwargs.get('project'),
                                 position=self.kwargs.get('position'))
-        except:
+        except Http404:
             return 0
         return 1
 
@@ -118,7 +118,7 @@ class KanbanColumnDownView(LoginRequiredMixin, UserPassesTestMixin, View):
             get_w_object_or_404(self.request.user, KanbanColumn,
                                 project__name_short=self.kwargs.get('project'),
                                 position=self.kwargs.get('position'))
-        except:
+        except Http404:
             return 0
         return 1
 
@@ -155,7 +155,7 @@ class KanbanColumnDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView
             get_w_object_or_404(self.request.user, KanbanColumn,
                                 project__name_short=self.kwargs.get('project'),
                                 position=self.kwargs.get('position'))
-        except:
+        except Http404:
             return 0
         return 1
 

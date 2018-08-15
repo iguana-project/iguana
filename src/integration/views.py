@@ -8,6 +8,7 @@ Creative Commons Attribution-ShareAlike 4.0 International License.
 You should have received a copy of the license along with this
 work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 """
+from django.http import Http404
 from django.views.generic.base import RedirectView
 from django.views.generic.edit import UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -23,7 +24,7 @@ from project.models import Project
 
 try:
     from common.settings import SLACK_SECRET, SLACK_VERIFICATION, SLACK_ID, HOST
-except:
+except ImportError:
     SLACK_ID = None
 
 
@@ -42,7 +43,7 @@ class SlackIntegrationUpdateView(LoginRequiredMixin, UserPassesTestMixin, Update
         try:
             get_w_object_or_404(self.request.user, Project,
                                 name_short=self.kwargs.get('project'))
-        except:
+        except Http404:
             return 0
         return 1
 
@@ -66,7 +67,7 @@ class SlackIntegrationDeleteView(LoginRequiredMixin, UserPassesTestMixin, Delete
         try:
             get_w_object_or_404(self.request.user, Project,
                                 name_short=self.kwargs.get('project'))
-        except:
+        except Http404:
             return 0
         return 1
 

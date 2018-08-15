@@ -99,7 +99,7 @@ class ProjectDetailTimelogView(LoginRequiredMixin, UserPassesTestMixin, Template
         try:
             get_r_object_or_404(self.request.user, Project,
                                 name_short=self.kwargs.get('project'))
-        except:
+        except Http404:
             return 0
         return 1
 
@@ -146,7 +146,7 @@ class ProjectUserTimelogView(LoginRequiredMixin, UserPassesTestMixin, TemplateVi
         try:
             get_r_object_or_404(self.request.user, Project,
                                 name_short=self.kwargs.get('project'))
-        except:
+        except Http404:
             return 0
         return 1
 
@@ -176,7 +176,7 @@ class ProjectDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         try:
             get_r_object_or_404(self.request.user, Project,
                                 name_short=self.kwargs.get('project'))
-        except:
+        except Http404:
             return 0
         return 1
 
@@ -230,7 +230,7 @@ class ProjectEditView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         try:
             get_w_object_or_404(self.request.user, Project,
                                 name_short=self.kwargs.get('project'))
-        except:
+        except Http404:
             return 0
         return 1
 
@@ -279,7 +279,7 @@ class ProjectDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         try:
             get_w_object_or_404(self.request.user, Project,
                                 name_short=self.kwargs.get('project'))
-        except:
+        except Http404:
             return 0
         return 1
 
@@ -314,6 +314,6 @@ class LeaveProjectView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         try:
             get_r_object_or_404(self.request.user, Project,
                                 name_short=self.kwargs.get('project'))
-        except:
+        except Http404:
             return 0
         return 1

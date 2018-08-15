@@ -76,7 +76,7 @@ class CreateFilterView(LoginRequiredMixin, View):
 
         if filter_string:
             name = self.request.POST.get('name')
-            if not re.match("^[\w\s,.]+$", name) or len(name) > 99:
+            if not re.match(r"^[\w\s,.]+$", name) or len(name) > 99:
                 messages.add_message(request,
                                      messages.WARNING,
                                      _("""Filter name can only contain letters, numbers, commas or periods.

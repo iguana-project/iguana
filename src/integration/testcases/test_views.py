@@ -20,7 +20,7 @@ from integration.views import SlackIntegrationOAuthView
 
 try:
     from common.settings import SLACK_SECRET, SLACK_VERIFICATION, SLACK_ID, HOST
-except:
+except ImportError:
     SLACK_ID = None
 
 

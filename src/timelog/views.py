@@ -18,7 +18,7 @@ from django.utils import timezone
 from django.views.generic import TemplateView
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render
-from django.http import HttpResponseRedirect
+from django.http import Http404, HttpResponseRedirect
 
 from datetime import timedelta
 import pytz
@@ -59,7 +59,7 @@ class TimelogCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
         try:
             get_r_object_or_404(self.request.user, Project,
                                 name_short=self.kwargs.get('project')).developer_allowed(self.request.user)
-        except:
+        except Http404:
             return 0
         return 1
 
@@ -91,7 +91,7 @@ class TimelogEditView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     def test_func(self):
         try:
             self.get_object().edit_allowed(self.request.user)
-        except:
+        except Exception:
             return 0
         return 1
 
@@ -234,6 +234,6 @@ class PunchView(LoginRequiredMixin, UserPassesTestMixin, View):
         try:
             get_r_object_or_404(self.request.user, Project,
                                 name_short=self.kwargs.get('project')).developer_allowed(self.request.user)
-        except:
+        except Http404:
             return 0
         return 1

@@ -26,7 +26,7 @@ def remove_notification_settings(user, project):
             # project in settings, delete it and store
             del props[project.name_short]
             user.set_preference('notify_mail', json.dumps(props))
-    except:
+    except (TypeError, json.JSONDecodeError):
         # no props => nothing to delete => return
         return
 
