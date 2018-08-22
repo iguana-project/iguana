@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'event.apps.EventConfig',
     'gitintegration.apps.GitintegrationConfig',
     'api.apps.ApiConfig',
+    'archive.apps.ArchiveConfig',
     'backlog.apps.BacklogConfig',
     'integration.apps.IntegrationConfig',
     'invite_users.apps.InviteUsersConfig',

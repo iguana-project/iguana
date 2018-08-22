@@ -65,7 +65,7 @@ class CreateArchiveTest(TestCase):
                           archived=True)
         issueinno.save()
 
-        response = self.client.get(reverse('issue:archive',
+        response = self.client.get(reverse('archive:archive',
                                    kwargs={'project': self.project.name_short}))
         self.assertNotIn(issueinnew, response.context['archived_issues_without_sprint'])
         self.assertNotIn(issueinwrong, response.context['archived_issues_without_sprint'])

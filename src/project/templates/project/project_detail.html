@@ -81,7 +81,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 				{% trans "Show events in the" %}</br>{% trans "Activity Stream" %}
 			</a>
 		{% endif %}
-		<a class="btn btn-default" href="{% url 'issue:archive' project=project.name_short %}" title="{% trans "Past issues" %}"><span class="glyphicon glyphicon-book"></span> {% trans "Archive" %}</a>
+		<a class="btn btn-default" href="{% url 'archive:archive' project=project.name_short %}" title="{% trans "Past issues" %}"><span class="glyphicon glyphicon-book"></span> {% trans "Archive" %}</a>
 		</div>
 		<div class="panel panel-default">
 			<div class ="panel-heading">

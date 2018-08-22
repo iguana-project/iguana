@@ -34,7 +34,6 @@ urlpatterns = [
         # NOTE WARNING: this page is broken as ****, in case of the errors described in the relative template
         #      the WHOLE PROJECT WILL BE DELETED!!! NOTE DON'T REACTIVATE WITHOUT FIX!!!!!!!!!!!!
         # url(r'^deletesprint/'+issue_sqn_s_pattern+r'/?$', sp_views.Sprint_Delete_View.as_view(), name='deletesprint'),
-        url(r'^archive/?$', views.ArchivedIssuesView.as_view(), name='archive'),
         url(r'toggletofromsprint/?$', sp_views.ToggleIssueToFromSprintView.as_view(), name='assigntosprint',),
         url(r'assigntome/?$', views.AssignIssueToMeView.as_view(), name='assigntome',),
         url(r'^rmfromme/?$', views.RemoveIssueFromMeView.as_view(), name='rmfromme',),

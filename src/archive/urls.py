@@ -10,14 +10,11 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 """
 from django.conf.urls import url
 
-from backlog import views
+from archive import views
 
-app_name = 'backlog'
+app_name = 'archive'
 
-
-sprint_sqn_s_pattern = r'(?P<sqn_s>[0-9]+)'
 
 urlpatterns = [
-    url(r'backlog/?$', views.BacklogListView.as_view(), name='backlog'),
-    url(r'^backlog/'+sprint_sqn_s_pattern+r'/?$', views.BacklogListView.as_view(), name='backlog'),
+    url(r'^archive/?$', views.ArchivedIssuesView.as_view(), name='archive'),
 ]
