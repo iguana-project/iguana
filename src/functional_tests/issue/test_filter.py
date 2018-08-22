@@ -44,7 +44,7 @@ class FilterTest(StaticSeleniumTestCase):
         self.selenium.refresh()
 
     def test_filter_title(self):
-        response = self.selenium.get(self.live_server_url + reverse('issue:backlog', kwargs={'project': self.short}))
+        response = self.selenium.get(self.live_server_url + reverse('backlog:backlog', kwargs={'project': self.short}))
         elements = self.selenium.find_elements_by_class_name("backlog-issue")
         self.assertTrue(elements[0].is_displayed())
         self.assertTrue(elements[1].is_displayed())
@@ -55,7 +55,7 @@ class FilterTest(StaticSeleniumTestCase):
         self.assertFalse(elements[1].is_displayed())
 
     def test_filter_number(self):
-        response = self.selenium.get(self.live_server_url + reverse('issue:backlog', kwargs={'project': self.short}))
+        response = self.selenium.get(self.live_server_url + reverse('backlog:backlog', kwargs={'project': self.short}))
         elements = self.selenium.find_elements_by_class_name("backlog-issue")
         self.assertTrue(elements[0].is_displayed())
         self.assertTrue(elements[1].is_displayed())
@@ -66,7 +66,7 @@ class FilterTest(StaticSeleniumTestCase):
         self.assertFalse(elements[1].is_displayed())
 
     def test_filter_tag(self):
-        response = self.selenium.get(self.live_server_url + reverse('issue:backlog', kwargs={'project': self.short}))
+        response = self.selenium.get(self.live_server_url + reverse('backlog:backlog', kwargs={'project': self.short}))
         elements = self.selenium.find_elements_by_class_name("backlog-issue")
         self.assertTrue(elements[0].is_displayed())
         self.assertTrue(elements[1].is_displayed())

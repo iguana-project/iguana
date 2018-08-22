@@ -166,7 +166,7 @@ class OnSignalTest(CallbackTestBase):
                 'pretext': 'Sprint started:',
                 'text': "",
                 'title': "Sprint 1",
-                'title_link': "http://localhost:8000" + reverse("issue:backlog",
+                'title_link': "http://localhost:8000" + reverse("backlog:backlog",
                                                                 kwargs={'project': self.project.name_short}),
                 'author_name': "username",
                 'author_link': "http://localhost:8000" + self.user.get_absolute_url(),

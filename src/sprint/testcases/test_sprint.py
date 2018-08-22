@@ -133,7 +133,7 @@ class SprintTest(TestCase):
                                            kwargs={'project': self.project.name_short}
                                            ))
 
-        self.assertRedirects(response, reverse('issue:backlog',
+        self.assertRedirects(response, reverse('backlog:backlog',
                              kwargs={'project': self.project.name_short, 'sqn_s': nextseqnum}))
         response = self.client.get(response['location'])
         self.assertEqual(response.status_code, 200)
@@ -182,7 +182,7 @@ class SprintTest(TestCase):
         # start sprint
         response = self.client.post(reverse('issue:startsprint',
                                     kwargs={'project': project.name_short, 'sqn_s': sprint.seqnum}))
-        self.assertRedirects(response, reverse('issue:backlog',
+        self.assertRedirects(response, reverse('backlog:backlog',
                              kwargs={'project': project.name_short, 'sqn_s': sprint.seqnum}))
         sprint.refresh_from_db()
         project.refresh_from_db()
@@ -208,7 +208,7 @@ class SprintTest(TestCase):
                                             kwargs={'project': project.name_short, 'sqn_s': sprint.seqnum}),
                                     {'sprint': 'new', 'move_to_new_sprint': []},
                                     follow=True)
-        self.assertRedirects(response, reverse('issue:backlog',
+        self.assertRedirects(response, reverse('backlog:backlog',
                              kwargs={'project': project.name_short}))
         sprint.refresh_from_db()
         project.refresh_from_db()
@@ -256,7 +256,7 @@ class SprintTest(TestCase):
         response = self.client.post(reverse('issue:editsprint',
                                             kwargs={'project': self.project.name_short, 'sqn_s': self.sprint.seqnum}
                                             ), values)
-        self.assertRedirects(response, reverse('issue:backlog',
+        self.assertRedirects(response, reverse('backlog:backlog',
                              kwargs={'project': self.project.name_short, 'sqn_s': self.sprint.seqnum}))
         response = self.client.get(response['location'])
         self.assertEqual(response.status_code, 200)
@@ -271,19 +271,20 @@ class SprintTest(TestCase):
         # add to sprint
         response = self.client.post(reverse('issue:assigntosprint', kwargs={'project': self.project.name_short}),
                                     {'sqn_i': issue.number}, follow=True,
-                                    HTTP_REFERER=reverse('issue:backlog', kwargs={'project': self.project.name_short}))
-        self.assertRedirects(response, reverse('issue:backlog', kwargs={'project': self.project.name_short,
-                                                                        'sqn_s': self.sprint.seqnum}))
+                                    HTTP_REFERER=reverse('backlog:backlog',
+                                                         kwargs={'project': self.project.name_short}))
+        self.assertRedirects(response, reverse('backlog:backlog', kwargs={'project': self.project.name_short,
+                                                                          'sqn_s': self.sprint.seqnum}))
 
         self.assertEqual(Issue.objects.get(pk=issue.pk).sprint, Sprint.objects.get(pk=self.sprint.pk))
 
         # remove from sprint
         response = self.client.post(reverse('issue:assigntosprint', kwargs={'project': self.project.name_short}),
                                     {'sqn_s': self.sprint.seqnum, 'sqn_i': issue.number}, follow=True,
-                                    HTTP_REFERER=reverse('issue:backlog', kwargs={'project': self.project.name_short})
+                                    HTTP_REFERER=reverse('backlog:backlog', kwargs={'project': self.project.name_short})
                                     )
-        self.assertRedirects(response, reverse('issue:backlog', kwargs={'project': self.project.name_short,
-                                                                        'sqn_s': self.sprint.seqnum}))
+        self.assertRedirects(response, reverse('backlog:backlog', kwargs={'project': self.project.name_short,
+                                                                          'sqn_s': self.sprint.seqnum}))
 
         self.assertEqual(Issue.objects.get(pk=issue.pk).sprint, None)
 
@@ -301,9 +302,10 @@ class SprintTest(TestCase):
         # assign first issue
         response = self.client.post(reverse('issue:assigntosprint', kwargs={'project': self.project.name_short}),
                                     {'sqn_i': issue.number}, follow=True,
-                                    HTTP_REFERER=reverse('issue:backlog', kwargs={'project': self.project.name_short}))
-        self.assertRedirects(response, reverse('issue:backlog', kwargs={'project': self.project.name_short,
-                                                                        'sqn_s': self.sprint.seqnum}))
+                                    HTTP_REFERER=reverse('backlog:backlog',
+                                                         kwargs={'project': self.project.name_short}))
+        self.assertRedirects(response, reverse('backlog:backlog', kwargs={'project': self.project.name_short,
+                                                                          'sqn_s': self.sprint.seqnum}))
         # first issue is part of the sprint
         issue.refresh_from_db()
         self.assertIsNotNone(issue.sprint)
@@ -317,8 +319,9 @@ class SprintTest(TestCase):
         # assign second issue => should fail
         response = self.client.post(reverse('issue:assigntosprint', kwargs={'project': self.project.name_short}),
                                     {'sqn_i': issue2.number}, follow=True,
-                                    HTTP_REFERER=reverse('issue:backlog', kwargs={'project': self.project.name_short}))
-        self.assertRedirects(response, reverse('issue:backlog', kwargs={'project': self.project.name_short}))
+                                    HTTP_REFERER=reverse('backlog:backlog',
+                                                         kwargs={'project': self.project.name_short}))
+        self.assertRedirects(response, reverse('backlog:backlog', kwargs={'project': self.project.name_short}))
         # second issue is NOT part of the sprint
         issue2.refresh_from_db()
         self.assertIsNone(issue2.sprint)
@@ -329,10 +332,10 @@ class SprintTest(TestCase):
 
         response = self.client.post(reverse('issue:assigntosprint', kwargs={'project': self.project.name_short}),
                                     {'sqn_i': issue2.number}, follow=True,
-                                    HTTP_REFERER=reverse('issue:backlog', kwargs={'project': self.project.name_short,
-                                                                                  'sqn_s': self.sprint.seqnum}))
-        self.assertRedirects(response, reverse('issue:backlog', kwargs={'project': self.project.name_short,
-                                                                        'sqn_s': self.sprint.seqnum}))
+                                    HTTP_REFERER=reverse('backlog:backlog', kwargs={'project': self.project.name_short,
+                                                                                    'sqn_s': self.sprint.seqnum}))
+        self.assertRedirects(response, reverse('backlog:backlog', kwargs={'project': self.project.name_short,
+                                                                          'sqn_s': self.sprint.seqnum}))
         issue2.refresh_from_db()
         self.assertIsNone(issue2.sprint)
 
@@ -403,18 +406,18 @@ class SprintTest(TestCase):
         kanbancol.save()
         issue = Issue(title="Test-Issue", kanbancol=kanbancol, project=self.project, type="Bug", sprint=self.sprint)
         issue.save()
-        response = self.client.get(reverse('issue:backlog',
+        response = self.client.get(reverse('backlog:backlog',
                                            kwargs={'project': self.project.name_short}
                                            ))
         self.assertNotContains(response, 'Storypoints:')
         issue.storypoints = 5
         issue.save()
-        response = self.client.get(reverse('issue:backlog',
+        response = self.client.get(reverse('backlog:backlog',
                                            kwargs={'project': self.project.name_short}
                                            ))
         self.assertNotContains(response, 'Storypoints:')
         issue.assignee.add(self.user)
-        response = self.client.get(reverse('issue:backlog',
+        response = self.client.get(reverse('backlog:backlog',
                                            kwargs={'project': self.project.name_short}
                                            ))
         self.assertContains(response, 'Storypoints:')
@@ -423,7 +426,7 @@ class SprintTest(TestCase):
         user2.save()
         self.project.developer.add(user2)
         issue.assignee.add(user2)
-        response = self.client.get(reverse('issue:backlog',
+        response = self.client.get(reverse('backlog:backlog',
                                            kwargs={'project': self.project.name_short}
                                            ))
         self.assertContains(response, str(user2.username) + ': 2.5')
@@ -432,7 +435,7 @@ class SprintTest(TestCase):
                        project=self.project, type="Bug", sprint=self.sprint, storypoints=5)
         issue2.save()
         issue2.assignee.add(self.user)
-        response = self.client.get(reverse('issue:backlog',
+        response = self.client.get(reverse('backlog:backlog',
                                            kwargs={'project': self.project.name_short}
                                            ))
         self.assertContains(response, str(user2.username) + ': 2.5')

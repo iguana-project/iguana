@@ -182,7 +182,7 @@ class CreateEditDetailTest(TestCase):
         response = self.client.post(
                 reverse('issue:delete', kwargs={'project': self.project.name_short, 'sqn_i': issue.number}),
                 {'delete': 'true'}, follow=True)
-        self.assertRedirects(response, reverse('issue:backlog', kwargs={'project': self.project.name_short}))
+        self.assertRedirects(response, reverse('backlog:backlog', kwargs={'project': self.project.name_short}))
         self.assertContains(response, "foo")
         self.assertContains(response, "logged time")
 
@@ -223,9 +223,9 @@ class CreateEditDetailTest(TestCase):
         response = self.client.post(
                 reverse('issue:delete', kwargs={'project': self.project.name_short, 'sqn_i': issue.number}),
                 {'delete': 'true'})
-        self.assertRedirects(response, reverse('issue:backlog', kwargs={'project': self.project.name_short}))
+        self.assertRedirects(response, reverse('backlog:backlog', kwargs={'project': self.project.name_short}))
         response = self.client.get(response['location'])
-        self.assertTemplateUsed(response, 'issue/backlog_list.html')
+        self.assertTemplateUsed(response, 'backlog/backlog_list.html')
         self.assertNotContains(response, "foo123")
 
     def test_keep_and_dont_delete_issue(self):
@@ -253,7 +253,7 @@ class CreateEditDetailTest(TestCase):
             'storypoints': 5,
         }
         response = self.client.post(reverse('issue:create', kwargs={'project': self.project.name_short}), values)
-        self.assertRedirects(response, reverse('issue:backlog', kwargs={'project': self.project.name_short}))
+        self.assertRedirects(response, reverse('backlog:backlog', kwargs={'project': self.project.name_short}))
         response = self.client.get(response['location'])
         self.assertEqual(response.status_code, 200)
         self.assertEqual(self.project.issue.count(), 1)
@@ -366,7 +366,7 @@ class CreateEditDetailTest(TestCase):
             'dependsOn': (),
         }
         response = self.client.post(reverse('issue:create', kwargs={'project': self.project.name_short}), values)
-        self.assertRedirects(response, reverse('issue:backlog', kwargs={'project': self.project.name_short}))
+        self.assertRedirects(response, reverse('backlog:backlog', kwargs={'project': self.project.name_short}))
         response = self.client.get(response['location'])
         self.assertEqual(response.status_code, 200)
 
@@ -375,7 +375,7 @@ class CreateEditDetailTest(TestCase):
         values['dependsOn'] = (1)
 
         response = self.client.post(reverse('issue:create', kwargs={'project': self.project.name_short}), values)
-        self.assertRedirects(response, reverse('issue:backlog', kwargs={'project': self.project.name_short}))
+        self.assertRedirects(response, reverse('backlog:backlog', kwargs={'project': self.project.name_short}))
         response = self.client.get(response['location'])
         self.assertEqual(response.status_code, 200)
 

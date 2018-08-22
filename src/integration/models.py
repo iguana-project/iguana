@@ -188,7 +188,7 @@ class SlackIntegration(Integration):
         protocol = 'https://'
         if DEBUG:
             protocol = 'http://'
-        title_link = protocol + HOST + reverse("issue:backlog", kwargs={'project': self.project.name_short})
+        title_link = protocol + HOST + reverse("backlog:backlog", kwargs={'project': self.project.name_short})
         title = "sprint {}".format(instance.seqnum)
         user_link = protocol + HOST + user.get_absolute_url()
         user_avatar = protocol + HOST + user.avatar.url

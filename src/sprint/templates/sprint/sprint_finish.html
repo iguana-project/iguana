@@ -91,7 +91,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 		<button type="submit" id="finish_sprint" class="btn btn-success" title="{% trans "Move to archive" %}">
 			<span class="glyphicon glyphicon-ok"></span> {% trans "Finish"%}
 		</button>
-		<a class="btn btn-default" href="{% url 'issue:backlog' project=project.name_short sqn_s=sprint.seqnum %}">{% trans "Go back" %}</a>
+		<a class="btn btn-default" href="{% url 'backlog:backlog' project=project.name_short sqn_s=sprint.seqnum %}">{% trans "Go back" %}</a>
 	</form>
 
 {% endblock %}

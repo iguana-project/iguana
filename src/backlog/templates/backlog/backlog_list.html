@@ -70,12 +70,12 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 						<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
 							{% for sprint in project.sprint.get_current_sprints %}
 								<li>
-									<a href="{% url 'issue:backlog' project=project.name_short sqn_s=sprint.seqnum%}">Sprint {{sprint.seqnum}} (running)</a>
+									<a href="{% url 'backlog:backlog' project=project.name_short sqn_s=sprint.seqnum%}">Sprint {{sprint.seqnum}} (running)</a>
 								</li>
 							{% endfor %}
 							{% for sprint in project.sprint.get_new_sprints %}
 								<li>
-									<a href="{% url 'issue:backlog' project=project.name_short sqn_s=sprint.seqnum%}">Sprint {{sprint.seqnum}}</a>
+									<a href="{% url 'backlog:backlog' project=project.name_short sqn_s=sprint.seqnum%}">Sprint {{sprint.seqnum}}</a>
 								</li>
 							{% endfor %}
 						</ul>

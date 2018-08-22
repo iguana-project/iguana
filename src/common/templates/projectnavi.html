@@ -24,7 +24,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 		</a>
 	</li>
 	<li class="{% if viewpoint == 'backlog' %}active{% endif %}">
-		<a href="{% url 'issue:backlog' project=project.name_short%}"><i class="glyphicon glyphicon-list"></i> {% trans "Backlog" %}</a>
+		<a href="{% url 'backlog:backlog' project=project.name_short%}"><i class="glyphicon glyphicon-list"></i> {% trans "Backlog" %}</a>
 	</li>
 	<li class="{% if viewpoint == 'timelogging' %}active{% endif %}">
 		<a href="{% url 'project:timelog' project.name_short %}"><i class="glyphicon glyphicon-time"></i> {% trans "Timelogging" %}</a>

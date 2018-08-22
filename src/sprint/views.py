@@ -37,9 +37,9 @@ class NewSprintView(LoginRequiredMixin, UserPassesTestMixin, View):
         new_sprint = Sprint(project=Project.objects.get(name_short=self.kwargs.get('project')))
         new_sprint.save()
         s = new_sprint.seqnum
-        return redirect(reverse('issue:backlog', kwargs={'project': self.kwargs.get('project'),
-                                                         'sqn_s': s
-                                                         }))
+        return redirect(reverse('backlog:backlog', kwargs={'project': self.kwargs.get('project'),
+                                                           'sqn_s': s
+                                                           }))
 
     def test_func(self):
         return get_r_object_or_404(self.request.user, Project,
@@ -52,9 +52,9 @@ class StartSprintView(LoginRequiredMixin, UserPassesTestMixin, View):
         if proj.has_active_sprint():
             messages.add_message(request, messages.ERROR, _('Only one current sprint is allowed at once, ' +
                                                             'please finish your current running sprint first.'))
-            return redirect(reverse('issue:backlog', kwargs={'project': self.kwargs.get('project'),
-                                                             'sqn_s': self.kwargs.get('sqn_s')
-                                                             }))
+            return redirect(reverse('backlog:backlog', kwargs={'project': self.kwargs.get('project'),
+                                                               'sqn_s': self.kwargs.get('sqn_s')
+                                                               }))
         relsprint = Sprint.objects.get(project__name_short=self.kwargs.get('project'),
                                        seqnum=self.kwargs.get('sqn_s')
                                        )
@@ -62,9 +62,9 @@ class StartSprintView(LoginRequiredMixin, UserPassesTestMixin, View):
         proj.currentsprint = relsprint
         proj.save()
         signals.start.send(sender=relsprint.__class__, instance=relsprint, user=self.request.user)
-        return redirect(reverse('issue:backlog', kwargs={'project': self.kwargs.get('project'),
-                                                         'sqn_s': self.kwargs.get('sqn_s')
-                                                         }))
+        return redirect(reverse('backlog:backlog', kwargs={'project': self.kwargs.get('project'),
+                                                           'sqn_s': self.kwargs.get('sqn_s')
+                                                           }))
 
     def test_func(self):
         return get_r_object_or_404(self.request.user, Sprint, project__name_short=self.kwargs.get('project'),
@@ -93,7 +93,7 @@ class StopSprintView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
 
         new_sprint = request.POST.get('sprint')
         if not new_sprint:
-            return redirect(reverse('issue:backlog', kwargs={'project': self.kwargs.get('project')}))
+            return redirect(reverse('backlog:backlog', kwargs={'project': self.kwargs.get('project')}))
 
         selection = request.POST.getlist('move_to_new_sprint')
         sprint = None
@@ -109,10 +109,10 @@ class StopSprintView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
             issue.save()
 
         if selection:
-            return redirect(reverse('issue:backlog', kwargs={'project': self.kwargs.get('project'),
-                                                             'sqn_s': sprint.seqnum
-                                                             }))
-        return redirect(reverse('issue:backlog', kwargs={'project': self.kwargs.get('project')}))
+            return redirect(reverse('backlog:backlog', kwargs={'project': self.kwargs.get('project'),
+                                                               'sqn_s': sprint.seqnum
+                                                               }))
+        return redirect(reverse('backlog:backlog', kwargs={'project': self.kwargs.get('project')}))
 
     def test_func(self):
         return get_r_object_or_404(self.request.user, Sprint, project__name_short=self.kwargs.get('project'),
@@ -150,15 +150,15 @@ class ToggleIssueToFromSprintView(LoginRequiredMixin, UserPassesTestMixin, View)
                     sqn_s = relissue.sprint.seqnum
                     relissue.sprint = None
                     relissue.save()
-                    return HttpResponseRedirect(reverse('issue:backlog', kwargs={'project': self.kwargs.get('project'),
-                                                                                 'sqn_s': sqn_s}))
+                    return HttpResponseRedirect(reverse('backlog:backlog',
+                                                        kwargs={'project': self.kwargs.get('project'), 'sqn_s': sqn_s}))
         except IntegrityError as e:
             raise e
 
         ref = self.request.META.get('HTTP_REFERER')
         # catch post requests which are not from backlog
         if "backlog" not in ref:
-            return HttpResponseRedirect(reverse('issue:backlog', kwargs={'project': self.kwargs.get('project')}))
+            return HttpResponseRedirect(reverse('backlog:backlog', kwargs={'project': self.kwargs.get('project')}))
 
         o = urlparse(ref)
         o = o.path.split('/')[-1]
@@ -172,7 +172,7 @@ class ToggleIssueToFromSprintView(LoginRequiredMixin, UserPassesTestMixin, View)
                 sprint = proj.sprint.get_new_sprints().first()
             # at least during testing this case is possible if there is no new sprint
             if not sprint:
-                return HttpResponseRedirect(reverse('issue:backlog', kwargs={'project': self.kwargs.get('project')}))
+                return HttpResponseRedirect(reverse('backlog:backlog', kwargs={'project': self.kwargs.get('project')}))
             sqn_s = sprint.seqnum
 
         # this should make this situation TOCTOU-safe
@@ -184,8 +184,8 @@ class ToggleIssueToFromSprintView(LoginRequiredMixin, UserPassesTestMixin, View)
                     relissue.save()
         except IntegrityError as e:
             raise e
-        return HttpResponseRedirect(reverse('issue:backlog', kwargs={'project': self.kwargs.get('project'),
-                                                                     'sqn_s': sqn_s}))
+        return HttpResponseRedirect(reverse('backlog:backlog', kwargs={'project': self.kwargs.get('project'),
+                                                                       'sqn_s': sqn_s}))
 
     def test_func(self):
         return get_r_object_or_404(self.request.user, Project,

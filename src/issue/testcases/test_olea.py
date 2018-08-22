@@ -423,7 +423,7 @@ class FormTest(TestCase):
         values = {
             'expression': 'Task from frontend @a',
             'currentsprint': '',
-            'next': reverse('issue:backlog', kwargs={'project': self.project.name_short}),
+            'next': reverse('backlog:backlog', kwargs={'project': self.project.name_short}),
         }
         response = self.client.post(reverse('issue:processOlea', kwargs={'project': self.project.name_short}), values)
         self.assertRedirects(response, values['next'])

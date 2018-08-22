@@ -31,8 +31,6 @@ urlpatterns = [
         url(r'^create/?$', views.IssueCreateView.as_view(), name='create'),
         url(r'^newsprint/?$', sp_views.NewSprintView.as_view(), name='newsprint'),
         url(r'^editsprint/'+issue_sqn_s_pattern+r'/?$', sp_views.SprintEditView.as_view(), name='editsprint'),
-        url(r'^backlog/?$', views.BacklogListView.as_view(), name='backlog'),
-        url(r'^backlog/'+issue_sqn_s_pattern+r'/?$', views.BacklogListView.as_view(), name='backlog'),
         # NOTE WARNING: this page is broken as ****, in case of the errors described in the relative template
         #      the WHOLE PROJECT WILL BE DELETED!!! NOTE DON'T REACTIVATE WITHOUT FIX!!!!!!!!!!!!
         # url(r'^deletesprint/'+issue_sqn_s_pattern+r'/?$', sp_views.Sprint_Delete_View.as_view(), name='deletesprint'),

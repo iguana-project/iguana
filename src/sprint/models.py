@@ -78,7 +78,7 @@ class Sprint(CustomModel):
         verbose_name_plural = _("sprints")
 
     def get_absolute_url(self):
-        return reverse('issue:backlog', kwargs={'project': self.project.name_short, 'sqn_s': self.seqnum})
+        return reverse('backlog:backlog', kwargs={'project': self.project.name_short, 'sqn_s': self.seqnum})
 
     def is_active(self):
         return (self.startdate is not None) and (self.enddate is None)

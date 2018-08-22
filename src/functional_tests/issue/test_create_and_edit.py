@@ -112,7 +112,7 @@ class CreateAndEditTest(StaticSeleniumTestCase):
         self.assertEqual(len(Select(driver.find_element_by_id("id_kanbancol")).options), 5)
 
         # assert that dependsOn now has one entry
-        driver.get('{}{}'.format(self.live_server_url, reverse('issue:backlog',
+        driver.get('{}{}'.format(self.live_server_url, reverse('backlog:backlog',
                                                                kwargs={'project': self.project.name_short}
                                                                )))
         driver.find_element_by_link_text("New issue").click()
@@ -158,7 +158,7 @@ class CreateAndEditTest(StaticSeleniumTestCase):
         issue.save()
         issue.assignee.add(self.user)
 
-        driver.get('{}{}'.format(self.live_server_url, reverse('issue:backlog',
+        driver.get('{}{}'.format(self.live_server_url, reverse('backlog:backlog',
                                                                kwargs={'project': self.project.name_short}
                                                                )))
 
