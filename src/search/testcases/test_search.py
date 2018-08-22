@@ -15,12 +15,13 @@ from django.urls import reverse
 
 import ply.lex as lex
 
+from project.models import Project
 import search.lexer
 from search import parser
 from search.frontend import SearchFrontend
-from project.models import Project
-from issue.models import Issue, Comment
 from search.models import Search
+from tag.models import Tag
+from issue.models import Issue, Comment
 from django.contrib.auth import get_user_model
 
 
@@ -389,6 +390,19 @@ class SearchTest(TestCase):
         self.assertContains(response, "Your account doesn't have access to this page.")
 
         self.assertEqual(Search.objects.filter(creator=self.user, persistent=True).count(), 1)
+
+    def test_search_for_tag(self):
+        tag = Tag(tag_text='Test', project=self.project)
+        tag.save()
+        self.issue.tags.add(tag)
+
+        result = SearchFrontend.query('test', self.user)
+        self.assertEqual(len(result), 2)
+
+        result = SearchFrontend.query('Issue.tags.tag_text ~~ "es"', self.user)
+        self.assertEqual(len(result), 1)
+
+    # TODO TESTCASE search for different types and use extended searches
 
     def test_filter(self):
         # TODO TESTCASE test project filter
