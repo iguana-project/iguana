@@ -1,0 +1,49 @@
+<!--
+Iguana (c) by Marc Ammon, Moritz Fickenscher, Lukas Fridolin,
+Michael Gunselmann, Katrin Raab, Christian Strate
+
+Iguana is licensed under a
+Creative Commons Attribution-ShareAlike 4.0 International License.
+
+You should have received a copy of the license along with this
+work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
+-->
+{% load i18n %}
+		<a href="{% url 'issue:detail' project=project.name_short sqn_i=issue.number %}" title="{{issue.description}}" style="vertical-align:top" class="issue-id-link">{{ issue.get_ticket_identifier }}</a>
+		<br \>
+		{% if issue.get_priority_display == "Critical" %}
+			<span class="glyphicon glyphicon-arrow-up red" title="{% trans "Priority" %}: {% trans "Critical" %}"></span>
+		{% elif issue.get_priority_display == "High" %}
+			<span class="glyphicon glyphicon-arrow-up gly-rotate-45 red" title="{% trans "Priority" %}: {% trans "High" %}"></span>
+		{% elif issue.get_priority_display == "Low" %}
+			<span class="glyphicon glyphicon-arrow-up gly-rotate-145 green" title="{% trans "Priority" %}: {% trans "Low" %}"></span>
+		{% elif issue.get_priority_display == "Unimportant" %}
+			<span class="glyphicon glyphicon-arrow-up gly-rotate-180 green" title="{% trans "Priority" %}: {% trans "Unimportant" %}"></span>
+		{% endif %}
+	{% if issue.assignee %}
+			{% for dev in issue.assignee.all|slice:"2" %}
+				<img src={{ dev.avatar.url }} title="{{ dev }}" style="width: 15px" alt="{% trans "Avatar" %} {{ dev }}"/>
+			{% endfor %}
+			{% if issue.assignee.count == 3 %}
+				<span title="{% trans "There is " %}{{issue.assignee.count|add:"-1"}}{% trans " other assignee not listed here." %}"><strong>...</strong>
+				</span>
+			{% elif issue.assignee.count > 3 %}
+				<span title="{% trans "There are " %}{{issue.assignee.count|add:"-1"}}{% trans " other assignees not listed here." %}"><strong>...</strong>
+				</span>
+			{% endif %}
+	{% endif %}
+	</td>
+	<td style="">
+		<span class="issue-title">{{issue.title}}</span>
+		{% if issue.storypoints %}
+			<span class="story-points" title="{% trans "Storypoints" %}">{{issue.storypoints}}</span>
+		{% endif %}
+		{% for tag in issue.tags.all %}
+			<span class="issue-tag" style="background: #{{tag.color}}; color:#{{tag.font_color}};" title="{{tag.tag_text}}">{{tag.tag_text}}</span>
+		{% endfor %}
+	</td>
+	<td style="padding-left:5px">
+		<div class="pull-right">
+			{% include "issue_option_template.html" %}
+		</div>
+	</td>

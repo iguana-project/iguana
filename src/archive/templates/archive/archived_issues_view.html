@@ -31,9 +31,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 									<div class="issue-type text-muted {{issue.type|lower}}" title={{issue.type}}>
 										{{ issue.type|slice:":1" }}
 									</div>
-									<a href="{% url 'issue:detail' project=project.name_short sqn_i=issue.number %}" title="{{issue.description}}">{{ issue.get_ticket_identifier }}</a></td>
-								<td style="width:55%">{{issue.title}}</td>
-								<td><div style="float:right">{% include "issue_option_template.html"%}</div></td>
+								{% include "issue_info_template.html"%}
 							</tr>
 						{% endfor %}
 					</table>
