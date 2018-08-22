@@ -25,7 +25,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 			<input type="hidden" name="currentsprint" value="">
 			<input type="hidden" name="next" value="{{request.get_full_path}}">
 		</form>
-		<a class="btn btn-default olea-flex-element" href="{% url 'issue:newsprint' project=project.name_short %}"><span class="glyphicon glyphicon-plus"></span> {% trans "New sprint" %}</a>
+		<a class="btn btn-default olea-flex-element" href="{% url 'sprint:newsprint' project=project.name_short %}"><span class="glyphicon glyphicon-plus"></span> {% trans "New sprint" %}</a>
 		<form class="olea-flex-element">
 			<input type="text" id="text-filter" onkeyup="filter_issues('backlog-issue')" placeholder="Filter issues" class="form-control">
 		</form>
@@ -90,9 +90,9 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 					{% if not view.is_old_sprint %}
 					{% if view.is_sprint_current %}
                                                 {% if view.get_sprint_issues_left.all %}
-                                                        <a class="btn btn-default" href="{% url 'issue:stopsprint' project=project.name_short sqn_s=view.get_sqn_s %}" title="{% trans "Stop sprint" %}"><span class="glyphicon glyphicon-stop"></span> {% trans "Stop" %}</a>
+                                                        <a class="btn btn-default" href="{% url 'sprint:stopsprint' project=project.name_short sqn_s=view.get_sqn_s %}" title="{% trans "Stop sprint" %}"><span class="glyphicon glyphicon-stop"></span> {% trans "Stop" %}</a>
                                                 {% else %}
-                                                        <form class="btn-group" method="post" action="{% url 'issue:stopsprint' project=project.name_short sqn_s=view.get_sqn_s %}" >
+                                                        <form class="btn-group" method="post" action="{% url 'sprint:stopsprint' project=project.name_short sqn_s=view.get_sqn_s %}" >
                                                                 {% csrf_token %}
                                                                 <button type="submit" style="border-bottom-left-radius: 4px; border-top-left-radius: 4px" class="btn btn-default" id="stopsprint">
                                                                         <span class="glyphicon glyphicon-stop"></span> {% trans "Stop" %}
@@ -100,20 +100,20 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
                                                         </form>
                                                 {% endif %}
 					{% else %}
-                                                <form class="btn-group" method="post" action="{% url 'issue:startsprint' project=project.name_short sqn_s=view.get_sqn_s %}" >
+                                                <form class="btn-group" method="post" action="{% url 'sprint:startsprint' project=project.name_short sqn_s=view.get_sqn_s %}" >
                                                         {% csrf_token %}
                                                         <button type="submit" style="border-bottom-left-radius: 4px; border-top-left-radius: 4px" class="btn btn-default" id="startsprint">
                                                                 <span class="glyphicon glyphicon-play"></span> {% trans "Start" %}
                                                         </button>
                                                 </form>
-                                                <form class="btn-group" method="post" action="{% url 'issue:stopsprint' project=project.name_short sqn_s=view.get_sqn_s %}" >
+                                                <form class="btn-group" method="post" action="{% url 'sprint:stopsprint' project=project.name_short sqn_s=view.get_sqn_s %}" >
                                                         {% csrf_token %}
                                                         <button type="submit" class="btn btn-default" id="stopsprint">
                                                                 <span class="glyphicon glyphicon-minus"></span> {% trans "Remove" %}
                                                         </button>
                                                 </form>
 					{% endif %}
-					<a class="btn btn-default" href="{% url 'issue:editsprint' project=project.name_short sqn_s=view.get_sqn_s %}" title="{% trans "Edit sprint" %}"><span class="glyphicon glyphicon-pencil"></span> {% trans "Edit" %}</a>
+					<a class="btn btn-default" href="{% url 'sprint:editsprint' project=project.name_short sqn_s=view.get_sqn_s %}" title="{% trans "Edit sprint" %}"><span class="glyphicon glyphicon-pencil"></span> {% trans "Edit" %}</a>
 					{% else %}
 						{% trans "Finished sprint" %}
 					{% endif %}

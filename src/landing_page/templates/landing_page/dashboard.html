@@ -64,7 +64,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 				<ul class="list-group">
 				{% for project in request.user.get_projects %}
 					<li class ="list-group-item">
-					<a href="{% url 'issue:projList' project=project.name_short %}">{{ project.name}}</a>
+					<a href="{% url 'sprint:sprintboard' project=project.name_short %}">{{ project.name}}</a>
 					</li>
 				{% endfor %}
 				</ul>

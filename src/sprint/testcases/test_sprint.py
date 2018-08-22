@@ -69,7 +69,7 @@ class SprintTest(TestCase):
         self.assertEqual(issue.was_in_sprint, False)
 
         response = self.client.post(
-                reverse('issue:stopsprint', kwargs={'project': self.project.name_short, 'sqn_s': self.sprint.seqnum}))
+                reverse('sprint:stopsprint', kwargs={'project': self.project.name_short, 'sqn_s': self.sprint.seqnum}))
         self.assertEqual(Issue.objects.get(pk=issue.pk).was_in_sprint, True)
 
         issue.save()  # unset the flag
@@ -129,7 +129,7 @@ class SprintTest(TestCase):
         self.assertNotEqual(self.sprint.seqnum, -1)
         nextseqnum = self.sprint.seqnum + 1
         n = Sprint.objects.count() + 1
-        response = self.client.get(reverse('issue:newsprint',
+        response = self.client.get(reverse('sprint:newsprint',
                                            kwargs={'project': self.project.name_short}
                                            ))
 
@@ -180,7 +180,7 @@ class SprintTest(TestCase):
         self.assertFalse(project.has_active_sprint())
 
         # start sprint
-        response = self.client.post(reverse('issue:startsprint',
+        response = self.client.post(reverse('sprint:startsprint',
                                     kwargs={'project': project.name_short, 'sqn_s': sprint.seqnum}))
         self.assertRedirects(response, reverse('backlog:backlog',
                              kwargs={'project': project.name_short, 'sqn_s': sprint.seqnum}))
@@ -204,7 +204,7 @@ class SprintTest(TestCase):
         self.assertFalse(issue4 in Issue.objects.archived())
 
         # set sprint inactive(and archive)
-        response = self.client.post(reverse('issue:stopsprint',
+        response = self.client.post(reverse('sprint:stopsprint',
                                             kwargs={'project': project.name_short, 'sqn_s': sprint.seqnum}),
                                     {'sprint': 'new', 'move_to_new_sprint': []},
                                     follow=True)
@@ -239,7 +239,7 @@ class SprintTest(TestCase):
         response = self.client.post(reverse('issue:archivecol',
                                     kwargs={'project': project.name_short}),
                                     values)
-        self.assertRedirects(response, reverse('issue:projList',
+        self.assertRedirects(response, reverse('sprint:sprintboard',
                              kwargs={'project': project.name_short}))
         issue4.refresh_from_db()
 
@@ -253,7 +253,7 @@ class SprintTest(TestCase):
 
         planned_date = datetime.date.today() + datetime.timedelta(days=10)
         values = {'plandate': planned_date}
-        response = self.client.post(reverse('issue:editsprint',
+        response = self.client.post(reverse('sprint:editsprint',
                                             kwargs={'project': self.project.name_short, 'sqn_s': self.sprint.seqnum}
                                             ), values)
         self.assertRedirects(response, reverse('backlog:backlog',
@@ -269,7 +269,7 @@ class SprintTest(TestCase):
         issue.save()
 
         # add to sprint
-        response = self.client.post(reverse('issue:assigntosprint', kwargs={'project': self.project.name_short}),
+        response = self.client.post(reverse('sprint:assigntosprint', kwargs={'project': self.project.name_short}),
                                     {'sqn_i': issue.number}, follow=True,
                                     HTTP_REFERER=reverse('backlog:backlog',
                                                          kwargs={'project': self.project.name_short}))
@@ -279,7 +279,7 @@ class SprintTest(TestCase):
         self.assertEqual(Issue.objects.get(pk=issue.pk).sprint, Sprint.objects.get(pk=self.sprint.pk))
 
         # remove from sprint
-        response = self.client.post(reverse('issue:assigntosprint', kwargs={'project': self.project.name_short}),
+        response = self.client.post(reverse('sprint:assigntosprint', kwargs={'project': self.project.name_short}),
                                     {'sqn_s': self.sprint.seqnum, 'sqn_i': issue.number}, follow=True,
                                     HTTP_REFERER=reverse('backlog:backlog', kwargs={'project': self.project.name_short})
                                     )
@@ -300,7 +300,7 @@ class SprintTest(TestCase):
         self.project.currentsprint = self.sprint
         self.project.save()
         # assign first issue
-        response = self.client.post(reverse('issue:assigntosprint', kwargs={'project': self.project.name_short}),
+        response = self.client.post(reverse('sprint:assigntosprint', kwargs={'project': self.project.name_short}),
                                     {'sqn_i': issue.number}, follow=True,
                                     HTTP_REFERER=reverse('backlog:backlog',
                                                          kwargs={'project': self.project.name_short}))
@@ -311,13 +311,13 @@ class SprintTest(TestCase):
         self.assertIsNotNone(issue.sprint)
 
         # stop sprint
-        response = self.client.post(reverse('issue:stopsprint',
+        response = self.client.post(reverse('sprint:stopsprint',
                                             kwargs={'project': self.project.name_short, 'sqn_s': self.sprint.seqnum}),
                                     {'sprint': 'new', 'move_to_new_sprint': []},
                                     follow=True)
         self.assertEqual(Issue.objects.get(pk=issue.pk).was_in_sprint, True)
         # assign second issue => should fail
-        response = self.client.post(reverse('issue:assigntosprint', kwargs={'project': self.project.name_short}),
+        response = self.client.post(reverse('sprint:assigntosprint', kwargs={'project': self.project.name_short}),
                                     {'sqn_i': issue2.number}, follow=True,
                                     HTTP_REFERER=reverse('backlog:backlog',
                                                          kwargs={'project': self.project.name_short}))
@@ -330,7 +330,7 @@ class SprintTest(TestCase):
         sprint2 = Sprint(project=self.project)
         sprint2.save()
 
-        response = self.client.post(reverse('issue:assigntosprint', kwargs={'project': self.project.name_short}),
+        response = self.client.post(reverse('sprint:assigntosprint', kwargs={'project': self.project.name_short}),
                                     {'sqn_i': issue2.number}, follow=True,
                                     HTTP_REFERER=reverse('backlog:backlog', kwargs={'project': self.project.name_short,
                                                                                     'sqn_s': self.sprint.seqnum}))
@@ -366,7 +366,7 @@ class SprintTest(TestCase):
         sprint.set_active()
 
         # move to autocreated sprint
-        response = self.client.post(reverse('issue:stopsprint',
+        response = self.client.post(reverse('sprint:stopsprint',
                                             kwargs={'project': project.name_short, 'sqn_s': sprint.seqnum}),
                                     {'sprint': 'new', 'move_to_new_sprint': [issue.number, issue2.number]},
                                     follow=True)
@@ -389,7 +389,7 @@ class SprintTest(TestCase):
         project.refresh_from_db()
         sprint2 = Sprint(project=project)
         sprint2.save()
-        response = self.client.post(reverse('issue:stopsprint',
+        response = self.client.post(reverse('sprint:stopsprint',
                                             kwargs={'project': project.name_short, 'sqn_s': sprint.seqnum}),
                                     {'sprint': sprint2.seqnum, 'move_to_new_sprint': [issue.number]},
                                     follow=True)

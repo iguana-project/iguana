@@ -9,6 +9,7 @@ You should have received a copy of the license along with this
 work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 """
 from django.views import View
+from django.views.generic.detail import DetailView
 from django.views.generic.edit import UpdateView
 from django.views.generic.base import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -27,6 +28,8 @@ from event import signals
 
 from urllib.parse import urlparse
 import re
+from issue.views import process_order_by
+
 # NOTE: ugettext_lazy "is essential when calls to these functions are located in code
 #       paths that are executed at module load time."
 from django.utils.translation import ugettext as _, ugettext_lazy as _l
@@ -132,6 +135,65 @@ class SprintEditView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     def get_object(self):
         return get_r_object_or_404(self.request.user, Sprint, project__name_short=self.kwargs.get('project'),
                                    seqnum=self.kwargs.get('sqn_s'))
+
+
+class SprintboardView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
+    template_name = 'sprint/sprintboard.html'
+    context_object_name = 'project'
+
+    def get_context_data(self, **kwargs):
+        context = super(SprintboardView, self).get_context_data(**kwargs)
+        context['nbar'] = 'sprint'
+        proj = get_r_object_or_404(self.request.user, Project, name_short=self.kwargs.get('project'))
+        context['colwidth'] = int(100/len(proj.kanbancol.all()))
+
+        # pass olea request to template if present in session object
+        context['oleaexpression'] = ''
+        if 'oleaexpression' in self.request.session:
+            context['oleaexpression'] = self.request.session['oleaexpression']
+            del self.request.session['oleaexpression']
+
+        # focus olea bar if present in session object
+        context['oleafocus'] = ''
+        if 'oleafocus' in self.request.session:
+            context['oleafocus'] = self.request.session['oleafocus']
+            del self.request.session['oleafocus']
+
+        if proj.currentsprint is not None and proj.currentsprint.is_active():
+            issuelist = proj.currentsprint.issue.all()
+        else:
+            issuelist = proj.issue.without_sprint().not_archived()
+        myiss = self.request.GET.get('myissues', 'false')
+        issuelist_count = issuelist
+        if myiss == 'true':
+            issuelist_count = issuelist_count.filter(assignee=self.request.user)
+        issue_all = issuelist_count.count()
+        issue_done = 0
+        for issue in issuelist_count:
+            if issue.kanbancol.type == 'Done':
+                issue_done += 1
+
+        if issue_all == 0:
+            context['progress'] = 0
+        else:
+            context['progress'] = int(100*issue_done/issue_all)
+        context['issue_all'] = issue_all
+        context['issue_done'] = issue_done
+
+        issues = process_order_by(self.request, issuelist)
+        context['issuelist'] = issues
+
+        return context
+
+    def get_object(self):
+        return get_r_object_or_404(self.request.user, Project, name_short=self.kwargs.get('project'))
+
+    def test_func(self):
+        return get_r_object_or_404(self.request.user, Project,
+                                   name_short=self.kwargs.get('project')).user_has_read_permissions(self.request.user)
+
+    def get_breadcrumb(self, *args, **kwargs):
+        return kwargs['project']
 
 
 class ToggleIssueToFromSprintView(LoginRequiredMixin, UserPassesTestMixin, View):

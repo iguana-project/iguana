@@ -185,7 +185,7 @@ class PunchView(LoginRequiredMixin, UserPassesTestMixin, View):
         next_url = self.request.POST.get('next')
         if next_url:
             return next_url
-        return reverse('issue:projList', kwargs={'project': self.kwargs.get('project')})
+        return reverse('sprint:sprintboard', kwargs={'project': self.kwargs.get('project')})
 
     def post(self, request, *args, **kwargs):
         issue = get_r_object_or_404(self.request.user, Issue,

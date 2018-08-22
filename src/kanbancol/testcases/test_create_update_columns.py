@@ -106,7 +106,7 @@ class ColumnTest(TestCase):
                                     {'sqn_k': '0',
                                      'sqn_i': issue1.number,
                                      }, follow=True)
-        self.assertRedirects(response, reverse('issue:projList', kwargs={'project': self.project.name_short}))
+        self.assertRedirects(response, reverse('sprint:sprintboard', kwargs={'project': self.project.name_short}))
         issue1.refresh_from_db()
         self.assertEqual(issue1.kanbancol.position, 0)
 
@@ -115,7 +115,7 @@ class ColumnTest(TestCase):
                                     {'sqn_k': '4',
                                      'sqn_i': issue1.number,
                                      }, follow=True)
-        self.assertRedirects(response, reverse('issue:projList', kwargs={'project': self.project.name_short}))
+        self.assertRedirects(response, reverse('sprint:sprintboard', kwargs={'project': self.project.name_short}))
         self.assertEqual(len(list(response.context['messages'])), 1)
         issue1.refresh_from_db()
         self.assertEqual(issue1.kanbancol.position, 0)
@@ -125,7 +125,7 @@ class ColumnTest(TestCase):
                                     {'sqn_k': '2',
                                      'sqn_i': issue1.number+1,
                                      }, follow=True)
-        self.assertRedirects(response, reverse('issue:projList', kwargs={'project': self.project.name_short}))
+        self.assertRedirects(response, reverse('sprint:sprintboard', kwargs={'project': self.project.name_short}))
         self.assertEqual(len(list(response.context['messages'])), 1)
         issue1.refresh_from_db()
         self.assertEqual(issue1.kanbancol.position, 0)

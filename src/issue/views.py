@@ -110,65 +110,6 @@ class IssueGlobalView(LoginRequiredMixin, TemplateView):
         return context
 
 
-class SprintboardView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
-    template_name = 'issue/sprintboard.html'
-    context_object_name = 'project'
-
-    def get_context_data(self, **kwargs):
-        context = super(SprintboardView, self).get_context_data(**kwargs)
-        context['nbar'] = 'sprint'
-        proj = get_r_object_or_404(self.request.user, Project, name_short=self.kwargs.get('project'))
-        context['colwidth'] = int(100/len(proj.kanbancol.all()))
-
-        # pass olea request to template if present in session object
-        context['oleaexpression'] = ''
-        if 'oleaexpression' in self.request.session:
-            context['oleaexpression'] = self.request.session['oleaexpression']
-            del self.request.session['oleaexpression']
-
-        # focus olea bar if present in session object
-        context['oleafocus'] = ''
-        if 'oleafocus' in self.request.session:
-            context['oleafocus'] = self.request.session['oleafocus']
-            del self.request.session['oleafocus']
-
-        if proj.currentsprint is not None and proj.currentsprint.is_active():
-            issuelist = proj.currentsprint.issue.all()
-        else:
-            issuelist = proj.issue.without_sprint().not_archived()
-        myiss = self.request.GET.get('myissues', 'false')
-        issuelist_count = issuelist
-        if myiss == 'true':
-            issuelist_count = issuelist_count.filter(assignee=self.request.user)
-        issue_all = issuelist_count.count()
-        issue_done = 0
-        for issue in issuelist_count:
-            if issue.kanbancol.type == 'Done':
-                issue_done += 1
-
-        if issue_all == 0:
-            context['progress'] = 0
-        else:
-            context['progress'] = int(100*issue_done/issue_all)
-        context['issue_all'] = issue_all
-        context['issue_done'] = issue_done
-
-        issues = process_order_by(self.request, issuelist)
-        context['issuelist'] = issues
-
-        return context
-
-    def get_object(self):
-        return get_r_object_or_404(self.request.user, Project, name_short=self.kwargs.get('project'))
-
-    def test_func(self):
-        return get_r_object_or_404(self.request.user, Project,
-                                   name_short=self.kwargs.get('project')).user_has_read_permissions(self.request.user)
-
-    def get_breadcrumb(self, *args, **kwargs):
-        return kwargs['project']
-
-
 # olea short for one line edit add - the functionality to add issues in backlog and board
 class ProcessOleaView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
@@ -199,7 +140,7 @@ class AssignIssueToMeView(LoginRequiredMixin, UserPassesTestMixin, View):
         next_url = self.request.POST.get('next')
         if next_url:
             return next_url
-        return reverse('issue:projList', kwargs={'project': self.kwargs.get('project')})
+        return reverse('sprint:sprintboard', kwargs={'project': self.kwargs.get('project')})
 
     def post(self, request, *args, **kwargs):
         relassignee = self.request.user
@@ -220,7 +161,7 @@ class RemoveIssueFromMeView(LoginRequiredMixin, UserPassesTestMixin, View):
         next_url = self.request.POST.get('next')
         if next_url:
             return next_url
-        return reverse('issue:projList', kwargs={'project': self.kwargs.get('project')})
+        return reverse('sprint:sprintboard', kwargs={'project': self.kwargs.get('project')})
 
     def post(self, request, *args, **kwargs):
         user = self.request.user
@@ -250,7 +191,7 @@ class AddIssueToKanbancolView(LoginRequiredMixin, UserPassesTestMixin, View):
         next_url = self.request.POST.get('next')
         if next_url:
             return next_url[:-1]
-        return reverse('issue:projList', kwargs={'project': self.kwargs.get('project')})
+        return reverse('sprint:sprintboard', kwargs={'project': self.kwargs.get('project')})
 
     def post(self, request, *args, **kwargs):
         issue = (
@@ -340,7 +281,7 @@ class ArchiveMultipleIssueView(LoginRequiredMixin, UserPassesTestMixin, View):
         next_url = self.request.POST.get('next')
         if next_url:
             return next_url
-        return reverse('issue:projList', kwargs={'project': self.kwargs.get('project')})
+        return reverse('sprint:sprintboard', kwargs={'project': self.kwargs.get('project')})
 
     def post(self, request, *args, **kwargs):
         proj = get_r_object_or_404(self.request.user, Project, name_short=self.kwargs.get('project'))

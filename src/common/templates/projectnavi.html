@@ -14,7 +14,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 		<a href="{% url 'project:detail' project=project.name_short%}"><i class="glyphicon glyphicon-paperclip"></i> {% trans "Overview" %}</a>
 	</li>
 	<li class="{% if viewpoint == 'projlist' %}active{% endif %}">
-		<a href="{% url 'issue:projList' project=project.name_short %}">
+		<a href="{% url 'sprint:sprintboard' project=project.name_short %}">
 			<i class="glyphicon glyphicon-align-left gly-rotate-90"></i>
 			{% if project.has_active_sprint %}
 				{% trans "Sprintboard" %}

@@ -16,7 +16,7 @@ import re
 
 class csrfUpdateMiddleware(MiddlewareMixin):
 
-    needs_update = ['backlog/backlog_list.html', 'issue/sprintboard.html']
+    needs_update = ['backlog/backlog_list.html', 'sprint/sprintboard.html']
 
     def process_response(self, request, response):
         if isinstance(response, TemplateResponse) and response.template_name[0] in self.needs_update:

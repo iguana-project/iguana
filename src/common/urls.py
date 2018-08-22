@@ -36,6 +36,7 @@ urlpatterns = [
     url(r'^project/', include('project.urls')),
     url(r'^project/'+project_pattern, include('archive.urls')),
     url(r'^project/'+project_pattern, include('backlog.urls')),
+    url(r'^project/'+project_pattern, include('sprint.urls')),
     url(r'^project/'+project_pattern+r'column/', include('kanbancol.urls')),
     url(r'^project/'+project_pattern+r'integration/', include('integration.urls')),
     url(r'^', include('issue.urls')),

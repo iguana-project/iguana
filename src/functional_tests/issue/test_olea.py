@@ -38,7 +38,7 @@ class OleaTest(StaticSeleniumTestCase):
     def test_oleainput(self):
         driver = self.selenium
         driver.get('{}{}'.format(self.live_server_url,
-                                 reverse('issue:projList', kwargs={'project': self.project.name_short})))
+                                 reverse('sprint:sprintboard', kwargs={'project': self.project.name_short})))
 
         driver.find_element_by_id("expression").send_keys("Test-Issue :Task" + Keys.RETURN)
         self.assertEqual("Test-Issue", driver.find_element_by_css_selector("#issue_title_1").text)

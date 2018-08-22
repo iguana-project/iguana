@@ -57,7 +57,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 	{% if view.get_sqn_s != -1 %}
 		<td style="padding-left: 0px">
 		<div class="pull-right">
-				<form style="display:inline-block" id="ats{{issue.number}}" method="post" action="{% url 'issue:assigntosprint' project=project.name_short %}" >{% csrf_token %}
+				<form style="display:inline-block" id="ats{{issue.number}}" method="post" action="{% url 'sprint:assigntosprint' project=project.name_short %}" >{% csrf_token %}
 					<input type="hidden" name="sqn_i" value={{issue.number}} />
 					<button style="padding:0px" type="submit" class="btn btn-link">
 						{% if issue.sprint %}

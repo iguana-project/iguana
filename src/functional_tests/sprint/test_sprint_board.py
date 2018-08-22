@@ -55,7 +55,7 @@ class SprintBoardTest(StaticSeleniumTestCase):
         issue1.save()
         issue2.save()
 
-        driver.get("{}{}".format(self.live_server_url, reverse('issue:projList',
+        driver.get("{}{}".format(self.live_server_url, reverse('sprint:sprintboard',
                                                                kwargs={'project': project.name_short}
                                                                )))
         self.assertEqual(issue1.kanbancol.position, 0)
@@ -103,7 +103,7 @@ class SprintBoardTest(StaticSeleniumTestCase):
         issue5.save()
 
         # check order_by number
-        driver.get("{}{}".format(self.live_server_url, reverse('issue:projList',
+        driver.get("{}{}".format(self.live_server_url, reverse('sprint:sprintboard',
                                                                kwargs={'project': project.name_short}
                                                                )))
         col = driver.find_element_by_id("sortable0")
@@ -112,7 +112,7 @@ class SprintBoardTest(StaticSeleniumTestCase):
             self.assertEqual(issues[i].get_attribute("id") < issues[i+1].get_attribute("id"), True)
 
         # check order_by priority
-        driver.get("{}{}".format(self.live_server_url, reverse('issue:projList',
+        driver.get("{}{}".format(self.live_server_url, reverse('sprint:sprintboard',
                                                                kwargs={'project': project.name_short}
                                                                ))+"?order_by=priority")
         col = driver.find_element_by_id("sortable0")
@@ -122,7 +122,7 @@ class SprintBoardTest(StaticSeleniumTestCase):
                              True)
 
         # check order_by title
-        driver.get("{}{}".format(self.live_server_url, reverse('issue:projList',
+        driver.get("{}{}".format(self.live_server_url, reverse('sprint:sprintboard',
                                                                kwargs={'project': project.name_short}
                                                                ))+"?order_by=title")
         col = driver.find_element_by_id("sortable0")
@@ -131,7 +131,7 @@ class SprintBoardTest(StaticSeleniumTestCase):
             self.assertEqual(issues[i].get_attribute("data-title") <= issues[i+1].get_attribute("data-title"), True)
 
         # check order_by Type
-        driver.get("{}{}".format(self.live_server_url, reverse('issue:projList',
+        driver.get("{}{}".format(self.live_server_url, reverse('sprint:sprintboard',
                                                                kwargs={'project': project.name_short}
                                                                ))+"?order_by=type")
         col = driver.find_element_by_id("sortable0")
@@ -163,7 +163,7 @@ class SprintBoardTest(StaticSeleniumTestCase):
         issue5.save()
 
         # switch to ordered_by priority
-        driver.get("{}{}".format(self.live_server_url, reverse('issue:projList',
+        driver.get("{}{}".format(self.live_server_url, reverse('sprint:sprintboard',
                                                                kwargs={'project': project.name_short}
                                                                ))+"?order_by=priority")
 
@@ -220,7 +220,7 @@ class SprintBoardTest(StaticSeleniumTestCase):
         issue4.save()
         issue5.save()
 
-        driver.get("{}{}".format(self.live_server_url, reverse('issue:projList',
+        driver.get("{}{}".format(self.live_server_url, reverse('sprint:sprintboard',
                                                                kwargs={'project': project.name_short}
                                                                )))
 
@@ -231,7 +231,7 @@ class SprintBoardTest(StaticSeleniumTestCase):
 
         issue1.assignee.add(self.user)
 
-        driver.get("{}{}".format(self.live_server_url, reverse('issue:projList',
+        driver.get("{}{}".format(self.live_server_url, reverse('sprint:sprintboard',
                                                                kwargs={'project': project.name_short}
                                                                ))+"?myissues=true")
 
