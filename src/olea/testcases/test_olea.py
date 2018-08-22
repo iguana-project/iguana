@@ -425,7 +425,7 @@ class FormTest(TestCase):
             'currentsprint': '',
             'next': reverse('backlog:backlog', kwargs={'project': self.project.name_short}),
         }
-        response = self.client.post(reverse('issue:processOlea', kwargs={'project': self.project.name_short}), values)
+        response = self.client.post(reverse('olea:processOlea', kwargs={'project': self.project.name_short}), values)
         self.assertRedirects(response, values['next'])
         response = self.client.get(response['location'])
         self.assertEqual(response.status_code, 200)
@@ -449,7 +449,7 @@ class FormTest(TestCase):
 
         values['currentsprint'] = sprint.seqnum
         values['expression'] = 'Another frontend task @a'
-        response = self.client.post(reverse('issue:processOlea', kwargs={'project': self.project.name_short}), values)
+        response = self.client.post(reverse('olea:processOlea', kwargs={'project': self.project.name_short}), values)
         self.assertNotIn('oleaexpression', self.client.session)
         self.assertIn('oleafocus', self.client.session)
         self.assertEqual(self.client.session['oleafocus'], 'autofocus')
@@ -469,7 +469,7 @@ class FormTest(TestCase):
         issue = Issue.objects.get(project__name_short="PRJ", number=1)
         self.assertEqual(issue.sprint, None)
         values['expression'] = '>PRJ-1 @a'
-        response = self.client.post(reverse('issue:processOlea', kwargs={'project': self.project.name_short}), values)
+        response = self.client.post(reverse('olea:processOlea', kwargs={'project': self.project.name_short}), values)
         self.assertIn('oleafocus', self.client.session)
         self.assertEqual(self.client.session['oleafocus'], 'autofocus')
         self.assertRedirects(response, values['next'])
@@ -483,7 +483,7 @@ class FormTest(TestCase):
         issue.sprint = sprint2
         issue.save()
         values['expression'] = '>PRJ-1 @a'
-        response = self.client.post(reverse('issue:processOlea', kwargs={'project': self.project.name_short}), values)
+        response = self.client.post(reverse('olea:processOlea', kwargs={'project': self.project.name_short}), values)
         self.assertIn('oleafocus', self.client.session)
         self.assertEqual(self.client.session['oleafocus'], 'autofocus')
         self.assertRedirects(response, values['next'])
@@ -496,7 +496,7 @@ class FormTest(TestCase):
 
         # check that syntax errors are signalled by message
         values['expression'] = '>PRJ-1:! @a'
-        response = self.client.post(reverse('issue:processOlea',
+        response = self.client.post(reverse('olea:processOlea',
                                             kwargs={'project': self.project.name_short}
                                             ), values, follow=True)
         self.assertIn('&gt;PRJ-1:! @a', response.content.decode())
@@ -509,7 +509,7 @@ class FormTest(TestCase):
         # supply invalid sprint id
         values['expression'] = 'This is actually correct @a'
         values['currentsprint'] = '42'
-        response = self.client.post(reverse('issue:processOlea',
+        response = self.client.post(reverse('olea:processOlea',
                                             kwargs={'project': self.project.name_short}
                                             ), values, follow=True)
         self.assertRedirects(response, values['next'])

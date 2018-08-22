@@ -25,7 +25,6 @@ urlpatterns = [
         url(r'^$', views.IssueGlobalView.as_view(), name='issue_global_view'),
     ])),
     url(r'^project/'+project_pattern+r'issue/', include([
-        url(r'^processOlea/?$', views.ProcessOleaView.as_view(), name='processOlea'),
         url(r'^create/?$', views.IssueCreateView.as_view(), name='create'),
         url(r'assigntome/?$', views.AssignIssueToMeView.as_view(), name='assigntome',),
         url(r'^rmfromme/?$', views.RemoveIssueFromMeView.as_view(), name='rmfromme',),

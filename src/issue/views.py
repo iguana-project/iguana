@@ -110,31 +110,6 @@ class IssueGlobalView(LoginRequiredMixin, TemplateView):
         return context
 
 
-# olea short for one line edit add - the functionality to add issues in backlog and board
-class ProcessOleaView(LoginRequiredMixin, View):
-    def post(self, request, *args, **kwargs):
-        project = get_r_object_or_404(self.request.user, Project, name_short=self.kwargs.get('project'))
-        try:
-            parser.compile(self.request.POST.get('expression'), project, self.request.user)
-
-            # add to sprint if currentsprint is set and issue was newly created
-            if self.request.POST.get('currentsprint') != "" and parser.issue_created:
-                sprint = Sprint.objects.get(project__name_short=self.kwargs.get('project'),
-                                            seqnum=self.request.POST.get('currentsprint'))
-                parser.issue_to_change.sprint = sprint
-                parser.issue_to_change.save()
-        except Exception as e:
-            messages.add_message(request, messages.ERROR,
-                                 _("An error occurred when processing your request") + ": " + str(e))
-            # store expression in session data to give edit ability to user
-            self.request.session['oleaexpression'] = self.request.POST.get('expression')
-
-        # set focus to olea bar
-        self.request.session['oleafocus'] = 'autofocus'
-
-        return redirect(self.request.POST.get('next'))
-
-
 class AssignIssueToMeView(LoginRequiredMixin, UserPassesTestMixin, View):
     def get_success_url(self):
         next_url = self.request.POST.get('next')

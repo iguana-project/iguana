@@ -19,7 +19,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 {% trans "backlog" as viewpoint %}
 {% include "projectnavi.html" %}
 	<div class="olea-container">
-		<form id="olea" method="post" class="olea-flex-element" action="{% url 'issue:processOlea' project=project.name_short %}">
+		<form id="olea" method="post" class="olea-flex-element" action="{% url 'olea:processOlea' project=project.name_short %}">
 			{% csrf_token %}
 			<input type="text" id="expression" title="{% include "static/olea_tooltip.html" %}" class="form-control" name="expression" {{oleafocus}} value="{{oleaexpression}}" placeholder="{% trans 'Place your change expression here' %}" autocomplete="off" />
 			<input type="hidden" name="currentsprint" value="">

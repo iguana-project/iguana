@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'sprint.apps.SprintConfig',
     'tag.apps.TagConfig',
     'timelog',
+    'olea.apps.OleaConfig',
     'user_management',
     'user_profile.apps.UserProfileConfig',
     'captcha',  # django-simple-captcha
