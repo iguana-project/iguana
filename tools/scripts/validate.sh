@@ -28,7 +28,7 @@ password="passpass"
 [ -n "$PASS" ] && password="$PASS"
 hostname="localhost"
 host="${hostname}:8000"
-vnu_version="17.2.1"
+vnu_version="18.7.23"
 
 
 echo "Checking for validator (vnu.jar)..."
