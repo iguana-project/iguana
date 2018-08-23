@@ -30,7 +30,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 	{% if user.get_full_name and user.get_full_name.strip %}
 		<small>{{ user.username }}</small>
 	{% endif %}
-			<img class="img-rounded" src="{{user.avatar.url}}" alt="{% trans "Avatar" %}" width=100px \>
+			<img class="img-rounded" src="{{user.avatar.url}}" alt="{% trans "Avatar" %}" width=100 />
 	</h1>
 
 	{% if request.user == user %}

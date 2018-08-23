@@ -44,7 +44,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 					</li>
 				{% else %}
 					<li class="list-group-item">
-						{% trans "No items in the activity stream." %}</br>
+						{% trans "No items in the activity stream." %}<br>
 						{% trans "To change this you can" %}
 						<a href="{% url 'project:create' %}">{% trans "add a new Project" %}</a>
 						{% trans "or follow an" %}
@@ -64,14 +64,14 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 				<ul class="list-group">
 				{% for project in request.user.get_projects %}
 					<li class ="list-group-item">
-					<a href="{% url 'sprint:sprintboard' project=project.name_short %}">{{ project.name}}</a>
+						<a href="{% url 'sprint:sprintboard' project=project.name_short %}">{{ project.name}}</a>
 					</li>
 				{% endfor %}
 				</ul>
 			{% else %}
 				<ul class="list-group">
 					<li class ="list-group-item">
-					{% trans "No projects at the moment" %}
+						{% trans "No projects at the moment" %}
 					</li>
 				</ul>
 			{% endif %}
@@ -84,16 +84,15 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 				<ul class="list-group">
 				{% for issue in request.user.issues.not_archived.not_done %}
 					<li class ="list-group-item">
-					<a href="{% url 'issue:detail' project=issue.project.name_short sqn_i=issue.number %}">[{{ issue.get_ticket_identifier }}] {{issue.title}}</a>
+						<a href="{% url 'issue:detail' project=issue.project.name_short sqn_i=issue.number %}">[{{ issue.get_ticket_identifier }}] {{issue.title}}</a>
 					</li>
 				{% endfor %}
 				</ul>
 			{% else %}
 				<ul class="list-group">
 					<li class ="list-group-item">
-					{% trans "No undone issues at the moment" %}
-                                        </li>
-
+						{% trans "No undone issues at the moment" %}
+					</li>
 				</ul>
 			{% endif %}
 		</div>

@@ -33,7 +33,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 			{{issue.title}}</small>
 	</h1>
 	{% for tag in issue.tags.all %}
-		<span class="issue-tag" target="tag" style="background-color: #{{tag.color}}; color: #{{tag.font_color}}">{{ tag }}</span>
+		<span><a class="issue-tag" style="background-color: #{{tag.color}}; color: #{{tag.font_color}}" href="{% url 'tag:tag' project=issue.project.name_short %}" target="tag">{{ tag }}</a></span>
 	{% endfor %}
 	<p></p>
 	<a class="btn btn-default" id="issue_detail_edit_link" href="{% url 'issue:edit' project=issue.project.name_short sqn_i=issue.number %}" title="{% trans "Edit this issue" %}">

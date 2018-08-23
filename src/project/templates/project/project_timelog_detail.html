@@ -17,7 +17,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 {% block content %}
 	{% trans "timelogging" as viewpoint %}
 	{% include "projectnavi.html" %}
-	<h1 class="page-header"><img src="{{ava_url}}" width="40" alt"{% trans "Avatar" %} {{ user }}"/>  {{ user }}</h1>
+	<h1 class="page-header"><img src="{{ava_url}}" width="40" alt="{% trans "Avatar" %} {{ user }}"/>  {{ user }}</h1>
 	<ul class="list-group">
 		{% for l in logs %}
 			<li class ="list-group-item">
@@ -27,7 +27,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 						<a href="{% url 'issue:detail' project=l.issue.project.name_short sqn_i=l.issue.number %}">
 							{{ l.issue.title }}
 						</a>
-						<br /><small>
+						<br><small>
 							{{ l.created_at }}
 						</small>
 					</div>
@@ -65,6 +65,5 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 				<a href="?page={{ logs.next_page_number }}">next</a>
 			{% endif %}
 		</span>
-	</div>
 	</div>
 {% endblock content %}

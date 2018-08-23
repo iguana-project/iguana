@@ -64,7 +64,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 	{% endbuttons %}
 	<input type="hidden" name="next" value="{{ next }}" />
 </form>
-<br />
+<br>
 
 {# Assumes you setup the password_reset view in your URLconf #}
 <p><a class="btn btn-default" id="id_lost_password_ref" href="{% url 'password_reset' %}">{% trans "Lost password?" %}</a>

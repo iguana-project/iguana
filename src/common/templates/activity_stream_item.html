@@ -20,7 +20,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 	</div>
 	{% if action.target|get_class_name == 'Project' and not 'user' in request.path %}
 		<div class="unfollow_btn">
-			<a href="{{request.path}}?unfollow={{action.target.pk}}" title="{% trans "Remove project" %} {{action.target}} {% trans "from the activity stream" %}"><span class="glyphicon glyphicon-remove-sign"/></a>
+			<a href="{{request.path}}?unfollow={{action.target.pk}}" title="{% trans "Remove project" %} {{action.target}} {% trans "from the activity stream" %}"><span class="glyphicon glyphicon-remove-sign"></span></a>
 		</div>
 	{% endif %}
 	<div class="content">

@@ -10,7 +10,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 -->
 {% load i18n %}
 		<a href="{% url 'issue:detail' project=project.name_short sqn_i=issue.number %}" title="{{issue.description}}" style="vertical-align:top" class="issue-id-link">{{ issue.get_ticket_identifier }}</a>
-		<br \>
+		<br>
 		{% if issue.get_priority_display == "Critical" %}
 			<span class="glyphicon glyphicon-arrow-up red" title="{% trans "Priority" %}: {% trans "Critical" %}"></span>
 		{% elif issue.get_priority_display == "High" %}

@@ -10,7 +10,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 -->
 {% load i18n %}
 <div class="dropdown" style=" display:inline-block;">
-	<a href="#" class="dropdown-toggle" data-toggle="dropdown" style="positin:relative; z-index:999"><span class="glyphicon glyphicon-option-vertical"></span></a>
+	<a href="#" class="dropdown-toggle" data-toggle="dropdown" style="position:relative; z-index:999"><span class="glyphicon glyphicon-option-vertical"></span></a>
 	<ul class="dropdown-menu {% if "issue" in request.get_full_path %}dropdown-menu-right{% endif %}" role="menu" style="position:absolute; z-index:1001">
 		<li>
 			<a href="{% url 'issue:detail' project=issue.project.name_short sqn_i=issue.number %}"><span class="glyphicon glyphicon-leaf"></span> Details </a>
@@ -46,7 +46,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 				</form>
 			</li>
 			<li>
-				<a id="issue_delete_link" href="{% url 'issue:delete' project=issue.project.name_short sqn_i=issue.number %}">
+				<a id="issue_delete_link_{{issue.number}}" href="{% url 'issue:delete' project=issue.project.name_short sqn_i=issue.number %}">
 					<span class="glyphicon glyphicon-trash"></span> {% trans "Delete"%}
 				</a>
 			</li>

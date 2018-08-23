@@ -50,7 +50,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 				<li id="log_{{forloop.counter}}" class ="list-group-item">
 					<div class="row">
 						<div class="col-xs-5">{{ l.time|duration }}
-							<br /><small> {{ l.created_at }} </small>
+							<br><small> {{ l.created_at }} </small>
 						</div>
 						<div class="col-xs-5">
 							{% if request.user in l.issue.project.get_members %}

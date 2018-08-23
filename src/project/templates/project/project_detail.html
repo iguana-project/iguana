@@ -73,12 +73,12 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 		{% if request.user|is_following:project %}
 			<a class="btn btn-default" href="{{request.path}}?follow=false" title="{% trans "on the dashboard" %}">
 				<span class="glyphicon glyphicon-list" style="top:10px;"></span>
-				{% trans "Remove events from the" %}</br>{% trans "Activity Stream" %}
+				{% trans "Remove events from the" %}<br>{% trans "Activity Stream" %}
 			</a>
 		{% else %}
 			<a class="btn btn-default" href="{{request.path}}?follow=true" title="{% trans "on the dashboard" %}">
 				<span class="glyphicon glyphicon-list" style="top:10px;"></span>
-				{% trans "Show events in the" %}</br>{% trans "Activity Stream" %}
+				{% trans "Show events in the" %}<br>{% trans "Activity Stream" %}
 			</a>
 		{% endif %}
 		<a class="btn btn-default" href="{% url 'archive:archive' project=project.name_short %}" title="{% trans "Past issues" %}"><span class="glyphicon glyphicon-book"></span> {% trans "Archive" %}</a>

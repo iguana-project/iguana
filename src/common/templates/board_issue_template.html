@@ -43,7 +43,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 				<span class="glyphicon glyphicon-arrow-up gly-rotate-180 green" title="{{priority_string}}{% trans "Unimportant" %}"></span>
 				{% endif %}
 				{% for tag in issue.tags.all %}
-				<span class="issue-tag" style="background: #{{tag.color}}; color:#{{tag.font_color}}" title="{{tag.tag_text}}">{{tag.tag_text}}</span>
+				<span><a class="issue-tag" style="background: #{{tag.color}}; color:#{{tag.font_color}}" title="{{tag.tag_text}}" href="{% url 'tag:tag' project=project.name_short %}">{{tag.tag_text}}</a></span>
 				{% endfor %}
 			</div>
 
