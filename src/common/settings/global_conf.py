@@ -137,6 +137,9 @@ SLACK_ID = get_setting(["slack", "ID"], False)
 SLACK_SECRET = get_setting(["slack", "SECRET"], False)
 SLACK_VERIFICATION = get_setting(["slack", "VERIFICATION"], False)
 
+# Olea-Bar - If set to true the previously assigned devs are replaced at the usage of @<dev0>[...@<devN>]
+OLEA_REPLACE_DEVS = get_setting(["olea", "REPLACE_DEVS"], False, False)
+
 REST_FRAMEWORK.update({
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',

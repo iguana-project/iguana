@@ -25,6 +25,11 @@ from timelog.forms import DurationField
 from user_management.models import CustomUser
 from event import signals
 
+# NOTE: This has been deactivated by default. If False it is possible to add a new dev without overwriting
+#       the previous ones and the necessity to rewrite them all in the expression.
+#       If you want to reactivate the previous behaviour simply set the value in the configuration to True.
+from common.settings import OLEA_REPLACE_DEVS
+
 # global attributes
 attrs_to_set = []
 issue_to_change = None
@@ -33,7 +38,7 @@ glob_user = None
 issue_created = False
 issue_changed = False
 duration_field = DurationField
-cleanup_asignee = True
+cleanup_asignee = OLEA_REPLACE_DEVS
 timelogs = []
 
 
@@ -284,7 +289,7 @@ def compile(expression, project, user):
     global issue_changed
     issue_created = False
     issue_changed = False
-    cleanup_asignee = True
+    cleanup_asignee = OLEA_REPLACE_DEVS
     attrs_to_set = []
     timelogs = []
     issue_to_change = ""
@@ -326,7 +331,7 @@ def compile(expression, project, user):
         field = issue_to_change.__getattribute__(attr[0])
 
         if str(type(field)).startswith("<class 'django.db.models"):
-            # cleanup asignee before setting first new asignee
+            # cleanup assignee before setting first new assignee
             if attr[0] == "assignee" and cleanup_asignee:
                 cleanup_asignee = False
                 field.clear()

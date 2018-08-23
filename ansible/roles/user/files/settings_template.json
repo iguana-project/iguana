@@ -40,5 +40,8 @@
         "ID": "",
         "SECRET": "",
         "VERIFICATION": ""
+    },
+    "olea": {
+        "REPLACE_DEVS": ""
     }
 }

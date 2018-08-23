@@ -166,7 +166,7 @@ class FormTest(TestCase):
         parser.compile('>PRJ-1 &Done', self.project, self.user)
         self.assertEqual(Issue.objects.filter(project=self.project, number=1).first().kanbancol.name, 'Done')
 
-        # add second tag and new asignee to PRJ2 and validate
+        # add second tag and new assignee to PRJ2 and validate
         currentID = self.project.nextTicketId
         parser.compile('>PRJ-2 #zweitertag @d', self.project, self.user)
         issue = Issue.objects.get(title="Another fancy task")
@@ -174,8 +174,9 @@ class FormTest(TestCase):
         self.assertEqual(parser.issue_changed, True)
         self.assertEqual(parser.issue_to_change, issue)
         self.assertEqual(issue.tags.count(), 2)
-        self.assertEqual(issue.assignee.count(), 1)
-        self.assertEqual(issue.assignee.first(), self.user2)
+        self.assertEqual(issue.assignee.count(), 2)
+        self.assertIn(self.user, issue.assignee.all())
+        self.assertIn(self.user2, issue.assignee.all())
         self.assertEqual(issue.number, 2)
         self.project.refresh_from_db()
         self.assertEqual(currentID, self.project.nextTicketId)
@@ -195,7 +196,7 @@ class FormTest(TestCase):
         # user must not edit projects to which he has no devel access
         self.assertRaises(Exception, parser.compile, '>PRJ-2 #zweitertag @d', self.project, user)
 
-        # only users with access to project may be set as asignee
+        # only users with access to project may be set as assignee
         self.assertRaises(Exception, parser.compile, '>PRJ-2 #zweitertag @g', self.project, self.user)
 
         # tags must not have changed
@@ -314,15 +315,15 @@ class FormTest(TestCase):
         self.assertEqual(Issue.objects.filter(title='Fancy task',
                                               assignee=user4).count(), 1)
 
-        # check that setting more than one asignee is possible
+        # check that setting more than one assignee is possible
         parser.compile('>PRJ-1 @a @jj @kj', self.project, self.user)
         self.assertEqual(parser.issue_created, False)
         self.assertEqual(parser.issue_changed, True)
-        self.assertEqual(Issue.objects.get(title='Fancy task').assignee.count(), 3)
+        self.assertEqual(Issue.objects.get(title='Fancy task').assignee.count(), 4)
         parser.compile('>PRJ-1 @jj', self.project, self.user)
         self.assertEqual(parser.issue_created, False)
         self.assertEqual(parser.issue_changed, True)
-        self.assertEqual(Issue.objects.get(title='Fancy task').assignee.count(), 1)
+        self.assertEqual(Issue.objects.get(title='Fancy task').assignee.count(), 4)
 
         # test add depends functionality
         parser.compile('New issue depending on PRJ-1 ~PRJ-1', self.project, self.user)
@@ -360,7 +361,7 @@ class FormTest(TestCase):
         self.assertRaises(Exception, parser.compile, '>1 !4', self.project, user5)
         self.assertNotEqual(Issue.objects.get(title='Fancy task').priority, 4)
 
-        # check that managers and (managers & developers) are valid as asignee
+        # check that managers and (managers & developers) are valid as assignee
         u_manager = get_user_model().objects.create_user('manager', 'ma', 'ma')
         u_maneloper = get_user_model().objects.create_user('maneloper', 'mar', 'mar')
         self.project.manager.add(u_manager)
@@ -379,12 +380,19 @@ class FormTest(TestCase):
         issue = self.project.issue.get(number=1)
         self.assertIn(self.user, issue.assignee.all())
         self.assertIn(self.user2, issue.assignee.all())
+        self.assertIn(u_manager, issue.assignee.all())
+        self.assertIn(u_maneloper, issue.assignee.all())
+        self.assertEqual(issue.assignee.count(), 4)
         parser.compile('>PRJ-1 @alice @Blub', self.project, self.user)
         issue.refresh_from_db()
         self.assertIn(self.user, issue.assignee.all())
         self.assertIn(self.user2, issue.assignee.all())
+        self.assertIn(u_manager, issue.assignee.all())
+        self.assertIn(u_maneloper, issue.assignee.all())
+        self.assertEqual(issue.assignee.count(), 4)
 
         # check that user is not assigned more than once
+        Issue.objects.get(title='Fancy task').assignee.clear()
         parser.compile('>PRJ-1 @alice @Bla', self.project, self.user)
         issue.refresh_from_db()
         self.assertIn(self.user, issue.assignee.all())

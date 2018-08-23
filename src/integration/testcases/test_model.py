@@ -262,7 +262,8 @@ class OnSignalTest(CallbackTestBase):
                 'author_link': "http://localhost:8000" + self.user.get_absolute_url(),
                 'author_icon': "http://localhost:8000" + self.user.avatar.url,
                 'fields': [
-                    {"title": "Assignee", "value": "username → username, user2", "short": True},
+                    {"title": "Assignee", "value": "{} → {}, {}".format(self.user, self.user, self.user2),
+                     "short": True},
                     ],
                 'color': 'good',
             }]
@@ -348,7 +349,8 @@ class OnSignalTest(CallbackTestBase):
                 'author_link': "http://localhost:8000" + self.user.get_absolute_url(),
                 'author_icon': "http://localhost:8000" + self.user.avatar.url,
                 'fields': [
-                    {"title": "Assignee", "value": "username → user2", "short": True},
+                    {"title": "Assignee", "value": "{} → {}, {}".format(self.user, self.user, self.user2),
+                     "short": True},
                     ],
                 'color': 'good',
             }]
