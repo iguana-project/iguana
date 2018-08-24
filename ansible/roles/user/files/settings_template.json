@@ -25,7 +25,7 @@
         "PASSWORD": ""
     },
     "redis": {
-        "HOST": "",
+        "HOST": ""
     },
     "email": {
         "HOST": "",
