@@ -15,7 +15,15 @@ settings = json.loads(settings_file)
 
 # function to get a setting from the settings.json
 def get_setting(names, required=True, default=""):
-    setting = settings[names[0]]
+    # if the value is not required and a default exists there is no need for the relative setting in the json file
+    if not required and default != "":
+        try:
+            setting = settings[names[0]]
+        except KeyError:
+            return default
+    else:
+        setting = settings[names[0]]
+
     for i in range(1, len(names)):
         setting = setting[names[i]]
 
