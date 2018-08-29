@@ -5,6 +5,7 @@ This file contains all settings for running Iguana on a host.
 # First import the common settings
 from .common import *
 import json
+import sys
 
 
 # load the user settings JSON file
@@ -15,21 +16,32 @@ settings = json.loads(settings_file)
 
 # function to get a setting from the settings.json
 def get_setting(names, required=True, default=""):
-    # if the value is not required and a default exists there is no need for the relative setting in the json file
-    if not required and default != "":
+    missing_req_set = "\033[31mA required setting is missing: \33[34m{}\33[0m".format(" -> ".join(names))
+    warning = ("\033[33mWarning - default value for the following settings used:"
+               " \33[34m{}\33[0m\n".format(" -> ".join(names)))
+
+    # otherwise the whole settings would be returned
+    if(not len(names)):
+        raise Exception("\033[31mrequested values for empty keys\33[0m")
+
+    setting = settings
+    for i in range(len(names)):
+        # if the value is not required and a default exists there is no need
+        # for the relative setting to be in the json file
         try:
-            setting = settings[names[0]]
+            setting = setting[names[i]]
         except KeyError:
-            return default
-    else:
-        setting = settings[names[0]]
+            if not required:
+                sys.stderr.write(warning)
+                return default
+            else:
+                raise Exception(missing_req_set)
 
-    for i in range(1, len(names)):
-        setting = setting[names[i]]
-
+    # catch existing key with empty values
     if required and not setting:
-        raise Exception("A required setting is missing: " + " -> ".join(names))
+        raise Exception(missing_req_set)
     elif not setting:
+        sys.stderr.write(warning)
         return default
 
     return setting
