@@ -15,6 +15,9 @@ import io
 from PIL import Image
 
 
+# It is necessary to strip any meta informations before the image is stored for the first time. In many other
+# approaches those informations are striped after the image has been stored. Hence a leak would be possible for a short
+# amount of time. Therefore InMemory representation is used to prevent any leaks.
 def strip_img_metadata(in_memory_img):
     if not in_memory_img:
         return None
