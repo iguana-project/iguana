@@ -1,8 +1,8 @@
-bleach==2.1.4
+bleach==3.0.0
 Django==2.0.7
 -e git://github.com/justquick/django-activity-stream.git#egg=django-activity-stream
 celery==4.2.1
-django-autocomplete-light==3.3.1
+django-autocomplete-light==3.3.2
 django-bootstrap3==11.0.0
 django-cuser==2017.3.16
 django-datetime-widget==0.9.3
