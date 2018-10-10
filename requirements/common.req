@@ -8,7 +8,7 @@ django-cuser==2017.3.16
 django-datetime-widget==0.9.3
 django-filter==1.1.0
 django-pagedown==1.0.6
-djangorestframework==3.7.7
+djangorestframework==3.8.2
 djangorestframework-filters==0.10.2.post0
 djangorestframework-jwt==1.11.0
 djangorestframework-jwt-refresh-token==0.5

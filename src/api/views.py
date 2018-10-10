@@ -103,7 +103,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         return ProjectUpdateSerializer
 
     def perform_create(self, serializer):
-        serializer.save(manager=[self.request.user, ])
+        serializer.save(manager=[self.request.user, ], creator=self.request.user)
 
 
 class ProjectIssuesViewSet(viewsets.ModelViewSet):
