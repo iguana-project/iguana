@@ -1,4 +1,4 @@
-bleach==3.0.0
+bleach==3.0.2
 Django==2.0.7
 -e git://github.com/justquick/django-activity-stream.git#egg=django-activity-stream
 celery==4.2.1
