@@ -321,7 +321,10 @@ add_license_header: $(DJANGO_BASE)/add_header.sh
 	cd $(DJANGO_BASE) && ./add_header.sh
 
 check_requirements: ##@other Check whether our requirements are up to date or not.
-	piprot requirements/development.req | grep -v "up to date"
+	for reqs in development production staging; do \
+		echo "========= $$reqs ========="; \
+		piprot requirements/$$reqs.req | grep -v "up to date"; \
+	done
 
 # default target for targets that are meant as parameters
 .DEFAULT:
