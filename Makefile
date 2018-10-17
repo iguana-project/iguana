@@ -87,7 +87,7 @@ MAKE_SETTINGS_FILE = $(BASE)/.makeSettings
 
 # XXX Don't forget to update the phony targets as soon as the makefile is extended
 # phony targets
-.PHONY: default help $(DJANGO_INSTALLED_APPS) $(DJANGO_INSTALLED_APPS_WILDCARD) $(WEBDRIVERS) production staging development setup-webdriver check-webdriver setup-virtualenv refresh-reqs initialize-settings link-git-hooks run startapp makemigrations migrate test test-ign_imp_errs func_tests messages compilemessages coverage coverage-report coverage-html coverage-xml coverage-erase css remove-dev_stage-setting check-dev_staging save-dev_stage-setting make-messages compile-messages list_bugs list_missing_testcases add_license_header check_requirements
+.PHONY: default help $(DJANGO_INSTALLED_APPS) $(DJANGO_INSTALLED_APPS_WILDCARD) $(WEBDRIVERS) production staging development setup-webdriver check-webdriver setup-virtualenv refresh-reqs initialize-settings link-git-hooks run startapp makemigrations migrate test test-ign_imp_errs func_tests messages compilemessages coverage coverage_func coverage-report coverage-html coverage-xml coverage-erase css remove-dev_stage-setting check-dev_staging save-dev_stage-setting make-messages compile-messages list_bugs list_missing_testcases add_license_header check_requirements
 
 # default target
 default: production

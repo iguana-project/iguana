@@ -25,8 +25,7 @@ before_script:
   - fluxbox >/dev/null 2>&1 &
   
 script:
-  - make coverage
-  - make coverage functional_tests
+  - make coverage_func
 
 # send coverage report to coveralls.io
 after_success:
