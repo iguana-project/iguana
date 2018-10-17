@@ -13,6 +13,8 @@ addons:
      
 install:
   - make development
+  # Ansible is required for deployment
+  - pip install ansible
 
 before_script:
   - "export DISPLAY=:99.0"
