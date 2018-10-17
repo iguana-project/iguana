@@ -1,5 +1,3 @@
-#!/bin/python
-
 import random
 import string
 
