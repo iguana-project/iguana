@@ -30,7 +30,9 @@ script:
 
 # send coverage report to coveralls.io
 after_success:
-  - coveralls --rcfile=src/.coveragerc
+  - pushd src
+  - coveralls
+  - popd
 
 deploy:
   # deploy to the staging environment
