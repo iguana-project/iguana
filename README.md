@@ -1,5 +1,5 @@
 # Iguana
-![Test Coverage](https://jenkins.computermokel.de/badges/coverage.svg?maxAge=300)
+[![Coverage Status](https://coveralls.io/repos/github/iguana-project/iguana/badge.svg?branch=master)](https://coveralls.io/github/iguana-project/iguana?branch=master)
 [![Build Status](https://travis-ci.org/iguana-project/iguana.svg?branch=master)](https://travis-ci.org/iguana-project/iguana)
 
 ## Description
