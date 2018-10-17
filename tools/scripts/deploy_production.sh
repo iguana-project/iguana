@@ -10,7 +10,7 @@ You should have received a copy of the license along with this
 work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 '
 
-pushd /var/lib/jenkins/workspace/iguana/ansible
+pushd $TRAVIS_BUILD_DIR/ansible
 
 tag=$(git tag -l production-* | sort -V | tail -n1)
 

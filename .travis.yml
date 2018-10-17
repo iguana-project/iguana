@@ -1,0 +1,33 @@
+language: python
+
+python:
+  - "3.5"
+cache: pip
+sudo: required 
+addons:
+  apt:
+    sources:
+     - google-chrome
+    packages:
+     - google-chrome-stable fluxbox
+     
+install:
+  - make development
+
+before_script:
+  - "export DISPLAY=:99.0"
+  - "sh -e /etc/init.d/xvfb start"
+  - sleep 3
+  - fluxbox >/dev/null 2>&1 &
+  
+script:
+  - make test
+  - make test functional_tests
+
+deploy:
+  # deploy to the staging environment
+  - provider: script
+    script: bash tools/scripts/deploy_staging.sh
+  # deploy to production
+  - provider: script
+    script: bash tools/scripts/deploy_production.sh
