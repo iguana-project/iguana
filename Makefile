@@ -283,8 +283,10 @@ compile-messages: ##@django Compile the django messages.
 	cd $(DJANGO_BASE) && $(PYTHON) $(DJANGO_MANAGE) compilemessages --settings=$(DJANGO_SETTINGS)
 
 coverage: ##@coverage Run coverage on the django tests. An app can be specified with <appname>
-coverage: $(filter $(DJANGO_INSTALLED_APPS),$(MAKECMDGOALS)) $(filter $(DJANGO_INSTALLED_APPS_WILDCARD),$(MAKECMDGOALS)) coverage-erase
-	cd $(DJANGO_BASE) && $(COVERAGE) run $(DJANGO_MANAGE) test $(APPNAME) --settings=$(DJANGO_SETTINGS)
+coverage: $(filter $(DJANGO_INSTALLED_APPS),$(MAKECMDGOALS)) $(filter $(DJANGO_INSTALLED_APPS_WILDCARD),$(MAKECMDGOALS)) coverage-erase check-dev_staging
+	@$(if $(filter $(DEVELOPMENT),true),\
+		cd $(DJANGO_BASE) && $(COVERAGE) run $(DJANGO_MANAGE) test --noinput --nomigrations $(APPNAME) --settings=$(DJANGO_SETTINGS),\
+		cd $(DJANGO_BASE) && $(COVERAGE) run $(DJANGO_MANAGE) test --noinput $(APPNAME) --settings=$(DJANGO_SETTINGS))
 
 coverage-report: ##@coverage Get the coverage report.
 coverage-report: coverage
