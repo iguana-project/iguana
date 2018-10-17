@@ -1,6 +1,6 @@
 # Iguana
 ![Test Coverage](https://jenkins.computermokel.de/badges/coverage.svg?maxAge=300)
-![Build Status](https://jenkins.computermokel.de/buildStatus/icon?job=iguana)
+[![Build Status](https://travis-ci.org/iguana-project/iguana.svg?branch=master)](https://travis-ci.org/iguana-project/iguana)
 
 ## Description
 Iguana is a mixture of a ticket system, an issue tracker and an issue management system, heavily based on basic functions being easy to use. So Iguana can help you to plan the next schedule and have always a nice overview about your current tasks depending on your needs, especially for working in groups. There is a kanban board to keep an eye on the progress until the end of the next planning stage and also a backlog to have the ability for scheduling of long-terms. In combination with a mechanism to log time spent on different tasks individually those are the essential functionalities.
