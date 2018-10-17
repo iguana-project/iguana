@@ -13,6 +13,8 @@ addons:
      
 install:
   - make development
+  # requirement for coveralls.io
+  - pip install coveralls
   # Ansible is required for deployment
   - pip install ansible
 
@@ -23,8 +25,12 @@ before_script:
   - fluxbox >/dev/null 2>&1 &
   
 script:
-  - make test
-  - make test functional_tests
+  - make coverage
+  - make coverage functional_tests
+
+# send coverage report to coveralls.io
+after_success:
+  - coveralls --rcfile=src/.coveragerc
 
 deploy:
   # deploy to the staging environment
