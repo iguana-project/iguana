@@ -5,6 +5,7 @@ __pycache__/
 # eclipse files
 /.project
 /.pydevproject
+/.settings
 
 # vim-template
 [._]*.s[a-w][a-z]
