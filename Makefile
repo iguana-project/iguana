@@ -288,15 +288,20 @@ coverage: $(filter $(DJANGO_INSTALLED_APPS),$(MAKECMDGOALS)) $(filter $(DJANGO_I
 		cd $(DJANGO_BASE) && $(COVERAGE) run $(DJANGO_MANAGE) test --noinput --nomigrations $(APPNAME) --settings=$(DJANGO_SETTINGS),\
 		cd $(DJANGO_BASE) && $(COVERAGE) run $(DJANGO_MANAGE) test --noinput $(APPNAME) --settings=$(DJANGO_SETTINGS))
 
+
+COV_APP=.coverage_apps
+COV_FUNC=.coverage_func
 coverage_func: ##@coverage Run coverage on the django tests including the functional_tests
 coverage_func: $(filter $(DJANGO_INSTALLED_APPS),$(MAKECMDGOALS)) $(filter $(DJANGO_INSTALLED_APPS_WILDCARD),$(MAKECMDGOALS)) coverage-erase check-dev_staging
 	@$(if $(filter $(DEVELOPMENT),true),\
-		cd $(DJANGO_BASE) && COVERAGE_FILE=.coverage_apps $(COVERAGE) run $(DJANGO_MANAGE) test --noinput --nomigrations $(APPNAME) --settings=$(DJANGO_SETTINGS) ;\
-		cd $(DJANGO_BASE) && COVERAGE_FILE=.coverage_funcs $(COVERAGE) run $(DJANGO_MANAGE) test --noinput --nomigrations functional_tests --settings=$(DJANGO_SETTINGS) ;\
-		cd $(DJANGO_BASE) && $(COVERAGE) combine .coverage_apps .coverage_funcs,\
-		cd $(DJANGO_BASE) && COVERAGE_FILE=.coverage_apps $(COVERAGE) run $(DJANGO_MANAGE) test --noinput $(APPNAME) --settings=$(DJANGO_SETTINGS) ;\
-		cd $(DJANGO_BASE) && COVERAGE_FILE=.coverage_funcs $(COVERAGE) run $(DJANGO_MANAGE) test --noinput functional_tests --settings=$(DJANGO_SETTINGS) ;\
-		cd $(DJANGO_BASE) && $(COVERAGE) combine .coverage_apps .coverage_funcs)\
+		cd $(DJANGO_BASE);\
+		COVERAGE_FILE=$(COV_APP) $(COVERAGE) run $(DJANGO_MANAGE) test --noinput --nomigrations $(APPNAME) --settings=$(DJANGO_SETTINGS) ;\
+		COVERAGE_FILE=$(COV_FUNC) $(COVERAGE) run $(DJANGO_MANAGE) test --noinput --nomigrations functional_tests --settings=$(DJANGO_SETTINGS) ;\
+		$(COVERAGE) combine $(COV_APP) $(COV_FUNC),\
+		cd $(DJANGO_BASE);\
+		COVERAGE_FILE=$(COV_APP) $(COVERAGE) run $(DJANGO_MANAGE) test --noinput $(APPNAME) --settings=$(DJANGO_SETTINGS) ;\
+		COVERAGE_FILE=$(COV_FUNC) $(COVERAGE) run $(DJANGO_MANAGE) test --noinput functional_tests --settings=$(DJANGO_SETTINGS) ;\
+		$(COVERAGE) combine $(COV_APP) $(COV_FUNC))
 
 
 coverage-report: ##@coverage Get the coverage report.
