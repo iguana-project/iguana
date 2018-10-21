@@ -223,7 +223,29 @@ class _ValidateHTMLTarget(argparse.Action):
 
 
 class _CommonTargets():
-    pass
+    @classmethod
+    def remove_dev_stage_setting(cls):
+        pass
+
+    @classmethod
+    def check_webdriver(cls):
+        pass
+
+    @classmethod
+    def initialize_settings(cls):
+        pass
+
+    @classmethod
+    def check_dev_stage_setting(cls):
+        pass
+
+    @classmethod
+    def save_dev_stage_setting(cls):
+        pass
+
+    @classmethod
+    def link_git_hooks(cls):
+        pass
 
 
 # initialize the argument parser
