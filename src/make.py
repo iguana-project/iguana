@@ -9,8 +9,36 @@ You should have received a copy of the license along with this
 work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 """
 import argparse
+import json
+import os
 import sys
 import textwrap
+
+
+###########
+# VARIABLES
+###########
+BASE = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+# settings file for the Makefile
+MAKE_SETTINGS_FILE = os.path.join(BASE, ".makeSettings")
+
+# tools directory
+TOOLS = os.path.join(BASE, "tools")
+
+# django settings
+DJANGO_BASE = os.path.join(BASE, "src")
+# DJANGO_SETTINGS = common.settings
+# DJANGO_STATIC = $(DJANGO_BASE)/common/static
+# DJANGO_SCSS = $(DJANGO_BASE)/common/scss
+DJANGO_SETTINGS_FILE = os.path.join(DJANGO_BASE, "common", "settings", "__init__.py")
+WEBDRIVER_CONF = os.path.join(DJANGO_BASE, "common", "settings", "webdriver.py")
+
+# git hooks directory
+GITHOOKS = os.path.join(BASE, ".git", "hooks")
+# custom git hooks (relative to the BASE path)
+CUSTOM_GIT_HOOKS = [os.path.relpath(os.path.join(TOOLS, "git-hooks", hook), BASE)
+                    for hook in os.listdir(os.path.join(TOOLS, "git-hooks"))
+                    if os.path.isfile(os.path.join(os.path.join(TOOLS, "git-hooks"), hook))]
 
 
 # custom class to enable pseudo groups with subparsers (see https://bugs.python.org/issue9341)
@@ -225,27 +253,58 @@ class _ValidateHTMLTarget(argparse.Action):
 class _CommonTargets():
     @classmethod
     def remove_dev_stage_setting(cls):
-        pass
+        # remove the settings file if it exeists
+        if os.path.isfile(MAKE_SETTINGS_FILE):
+            os.remove(MAKE_SETTINGS_FILE)
 
     @classmethod
     def check_webdriver(cls):
-        pass
+        global WEBDRIVER
+        if os.path.isfile(WEBDRIVER_CONF):
+            import common.settings.webdriver as driver
+            WEBDRIVER = driver.WEBDRIVER
+        else:
+            print("Default webdriver 'chrome' is used.")
 
     @classmethod
     def initialize_settings(cls):
-        pass
+        settings = cls.get_dev_stage_setting()
+
+        with open(DJANGO_SETTINGS_FILE, 'w') as f:
+            if settings["development"]:
+                f.write("from .local_conf import *")
+            else:
+                f.write("from .global_conf import *")
 
     @classmethod
-    def check_dev_stage_setting(cls):
-        pass
+    def get_dev_stage_setting(cls):
+        if os.path.isfile(MAKE_SETTINGS_FILE):
+            # open the settings file
+            with open(MAKE_SETTINGS_FILE, 'r') as f:
+                settings = json.load(f)
+        else:
+            settings = {
+                "development": False,
+                "staging": False
+            }
+
+        return settings
 
     @classmethod
-    def save_dev_stage_setting(cls):
-        pass
+    def save_dev_stage_setting(cls, settings):
+        # open the settings file
+        with open(MAKE_SETTINGS_FILE, 'w') as f:
+            json.dump(settings, f)
 
     @classmethod
     def link_git_hooks(cls):
-        pass
+        for hook in CUSTOM_GIT_HOOKS:
+            # the relative path to the source file
+            hook_src = os.path.join(os.path.relpath(BASE, GITHOOKS), hook)
+            # the path for the link destination
+            hook_dest = os.path.join(GITHOOKS, os.path.basename(hook))
+            # create the system link
+            os.symlink(hook_src, hook_dest)
 
 
 # initialize the argument parser
