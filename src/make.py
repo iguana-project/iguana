@@ -14,6 +14,7 @@ import os
 import sys
 import textwrap
 import shutil
+import subprocess
 
 
 ###########
@@ -32,8 +33,8 @@ TOOLS = os.path.join(BASE, "tools")
 # django settings
 DJANGO_BASE = os.path.join(BASE, "src")
 # DJANGO_SETTINGS = common.settings
-# DJANGO_STATIC = $(DJANGO_BASE)/common/static
-# DJANGO_SCSS = $(DJANGO_BASE)/common/scss
+DJANGO_STATIC = os.path.join(DJANGO_BASE, "common", "static")
+DJANGO_SCSS = os.path.join(DJANGO_BASE, "common", "scss")
 DJANGO_SETTINGS_FILE = os.path.join(DJANGO_BASE, "common", "settings", "__init__.py")
 WEBDRIVER_CONF = os.path.join(DJANGO_BASE, "common", "settings", "webdriver.py")
 
@@ -253,8 +254,27 @@ class _CoverageSubTargets(argparse.Action):
 
 
 class _CSSTarget(argparse.Action):
-    def __call__(self, parser, namespace, values, option_string=None):
-        pass
+    def __call__(self, *unused):
+        # check if sassc executable exists
+        sassc_file = None
+        for path in os.environ["PATH"].split(os.pathsep):
+            sassc_file = os.path.join(path, "sassc")
+            if os.path.isfile(sassc_file) and os.access(sassc_file, os.X_OK):
+                break
+
+        if sassc_file is None:
+            print("WARNING: sassc not installed!")
+        else:
+            # get the SCSS files
+            scss_files = [css for css in os.listdir(DJANGO_SCSS)
+                          if os.path.isfile(os.path.join(DJANGO_SCSS, css)) and css.endswith(".sccs")]
+
+            # iterate over the SCSS files
+            for scss in scss_files:
+                out_css_file = os.path.join(DJANGO_STATIC, "css",
+                                            os.path.splitext(os.path.basename(scss))[0] + ".css")
+                # call sassc
+                subprocess.run([sassc_file, scss, out_css_file])
 
 
 class _ListBugsTarget(argparse.Action):
