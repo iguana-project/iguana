@@ -357,13 +357,9 @@ def __create_argparse():
 
     # the code management targets
     code_grp = subparser.add_parser_group("Source code management:")
-    # single subparser for --staging and --development option
-    stage_dev_parser = argparse.ArgumentParser(add_help=False)
-    stage_dev_parser.add_argument("-s", "--staging", action="store_true", help="Use the settings for staging.")
-    stage_dev_parser.add_argument("-d", "--development", action="store_true", help="Use the settings for development.")
 
     # target for creating the virtualenv
-    code_grp.add_parser("setup-virtualenv", action=_SetupVirtualenvTarget, parents=[stage_dev_parser],
+    code_grp.add_parser("setup-virtualenv", action=_SetupVirtualenvTarget,
                         help="Create the virtual environment for Django.")
 
     # targets for controlling the requirements
@@ -374,8 +370,7 @@ def __create_argparse():
     requirement_sp.add_parser("check", action=_RequirementsCheckTarget,
                               help="Check if there are any updates of the requirements.")
     # (re)install the requirements
-    requirement_sp.add_parser("install", action=_RequirementInstallTarget, parents=[stage_dev_parser],
-                              help="(Re-)Install the requirements.")
+    requirement_sp.add_parser("install", action=_RequirementsInstallTarget, help="(Re-)Install the requirements.")
 
     # target for setting the webdriver
     set_webdriver_target = code_grp.add_parser("set-webdriver", action=_HelpTarget,
