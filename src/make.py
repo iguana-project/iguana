@@ -13,6 +13,7 @@ import json
 import os
 import sys
 import textwrap
+import shutil
 
 
 ###########
@@ -20,7 +21,10 @@ import textwrap
 ###########
 BASE = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 # settings file for the Makefile
-MAKE_SETTINGS_FILE = os.path.join(BASE, ".makeSettings")
+MAKE_SETTINGS_FILE = os.path.join(BASE, ".makeSettings_py")
+
+# virtualenv settings
+VIRTUALENV_BASE = os.path.join(BASE, "virtualenv")
 
 # tools directory
 TOOLS = os.path.join(BASE, "tools")
@@ -189,17 +193,45 @@ class _MessagesCompileTarget(argparse.Action):
 
 class _SetupVirtualenvTarget(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):
-        pass
+        # check if already a virtual environment is present
+        activate_script = os.path.join(VIRTUALENV_BASE, "bin", "activate_this.py")
+        if not os.path.isfile(activate_script):
+            # create a new environment
+            try:
+                import virtualenv
+            except ImportError as e:
+                _CommonTargets.exit(e, 1)
+
+            virtualenv.create_environment(VIRTUALENV_BASE)
+
+        # use the environment now
+        _CommonTargets.use_virtual_environment()
+
+        # install the requirements
+        _RequirementsInstallTarget.__call__(self, parser, namespace, values, option_string)
 
 
 class _RequirementsCheckTarget(argparse.Action):
-    def __call__(self, parser, namespace, values, option_string=None):
-        pass
+    def __call__(self, *unused):
+        _CommonTargets.use_virtual_environment()
+
+        # import piprot
+        from piprot import piprot
+        # get the requirements file
+        requirements_file = _CommonTargets.get_requirements_file()
+        # execute piprot
+        piprot.main([open(requirements_file, 'r')], outdated=True)
 
 
-class _RequirementInstallTarget(argparse.Action):
-    def __call__(self, parser, namespace, values, option_string=None):
-        pass
+class _RequirementsInstallTarget(argparse.Action):
+    def __call__(self, *unused):
+        # check which requirements should be installed
+        requirements_file = _CommonTargets.get_requirements_file()
+
+        # install the requirements
+        _CommonTargets.use_virtual_environment()
+        from pip._internal import main as pipmain
+        pipmain(["install", "-r", requirements_file])
 
 
 class _SetWebdriverTarget(argparse.Action):
@@ -258,6 +290,41 @@ class _CommonTargets():
             os.remove(MAKE_SETTINGS_FILE)
 
     @classmethod
+    def remove_virtualenv_directory(cls):
+        if os.path.isdir(VIRTUALENV_BASE):
+            shutil.rmtree(VIRTUALENV_BASE, ignore_errors=True)
+
+    @classmethod
+    def use_virtual_environment(cls):
+        # check if already a virtual environment is present
+        activate_script = os.path.join(VIRTUALENV_BASE, "bin", "activate_this.py")
+        if not os.path.isfile(activate_script):
+            cls.exit("No virtual environment is present! Please run 'setup-virtualenv'.", 1)
+
+        # use the environment now
+        globs = globals()
+        globs.update({
+                "__file__": activate_script,
+                "__name__": "__main__"
+            })
+        with open(activate_script, "rb") as f:
+            exec(compile(f.read(), activate_script, "exec"), globs)
+
+    @classmethod
+    def get_requirements_file(cls):
+        # check which requirements should be installed
+        settings = cls._get_dev_stage_setting()
+        requirements_file = os.path.join(BASE, "requirements")
+        if settings["development"]:
+            requirements_file = os.path.join(requirements_file, "development.req")
+        elif settings["staging"]:
+            requirements_file = os.path.join(requirements_file, "staging.req")
+        else:
+            requirements_file = os.path.join(requirements_file, "production.req")
+
+        return requirements_file
+
+    @classmethod
     def check_webdriver(cls):
         global WEBDRIVER
         if os.path.isfile(WEBDRIVER_CONF):
@@ -268,7 +335,7 @@ class _CommonTargets():
 
     @classmethod
     def initialize_settings(cls):
-        settings = cls.get_dev_stage_setting()
+        settings = cls._get_dev_stage_setting()
 
         with open(DJANGO_SETTINGS_FILE, 'w') as f:
             if settings["development"]:
@@ -277,12 +344,13 @@ class _CommonTargets():
                 f.write("from .global_conf import *")
 
     @classmethod
-    def get_dev_stage_setting(cls):
+    def _get_dev_stage_setting(cls):
         if os.path.isfile(MAKE_SETTINGS_FILE):
             # open the settings file
             with open(MAKE_SETTINGS_FILE, 'r') as f:
                 settings = json.load(f)
         else:
+            # default settings
             settings = {
                 "development": False,
                 "staging": False
@@ -291,7 +359,13 @@ class _CommonTargets():
         return settings
 
     @classmethod
-    def save_dev_stage_setting(cls, settings):
+    def save_dev_stage_setting(cls, development=False, staging=False):
+        # add the settings to a dictionary
+        settings = {
+                "development": development,
+                "staging": staging
+            }
+
         # open the settings file
         with open(MAKE_SETTINGS_FILE, 'w') as f:
             json.dump(settings, f)
@@ -305,6 +379,13 @@ class _CommonTargets():
             hook_dest = os.path.join(GITHOOKS, os.path.basename(hook))
             # create the system link
             os.symlink(hook_src, hook_dest)
+
+    @classmethod
+    def exit(cls, error_msg=None, error_code=0):
+        if error_code != 0 or error_msg is not None:
+            print(error_msg, file=sys.stderr)
+
+        sys.exit(error_code)
 
 
 # initialize the argument parser
