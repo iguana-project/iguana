@@ -1,5 +1,8 @@
 language: python
 
+branches:
+  only:
+    - master
 python:
   - "3.5"
 cache: pip
