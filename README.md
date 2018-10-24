@@ -299,7 +299,7 @@ Besides the following plug-ins were used:
 | [ply](http://www.dabeaz.com/ply/) | BSD License |
 | [psycopg2](http://initd.org/psycopg/) | [GNU LGPL v3.0](https://github.com/psycopg/psycopg2/blob/master/LICENSE) |
 | [python-dateutil](https://github.com/dateutil/dateutil/) | [BSD License](https://github.com/dateutil/dateutil/blob/master/LICENSE) |
-| [python-magic](https://github.com/dateutil/dateutil/) | [MIT license](https://github.com/dateutil/dateutil/blob/master/LICENSE) |
+| [python-magic](https://github.com/ahupp/python-magic) | [MIT license](https://github.com/dateutil/dateutil/blob/master/LICENSE) |
 | [pytz](https://github.com/stub42/pytz) | [MIT license](http://pythonhosted.org/pytz/#license) |
 | [redis](https://github.com/antirez/redis) | [BSD License](https://github.com/antirez/redis/blob/unstable/COPYING) |
 | [requests](http://docs.python-requests.org) | [Apache License 2.0](https://github.com/kennethreitz/requests/blob/master/LICENSE) |
