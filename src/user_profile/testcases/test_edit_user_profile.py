@@ -143,10 +143,14 @@ class EditUserProfileTest(TestCase):
         avatar = open(image_path, "rb")
         new_dict = default_dict2.copy()
         new_dict['avatar'] = avatar
-        avatar2 = UploadedFile(avatar, name=avatar.name, content_type="image/png", size=os.path.getsize(image_path))
+        # all images are converted to jpg
+        new_file_name = os.path.basename(image_path).partition(".")[0]+".jpg"
+        avatar2 = UploadedFile(avatar, name=os.path.basename(image_path), content_type="image/png",
+                               size=os.path.getsize(image_path))
         response = self.client.post(reverse('user_profile:edit_profile', kwargs={"username": user_name}),
                                     new_dict, follow=True)
-        self.assertContains(response, avatar2)
+        # NOTE this doesn't verify whether the file has been uploaded successfully
+        self.assertContains(response, new_file_name)
         self.delete_image_test()
         avatar.close()
 
@@ -165,14 +169,24 @@ class EditUserProfileTest(TestCase):
         i.save(output, format="PNG")
         output.flush()
         output.seek(0)
-
-        avatar = SimpleUploadedFile("file.png", content=output.getvalue(), content_type="image/png")
+        # all images are converted to jpg
+        file_basename = "file"
+        avatar = SimpleUploadedFile(file_basename+".png", content=output.getvalue(), content_type="image/png")
         avatar.file.seek(0)
         new_dict = default_dict2.copy()
         new_dict['avatar'] = avatar
         response = self.client.post(reverse('user_profile:edit_profile', kwargs={"username": user_name}),
                                     new_dict, follow=True)
-        self.assertContains(response, avatar)
+        self.assertContains(response, file_basename+".jpg")
+
+    def test_image_transformation(self):
+        # TODO TESTCASE that verifies the content of an uploaded image
+        #      The images are transformed into a jpg on the server-side
+        pass
+
+    def test_image_size_restriction(self):
+        # TODO TESTCASE that checks for the restriction of an image file size
+        pass
 
     def test_upload_not_an_image(self):
         avatar = SimpleUploadedFile("file.png", content=no_image_byte_code, content_type="image/png")

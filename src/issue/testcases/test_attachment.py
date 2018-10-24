@@ -50,6 +50,10 @@ class AttachmentTest(TestCase):
         # TODO TESTCASE
         pass
 
+    def test_file_size_restriction(self):
+        # TODO TESTCASE that checks for the restriction of maximum file size
+        pass
+
     def test_create_and_download_attachment(self):
         issue = Issue(title="Test-Issue", project=self.project, kanbancol=self.column, type="Bug")
         issue.save()

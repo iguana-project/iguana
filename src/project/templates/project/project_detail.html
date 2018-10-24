@@ -26,6 +26,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 		{% if project.description %}
 		<div class="panel panel-default">
 			<div class="panel-heading">{% trans "Description" %}</div>
+			{# NOTE: normally it is a security risk to mark something as safe because html escaping doesn't take place. But in this case markdown won't work without and the input has been verified already. #}
 			<div class="panel-body">{{project.description|markdownify|safe}}</div>
 		</div>
 		{% endif %}

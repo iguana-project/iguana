@@ -17,7 +17,7 @@ from pagedown.widgets import PagedownWidget
 
 from .models import Issue, Comment, Attachment
 
-from image_strip.image_strip import strip_img_metadata
+from image_strip.image_strip import strip_if_file_is_an_img
 
 
 class LimitKanbanForm(ModelForm):
@@ -84,5 +84,6 @@ class AttachmentForm(ModelForm):
 
     def clean_file(self):
         cleaned_file = self.cleaned_data['file']
-        stripped_file = strip_img_metadata(cleaned_file)
+        # if the file is an image the metadata is stripped
+        stripped_file = strip_if_file_is_an_img(cleaned_file)
         return stripped_file

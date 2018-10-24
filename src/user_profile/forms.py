@@ -19,7 +19,7 @@ from django.db.models.fields.files import ImageFieldFile
 import os
 
 from user_profile.apps import defaultAvatar
-from common.settings import MEDIA_ROOT
+from common.settings import MEDIA_ROOT, ALLOWED_IMG_EXTENSION_VALIDATOR
 
 from django.utils.translation import ugettext_lazy as _
 
@@ -75,6 +75,7 @@ class CustomImageField(ImageField):
         if CustomClearableFileInput.isDefaultAvatar(data):
             self.validators = []
             return data
+        self.validators = ALLOWED_IMG_EXTENSION_VALIDATOR
 
         return super(CustomImageField, self).to_python(data)
 

@@ -1,6 +1,7 @@
 import os
 import datetime
 from django.contrib.messages import constants as messages
+from django.core.validators import FileExtensionValidator
 
 """
 Iguana (c) by Marc Ammon, Moritz Fickenscher, Lukas Fridolin,
@@ -147,6 +148,23 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+# used validator for image Uploads in CustomImageField
+# NOTE: DO NOT add svg without a proper sanitize implementation for it in image_strip
+#       svg is the only image type that is not recreated but the original file is stored
+ALLOWED_IMG_EXTENSIONS = ['bmp', 'jpe', 'jpeg', 'jpg', 'gif', 'png']
+ALLOWED_IMG_EXTENSION_VALIDATOR = [FileExtensionValidator(ALLOWED_IMG_EXTENSIONS)]
+# The following ones have been removed because even though they can be stored successfully
+# they won't get delivered successfully in all browser:        pbm, pgm, ppm, tif, tiff
+
+
+# maximum file size for an image to be uploaded: 7 MB
+MAX_IMG_SIZE_BASE = 7
+MAXIMUM_IMG_SIZE = MAX_IMG_SIZE_BASE*1024**2
+# maximum file size for a file to be uploaded: 15 MB
+MAX_FILE_SIZE_BASE = 15
+MAXIMUM_FILE_SIZE = MAX_FILE_SIZE_BASE*1024**2
+
 
 AUTHENTICATION_BACKENDS = ['user_management.auth_backend.AuthBackend', ]
 
