@@ -40,3 +40,8 @@ class StripImgMetadataTest(TestCase):
     def test_file_upload_picture(self):
         # TODO TESTCASE attachment from issue-detail - picture stripping
         pass
+
+    def test_change_user_profile_wo_default_avatar(self):
+        # TODO TESTCASE create test that changes the user profile while the current avatar is not the default one
+        #      this might produce some additional errors
+        pass

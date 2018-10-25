@@ -23,6 +23,7 @@ from django.utils.translation import ugettext_lazy as _
 
 
 def create_img(in_memory_img, format_str, suffix_str, content_type):
+
     # remove any possible suffixes to avoid possible confusion
     img_name = in_memory_img.name.partition(".")[0]
     img = Image.open(in_memory_img)
@@ -31,8 +32,14 @@ def create_img(in_memory_img, format_str, suffix_str, content_type):
     # new_img = InMemoryUploadedFile(img_io_bytes, None, img_name+suffix_str, content_type,
     #                                img_io_bytes.getbuffer().nbytes, None)
     # store the image always as jpeg
+    # transform the alpha channel to white
+    if img.mode in ('RGBA', 'LA'):
+        img_wo_alpha = Image.new(img.mode[:-1], img.size, '#ffffff')
+        img_wo_alpha.paste(img, img.split()[-1])
+        img = img_wo_alpha
+
     # TODO I'm not sure yet whether this sanitizes the image too
-    img.save(img_io_bytes, format="JPEG")
+    img.convert('RGB').save(img_io_bytes, format="JPEG")
     new_img = InMemoryUploadedFile(img_io_bytes, None, img_name+".jpg", "image/jpeg",
                                    img_io_bytes.getbuffer().nbytes, None)
     new_img.seek(0)
