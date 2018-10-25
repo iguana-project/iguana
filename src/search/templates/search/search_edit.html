@@ -10,6 +10,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 -->
 {% extends "_base.html" %}
 {% load i18n %}
+{% load bootstrap3 %}
 
 {% block title %}{% trans "Edit filter" %}{% endblock title %}
 
@@ -18,12 +19,10 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 	<div class="panel-heading">{% trans "Edit filter" %}</div>
 	<div class="panel-body">
 		<form method="POST" class="post-form">{% csrf_token %}
-			<table>
-				{{ form.as_table }}
-				<tr><td colspan="2">
-					<button type="submit" class="save btn btn-default">{% trans "Save" %}</button>
-				</td></tr>
-			</table>
+			{% bootstrap_form form %}
+			{% buttons %}
+				<button type="submit" class="save btn btn-default">{% trans "Save" %}</button>
+			{% endbuttons %}
 		</form>
 	</div>
 </div>

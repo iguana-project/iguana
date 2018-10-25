@@ -35,7 +35,7 @@ class InviteUsersTest(StaticSeleniumTestCase):
         self.selenium.get("{}{}".format(self.live_server_url, reverse('invite_users:invite_users')))
         self.assertNotIn('Not Found', self.selenium.page_source)
         self.assertIn('Invite new User via email', self.selenium.title)
-        self.assertIn('additional message', self.selenium.page_source)
+        self.assertIn('optional additional message', self.selenium.page_source)
         self.assertIn('email of person to be invited', self.selenium.page_source)
         invite_form = self.selenium.find_element_by_id('invite_friend_form')
         message = invite_form.find_element_by_id('id_additional_message')

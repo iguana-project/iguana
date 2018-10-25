@@ -10,14 +10,17 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 -->
 {% extends "_base.html" %}
 {% load i18n %}
+{% load bootstrap3 %}
 
 {% block title %}{% trans "Edit sprint " %} {{ sprint.seqnum }}{% endblock title %}
 
 {% block content %}
 	<h1 class="page-header">{% trans "Edit Sprint " %} {{ sprint.seqnum }}</h1>
 	<form method="POST" class="post-form">{% csrf_token %}
-		{{ form.as_p }}
-		<button type="submit" class="save btn btn-default">{% trans "Save" %}</button>
+		{% bootstrap_form form %}
+		{% buttons %}
+			<button type="submit" class="save btn btn-default">{% trans "Save" %}</button>
+		{% endbuttons %}
 	</form>
 {% endblock %}
 {% block extra_script %}

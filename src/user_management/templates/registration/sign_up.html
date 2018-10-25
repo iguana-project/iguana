@@ -23,7 +23,9 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 {% if user.is_authenticated %}
 	<p>{% blocktrans with username=user.username %}Welcome {{ username }}, you are already a member and logged in. Do you want to logout? {% endblocktrans %}</p>
 	<form action={% url 'logout' %}>
+		{% buttons %}
 		<input class="btn btn-primary" type="submit" id="submit_logout" value="{% trans "Logout" %}" />
+		{% endbuttons %}
 	</form>
 {% else %}
 
@@ -43,10 +45,10 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 	</li>
 	<br>
 	<p>{% trans "Already a member?" %}</p>
-	<p>
+	{% buttons %}
 		<a class="btn btn-default" id="id_login_ref" href="{% url 'login' %}">{% trans "Login" %}</a>
 		<a class="btn btn-default" id="id_reset_ref" href="{% url 'password_reset' %}">{% trans "Forgot your password?" %}</a>
-	</p>
+	{% endbuttons %}
 {% endif %}
 {% endblock content %}
 

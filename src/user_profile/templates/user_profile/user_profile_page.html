@@ -76,7 +76,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 		</div>
 	{% endif %}
 
-    <h2>{% trans "Activity" %}</h2>
+	<h2>{% trans "Activity" %}</h2>
 	<div style="margin-bottom:15px">
 		<a class="btn btn-default {% if not chart_type == 'actions' %}active{% endif %}" id="show_timelogs" href="{% url 'user_profile:user_profile_page' username=user.username %}?data=timelogs">Timelogs</a>
 		<a class="btn btn-default {% if chart_type == 'actions' %}active{% endif %}" id="show_actions" href="{% url 'user_profile:user_profile_page' username=user.username %}?data=actions">Actions</a>
