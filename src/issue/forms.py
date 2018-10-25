@@ -85,5 +85,4 @@ class AttachmentForm(ModelForm):
     def clean_file(self):
         cleaned_file = self.cleaned_data['file']
         # if the file is an image the metadata is stripped
-        stripped_file = strip_if_file_is_an_img(cleaned_file)
-        return stripped_file
+        return strip_if_file_is_an_img(cleaned_file)
