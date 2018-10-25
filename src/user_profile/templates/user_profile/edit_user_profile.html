@@ -15,7 +15,6 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 {% block title %}{% trans "Edit profile: " %}{{ user.username }}{% endblock title %}
 
 {% block content %}
-{# TODO show form-error in alert-danger block - try somehow {{forms}} #}
 <h1>{% trans "Edit" %} {% if user.get_full_name and user.get_full_name.strip %}{{ user.get_full_name }}{% else %}{{ user.username }}{% endif %}:</h1>
 <form method="POST" class="post-form" enctype="multipart/form-data">{% csrf_token %}
 	{% bootstrap_form forms.userChange %}

@@ -15,12 +15,6 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 {% block title %}Login{% endblock title %}
 
 {% block content %}
-{% if form.errors %}
-	<div class="alert alert-danger">
-	<p>{% trans "Your username and password didn't match. Please try again." %}</p>
-	</div>
-{% endif %}
-
 {% if next %}
 	<div class="alert alert-warning">
 	{% if user.is_authenticated %}
@@ -49,6 +43,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 
 <form method="post" id="id_login_form" action="{% url 'login' %}">
 {% csrf_token %}
+	{% bootstrap_form_errors form error_types='all' %}
 	<div class="form-group">
 		<label class="control-label" for="id_username">{% trans 'Username or mail address' %}</label>
 		<input autofocus="" class="form-control" id="id_username" maxlength="254" name="username" placeholder="{% trans 'Username' %}" title="" type="text" required />
