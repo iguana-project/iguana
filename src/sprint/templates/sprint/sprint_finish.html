@@ -29,15 +29,15 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 		<div class="panel panel-default">
 			<div class="panel-heading" style="padding-left:8px">
 				<label style="margin-right:10px">
-					<input type="checkbox" name="select-all" id="select_all" />
+					<input type="checkbox" name="select-all" id="id_select_all" />
 					<strong>{% trans "All" %}</strong>
 				</label>
 				<label style="margin-right:10px">
-					<input type="checkbox" name="select-todo" id="select_todo" />
+					<input type="checkbox" name="select-todo" id="id_select_todo" />
 					<strong>{% trans "Todo" %}</strong>
 				</label>
 				<label style="margin-right:10px">
-					<input type="checkbox" name="select-progress" id="select_progress" />
+					<input type="checkbox" name="select-progress" id="id_select_progress" />
 					<strong>{% trans "In progress" %}</strong>
 				</label>
 			</div>
@@ -47,35 +47,10 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 						<td><input name="move_to_new_sprint" class="{{issue.kanbancol.type|lower}}" type="checkbox" value="{{ issue.number }}">
 						</td>
 						<td>
-									<div class="issue-type text-muted {{issue.type|lower}}" title={{issue.type}}>
-										{{ issue.type|slice:":1" }}
-									</div>
-							<a href="{% url 'issue:detail' project=project.name_short sqn_i=issue.number %}" title="{{issue.description}}" class="issue-id-link">{{ issue.get_ticket_identifier }}</a>
-							{% if issue.get_priority_display == "Critical" %}
-								<span class="glyphicon glyphicon-arrow-up red" title="{% trans "Priority" %}: {% trans "Critical" %}"></span>
-							{% elif issue.get_priority_display == "High" %}
-								<span class="glyphicon glyphicon-arrow-up gly-rotate-45 red" title="{% trans "Priority" %}: {% trans "High" %}"></span>
-							{% elif issue.get_priority_display == "Low" %}
-								<span class="glyphicon glyphicon-arrow-up gly-rotate-145 green" title="{% trans "Priority" %}: {% trans "Low" %}"></span>
-							{% elif issue.get_priority_display == "Unimportant" %}
-								<span class="glyphicon glyphicon-arrow-up gly-rotate-180 green" title="{% trans "Priority" %}: {% trans "Unimportant" %}"></span>
-							{% endif %}
-						</td>
-						<td>
-							<span class="issue-title">{{issue.title}}</span>
-							{% if issue.storypoints %}
-								<span class="story-points" title="{% trans "Storypoints" %}">{{issue.storypoints}}</span>
-							{% endif %}
-							{% for tag in issue.tags.all %}
-								<span><a class="issue-tag" style="background: #{{tag.color}}; color:#{{tag.font_color}};" title="{{tag.tag_text}}" href="{% url 'tag:tag' project=issue.project.name_short %}">{{tag.tag_text}}</a></span>
-							{% endfor %}
-						</td>
-						<td>
-							{% if issue.assignee %}
-								{% for dev in issue.assignee.all %}
-									<img src={{ dev.avatar.url }} title="{{ dev }}" width="15" alt="{% trans "Avatar" %} {{ dev }}"/>
-								{% endfor %}
-							{% endif %}
+							<div class="issue-type text-muted {{issue.type|lower}}" title={{issue.type}}>
+								{{ issue.type|slice:":1" }}
+							</div>
+							{% include "issue_info_template.html"%}
 						</td>
 					</tr>
 				{% endfor %}
@@ -98,7 +73,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 {% block extra_script %}
 	<script>
 $( document ).ready(function() {
-	$("#select_all").change(function(){  //"select all" change
+	$("#id_select_all").change(function(){  //"select all" change
 		$("[name=move_to_new_sprint]").prop('checked', $(this).prop("checked")); //change all ".checkbox" checked status
 		$("#select_todo").prop('checked', false); //change all ".checkbox" checked status
 		$("#select_progress").prop('checked', false); //change all ".checkbox" checked status
@@ -106,13 +81,13 @@ $( document ).ready(function() {
 	$("#select_todo").change(function(){  //"select all" change
 		$("[name=move_to_new_sprint]").prop('checked', false); //change all ".checkbox" checked status
 		$(".todo").prop('checked', $(this).prop("checked")); //change all ".checkbox" checked status
-		$("#select_all").prop('checked', false); //change all ".checkbox" checked status
+		$("#id_select_all").prop('checked', false); //change all ".checkbox" checked status
 		$("#select_progress").prop('checked', false); //change all ".checkbox" checked status
 	});
 	$("#select_progress").change(function(){  //"select all" change
 		$("[name=move_to_new_sprint]").prop('checked', false); //change all ".checkbox" checked status
 		$(".inprogress").prop('checked', $(this).prop("checked")); //change all ".checkbox" checked status
-		$("#select_all").prop('checked', false); //change all ".checkbox" checked status
+		$("#id_select_all").prop('checked', false); //change all ".checkbox" checked status
 		$("#select_todo").prop('checked', false); //change all ".checkbox" checked status
 	});
 
@@ -120,13 +95,13 @@ $( document ).ready(function() {
 	$('[name=move_to_new_sprint]').change(function(){
 		//uncheck "select all", if one of the listed checkbox item is unchecked
 		if(!$(this).prop("checked")){ //if this item is unchecked
-			$("#select_all").prop('checked', false); //change "select all" checked status to false
+			$("#id_select_all").prop('checked', false); //change "select all" checked status to false
 		}
 			$("#select_todo").prop('checked', false); //change all ".checkbox" checked status
 			$("#select_progress").prop('checked', false); //change all ".checkbox" checked status
 		//check "select all" if all checkbox items are checked
 		if ($('[name=move_to_new_sprint]:checked').length == $('[name=move_to_new_sprint]').length ){
-			$("#select_all").prop('checked', true);
+			$("#id_select_all").prop('checked', true);
 			$("#select_todo").prop('checked', false); //change all ".checkbox" checked status
 			$("#select_progress").prop('checked', false); //change all ".checkbox" checked status
 		}
