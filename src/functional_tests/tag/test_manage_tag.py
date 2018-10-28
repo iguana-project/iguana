@@ -183,7 +183,7 @@ class TagTest(StaticSeleniumTestCase):
         tag2.save()
         tag3.save()
         self.selenium.get("{}{}".format(self.live_server_url, reverse('tag:tag', kwargs={'project': self.p0_short})))
-        self.selenium.find_element_by_id('select_all').click()
+        self.selenium.find_element_by_id('id_select_all').click()
         self.selenium.find_element_by_id('id_delete-tags').find_element_by_id('id_submit_delete_tags').click()
         for tag in tags:
             self.assertNotIn(tag, self.selenium.page_source)

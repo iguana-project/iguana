@@ -32,30 +32,20 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 {# Remind the user with which account s/he is currently logged in to be able to log into the correct account, that has access to the page. #}
 {% if user.is_authenticated %}
 	<p>{% blocktrans with username=user.username %}Welcome {{ username }}, you are already a member and logged in. Do you want to logout? {% endblocktrans %}</p>
-	<form action={% url 'logout' %}>
-		<input class="btn btn-default" type="submit" id="submit_logout" value="{% trans 'logout' %}" />
-	</form>
+	{% buttons %}
+		<a class="btn btn-default" id="id_submit_logout" href="{% url 'logout' %}">{% trans 'logout' %}</a>
+	{% endbuttons %}
 	<p>{% trans "Or do you want to go to your home?" %}</p>
-	<form action={% url 'landing_page:home' %}>
-		<input class="btn btn-primary" type="submit" id="submit_home" value="{% trans "home" %}" />
-	</form>
+	{% buttons %}
+		<a class="btn btn-primary" id="id_submit_home" href="{% url 'landing_page:home' %}">{% trans 'home' %}</a>
+	{% endbuttons %}
 {% endif %}
 
 <form method="post" id="id_login_form" action="{% url 'login' %}">
 {% csrf_token %}
-	{% bootstrap_form_errors form error_types='all' %}
-	<div class="form-group">
-		<label class="control-label" for="id_username">{% trans 'Username or mail address' %}</label>
-		<input autofocus="" class="form-control" id="id_username" maxlength="254" name="username" placeholder="{% trans 'Username' %}" title="" type="text" required />
-	</div>
-	<div class="form-group">
-		<label class="control-label" for="id_password">{% trans 'Password' %}</label>
-		<input class="form-control" id="id_password" name="password" placeholder="{% trans 'Password' %}" title="" type="password" required />
-	</div>
+	{% bootstrap_form form %}
 	{% buttons %}
-		<button type="submit" class="save btn btn-default" id="id_submit_login">
-			{% trans "Login" %}
-		</button>
+		<button type="submit" class="save btn btn-default" id="id_submit_login">{% trans "Login" %}</button>
 	{% endbuttons %}
 	<input type="hidden" name="next" value="{{ next }}" />
 </form>
