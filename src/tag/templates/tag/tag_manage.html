@@ -27,48 +27,14 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 	<div class="panel-heading">{% trans "Create new Tag" %}</div>
 	<div class="panel-body">
 		<form method="post" id="id_create-tags" class="post-form">{% csrf_token %}
-			{% if form.errors %}
-				{% for field in form %}
-					{% for error in field.errors %}
-						<div class="alert alert-danger">
-						{{ error|escape }}
-						</div>
-					{% endfor %}
-					{% for error in form.non_field_errors %}
-						<div class="alert alert-danger">
-						{{ error|escape }}
-						</div>
-					{% endfor %}
-				{% endfor %}
-				{# this is somhow an ugly solution for the swallowed Validation-Errors #}
-				<div class="form-group"><label class="control-label" for="id_tag_text", style="color:#a94442">Text</label><input class="form-control" id="id_tag_text" maxlength="32" name="tag_text" placeholder="Text" title="" type="text" required="" style="border-color:#a94442;"></div>
-			{% else %}
-				<div class="form-group"><label class="control-label" for="id_tag_text">Text</label><input class="form-control" id="id_tag_text" maxlength="32" name="tag_text" placeholder="Text" title="" type="text" required=""></div>
-			{% endif %}
-			<div class="form-group"><label class="control-label" for="id_color">Color</label>
-				<select class="form-control" id="id_color" name="color" title="">
-					{% for color, text in form.color.field.choices %}
-						{% if color|is_bright_color %}
-							<option value="{{color}}" style="background: #{{color}}; color: black;font-size: 130%"> {{text}} </option>
-						{% else %}
-							<option value="{{color}}" style="background: #{{color}}; color: white;font-size: 130%"> {{text}} </option>
-						{% endif %}
-					{% endfor %}
-				</select>
-			</div>
-			<div class="form-group">
-				<button type="submit" class="btn btn-default" id="id_submit_create_tag" name="create_tag">{% trans "Save" %}</button>
-			</div>
-
-			{# TODO a better fix would the usage of this with widget-adjustment instead of the above solution.#}
-			{#{% bootstrap_form form %}#}
-				{#{% buttons %}#}
-					{#<button type="submit" class="btn btn-default" id="id_submit_create_tag" name="create_tag">#}
-						{#{% trans "Save" %}#}
-					{#</button>#}
-			{#{% endbuttons %}#}
-
-
+			{% bootstrap_form_errors form error_types='all' %}
+			{% bootstrap_form form %}
+			{# TODO the code for background-styling of these colours has been removed because the style-tag seems not to work on those option values anymore #}
+			{% buttons %}
+				<button type="submit" class="btn btn-default" id="id_submit_create_tag" name="create_tag">
+					{% trans "Save" %}
+				</button>
+			{% endbuttons %}
 		</form>
 	</div>
 </div>
