@@ -58,7 +58,8 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 	<div class="col-md-4">
 		<div class="panel panel-default">
 			<div class="panel-heading">
-				{% trans "Projects you're a member of" %}
+				<span style="margin-right:20px">{% trans "Projects you're a member of" %}</span>
+				<a class="btn btn-default" id="manage_projects" href="{% url 'project:list' %}">{% trans "Manage your Projects" %}</a>
 			</div>
 			{% if request.user.get_projects %}
 				<ul class="list-group">
