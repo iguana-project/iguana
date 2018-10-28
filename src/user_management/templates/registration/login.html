@@ -41,8 +41,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 	{% endbuttons %}
 {% endif %}
 
-<form method="post" id="id_login_form" action="{% url 'login' %}">
-{% csrf_token %}
+<form method="post" id="id_login_form" action="{% url 'login' %}">{% csrf_token %}
 	{% bootstrap_form form %}
 	{% buttons %}
 		<button type="submit" class="save btn btn-default" id="id_submit_login">{% trans "Login" %}</button>

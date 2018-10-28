@@ -23,8 +23,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 {% trans "You have to enter at least one email address." %}
 </div>
 
-<form method="post" id="invite_friend_form" class="post-form">
-	{% csrf_token %}
+<form method="post" id="invite_friend_form" class="post-form">{% csrf_token %}
 	{% bootstrap_form form %}
 
 	{% buttons %}

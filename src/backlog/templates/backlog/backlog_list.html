@@ -19,8 +19,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 {% trans "backlog" as viewpoint %}
 {% include "projectnavi.html" %}
 	<div class="olea-container">
-		<form id="olea" method="post" class="olea-flex-element" action="{% url 'olea:processOlea' project=project.name_short %}">
-			{% csrf_token %}
+		<form id="olea" method="post" class="olea-flex-element" action="{% url 'olea:processOlea' project=project.name_short %}">{% csrf_token %}
 			<input type="text" id="expression" title="{% include "static/olea_tooltip.html" %}" class="form-control" name="expression" {{oleafocus}} value="{{oleaexpression}}" placeholder="{% trans 'Place your change expression here' %}" autocomplete="off" />
 			<input type="hidden" name="currentsprint" value="">
 			<input type="hidden" name="next" value="{{request.get_full_path}}">
@@ -92,22 +91,19 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 							{% if view.get_sprint_issues_left.all %}
 					<a class="btn btn-default" href="{% url 'sprint:stopsprint' project=project.name_short sqn_s=view.get_sqn_s %}" title="{% trans "Stop sprint" %}"><span class="glyphicon glyphicon-stop"></span> {% trans "Stop" %}</a>
 							{% else %}
-						<form class="btn-group" method="post" action="{% url 'sprint:stopsprint' project=project.name_short sqn_s=view.get_sqn_s %}" >
-							{% csrf_token %}
+						<form class="btn-group" method="post" action="{% url 'sprint:stopsprint' project=project.name_short sqn_s=view.get_sqn_s %}" >{% csrf_token %}
 							<button type="submit" style="border-bottom-left-radius: 4px; border-top-left-radius: 4px" class="btn btn-default" id="stopsprint">
 								<span class="glyphicon glyphicon-stop"></span> {% trans "Stop" %}
 							</button>
 						</form>
 							{% endif %}
 						{% else %}
-					<form class="btn-group" method="post" action="{% url 'sprint:startsprint' project=project.name_short sqn_s=view.get_sqn_s %}" >
-						{% csrf_token %}
+					<form class="btn-group" method="post" action="{% url 'sprint:startsprint' project=project.name_short sqn_s=view.get_sqn_s %}" >{% csrf_token %}
 						<button type="submit" style="border-bottom-left-radius: 4px; border-top-left-radius: 4px" class="btn btn-default" id="startsprint">
 							<span class="glyphicon glyphicon-play"></span> {% trans "Start" %}
 						</button>
 					</form>
-					<form class="btn-group" method="post" action="{% url 'sprint:stopsprint' project=project.name_short sqn_s=view.get_sqn_s %}" >
-						{% csrf_token %}
+					<form class="btn-group" method="post" action="{% url 'sprint:stopsprint' project=project.name_short sqn_s=view.get_sqn_s %}" >{% csrf_token %}
 						<button type="submit" class="btn btn-default" id="stopsprint">
 							<span class="glyphicon glyphicon-minus"></span> {% trans "Remove" %}
 						</button>

@@ -48,8 +48,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 									{% for file, changes in c.get_changes.items %}
 										<tr>
 											<td>
-												<form style="display:inline-block" method="post" action="{% url 'issue:commit_diff' project=c.repository.project.name_short sqn_i=c.issue.number %}">
-													{% csrf_token %}
+												<form style="display:inline-block" method="post" action="{% url 'issue:commit_diff' project=c.repository.project.name_short sqn_i=c.issue.number %}">{% csrf_token %}
 														<input type="hidden" name="filename" value={{file}} />
 														<input type="hidden" name="repository" value={{c.repository.pk}} />
 														<input type="hidden" name="commit_sha" value={{c.get_name_short}} />

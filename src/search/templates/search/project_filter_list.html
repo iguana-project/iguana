@@ -32,8 +32,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 			{% else %}
 			{% for search in searches %}
 			<li class="list-group-item">
-				<form method="post" action="{% url 'search:resultpage' %}" >
-					{% csrf_token %}
+				<form method="post" action="{% url 'search:resultpage' %}">{% csrf_token %}
 					<input type="hidden" name="expression" value="{{search.searchexpression}}" />
 					<button type="submit" class="btn btn-link">{{search.description}}</button>
 				</form>

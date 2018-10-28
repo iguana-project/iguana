@@ -52,8 +52,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 								<tr>
 									<td>{{noti.1}}</td>
 									<td>
-										<form name='toggle_{{uproj.name_short}}_{{noti.0}}' method="post" action="{% url 'user_profile:toggle_notification' username=user.username %}">
-											{% csrf_token %}
+										<form name='toggle_{{uproj.name_short}}_{{noti.0}}' method="post" action="{% url 'user_profile:toggle_notification' username=user.username %}">{% csrf_token %}
 											<input type="hidden" name="shn_p" value="{{uproj.name_short}}">
 											<input type="hidden" name="notiway" value="mail">
 											<input type="hidden" name="notitype" value="{{noti.0}}">

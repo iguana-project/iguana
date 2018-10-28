@@ -43,19 +43,16 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 		<ul class="list-group">
 		{% for kc in columns %}
 			<li class="list-group-item"><a href= {% url 'kanbancol:update' project.name_short kc.position %}>{{ kc.name }}</a>
-				<form method="POST" action="{% url "kanbancol:delete" project.name_short kc.position %}" style="display:inline">
-					{% csrf_token %}
+				<form method="POST" action="{% url "kanbancol:delete" project.name_short kc.position %}" style="display:inline">{% csrf_token %}
 					<button class="btn btn-danger btn-xs pull-right" type="submit" name="delete"><span class="glyphicon glyphicon-remove"></span></button>
 				</form>
 				{% if kc.position != 0 %}
-				<form method="POST" action="{% url "kanbancol:moveup" project.name_short kc.position %}" style="display:inline">
-					{% csrf_token %}
+				<form method="POST" action="{% url "kanbancol:moveup" project.name_short kc.position %}" style="display:inline">{% csrf_token %}
 					<button class="btn btn-default btn-xs pull-right" type="submit"><span class="glyphicon glyphicon-arrow-up"></span></button>
 				</form>
 				{% endif %}
 				{% if kc.position != columns|length|add:"-1" %}
-				<form method="POST" action="{% url "kanbancol:movedown" project.name_short kc.position %}" style="display:inline">
-					{% csrf_token %}
+				<form method="POST" action="{% url "kanbancol:movedown" project.name_short kc.position %}" style="display:inline">{% csrf_token %}
 					<button class="btn btn-default btn-xs pull-right" type="submit"><span class="glyphicon glyphicon-arrow-down"></span></button>
 				</form>
 				{% endif %}

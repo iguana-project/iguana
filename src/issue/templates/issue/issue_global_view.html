@@ -67,8 +67,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 		</div>
 		<div style="display:inline-block;">
 			{% if request.META.QUERY_STRING and request.GET.filt != 'true' %}
-				<form class="form-inline" method="post" action="{% url 'common:create_filter' %}">
-					{% csrf_token %}
+				<form class="form-inline" method="post" action="{% url 'common:create_filter' %}">{% csrf_token %}
 					<div class="input-group" style="width:150px" >
 						<input class="form-control"  id="name" maxlength="99" name="name" placeholder="Save filter" title="" type="text" required="">
 						<div class="input-group-btn">
@@ -89,8 +88,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 			<div class="btn-group btn-group-sm">
 				<a class="btn btn-default {% if filt.queryset|add:"&filt=true" == request.META.QUERY_STRING %} active{% endif %}" href="{{request.path}}{% if filt.queryset|add:"&filt=true" != request.META.QUERY_STRING %}?{{ filt.queryset }}&filt=true{% endif %}">{{ filt.name}}</a>
 				</button>
-				<form  method="post" style="display:inline-block" action="{% url 'common:create_filter' %}">
-					{% csrf_token %}
+				<form  method="post" style="display:inline-block" action="{% url 'common:create_filter' %}">{% csrf_token %}
 					<button class="btn btn-default" type="submit">
 						<span class="glyphicon glyphicon-remove"\>
 					</button>

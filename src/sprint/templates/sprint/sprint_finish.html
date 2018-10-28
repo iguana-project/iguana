@@ -24,8 +24,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 	<div class="alert alert-info">
 		{% trans "Select the issues you want to move to another sprint. The unselected issues will be moved to backlog." %}
 	</div>
-	<form  method="post" action="{% url 'sprint:stopsprint' project=project.name_short sqn_s=sprint.seqnum %}">
-		{% csrf_token %}
+	<form  method="post" action="{% url 'sprint:stopsprint' project=project.name_short sqn_s=sprint.seqnum %}">{% csrf_token %}
 		<div class="panel panel-default">
 			<div class="panel-heading" style="padding-left:8px">
 				<label style="margin-right:10px">

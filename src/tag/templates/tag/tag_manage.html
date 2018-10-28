@@ -40,8 +40,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 </div>
 
 {% if tags %}
-<form method="post" id="id_delete-tags" class="post-form">
-	{% csrf_token %}
+<form method="post" id="id_delete-tags" class="post-form">{% csrf_token %}
 	<ul class="list-group">
 		<li class="list-group-item list-first">
 			<div class="row">

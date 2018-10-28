@@ -61,15 +61,13 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 		{% endif %}
 	{% endif %}
 	{% if request.user in issue.participant.all %}
-		<form style="display:inline-block" method="post" action="{% url 'discussion:mute' project.name_short issue.number %}">
-			{% csrf_token %}
+		<form style="display:inline-block" method="post" action="{% url 'discussion:mute' project.name_short issue.number %}">{% csrf_token %}
 			<button type="submit" class="btn btn-default" title="{% trans "Turn off notifications for this issue" %}">
 				<span class="glyphicon glyphicon-eye-close"></span> {% trans "Mute"%}
 			</button>
 		</form>
 	{% else %}
-		<form style="display:inline-block" method="post" action="{% url 'discussion:follow' project.name_short issue.number %}">
-			{% csrf_token %}
+		<form style="display:inline-block" method="post" action="{% url 'discussion:follow' project.name_short issue.number %}">{% csrf_token %}
 			<button type="submit" class="btn btn-default"  title="{% trans "Turn on notifications for this issue" %}">
 				<span class="glyphicon glyphicon-eye-open"></span> {% trans "Follow"%}
 			</button>

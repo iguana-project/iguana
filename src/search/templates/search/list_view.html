@@ -11,8 +11,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 {% load i18n %}
 
 <li>
-<form id="search" method="post" action="{% url 'search:resultpage' %}" class="form-inline">
-	{% csrf_token %}
+<form id="search" method="post" action="{% url 'search:resultpage' %}" class="form-inline">{% csrf_token %}
 	<input class="form-control search-term" type="text" id="uinputxpr" name="expression" placeholder={% trans "Search" %} autocomplete="off"/>
 	<button type="submit" class="btn btn-default form-control search-go">{% trans "Go" %}</button>
 </form>
@@ -27,8 +26,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 
 {% for search in user.searches.all %}
 	<li>
-		<form id="search{{forloop.counter}}" method="post" action="{% url 'search:resultpage' %}" class="form-inline">
-			{% csrf_token %}
+		<form id="search{{forloop.counter}}" method="post" action="{% url 'search:resultpage' %}" class="form-inline">{% csrf_token %}
 			<input class="form-control search-term" type="text" name="expression" readonly value='{{search.searchexpression}}' />
 			<button type="submit" class="btn btn-default form-control search-go">{% trans "Go" %}</button>
 		</form>

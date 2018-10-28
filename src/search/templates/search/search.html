@@ -15,8 +15,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 {% block title %}{% trans "Search result" %}{% endblock title %}
 
 {% block content %}
-<form id="search_" method="post" action="{% url 'search:resultpage' %}" class="form-inline">
-	{% csrf_token %}
+<form id="search_" method="post" action="{% url 'search:resultpage' %}" class="form-inline">{% csrf_token %}
 	<input class="form-control search-term" type="text" id="uinputxpr_" name="expression" placeholder={% trans "Search" %} style="width:100%" autocomplete="off"/><br>
 	<button type="submit" class="btn btn-default">{% trans "Go" %}</button>
 </form>
@@ -28,8 +27,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 {% endif %}
 
 {% for search in user.searches.all %}
-		<form id="search{{forloop.counter}}_" method="post" action="{% url 'search:resultpage' %}" class="form-inline">
-			{% csrf_token %}
+		<form id="search{{forloop.counter}}_" method="post" action="{% url 'search:resultpage' %}" class="form-inline">{% csrf_token %}
 			<input class="form-control search-term" type="text" name="expression" readonly style="width:100%" value='{{search.searchexpression}}' />
 			<br>
 			<button type="submit" class="btn btn-default">{% trans "Go" %}</button>
