@@ -8,10 +8,12 @@ fi
 IFS='
 '
 
+# trailing whitespace
 plus='^[+][\d]*'
 message_send=0
 for line in `git diff --check --cached`; do
 	if [[ $message_send == 0 ]]; then
+		echo -e "\n=================="
 		echo "you have trailing whitespace left, please remove that before committing again!"
 		echo -e "you can execute git diff --check to see a more colorful output\n"
 		message_send=1
@@ -22,6 +24,27 @@ for line in `git diff --check --cached`; do
 		echo -e "\033[0;34m$line\e[0m"
 	fi
 done
-if [[ $message_send != 0 ]]; then
+
+
+# csrf_token is in the same line as the form-post method
+post_form_regex=".*form .*method=\"[pP][oO][sS][tT]\".*"
+csrf_token_pattern="{% csrf_token %}"
+csrf_missing=0
+for line in `git diff --cached`; do
+	if [[ $line =~ $plus$post_form_regex ]]; then
+		echo "$line" | grep -v "{% csrf_token %}" >/dev/null
+		if [ $? -eq 0 ]; then
+			if [[ $csrf_missing == 0 ]]; then
+				echo -e "\n=================="
+				echo "You added a post-form method withouth the relative {% csrf_token %} being in the same line."
+				echo "The csrf_token is necessary for post-form requests. In case you added the token in the following line, please move it up into the same line as the form."
+				csrf_missing=1
+			fi
+			echo "$line" | grep -v "{% csrf_token %}"
+		fi
+	fi
+done
+
+if [[ $message_send != 0 ]] || [[ $csrf_missing != 0 ]]; then
 	exit 1
 fi
