@@ -127,7 +127,7 @@ If you want to initialize the development settings and generate a sample `SECRET
 For more information about configuring Iguana see section [Configuration](README.md#Configuration).
 
 * **css**<br />
-See section *Styling*.
+See section [Styling](README.md#Styling).
 
 * **link-git-hooks**<br />
 This target installs the required git hooks for contributing to the development process. The hooks can be found in the [tools/git-hooks](tools/git-hooks) directory.
@@ -154,7 +154,7 @@ Run the Django unit tests. If an application name is provided, only that app is 
 Run the default django server.
 
 * **make-messages** `<lang-code>`<br />
-See section *Translation*.
+See section [Translation](README.md#Translation).
 
 * **compile-messages**<br />
 Compile the Django messages.
@@ -220,7 +220,7 @@ common/settings
 
 
 #### \_\_init\_\_.py
-A default init-file gets created by the Makefile target **initialize-settings** (see section *Makefile targets*).<br />
+A default init-file gets created by the Makefile target **initialize-settings** (see section [Makefile targets](README.md#Makefile-targets)).<br />
 For the development process this file can contain additional settings that should not be published in the repository. Mainly the Django-`SECRET_KEY = '...'` setting is defined here, when the project is in the development environment.<br />
 **Important:** The file must start with the line:
 
