@@ -43,8 +43,8 @@ For more detailed documentation including a list of features see our github docu
 
 ### Docker
 You can use docker to run iguana in production. The docker-compose file comes with automated letsencrypt certificate generation.
-* adapt `docker/settings.json`:
-  * SECRET_KEY and HOST/ALLOWED_HOSTS
+* adapt [docker/settings.json](docker/settings.json):
+  * `SECRET_KEY and HOST/ALLOWED_HOSTS`
   * email: either use a sendgrid api key or a normal mail server
 * adapt the env variables of the web service in `docker-compose.yml`
 * run `sudo docker-compose up`
@@ -85,7 +85,7 @@ The `<webdriver>` option the driver for the `setup-webriver` target can be speci
 * `migrate`
 
 ### Starting Iguana
-Currently Iguana supports only [Nginx](https://nginx.org/en/) as web server backend. For configuring Nginx and using [Gunicorn](http://gunicorn.org/) together with Django please stick to the official documentation: https://docs.djangoproject.com/en/1.11/howto/deployment/wsgi/gunicorn/
+Currently Iguana supports only [Nginx](https://nginx.org/en/) as web server backend. For configuring Nginx and using [Gunicorn](http://gunicorn.org/) together with Django please stick to the official documentation: https://docs.djangoproject.com/en/dev/howto/deployment/wsgi/gunicorn/
 
 ### Starting the local Iguana instance
 To start the local Django web server simply run:
@@ -106,11 +106,11 @@ These targets can be run with:
 
 ### Main targets
 * **production**<br />
-See subsection *Production*.
+See subsection [Production](README.md#Production).
 * **staging**<br />
-See subsection *Staging*.
+See subsection [Staging](README.md#Staging).
 * **development**<br />
-See subsection *Development*.
+See subsection [Development](README.md#Development).
 
 ### Other targets
 
@@ -118,19 +118,19 @@ See subsection *Development*.
 Prints a short description for each Makefile target.
 
 * **setup-virtualenv** `[dev|stage]`<br />
-This target prepares the virtual python environment in which this project is executed. The packages for the virtual environment are defined in the file `requirements/production.req`.<br />
-If you want to setup the virtualenv for development (`development.req`) or staging (`staging.req`), add `dev` or `stage` option.
+This target prepares the virtual python environment in which this project is executed. The packages for the virtual environment are defined in the file [requirements/production.req](requirements/production.req).<br />
+If you want to setup the virtualenv for development ([development.req](requirements/development.req)) or staging ([staging.req](requirements/staging.req)), add `dev` or `stage` option.
 
 * **initialize-settings** `[dev]`<br />
 This target sets up the settings for Iguana. By default the production or staging settings are loaded.<br />
 If you want to initialize the development settings and generate a sample `SECRET_KEY` for Django, add the `dev` option.<br />
-For more information about configuring Iguana see section *Configuration*.
+For more information about configuring Iguana see section [Configuration](README.md#Configuration).
 
 * **css**<br />
 See section *Styling*.
 
 * **link-git-hooks**<br />
-This target installs the required git hooks for contributing to the development process. The hooks can be found in the `tools/git-hooks` directory.
+This target installs the required git hooks for contributing to the development process. The hooks can be found in the [tools/git-hooks](tools/git-hooks) directory.
 
 * **setup-webdriver** `[<webdriver>]`<br />
 This target configures the webdriver for the functional tests. You can replace `<webdriver>` with `chrome`, `firefox` or `safari`. If you use this target for the first time and no driver is specified, it uses `chrome` as default. Then if there's no driver supplied, it tries to use the current one.
@@ -142,7 +142,7 @@ Create the Django migrations.
 Apply the Django migrations to the database or create the database if no exists.
 
 * **refresh-reqs** `[dev|stage]`<br />
-Reinstall all packages in the virtual environment. If `dev` parameter is specified, the development requirements (`requirements/development.req`) will be installed. For `stage` the staging (`requirements/staging.req`) and if no parameter is provided, the production requirements (`requirements/production.req`) are reinstalled.
+Reinstall all packages in the virtual environment. If `dev` parameter is specified, the development requirements ([requirements/development.req](requirements/development.req)) will be installed. For `stage` the staging ([requirements/staging.req](requirements/staging.req)) and if no parameter is provided, the production requirements ([requirements/production.req](requirements/production.req)) are reinstalled.
 
 * **startapp** `<appname>`<br />
 Create a new Django application with the specified name.
@@ -185,17 +185,17 @@ Check whether our requirements are up to date or not.
 
 
 ### Styling
-Currently the style is stored in `config/scss/style.scss`. To build it run
+Currently the style is stored in [src/common/scss/style.scss](src/common/scss/style.scss). To build it run
 `make css`. For Selenium tests use `StaticLiveServerTestcase` instead of
 `LiveServerTestcase` to make sure static files (like css) are served.
 
-Documentation on Sass and SCSS: http://sass-lang.com/guide
+Documentation on Sass and SCSS: [sass-lang guide](https://sass-lang.com/guide)
 
 I propose we use SCSS, as it is a superset of CSS and the default Sass syntax.
 If we change our mind, there are tools to convert between the two syntaxes.
 
 ### Translation
-Please use translation hooks in templates (see `\_base.html` for an example)
+Please use translation hooks in templates (see [\_base.html](src/common/templates/_base.html) for an example)
 and code (`ugettext` as `_`).
 
 You can create/update the `*.po` in the locale directory by running `make-messages <lang-code>`. The default language is English (code: en). This file is where the actual translations go. It should be checked
@@ -208,7 +208,7 @@ in the url. For example `/de/login` instead of `/en/login`.
 
 
 ## Configuration
-Iguana has a lot of settings that can be changed by the user. The settins files are stored in the `common/settings` package. The package structure is:
+Iguana has a lot of settings that can be changed by the user. The settins files are stored in the [src/common/settings](src/common/settings) package. The package structure is:
 
 ```
 common/settings
@@ -238,7 +238,7 @@ This file contains the basic settings that are the same for the other two config
 
 #### global_conf.py
 Basically this file contains all settings that are required to run Iguana in an staging or production environment.<br />
-But the settings that should be changed by the user are loaded from the file `/var/lib/iguana/settings/settings.json`. This file gets created when installing Iguana through Ansible. A template for this file can be found in `ansible/roles/user/files/settings_template.json`.
+But the settings that should be changed by the user are loaded from the file `/var/lib/iguana/settings/settings.json`. This file gets created when installing Iguana through Ansible. A template for this file can be found in [ansible/roles/user/files/settings_template.json](ansible/roles/user/files/settings_template.json).
 
 #### local_conf.py
 This file contains all settings that are required to run Iguana in a development environment.<br />
