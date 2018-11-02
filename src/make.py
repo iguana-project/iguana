@@ -679,7 +679,11 @@ class _RequirementsTarget(_Target):
             # install the requirements
             _CommonTargets.activate_virtual_environment()
             from pip._internal import main as pipmain
-            pipmain(["install", "-r", requirements_file])
+            code = pipmain(["install", "-r", requirements_file])
+
+            # check for possible errors
+            if code != 0:
+                _CommonTargets.exit("Failed while installing the requirements! Please check the errors above.", code)
 
 
 @cmd("setup-virtualenv")
