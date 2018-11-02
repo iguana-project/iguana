@@ -12,7 +12,9 @@ import argparse
 import inspect
 import json
 import os
+import random
 import shutil
+import string
 import subprocess
 import sys
 import textwrap
@@ -426,6 +428,13 @@ class _CommonTargets:
         with open(DJANGO_SETTINGS_FILE, 'w') as f:
             if settings["development"]:
                 f.write("from .local_conf import *")
+
+                # generate a secret key for Django; this is needed
+                secret_key = ''.join([random.SystemRandom().choice(string.digits + string.ascii_uppercase
+                                                                   + string.ascii_lowercase + '!@#$%^&*(-_=+)')
+                                      for _ in range(50)])
+                f.write('\n\n')
+                f.write("SECRET_KEY = \"" + secret_key + "\"\n")
             else:
                 f.write("from .global_conf import *")
 
