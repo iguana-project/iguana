@@ -459,10 +459,16 @@ class _CommonTargets:
     @classmethod
     def link_git_hooks(cls):
         for hook in CUSTOM_GIT_HOOKS:
-            # the relative path to the source file
-            hook_src = os.path.join(os.path.relpath(BASE, GITHOOK_DIR), hook)
             # the path for the link destination
             hook_dest = os.path.join(GITHOOK_DIR, os.path.basename(hook))
+
+            if os.path.islink(hook_dest) or \
+                    os.path.isfile(hook_dest):
+                continue
+
+            # the relative path to the source file
+            hook_src = os.path.join(os.path.relpath(BASE, GITHOOK_DIR), hook)
+
             # create the system link
             os.symlink(hook_src, hook_dest)
 
