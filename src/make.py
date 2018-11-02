@@ -195,10 +195,24 @@ class _Target(argparse.Action, metaclass=_MetaTarget):
         # by default it shows the help message
         _HelpTarget.execute_target(parser, argument_values)
 
-    def _get_callable_targets(self, target_list=[]):
+    @classmethod
+    def _get_callable_targets(cls, target_list=[]):
         for target in target_list:
-            if isinstance(target, _Target):
+            if issubclass(target, _Target):
                 yield target
+
+    @classmethod
+    def _call_targets(cls, parser, argument_values):
+        # call dependency targets
+        for target in cls._get_callable_targets(cls.call_before):
+            target._call_targets(parser, argument_values)
+
+        # call the target
+        cls.execute_target(parser, argument_values)
+
+        # call dependent targets
+        for target in cls._get_callable_targets(cls.call_after):
+            target._call_targets(parser, argument_values)
 
     def __call__(self, parser, *unused):
         # do not execute the target if it has child targets and one of them is used
@@ -211,16 +225,8 @@ class _Target(argparse.Action, metaclass=_MetaTarget):
         if choice_made_and_possible:
             return
 
-        # call dependency targets
-        for target in self._get_callable_targets(self.call_before):
-            target.execute_target(parser, type(self).argument_values[self.cmd])
-
-        # call the target
-        self.execute_target(parser, type(self).argument_values[type(self).super_parent_target.cmd])
-
-        # call dependent targets
-        for target in self._get_callable_targets(self.call_after):
-            target.execute_target(parser, type(self).argument_values[self.cmd])
+        # call the target with its dependecies
+        self._call_targets(parser, type(self).argument_values[type(self).super_parent_target.cmd])
 
 
 class _MetaArgument(type):
@@ -527,33 +533,6 @@ class _HelpTarget(_Target):
                 print(textwrap.indent(subparser.format_help(), '    '))
 
         root_parser.exit()
-
-
-@cmd("production")
-@group("Main")
-@help("Configure everything to be ready for production.")
-class _ProductionTarget(_Target):
-    @classmethod
-    def execute_target(cls, parser, argument_values):
-        pass
-
-
-@cmd("staging")
-@group("Main")
-@help("Configure everything to be ready for staging.")
-class _StagingTarget(_Target):
-    @classmethod
-    def execute_target(cls, parser, argument_values):
-        pass
-
-
-@cmd("development")
-@group("Main")
-@help("Configure everything to be ready for development.")
-class _DevelopmentTarget(_Target):
-    @classmethod
-    def execute_target(cls, parser, argument_values):
-        pass
 
 
 @cmd("run")
@@ -898,6 +877,44 @@ class _ValidateHTMLTarget(_Target):
     @classmethod
     def execute_target(cls, parser, argument_values):
         pass
+
+
+@cmd("production")
+@group("Main")
+@call_after([_SetupVirtualenvTarget, _CSSTarget])
+@help("Configure everything to be ready for production.")
+class _ProductionTarget(_Target):
+    @classmethod
+    def execute_target(cls, unused, argument_values):
+        # write the production settings
+        _CommonTargets.save_dev_stage_setting(development=argument_values.get("development", False),
+                                              staging=argument_values.get("staging", False))
+
+        # initialize the rest of the settings
+        _CommonTargets.initialize_settings()
+
+
+@cmd("staging")
+@group("Main")
+@call_after(_ProductionTarget)
+@help("Configure everything to be ready for staging.")
+class _StagingTarget(_Target):
+    @classmethod
+    def execute_target(cls, unused, argument_values):
+        argument_values["staging"] = True
+
+
+@cmd("development")
+@group("Main")
+@call_after([_ProductionTarget, _SetWebdriverTarget.Chrome, _MigrationsTarget.Apply])
+@help("Configure everything to be ready for development.")
+class _DevelopmentTarget(_Target):
+    @classmethod
+    def execute_target(cls, unused, argument_values):
+        argument_values["development"] = True
+
+        # link the git hooks
+        _CommonTargets.link_git_hooks()
 
 
 def __get_parser_group(parser, target):
