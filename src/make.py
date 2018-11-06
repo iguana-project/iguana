@@ -18,6 +18,7 @@ import string
 import subprocess
 import sys
 import textwrap
+from io import StringIO
 
 
 ###########
@@ -366,7 +367,19 @@ class _SubParsersCustom(argparse._SubParsersAction):
 #########
 
 # class with operations used by multiple targets
-class _CommonTargets:
+class _MetaCommonTargets(type):
+    @property
+    def is_development(self):
+        settings = self._get_dev_stage_setting()
+        return settings["development"]
+
+    @property
+    def is_staging(self):
+        settings = self._get_dev_stage_setting()
+        return settings["staging"]
+
+
+class _CommonTargets(metaclass=_MetaCommonTargets):
     @classmethod
     def remove_dev_stage_setting(cls):
         # remove the settings file if it exeists
@@ -614,15 +627,61 @@ class _TestTarget(_Target):
     class FuncTests(_Argument):
         pass
 
-    @arg("ing-imp-errs")
+    @arg("ign-imp-errs")
     @boolean
     @help("Run the Django tests without error-messages from imported packages.")
     class IgnImpErrs(_Argument):
         pass
 
+    class IgnImpErrsOutWrapper(StringIO):
+        def __init__(self, stdout):
+            self.__stdout = stdout
+            StringIO.__init__(self)
+
+        def write(self, *args, **kwargs):
+            # only write output, that does not contain 'virtualenv'
+            write = False
+            if isinstance(args, tuple):
+                for arg in args:
+                    if "virtualenv" not in arg:
+                        write = True
+            elif "virtualenv" not in args:
+                write = True
+
+            if write:
+                self.__stdout.write(*args, **kwargs)
+                StringIO.write(self, *args, **kwargs)
+
+        def read(self, *args, **kwargs):
+            self.seek(0)
+            self.__stdout.write(StringIO.read(self, *args, **kwargs))
+
     @classmethod
-    def execute_target(cls, parser, argument_values):
-        pass
+    def execute_target(cls, unused, argument_values):
+        if _CommonTargets.is_development:
+            nomigrations = True
+        else:
+            nomigrations = False
+
+        # check if functional tests should be run
+        if argument_values["func-tests"]:
+            argument_values["app"] = "functional_tests"
+
+        # override stdout and stderr
+        if argument_values["ign-imp-errs"]:
+            sys_stdout = sys.stdout
+            sys_stderr = sys.stderr
+            sys.stdout = _TestTarget.IgnImpErrsOutWrapper(sys.stdout)
+            sys.stderr = _TestTarget.IgnImpErrsOutWrapper(sys.stderr)
+
+        # execute the tests
+        _CommonTargets.exec_django_cmd("test", argument_values["app"], no_input=True, nomigrations=nomigrations,
+                                       settings=DJANGO_SETTINGS)
+
+        # restore stdout and stderr
+        if argument_values["ign-imp-errs"]:
+            sys.stdout = sys_stdout
+            sys.stderr = sys_stderr
 
 
 @cmd("messages")
