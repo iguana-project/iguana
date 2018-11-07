@@ -42,6 +42,10 @@ DJANGO_SCSS = os.path.join(DJANGO_BASE, "common", "scss")
 DJANGO_SETTINGS_FILE = os.path.join(DJANGO_BASE, "common", "settings", "__init__.py")
 WEBDRIVER_CONF = os.path.join(DJANGO_BASE, "common", "settings", "webdriver.py")
 
+# coverage settings
+COVERAGE_SETTINGS_FILE = os.path.join(DJANGO_BASE, ".coveragerc")
+COVERAGE_DATA_FILE = os.path.join(DJANGO_BASE, ".coverage")
+
 # git hooks directory
 GITHOOK_DIR = os.path.join(BASE, ".git", "hooks")
 # custom git hook directory
@@ -822,47 +826,64 @@ class _CoverageTarget(_Target):
     @help("Create the coverage report.")
     class Report(_Target):
         @classmethod
-        def execute_target(cls, unused, argument_values):
-            cls.parent_target.execute_sub_targets(argument_values)
+        def execute_target(cls, *unused):
+            cov = cls.parent_target.load_coverage()
+            cov.report()
 
     @cmd("html")
     @help("Create the coverage report as HTML.")
     class Html(_Target):
         @classmethod
-        def execute_target(cls, unused, argument_values):
-            cls.parent_target.execute_sub_targets(argument_values)
+        def execute_target(cls, *unused):
+            cov = cls.parent_target.load_coverage()
+            cov.html()
 
     @cmd("xml")
     @help("Create the coverage report as XML.")
     class Xml(_Target):
         @classmethod
-        def execute_target(cls, unused, argument_values):
-            cls.parent_target.execute_sub_targets(argument_values)
+        def execute_target(cls, *unused):
+            cov = cls.parent_target.load_coverage()
+            cov.xml()
 
     @cmd("erase")
     @help("Erase a previously created coverage report.")
     class Erase(_Target):
         @classmethod
-        def execute_target(cls, unused, argument_values):
-            cls.parent_target.execute_sub_targets(argument_values)
+        def execute_target(cls, *unused):
+            cov = cls.parent_target.load_coverage()
+            cov.erase()
 
     @classmethod
-    def execute_sub_targets(cls, argument_values):
-        # cmd in parser.prog
-        # cov.load()
-        pass
+    def __initialize_coverage(cls):
+        _CommonTargets.activate_virtual_environment()
+        from coverage import Coverage
+        return Coverage(data_file=COVERAGE_DATA_FILE, config_file=COVERAGE_SETTINGS_FILE,
+                        include=[os.path.join(DJANGO_BASE, '*')])
+
+    @classmethod
+    def load_coverage(cls):
+        # get coverage
+        cov = cls.__initialize_coverage()
+
+        # check if coverage was executed before
+        if not os.path.isfile(COVERAGE_DATA_FILE):
+            _CommonTargets.exit("No coverage file found! Please perform a coverage run first.", 1)
+
+        # load the coverage file
+        cov.load()
+
+        return cov
 
     @classmethod
     def execute_target(cls, parser, argument_values):
-        # _CommonTargets.activate_virtual_environment()
-        # arguments in namespace
-        # from coverage import Coverage
-        # cov = Coverage()
-        # cov.start()
-        # run test target
-        # cov.stop()
-        # cov.save()
-        pass
+        cov = cls.__initialize_coverage()
+        # start the coverage process
+        cov._auto_save = True
+        cov.start()
+        # perform the tests
+        argument_values["ign-imp-errs"] = False
+        _TestTarget.execute_target(parser, argument_values)
 
 
 @cmd("css")
