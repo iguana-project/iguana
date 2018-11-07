@@ -624,7 +624,6 @@ class _MigrationsTarget(_Target):
 @help("Execute the Django tests.")
 class _TestTarget(_Target):
     @arg("app")
-    @default('')
     @help("The Django application name to test.")
     class AppName(_Argument):
         pass
@@ -689,8 +688,12 @@ class _TestTarget(_Target):
             sys.stderr = _TestTarget.IgnImpErrsOutWrapper(sys.stderr)
 
         # execute the tests
-        _CommonTargets.exec_django_cmd("test", argument_values["app"], no_input=True, nomigrations=nomigrations,
-                                       settings=DJANGO_SETTINGS)
+        if not argument_values["app"]:
+            _CommonTargets.exec_django_cmd("test", DJANGO_BASE, no_input=True, nomigrations=nomigrations,
+                                           settings=DJANGO_SETTINGS)
+        else:
+            _CommonTargets.exec_django_cmd("test", argument_values["app"], no_input=True, nomigrations=nomigrations,
+                                           settings=DJANGO_SETTINGS)
         if argument_values["complete-test"]:
             # also execute the functional tests
             _CommonTargets.exec_django_cmd("test", "functional_tests", no_input=True, nomigrations=nomigrations,
@@ -894,7 +897,6 @@ class _SetWebdriverTarget(_Target):
 @help("Execute coverage on the source code.")
 class _CoverageTarget(_Target):
     @arg("app")
-    @default('')
     @help("The Django application name to test.")
     class AppName(_Argument):
         pass
