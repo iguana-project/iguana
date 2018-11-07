@@ -987,15 +987,6 @@ class _NewReleaseTarget(_Target):
         repo.create_tag("production-" + str(latest_tag_number + 1), ref="master")
 
 
-@cmd("validate-html")
-@group("Source code management")
-@help("Validate the HTML files.")
-class _ValidateHTMLTarget(_Target):
-    @classmethod
-    def execute_target(cls, parser, argument_values):
-        pass
-
-
 @cmd("production")
 @group("Main")
 @call_after([_SetupVirtualenvTarget, _CSSTarget])
