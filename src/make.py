@@ -621,6 +621,7 @@ class _MigrationsTarget(_Target):
 @help("Execute the Django tests.")
 class _TestTarget(_Target):
     @arg("app")
+    @default('')
     @help("The Django application name to test.")
     class AppName(_Argument):
         pass
@@ -635,6 +636,12 @@ class _TestTarget(_Target):
     @boolean
     @help("Run the Django tests without error-messages from imported packages.")
     class IgnImpErrs(_Argument):
+        pass
+
+    @arg("complete-test")
+    @boolean
+    @help("Run Django application AND functional tests.")
+    class CompleteTest(_Argument):
         pass
 
     class IgnImpErrsOutWrapper(StringIO):
@@ -681,6 +688,10 @@ class _TestTarget(_Target):
         # execute the tests
         _CommonTargets.exec_django_cmd("test", argument_values["app"], no_input=True, nomigrations=nomigrations,
                                        settings=DJANGO_SETTINGS)
+        if argument_values["complete-test"]:
+            # also execute the functional tests
+            _CommonTargets.exec_django_cmd("test", "functional_tests", no_input=True, nomigrations=nomigrations,
+                                           settings=DJANGO_SETTINGS)
 
         # restore stdout and stderr
         if argument_values["ign-imp-errs"]:
@@ -812,6 +823,7 @@ class _SetWebdriverTarget(_Target):
 @help("Execute coverage on the source code.")
 class _CoverageTarget(_Target):
     @arg("app")
+    @default('')
     @help("The Django application name to test.")
     class AppName(_Argument):
         pass
@@ -820,6 +832,12 @@ class _CoverageTarget(_Target):
     @boolean
     @help("Execute the functional tests.")
     class FuncTests(_Argument):
+        pass
+
+    @arg("complete-test")
+    @boolean
+    @help("Run Django application AND functional tests.")
+    class CompleteTest(_Argument):
         pass
 
     @cmd("report")
