@@ -29,7 +29,7 @@ from urllib.request import urlopen
 ###########
 BASE = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 # settings file for the Makefile
-MAKE_SETTINGS_FILE = os.path.join(BASE, ".makeSettings_py")
+MAKE_SETTINGS_FILE = os.path.join(BASE, ".makeSettings")
 
 # virtualenv settings
 VIRTUALENV_BASE = os.path.join(BASE, "virtualenv")
