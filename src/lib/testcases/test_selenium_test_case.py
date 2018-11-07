@@ -11,9 +11,6 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 from django.test.testcases import TestCase
 from lib.selenium_test_case import StaticSeleniumTestCase, wait_for, decorateAllAssertFunctions
 from lib import selenium_test_case
-from common.settings import webdriver
-import sys
-import os
 import time
 
 # set the default timeout of for the selenium test cases to 5
@@ -56,32 +53,9 @@ class SeleniumTest(TestCase):
         self.tempCase = TempTestAsserts()
 
     def test_setup_and_teardown(self):
-        installedDriver = [webdriver.WEBDRIVER]
-        availableDriver = [
-            "firefox",
-            "chrome",
-            "safari",
-            "notSupported"
-        ]
-        failDriver = list(set(availableDriver) - set(installedDriver))
-
-        # save normal stderr (to suppress selenium errors for not installed web browsers)
-        defaultStderr = sys.stderr
-        # redirect stderr to /dev/null
-        sys.stderr = open(os.devnull, 'w')
-
-        for driver in failDriver:
-            webdriver.WEBDRIVER = driver
-            self.assertRaises(Exception, StaticSeleniumTestCase.setUpClass)
-
-        webdriver.WEBDRIVER = installedDriver[0]
+        # test if the selenium driver works
         StaticSeleniumTestCase.setUpClass()
         StaticSeleniumTestCase.tearDownClass()
-
-        # flush everything that is buffered
-        sys.stderr.flush()
-        # restore the old stderr
-        sys.stderr = defaultStderr
 
     def test_temporary_testcaseclass_works(self):
         self.tempCase.assertTrue(True)
