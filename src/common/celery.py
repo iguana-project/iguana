@@ -38,4 +38,4 @@ def debug_task(self):
 
 @app.on_after_configure.connect
 def setup_periodic_tasks(sender, **kwargs):
-    sender.add_periodic_task(900.0, import_commits.s(), name='import commits')
+    sender.add_periodic_task(900.0, import_commits.s(), name='import git commits')

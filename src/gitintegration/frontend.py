@@ -22,7 +22,7 @@ EMPTY_TREE_SHA = "4b825dc642cb6eb9a060e54bf8d69288fbee4904"
 
 class Frontend():
     def set_auth(repository):
-        git_ssh_cmd = 'ssh -i %s' % repository.rsa_priv_path.path
+        git_ssh_cmd = 'ssh -i {}'.format(repository.rsa_priv_path.path)
         os.environ['GIT_SSH_COMMAND'] = git_ssh_cmd
 
     def clone_repository(repository):
@@ -32,7 +32,6 @@ class Frontend():
 
         try:
             repo = Repo.clone_from(repository.url, repository.get_local_repo_path(), branch='master')
-
             repository.conn_ok = True
         except Exception:
             repository.conn_ok = False

@@ -42,6 +42,10 @@ class AttachmentTest(TestCase):
         self.column = KanbanColumn(name='Column', position=4, project=self.project)
         self.column.save()
 
+    def delete_uploaded_files(self):
+        # TODO TESTCASE delete all uploaded files (the files that are stored on server side)
+        pass
+
     def test_attachments_from_other_issues_of_same_project_invisible(self):
         # TODO TESTCASE
         pass
@@ -82,6 +86,7 @@ class AttachmentTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual("application/octet-stream", response.get('Content-Type'))
         self.assertEqual(response.resolver_match.func.__name__, AttachmentDownloadView.as_view().__name__)
+        delete_uploaded_files()
 
     def test_attachment_delete(self):
         # create sample issue

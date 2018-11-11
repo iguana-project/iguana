@@ -38,6 +38,8 @@ def get_upload_path(instance, filename):
 
 def validate_local_path(value):
     # network protocols are always ok
+    # TODO usage of regex for user@ ... also for ssh:// private keys are required
+    #      => feature will be added as soon as the private-/public key handling has been reorganised
     valid_protocols = ['git://', 'http://', 'https://', 'ftp://', 'ftps://']
     for p in valid_protocols:
         if value.startswith(p):
