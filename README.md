@@ -70,7 +70,6 @@ To setup Iguana in a production environment you simply have to call:
 This command runs the following Makefile targets:
 
 * `setup-virtualenv`
-* `initialize-settings`
 * `css`
 
 ### Staging
@@ -78,24 +77,19 @@ To setup Iguana in a staging environment you simply have to call:
 
     make staging
 
-This command runs the following Makefile targets:
-* `setup-virtualenv stage`
-* `initialize-settings`
-* `css`
+This does the same as the production target but it creates the staging virtual environment.
 
 ### Development
 To setup Iguana in a development you simply have to call:
 
-    make development [<webdriver>]
+    make development ++webdriver [<webdriver>]
 
-The `<webdriver>` option the driver for the `setup-webriver` target can be specified. Beside that the following targets are executed:
+The `<webdriver>` option the driver for the `setup-webriver` target can be specified ("chrome" is used as default). Beside that the following targets are executed:
 
-* `setup-virtualenv dev`
-* `initialize-settings dev`
+* `setup-virtualenv`
 * `css`
-* `link-git-hooks`
 * `setup-webdriver <webdriver>`
-* `migrate`
+* `migrations apply`
 
 ### Starting Iguana
 Currently Iguana supports only [Nginx](https://nginx.org/en/) as web server backend. For configuring Nginx and using [Gunicorn](http://gunicorn.org/) together with Django please stick to the official documentation: https://docs.djangoproject.com/en/dev/howto/deployment/wsgi/gunicorn/
@@ -115,86 +109,83 @@ To start the local Django web server simply run:
 ## Makefile targets
 These targets can be run with:
 
-    make <target>
+    make <target> [++option]
 
-### Main targets
-* **production**<br />
-See subsection [Production](README.md#Production).
-* **staging**<br />
-See subsection [Staging](README.md#Staging).
-* **development**<br />
-See subsection [Development](README.md#Development).
+Note that options have to begin with `+` or `++` instead of `-` or `--`. This is due to a bug that prevents passing options to make targets.
 
-### Other targets
-
+### Main:
 * **help**<br />
 Prints a short description for each Makefile target.
 
-* **setup-virtualenv** `[dev|stage]`<br />
-This target prepares the virtual python environment in which this project is executed. The packages for the virtual environment are defined in the file [requirements/production.req](requirements/production.req).<br />
-If you want to setup the virtualenv for development ([development.req](requirements/development.req)) or staging ([staging.req](requirements/staging.req)), add `dev` or `stage` option.
+* **production**<br />
+See subsection [Production](README.md#Production).
 
-* **initialize-settings** `[dev]`<br />
-This target sets up the settings for Iguana. By default the production or staging settings are loaded.<br />
-If you want to initialize the development settings and generate a sample `SECRET_KEY` for Django, add the `dev` option.<br />
-For more information about configuring Iguana see section [Configuration](README.md#Configuration).
+* **staging**<br />
+See subsection [Staging](README.md#Staging).
 
-* **css**<br />
-See section [Styling](README.md#Styling).
+* **development** `[-w <webdriver>]`<br />
+See subsection [Development](README.md#Development).
 
-* **link-git-hooks**<br />
-This target installs the required git hooks for contributing to the development process. The hooks can be found in the [tools/git-hooks](tools/git-hooks) directory.
+### Django management:
+* **migrations**
+    * **create**<br />
+    Create the Django migrations.
+    * **apply**<br />
+    Apply the Django migrations to the database or create the database if no exists.
 
-* **setup-webdriver** `[<webdriver>]`<br />
-This target configures the webdriver for the functional tests. You can replace `<webdriver>` with `chrome`, `firefox` or `safari`. If you use this target for the first time and no driver is specified, it uses `chrome` as default. Then if there's no driver supplied, it tries to use the current one.
-
-* **makemigrations**<br />
-Create the Django migrations.
-
-* **migrate**<br />
-Apply the Django migrations to the database or create the database if no exists.
-
-* **refresh-reqs** `[dev|stage]`<br />
-Reinstall all packages in the virtual environment. If `dev` parameter is specified, the development requirements ([requirements/development.req](requirements/development.req)) will be installed. For `stage` the staging ([requirements/staging.req](requirements/staging.req)) and if no parameter is provided, the production requirements ([requirements/production.req](requirements/production.req)) are reinstalled.
-
-* **startapp** `<appname>`<br />
+* **create-app** `<appname>`<br />
 Create a new Django application with the specified name.
 
-* **test** `[<appname>]`<br />
-Run the Django unit tests. If an application name is provided, only that app is tested. To run the functional tests call `test functional_tests[.appname]`.
+* **test** `[-a <appname>|-f|-c] [-i]`<br />
+Run the Django unit tests. If an application name is provided with `-a`, only that app is tested. To run the functional tests use the `-f` option. If all tests should be run, use option `-c`. With the option `-i` the warnings and errors from imported packages get suppressed.
 
 * **run**<br />
 Run the default django server.
 
-* **make-messages** `<lang-code>`<br />
-See section [Translation](README.md#Translation).
+* **messages**<br />
+    * **create** `[-l <lang-code>]`<br />
+    See section [Translation](README.md#Translation).
+    * **compile**<br />
+    Compile the Django messages.
 
-* **compile-messages**<br />
-Compile the Django messages.
+### Source code management:
+* **setup-virtualenv**<br />
+This target prepares the virtual python environment in which this project is executed. The packages for the virtual environment are defined in the file [production.req](requirements/production.req), [development.req](requirements/development.req) or [staging.req](requirements/staging.req). This depends on which main target you have chosen before.
 
-* **coverage** `[<appname>]`<br />
-Run the coverage tool on the Django tests. To get a better output you can run one of the following commands:
-    * **coverage-report**<br />
+* **css**<br />
+See section [Styling](README.md#Styling).
+
+* **set-webdriver** `<webdriver>`<br />
+This target configures the webdriver for the functional tests. You can replace `<webdriver>` with `chrome`, `firefox` or `safari`.
+
+* **requirements**
+    * **install**<br />
+    Reinstall all packages in the virtual environment. Which packages are installed depend on what main target you have run in the initialization process.
+    * **check**<br />
+    Check whether the used requirements are up to date or not.
+
+* **coverage** `[-a <appname>|-f|-c]`<br />
+Run the coverage tool on the Django tests. With argument `-a` anapp for which the coverage should be measured can be specified. `-f` measures the coverage for all funtional tests and `-c` performs a measurement across all tests. To get a better output you can run one of the following commands:
+    * **report**<br />
     Get the coverage in text form.
-    * **coverage-html**<br />
+    * **html**<br />
     Get the coverage as a html website.
-    * **coverage-xml**<br />
+    * **xml**<br />
     Get the coverage as a xml file.
+    * **erase**<br />
+    Delete the last coverage report.
 
-* **coverage-erase**<br />
-Delete the last coverage report.
+* **list**
+    * **bugs**<br />
+    List all occurrence of the tag `TODO BUG`.
+    * **missing_testcases**<br />
+    List all occurrence of the tag `TODO TESTCASE`.
 
-* **list_bugs**<br />
-List all occurrence of the tag `TODO BUG`.
-
-* **list_missing_testcases**<br />
-List all occurrence of the tag `TODO TESTCASE`.
-
-* **add_license_header**<br />
+* **add-license**<br />
 Insert the license header into all source files.
 
-* **check_requirements**<br />
-Check whether our requirements are up to date or not.
+* **new-release**<br />
+Tag the current commit as a production release.
 
 
 ### Styling
@@ -321,3 +312,4 @@ Besides the following plug-ins were used:
 | [selenium](http://www.seleniumhq.org) | [Apache License 2.0](https://github.com/SeleniumHQ/selenium/blob/master/LICENSE)
 | [sendgrid-django](https://github.com/elbuo8/sendgrid-django) | [MIT License](https://github.com/elbuo8/sendgrid-django/blob/master/LICENSE) |
 | [slackclient](https://github.com/slackapi/python-slackclient) | [MIT License](https://github.com/slackapi/python-slackclient/blob/master/LICENSE) |
+
