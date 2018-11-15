@@ -1039,7 +1039,7 @@ class _ListTarget(_Target):
 @cmd("add-license")
 @group("Source code management")
 @help("Add the license header to the source files.")
-class _AddLicenseTarget(argparse.Action):
+class _AddLicenseTarget(_Target):
     @classmethod
     def execute_target(cls, *unused):
         subprocess.run([os.path.join(DJANGO_BASE, "add_header.sh")], cwd=DJANGO_BASE)
