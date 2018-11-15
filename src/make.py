@@ -9,6 +9,7 @@ You should have received a copy of the license along with this
 work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 """
 import argparse
+import importlib
 import inspect
 from io import StringIO
 import json
@@ -16,6 +17,7 @@ import os
 import platform
 import random
 import shutil
+import site
 import string
 import subprocess
 import sys
@@ -405,18 +407,22 @@ class _CommonTargets(metaclass=_MetaCommonTargets):
             return
 
         # check if a virtual environment can be activated
-        activate_script = os.path.join(VIRTUALENV_BASE, "bin", "activate_this.py")
-        if not os.path.isfile(activate_script):
+        virt_python = os.path.join(VIRTUALENV_BASE, "bin", "python")
+        if not os.path.isfile(virt_python):
             cls.exit("No virtual environment is present! Please run 'setup-virtualenv'.", 1)
 
         # use the environment now
-        globs = globals()
-        globs.update({
-                "__file__": activate_script,
-                "__name__": "__main__"
-            })
-        with open(activate_script, "rb") as f:
-            exec(compile(f.read(), activate_script, "exec"), globs)
+        script_file = __file__
+        if script_file.endswith('.pyc'):
+            script_file = script_file[:-1]
+        popen = subprocess.Popen([virt_python, script_file] + sys.argv[1:])
+        try:
+            result = popen.wait()
+        except KeyboardInterrupt:
+            # return no error when the process is interrupted by ctrl-c
+            raise SystemExit(0)
+        # all other cases
+        raise SystemExit(result)
 
     @classmethod
     def get_requirements_file(cls):
@@ -765,6 +771,9 @@ class _RequirementsTarget(_Target):
             if code != 0:
                 _CommonTargets.exit("Failed while installing the requirements! Please check the errors above.", code)
 
+            # reload the installed packages
+            importlib.reload(site)
+
 
 @cmd("setup-virtualenv")
 @group("Source code management")
@@ -774,8 +783,8 @@ class _SetupVirtualenvTarget(_Target):
     @classmethod
     def execute_target(cls, *unused):
         # check if already a virtual environment is present
-        activate_script = os.path.join(VIRTUALENV_BASE, "bin", "activate_this.py")
-        if not os.path.isfile(activate_script):
+        virt_python = os.path.join(VIRTUALENV_BASE, "bin", "python")
+        if not os.path.isfile(virt_python):
             # create a new environment
             try:
                 import virtualenv
