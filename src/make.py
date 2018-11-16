@@ -24,6 +24,7 @@ import sys
 import tarfile
 import textwrap
 from urllib.request import urlopen
+import venv
 
 
 ###########
@@ -403,7 +404,7 @@ class _CommonTargets(metaclass=_MetaCommonTargets):
     @classmethod
     def activate_virtual_environment(cls):
         # check if already a virtual environment is present
-        if hasattr(sys, 'real_prefix'):
+        if sys.base_prefix != sys.prefix:
             return
 
         # check if a virtual environment can be activated
@@ -786,15 +787,7 @@ class _SetupVirtualenvTarget(_Target):
         virt_python = os.path.join(VIRTUALENV_BASE, "bin", "python")
         if not os.path.isfile(virt_python):
             # create a new environment
-            try:
-                import virtualenv
-            except ImportError as e:
-                _CommonTargets.exit(e, 1)
-
-            virtualenv.create_environment(VIRTUALENV_BASE)
-
-        # use the environment now
-        _CommonTargets.activate_virtual_environment()
+            venv.create(VIRTUALENV_BASE, with_pip=True)
 
 
 @cmd("set-webdriver")
