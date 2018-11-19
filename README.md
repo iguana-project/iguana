@@ -296,10 +296,12 @@ Besides the following plug-ins were used:
 | [pep8](https://pep8.readthedocs.io) | [MIT License](https://github.com/PyCQA/pycodestyle/blob/master/LICENSE) |
 | [Pillow](https://python-pillow.org) | [PIL Software License](https://github.com/python-pillow/Pillow/blob/master/LICENSE) |
 | [piprot](https://github.com/sesh/piprot) | [MIT License](https://github.com/sesh/piprot/blob/master/LICENCE.txt) |
+| [Piexif](https://github.com/hMatoba/Piexif) | [MIT License](https://github.com/hMatoba/Piexif/blob/master/LICENSE.txt) |
 | [ply](http://www.dabeaz.com/ply/) | BSD License |
 | [psycopg2](http://initd.org/psycopg/) | [GNU LGPL v3.0](https://github.com/psycopg/psycopg2/blob/master/LICENSE) |
 | [python-dateutil](https://github.com/dateutil/dateutil/) | [BSD License](https://github.com/dateutil/dateutil/blob/master/LICENSE) |
 | [python-magic](https://github.com/ahupp/python-magic) | [MIT license](https://github.com/dateutil/dateutil/blob/master/LICENSE) |
+| [python-xmp-toolkit](https://github.com/python-xmp-toolkit/python-xmp-toolkit) | [ESA/ESO and CRS4 license](https://github.com/python-xmp-toolkit/python-xmp-toolkit/blob/master/LICENSE) |
 | [pytz](https://github.com/stub42/pytz) | [MIT license](http://pythonhosted.org/pytz/#license) |
 | [redis](https://github.com/antirez/redis) | [BSD License](https://github.com/antirez/redis/blob/unstable/COPYING) |
 | [requests](http://docs.python-requests.org) | [Apache License 2.0](https://github.com/kennethreitz/requests/blob/master/LICENSE) |

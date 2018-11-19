@@ -315,7 +315,6 @@ class GitIntegrationTest(TestCase):
         os.unlink(temp2.name)
         # TODO TESTCASE delete all uploaded files (the files that are stored on server side)
 
-
     def test_views_not_allowed_for_non_project_member(self):
         filecontent1 = 'Hello World File 1'
         temp1 = tempfile.NamedTemporaryFile(delete=False)

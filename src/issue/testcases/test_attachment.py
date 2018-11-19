@@ -86,7 +86,7 @@ class AttachmentTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual("application/octet-stream", response.get('Content-Type'))
         self.assertEqual(response.resolver_match.func.__name__, AttachmentDownloadView.as_view().__name__)
-        delete_uploaded_files()
+        self.delete_uploaded_files()
 
     def test_attachment_delete(self):
         # create sample issue
