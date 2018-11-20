@@ -145,7 +145,7 @@ def return_in_memory_file(in_memory_file, has_to_be_an_image):
         return in_memory_file
 
     # The file has been uploaded via the CustomImageField and no supported image matched the file type
-    raise ValidationError(_("Either unable to detect the image type or the image type is not supported." +
+    raise ValidationError(_("Either unable to detect the image type or the image type is not supported. " +
                             "Supported image extensions are: ") + str(ALLOWED_IMG_EXTENSIONS), code='unknown_img_type')
 
 

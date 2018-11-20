@@ -22,13 +22,14 @@ from django.urls.base import reverse
 from project.models import Project
 from issue.models import Issue
 from django.contrib.auth import get_user_model
-from common.settings import ALLOWED_IMG_EXTENSIONS, BASE_DIR, MEDIA_ROOT
+from common.settings import ALLOWED_IMG_EXTENSIONS, BASE_DIR, MEDIA_ROOT, TEST_FILE_PATH
 
 
 user_name = 'a'
 user_email = 'b@b.com'
 timezone = "Europe/Berlin"
 avatars_path = os.path.join(MEDIA_ROOT, "avatars", user_name)
+forbidden_img = 'forbidden_img.tiff'
 
 
 class StripImgMetadataTest(TestCase):
@@ -36,6 +37,10 @@ class StripImgMetadataTest(TestCase):
     def setUpTestData(cls):
         # NOTE: if you modify those elements they need to be created in setUp, instead of here
         cls.user = get_user_model().objects.create_user(user_name, user_email, 'c')
+        cls.project = Project(creator=cls.user, name_short='PRJ')
+        cls.project.save()
+        cls.project.manager.add(cls.user)
+        cls.project.developer.add(cls.user)
         cls.images = list(cls.create_images())
         # TODO https://blog.brian.jp/python/png/2016/07/07/file-fun-with-pyhon.html
         # TODO malicious payload jpg, png, bmp, gif
@@ -44,15 +49,13 @@ class StripImgMetadataTest(TestCase):
     def tearDownClass(cls):
         for image in cls.images:
             os.unlink(image)
+        os.unlink(forbidden_img)
         super().tearDownClass()
 
     def setUp(self):
         self.client.force_login(self.user)
-        self.project = Project(creator=self.user, name_short='PRJ')
-        self.project.save()
-        self.project.manager.add(self.user)
-        self.project.developer.add(self.user)
-        # TODO create issue
+        self.issue = Issue(title="Test-Issue", project=self.project)
+        self.issue.save()
 
     def tearDown(self):
         # delete uploaded avatars
@@ -78,6 +81,8 @@ class StripImgMetadataTest(TestCase):
         secret_exif_thumbnail = o.getvalue()
         secret_thumbnail.close()
 
+        # forbidden image_extension
+        img.save(forbidden_img, "tiff")
         # bmp doesn't contain critical meta information
         img.save(image_wmeta + "_bmp" + '.bmp')
 
@@ -304,14 +309,61 @@ class StripImgMetadataTest(TestCase):
         #      this might produce some additional errors
         pass
 
-    def test_refuse_forbidden_img_extensions(self):
-        # TODO TESTCASE test to upload a forbidden img extensions
-        # TODO TESTCASE test to upload a forbidden img type with an allowed extensions
-        pass
+    def test_reject_forbidden_img_extensions(self):
+        # upload a forbidden img extensions
+        img = open(forbidden_img, "rb")
+        img_dict = {
+            'avatar': img,
+            'email': user_email,
+            'timezone': timezone,
+            'language': 'en',
+        }
+        response = self.client.post(reverse('user_profile:edit_profile', kwargs={"username": user_name}),
+                                    img_dict, follow=True)
+        img.close()
+        # verify the file has NOT been uploaded successfully
+        file_name = os.path.basename(forbidden_img).partition(".")[0]+".jpg"
+        self.assertNotContains(response, file_name)
+        self.assertContains(response, "is not allowed. Allowed extensions are:")
+
+        # upload a forbidden img type with an allowed extensions
+        file_name = 'trick.jpg'
+        copyfile(forbidden_img, file_name)
+        img = open(file_name, "rb")
+        img_dict['avatar'] = img
+        response = self.client.post(reverse('user_profile:edit_profile', kwargs={"username": user_name}),
+                                    img_dict, follow=True)
+        img.close()
+        os.unlink(file_name)
+        self.assertNotContains(response, file_name)
+        self.assertContains(response, "Either unable to detect the image type or the image type is not supported. " +
+                            "Supported image extensions are:")
 
     def test_file_size_limitation(self):
-        # TODO TESTCASE verify that the allowed file size is actually limited
-        pass
+        # verify that the allowed image size (avatar) is actually limited
+        huge_img = TEST_FILE_PATH+'/8mb.png'
+        img = open(huge_img, "rb")
+        img_dict = {
+            'avatar': img,
+            'email': user_email,
+            'timezone': timezone,
+            'language': 'en',
+        }
+        response = self.client.post(reverse('user_profile:edit_profile', kwargs={"username": user_name}),
+                                    img_dict, follow=True)
+        img.close()
+        self.assertContains(response, "The uploaded image exceeds the allowed file size of: ")
+
+        # verify that the allowed file size (attachment) is actually limited
+        huge_file = TEST_FILE_PATH+'/16mb.txt'
+        f = open(huge_file, "r")
+        file_dict = {
+            "file": f,
+        }
+        response = self.client.post(reverse('issue:detail', kwargs={'project': self.project.name_short,
+                                            'sqn_i': self.issue.number}), file_dict)
+        f.close()
+        self.assertContains(response, "The uploaded file exceeds the allowed file size of: ")
 
     def test_malicious_pictures(self):
         # TODO TESTCASE upload malicious image and verify it is hamrless after upload

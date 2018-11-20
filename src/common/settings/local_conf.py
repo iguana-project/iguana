@@ -79,3 +79,7 @@ OLEA_REPLACE_DEVS = False
 CELERY_BROKER_BACKEND = 'memory'
 CELERY_TASK_ALWAYS_EAGER = True
 CELERY_TASK_EAGER_PROPAGATES = True
+
+# directory for files used for testing - This is the place where to put files used for testing but the recreation
+# for each test run is too expensive
+TEST_FILE_PATH = "../testing_files"
