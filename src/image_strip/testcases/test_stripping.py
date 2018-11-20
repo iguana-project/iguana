@@ -8,6 +8,7 @@ Creative Commons Attribution-ShareAlike 4.0 International License.
 You should have received a copy of the license along with this
 work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 """
+import io
 import os
 import re
 from libxmp import XMPFiles, consts, XMPMeta
@@ -28,8 +29,6 @@ user_name = 'a'
 user_email = 'b@b.com'
 timezone = "Europe/Berlin"
 avatars_path = os.path.join(MEDIA_ROOT, "avatars", user_name)
-# TODO thumbnail has to be deleted and recreated because otherwise it may contain some information that have been
-#      part of the image before it has been modified
 
 
 class StripImgMetadataTest(TestCase):
@@ -63,12 +62,23 @@ class StripImgMetadataTest(TestCase):
 
     # helper function to create all the different image types and returns the file names of all generated images
     def create_images():
+        # actual image color: 255,0,0
         img = Image.new("RGB", (100, 20), color='red')
         text = ImageDraw.Draw(img)
         text.text((10, 10), "Hello World", fill=(0, 0, 0))
         image_wmeta = 'image_wmeta'
 
-        # bmp doesn't contain critical meta informations
+        # thumbnail color: 0,0,255
+        o = io.BytesIO()
+        secret_thumbnail = Image.new("RGB", (120, 20), color='blue')
+        text = ImageDraw.Draw(secret_thumbnail)
+        text.text((10, 10), "secret thumbnail", fill=(0, 0, 0))
+        # transform it to bytes
+        secret_thumbnail.save(o, "jpeg")
+        secret_exif_thumbnail = o.getvalue()
+        secret_thumbnail.close()
+
+        # bmp doesn't contain critical meta information
         img.save(image_wmeta + "_bmp" + '.bmp')
 
         # for some reasons some of these values don't match the relative specification:
@@ -136,7 +146,8 @@ class StripImgMetadataTest(TestCase):
                              piexif.ImageIFD.Artist: u"artist",
                              piexif.ImageIFD.Copyright: u"copyright holder",
                              piexif.ImageIFD.DateTime: u"2013:10:03 10:03:10",
-                           }
+                           },
+                    "thumbnail": secret_exif_thumbnail
                     }
 
         png_dict = {
@@ -194,8 +205,7 @@ class StripImgMetadataTest(TestCase):
                     }
 
         # jpg with exif
-        # TODO generate and use different thumbnail - so at storage the thumbnail should be regenerated
-        img.save(image_wmeta + '_jpg' + '.jpg', exif=piexif.dump(jpg_exif), thumbnail=((100, 100), Image.ANTIALIAS))
+        img.save(image_wmeta + '_jpg' + '.jpg', exif=piexif.dump(jpg_exif))
         # copy jpg to jpe, jpeg
         copyfile(image_wmeta + '_jpg' + '.jpg', image_wmeta + '_jpe' + '.jpe')
         copyfile(image_wmeta + '_jpg' + '.jpg', image_wmeta + '_jpeg' + '.jpeg')
@@ -205,11 +215,9 @@ class StripImgMetadataTest(TestCase):
         # copy png metadata
         for k, v in png_dict.items():
             png_info.add_text(k, v, 0)
-        # TODO generate and use different thumbnail - so at storage the thumbnail should be regenerated
-        img.save(image_wmeta + '_png' + '.png', "PNG", pnginfo=png_info, thumbnail=((100, 100), Image.ANTIALIAS))
+        img.save(image_wmeta + '_png' + '.png', "PNG", pnginfo=png_info)
 
-        # TODO generate and use different thumbnail - so at storage the thumbnail should be regenerated
-        img.save(image_wmeta + '_gif' + '.gif', thumbnail=((100, 100), Image.ANTIALIAS))
+        img.save(image_wmeta + '_gif' + '.gif')
         img.close()
 
         # xmp for gif and png
@@ -230,24 +238,25 @@ class StripImgMetadataTest(TestCase):
         return ((image_wmeta + '_' + suffix + "." + suffix) for suffix in ALLOWED_IMG_EXTENSIONS)
 
     def verify_metadatas_are_removed(self, file_path):
-        # helper function that verifies that the provided image doesn't contain any sensible metadata
+        # helper function that verifies that the provided image doesn't contain any sensitive metadata
         # empty exif
-        self.assertEqual(piexif.load(file_path)["0th"], {}, msg="sensible exif data left")
-        self.assertEqual(piexif.load(file_path)["Exif"], {}, msg="sensible exif data left")
-        self.assertEqual(piexif.load(file_path)["GPS"], {}, msg="sensible exif data left")
-        self.assertEqual(piexif.load(file_path)["1st"], {}, msg="sensible exif data left")
+        self.assertEqual(piexif.load(file_path)["0th"], {}, msg="sensitive exif data left")
+        self.assertEqual(piexif.load(file_path)["Exif"], {}, msg="sensitive exif data left")
+        self.assertEqual(piexif.load(file_path)["GPS"], {}, msg="sensitive exif data left")
+        self.assertEqual(piexif.load(file_path)["1st"], {}, msg="sensitive exif data left")
+        # Imagine the following scenario: An image contains sensitive information, it gets modified to hide these.
+        # If there is an exif-thumbnail it might represent the previous image and hence could leak those information.
+        self.assertEqual(piexif.load(file_path)["thumbnail"], None, msg="The exif thumbnail has not been removed.")
 
         # verify that xmp is also empty. Normally the xmp content is stored in within the rdf tag
         xmp_file = XMPFiles(file_path=file_path)
         xmp_content = str(xmp_file.get_xmp())
         # this won't match if there are any additional xmp elements left, because they would occur between the opening
         # of the rdf:Description tag and the closing of the rdf:RDF tag.
-        sensitive_informations = re.findall("  <rdf:Description.*\n </rdf:RDF>", xmp_content)
-        self.assertEqual(len(sensitive_informations), 1,
-                         msg="There are sensible xmp-tags left:\n\n{}".format(xmp_content))
+        sensitive_information = re.findall("  <rdf:Description.*\n </rdf:RDF>", xmp_content)
+        self.assertEqual(len(sensitive_information), 1,
+                         msg="There are sensitive xmp-tags left:\n\n{}".format(xmp_content))
         xmp_file.close_file()
-
-        # TODO TESTCASE verify thumbnail is a new one
 
     def verify_images_are_sanitized(self, file_path):
         # helper function that verifies that the provided image is sanitized
@@ -273,7 +282,7 @@ class StripImgMetadataTest(TestCase):
             self.assertContains(response, file_name)
             file_path = avatars_path + "/" + file_name
 
-            # verify there are no sensible metadata left
+            # verify there are no sensitive metadata left
             self.verify_metadatas_are_removed(file_path)
             # verify there is no malicious code left
             self.verify_images_are_sanitized(file_path)

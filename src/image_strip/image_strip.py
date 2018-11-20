@@ -47,8 +47,8 @@ def create_img(in_memory_img, format_str, suffix_str, content_type):
     return new_img
 
 
-# It is necessary to strip any meta informations before the image is stored for the first time. In many other
-# approaches those informations are striped after the image has been stored. Hence a leak would be possible for a short
+# It is necessary to strip any meta information before the image is stored for the first time. In many other
+# approaches those information are striped after the image has been stored. Hence a leak would be possible for a short
 # amount of time. Therefore InMemory representation is used to prevent any leaks.
 # \param in_memory_file the file that has been uploaded
 # \param has_to_be_an_image bool that signalises if the file has been uploaded via the CustomImageField
