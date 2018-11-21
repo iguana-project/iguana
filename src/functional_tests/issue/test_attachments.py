@@ -21,6 +21,8 @@ from project.models import Project
 from issue.models import Issue
 from kanbancol.models import KanbanColumn
 
+from common.settings import MEDIA_ROOT
+
 
 class AttachmentTest(StaticSeleniumTestCase):
 
@@ -39,6 +41,13 @@ class AttachmentTest(StaticSeleniumTestCase):
         self.selenium.refresh()
 
     def test_reachable_and_elements_exist(self):
+        # TODO TESTCASE verify that the page is available + check (some) content like the title + check existence
+        #               of forms and their form elements by their ids!
+        pass
+
+    def test_upload_attachment(self):
+        # TODO TESTCASE upload file as an attachment
+        # TODO TESTCASE upload file together with a comment
         driver = self.selenium
 
         # create attachment file
@@ -71,7 +80,10 @@ class AttachmentTest(StaticSeleniumTestCase):
         attachment = issue.attachments.first()
         self.assertIn(filecontent1, attachment.file.read().decode())
 
-        os.remove(temp1.name)
+        # delete the uploaded file from the server
+        os.unlink(MEDIA_ROOT + '/' + attachment.file.name)
+        # delete the uploaded file locally
+        os.unlink(temp1.name)
 
     def test_required_fields(self):
         driver = self.selenium

@@ -8,6 +8,10 @@ Creative Commons Attribution-ShareAlike 4.0 International License.
 You should have received a copy of the license along with this
 work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 """
+import tempfile
+from os import path
+import os
+
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
@@ -20,9 +24,7 @@ from kanbancol.models import KanbanColumn
 from issue.models import Issue, Comment
 from django.contrib.auth import get_user_model
 
-import tempfile
-from os import path
-import os
+from common.settings import MEDIA_ROOT
 
 
 class CommentTest(TestCase):
@@ -227,10 +229,6 @@ class CommentTest(TestCase):
 
     def test_comment_attach_log(self):
         # TODO TESTCASE move this test into an own class when splitting up the issue application
-        # create a dummy issue
-        issue = Issue(title="Test-Issue", project=self.project, kanbancol=self.column, type="Bug")
-        issue.save()
-
         # add a comment
         values = {
             'action': "commentAtt",  # the action is for the multiforms.py
@@ -255,17 +253,18 @@ class CommentTest(TestCase):
                                             kwargs={'project': self.project.name_short, 'sqn_i': 1}),
                                     values, follow=True)
         self.assertContains(response, values['text'])
-        for com in issue.comments.all():
+        for com in self.issue.comments.all():
             if com.attachment:
                 self.assertEqual(path.basename(com.attachment.file.name), path.basename(temp.name))
+                # deletion takes place below
 
         # add only a file
         del values['text']
-        commentCount = len(issue.comments.all())
+        commentCount = len(self.issue.comments.all())
         response = self.client.post(reverse('issue:detail',
                                             kwargs={'project': self.project.name_short, 'sqn_i': 1}),
                                     values, follow=True)
-        self.assertEqual(commentCount, len(issue.comments.all()))
+        self.assertEqual(commentCount, len(self.issue.comments.all()))
         for form in response.context_data['forms'].values():
             self.assertFalse(form.is_valid())
 
@@ -289,7 +288,12 @@ class CommentTest(TestCase):
 
         # close the file
         f.close()
-        os.remove(temp.name)
+        # delete the uploaded file locally
+        os.unlink(temp.name)
+
+        # delete the uploaded files from the server
+        for att in self.issue.attachments.all():
+            os.unlink(MEDIA_ROOT + '/' + att.file.name)
 
         # add time log
         values['action'] = "timelog"

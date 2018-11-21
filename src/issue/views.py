@@ -608,7 +608,7 @@ class AttachmentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         # delete the object from the database
         response = DeleteView.delete(self, request, *args, **kwargs)
         # delete the file from disk
-        os.remove(filePath)
+        os.unlink(filePath)
 
         return response
 

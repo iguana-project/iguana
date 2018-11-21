@@ -17,6 +17,8 @@ from discussion.models import Notification
 from django.contrib.auth import get_user_model
 from django.core.files import File
 
+from common.settings import MEDIA_ROOT
+
 import os
 import tempfile
 
@@ -234,6 +236,10 @@ class SignalTest(TestCase):
         attachment = Attachment(file=f, creator=self.user2, issue=issue2)
         attachment.save()
         self.assertEqual(self.user1.notifications.get(issue=issue2).type.filter(type="NewAttachment").count(), 1)
+        # delete the uploaded file from the server
+        os.unlink(MEDIA_ROOT + '/' + attachment.file.name)
+        # delete the uploaded file locally
+        os.unlink(temp.name)
 
     def test_mute(self):
         self.client.force_login(self.user1)

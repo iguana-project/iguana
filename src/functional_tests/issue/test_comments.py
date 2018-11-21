@@ -21,6 +21,8 @@ from project.models import Project
 from kanbancol.models import KanbanColumn
 from issue.models import Issue
 
+from common.settings import MEDIA_ROOT
+
 
 class CommentsTest(StaticSeleniumTestCase):
 
@@ -106,8 +108,10 @@ class CommentsTest(StaticSeleniumTestCase):
         self.assertEqual(issue.comments.count(), 0)
         self.assertEqual(issue.attachments.count(), 1)
 
-        # clean up
-        os.remove(temp1.name)
+        # delete the uploaded file from the server
+        os.unlink(MEDIA_ROOT + '/' + issue.attachments.first().file.name)
+        # delete the uploaded file
+        os.unlink(temp1.name)
 
     def test_required_field_in_edit(self):
         driver = self.selenium

@@ -62,6 +62,7 @@ class StripImgMetadataTest(TestCase):
         rmtree(avatars_path, ignore_errors=True)
         # TODO TESTCASE delete all uploaded files (the files that are stored on server side
         #               so attachments needs to be removed too
+        # TODO therefore we need to know the structure of the attachments dir and which one has been added
 
     # helper function to create all the different image types and returns the file names of all generated images
     def create_images():
@@ -353,17 +354,6 @@ class StripImgMetadataTest(TestCase):
                                     img_dict, follow=True)
         img.close()
         self.assertContains(response, "The uploaded image exceeds the allowed file size of: ")
-
-        # verify that the allowed file size (attachment) is actually limited
-        huge_file = TEST_FILE_PATH+'/16mb.txt'
-        f = open(huge_file, "r")
-        file_dict = {
-            "file": f,
-        }
-        response = self.client.post(reverse('issue:detail', kwargs={'project': self.project.name_short,
-                                            'sqn_i': self.issue.number}), file_dict)
-        f.close()
-        self.assertContains(response, "The uploaded file exceeds the allowed file size of: ")
 
     def test_malicious_pictures(self):
         # TODO TESTCASE upload malicious image and verify it is hamrless after upload
