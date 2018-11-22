@@ -44,26 +44,26 @@ class KanbancolTest(StaticSeleniumTestCase):
         self.selenium.find_element_by_css_selector('.save').click()
         self.assertEqual(self.selenium.title, 'Edit asdf')
 
-    def delete_column_and_test_in_project_edit(self):
+    def test_delete_column_and_test_in_project_edit(self):
         # TODO TESTCASE
         pass
 
-    def create_column_and_test_in_project_edit(self):
+    def test_create_column_and_test_in_project_edit(self):
         # TODO TESTCASE
         pass
 
-    def move_column_up_in_project_edit(self):
+    def test_move_column_up_in_project_edit(self):
         # TODO TESTCASE
         pass
 
-    def change_number_of_columns_and_test(self):
+    def test_change_number_of_columns_and_test(self):
         # TODO TESTCASE
         # TODO create some
         # TODO delete some of the first ones
         # TODO verify everything works as expected
         pass
 
-    def delete_todo_column_and_stop_running_sprint(self):
+    def test_delete_todo_column_and_stop_running_sprint(self):
         # TODO TESTCASE
         # TODO what happens with those issues?
         pass

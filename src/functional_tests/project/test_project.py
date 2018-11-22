@@ -31,7 +31,7 @@ class ProjectTest(StaticSeleniumTestCase):
         self.selenium.add_cookie({'name': 'sessionid', 'value': self.cookie.value, 'secure': False, 'path': '/'})
         self.selenium.refresh()
 
-    def reachable_and_elements_exist(self):
+    def test_reachable_and_elements_exist(self):
         # TODO TESTCASE
         # TODO for each site check it is available + check (some) content like the title + check existence of forms
         #      and their form elements!
@@ -42,20 +42,20 @@ class ProjectTest(StaticSeleniumTestCase):
         # TODO project:delete
         pass
 
-    def fields_are_required(self):
+    def test_fields_are_required(self):
         # TODO TESTCASE
         # TODO check required-fields for the following
         #     TODO project:create - Name, short name
         #     TODO project:edit - Name
         pass
 
-    def fields_are_unique(self):
+    def test_fields_are_unique(self):
         # TODO TESTCASE
         # TODO project:create - name, short name
         # TODO project:edit - name
         pass
 
-    def further_error_messages(self):
+    def test_further_error_messages(self):
         # TODO TESTCASE
         pass
 
@@ -87,14 +87,14 @@ class ProjectTest(StaticSeleniumTestCase):
         edit_form.find_element_by_id('id_submit_edit').click()
         self.assertEqual(self.selenium.title, 'TestProjectRenamed')
 
-    def warning_at_delete(self):
+    def test_warning_at_delete(self):
         # TODO TESTCASE
         pass
 
-    def delete_project(self):
+    def test_delete_project(self):
         # TODO TESTCASE
         pass
 
-    def keep_and_dont_delete_project(self):
+    def test_keep_and_dont_delete_project(self):
         # TODO TESTCASE
         pass

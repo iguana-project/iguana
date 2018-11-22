@@ -45,7 +45,7 @@ class CreateAndEditTest(StaticSeleniumTestCase):
         self.selenium.add_cookie({'name': 'sessionid', 'value': self.cookie.value, 'secure': False, 'path': '/'})
         self.selenium.refresh()
 
-    def reachable_and_elements_exist(self):
+    def test_reachable_and_elements_exist(self):
         # TODO TESTCASE
         # TODO for each site check it is available + check (some) content like the title + check existence of forms
         #      and their form elements by their ids!
@@ -53,7 +53,7 @@ class CreateAndEditTest(StaticSeleniumTestCase):
         # TODO edit => form
         pass
 
-    def title_required(self):
+    def test_title_required(self):
         # TODO TESTCASE
         # TODO create => title
         # TODO edit => title
@@ -179,14 +179,14 @@ class CreateAndEditTest(StaticSeleniumTestCase):
         driver.find_element_by_link_text("title").click()
         self.assertEqual(url, driver.current_url)
 
-    def edit_change_settings(self):
+    def test_edit_change_settings(self):
         # TODO TESTCASE
         pass
 
-    def delete_issue(self):
+    def test_delete_issue(self):
         # TODO TESTCASE
         pass
 
-    def keep_and_dont_delete_issue(self):
+    def test_keep_and_dont_delete_issue(self):
         # TODO TESTCASE
         pass
