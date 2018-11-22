@@ -52,6 +52,8 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 			<div class="panel-heading">{% trans "RSA public key" %}</div>
 			<div class="panel-body" style="white-space:normal;word-wrap:break-word">
 				{{ repository.rsa_pub_path.read|linebreaksbr }}
+				{# the opened file needs to get closed afterwards #}
+				{{ repository.rsa_pub_path.close }}
 			</div>
 		</div>
 	</div>
