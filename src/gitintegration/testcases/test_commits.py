@@ -54,16 +54,16 @@ class GitFrontendTest(TestCase):
         self.project.save()
 
         filecontent1 = 'Hello World File 1'
-        temp1 = tempfile.NamedTemporaryFile(delete=False)
-        temp1.write(filecontent1.encode())
-        temp1.close()
+        tmp1 = tempfile.NamedTemporaryFile(delete=False)
+        tmp1.write(filecontent1.encode())
+        tmp1.close()
         filecontent2 = 'Hello World File 2'
-        temp2 = tempfile.NamedTemporaryFile(delete=False)
-        temp2.write(filecontent2.encode())
-        temp2.close()
+        tmp2 = tempfile.NamedTemporaryFile(delete=False)
+        tmp2.write(filecontent2.encode())
+        tmp2.close()
 
-        with open(temp1.name, 'r') as f1:
-            with open(temp2.name, 'r') as f2:
+        with open(tmp1.name, 'r') as f1:
+            with open(tmp2.name, 'r') as f2:
                 response = self.client.post(reverse('project:gitintegration:create',
                                                     kwargs={'project': self.project.name_short}
                                                     ),
@@ -333,8 +333,8 @@ class GitFrontendTest(TestCase):
         os.unlink(repo.rsa_priv_path.path)
         os.unlink(repo.rsa_pub_path.path)
         # delete the key files locally
-        os.unlink(temp1.name)
-        os.unlink(temp2.name)
+        os.unlink(tmp1.name)
+        os.unlink(tmp2.name)
         # clean up locally
         shutil.rmtree(repo_path, ignore_errors=True)
         shutil.rmtree(repo.get_local_repo_path(), ignore_errors=True)
