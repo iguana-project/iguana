@@ -329,6 +329,12 @@ class GitFrontendTest(TestCase):
         self.project.name_short = prj_name_short
         self.project.save()
 
-        # clean up
+        # delete the key files from the server
+        os.unlink(repo.rsa_priv_path.path)
+        os.unlink(repo.rsa_pub_path.path)
+        # delete the key files locally
+        os.unlink(temp1.name)
+        os.unlink(temp2.name)
+        # clean up locally
         shutil.rmtree(repo_path, ignore_errors=True)
         shutil.rmtree(repo.get_local_repo_path(), ignore_errors=True)
