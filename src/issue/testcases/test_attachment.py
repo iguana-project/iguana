@@ -118,3 +118,6 @@ class AttachmentTest(TestCase):
                                                                        'sqn_i': self.issue.number}))
         self.assertFalse(self.issue.attachments.all().exists())
         self.assertFalse(os.path.isfile(filePath))
+
+        # delete temp file locally
+        os.unlink(temp.name)
