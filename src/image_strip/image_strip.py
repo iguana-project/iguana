@@ -23,7 +23,6 @@ from django.utils.translation import ugettext_lazy as _
 
 
 def create_img(in_memory_img, format_str, suffix_str, content_type):
-
     # remove any possible suffixes to avoid possible confusion
     img_name = in_memory_img.name.partition(".")[0]
     img = Image.open(in_memory_img)
@@ -36,6 +35,7 @@ def create_img(in_memory_img, format_str, suffix_str, content_type):
     if img.mode in ('RGBA', 'LA'):
         img_wo_alpha = Image.new(img.mode[:-1], img.size, '#ffffff')
         img_wo_alpha.paste(img, img.split()[-1])
+        # TODO should img get closed?
         img = img_wo_alpha
 
     # TODO I'm not sure yet whether this sanitizes the image too
@@ -44,6 +44,7 @@ def create_img(in_memory_img, format_str, suffix_str, content_type):
                                    img_io_bytes.getbuffer().nbytes, None)
     new_img.seek(0)
     img.close()
+    in_memory_img.close()
     return new_img
 
 
@@ -136,6 +137,7 @@ def return_in_memory_file(in_memory_file, has_to_be_an_image):
 
     # since svg is not a valid extension it can not be uploaded. Hence this image has to be the default-avatar
     if "VG Scalable Vector Graphics image" in img_type:
+        in_memory_file.close()
         return in_memory_file
 
     # The file has been uploaded as a general attachment

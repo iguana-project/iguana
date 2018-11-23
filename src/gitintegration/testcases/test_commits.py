@@ -85,6 +85,9 @@ class GitFrontendTest(TestCase):
         self.assertEqual(repo.url, repo_path)
         self.assertIn(filecontent1, repo.rsa_priv_path.read().decode())
         self.assertIn(filecontent2, repo.rsa_pub_path.read().decode())
+        # read() opened the file
+        repo.rsa_priv_path.close()
+        repo.rsa_pub_path.close()
 
         # try importing without valid remote repository
         shutil.rmtree(repo_path, ignore_errors=True)

@@ -567,8 +567,6 @@ class IssueDeleteCommentView(LoginRequiredMixin, UserPassesTestMixin, DeleteView
         return self.post(request, *args, **kwargs)
 
 
-# TODO BUG this view might leak some ressources: there is an unclosed file,
-#          which has been opened with mode='rb' and closefd=True
 class AttachmentDownloadView(LoginRequiredMixin, UserPassesTestMixin, View):
     form_class = AttachmentForm
 
@@ -577,6 +575,9 @@ class AttachmentDownloadView(LoginRequiredMixin, UserPassesTestMixin, View):
                                          issue__project__name_short=self.kwargs.get('project'),
                                          issue__number=self.kwargs.get('sqn_i'),
                                          seqnum=self.kwargs.get('sqn_a'))
+        # TODO BUG For some reason this is reported as a leak of resources: there is an unclosed file,
+        #          which has been opened with mode='rb' and closefd=True
+        #          So I assume the development-backend doesn't close the file properly
         return sendfile(request, attachment.file.path, attachment=False)
 
     def test_func(self):

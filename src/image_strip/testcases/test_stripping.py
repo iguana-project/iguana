@@ -350,11 +350,13 @@ class StripImgMetadataTest(TestCase):
             'timezone': timezone,
             'language': 'en',
         }
+        # TODO BUG ResourceWarning: unclosed file <_io.BufferedReader name='/tmp/tmp......upload.png'>
+        #          seems to be a leak in Pillow
         response = self.client.post(reverse('user_profile:edit_profile', kwargs={"username": user_name}),
                                     img_dict, follow=True)
         img.close()
         self.assertContains(response, "The uploaded image exceeds the allowed file size of: ")
 
     def test_malicious_pictures(self):
-        # TODO TESTCASE upload malicious image and verify it is hamrless after upload
+        # TODO TESTCASE upload malicious image and verify it is harmless after upload
         pass

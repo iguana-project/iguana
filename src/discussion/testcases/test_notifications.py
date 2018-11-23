@@ -235,6 +235,8 @@ class SignalTest(TestCase):
         f = File(open(temp.name, 'r'))
         attachment = Attachment(file=f, creator=self.user2, issue=issue2)
         attachment.save()
+        f.close()
+
         self.assertEqual(self.user1.notifications.get(issue=issue2).type.filter(type="NewAttachment").count(), 1)
         # delete the uploaded file from the server
         os.unlink(MEDIA_ROOT + '/' + attachment.file.name)
