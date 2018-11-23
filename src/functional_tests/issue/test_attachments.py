@@ -79,6 +79,7 @@ class AttachmentTest(StaticSeleniumTestCase):
         self.assertEqual(issue.attachments.count(), 1)
         attachment = issue.attachments.first()
         self.assertIn(filecontent1, attachment.file.read().decode())
+        attachment.file.close()
 
         # delete the uploaded file from the server
         os.unlink(MEDIA_ROOT + '/' + attachment.file.name)
