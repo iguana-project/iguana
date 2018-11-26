@@ -16,6 +16,7 @@ from dal import autocomplete
 from pagedown.widgets import PagedownWidget
 
 from .models import Issue, Comment, Attachment
+from django.utils.translation import ugettext as _nl
 
 from image_strip.image_strip import strip_if_file_is_an_img
 
@@ -77,10 +78,17 @@ class CommentForm(ModelForm):
         fields = ['text']
 
 
+attachment_help_text = _nl("Please make sure that you don't violate any copyright by uploading a file. "
+                           "Also keep in mind that any previous metadata of the images will be removed.")
+
+
 class AttachmentForm(ModelForm):
     class Meta:
         model = Attachment
         fields = ['file']
+        help_texts = {
+            'file': ("<div class='alert alert-warning'><b>NOTE:</b> " + attachment_help_text + "</div>")
+        }
 
     def clean_file(self):
         cleaned_file = self.cleaned_data['file']

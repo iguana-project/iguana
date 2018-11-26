@@ -247,6 +247,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 						<form class="post-form" method="POST" enctype="multipart/form-data">{% csrf_token %}
 							{% bootstrap_form forms.comment layout='inline' %}
 							{% bootstrap_form forms.attachmentCom layout='inline'%}
+							{{forms.attachmentCom.file.help_text|safe}}
 							{% bootstrap_form_errors forms.attachmentCom error_types='all' %}
 							{% buttons %}
 								<button name='action' value='commentAtt' type="submit" class="save btn btn-default">{% trans "Add" %}</button>
@@ -324,6 +325,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 					<li class ="list-group-item">
 						<form id="attachment-form" class="post-form" method="POST" enctype="multipart/form-data">{% csrf_token %}
 							{% bootstrap_form forms.attachment layout='inline' %}
+							{{forms.attachment.file.help_text|safe}}
 							{% bootstrap_form_errors forms.attachment error_types='all' %}
 							{% buttons %}
 							<button id='attachment-btn' name='action' value='attachment' type="submit" class="save btn btn-default">{% trans "Add" %}</button>

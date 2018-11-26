@@ -22,6 +22,7 @@ from user_profile.apps import defaultAvatar
 from common.settings import MEDIA_ROOT, ALLOWED_IMG_EXTENSION_VALIDATOR
 
 from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _nl
 
 from image_strip.image_strip import strip_img_metadata
 
@@ -63,11 +64,16 @@ class CustomClearableFileInput(ClearableFileInput):
             return False
 
 
+custom_image_help_text = _nl("Please make sure that you don't violate any copyright by uploading an image. "
+                             "Also keep in mind that any previous metadata of the image will be removed.")
+
+
 class CustomImageField(ImageField):
     widget = CustomClearableFileInput
 
     def __init__(self, *args, **kwargs):
         kwargs["required"] = False
+        kwargs["help_text"] = "<div class='alert alert-warning'><b>NOTE:</b> " + custom_image_help_text + "</div>"
         super(CustomImageField, self).__init__(*args, **kwargs)
 
     def to_python(self, data):
