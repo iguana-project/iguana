@@ -2,6 +2,12 @@
 [run]
 branch = True
 include = ./*
+omit =
+	*/testcases/*
+	functional_tests/*/*
+	*/__init__.py
+	*/urls.py
+	*/admin.py
 
 [report]
 # Regexes for lines to exclude from consideration

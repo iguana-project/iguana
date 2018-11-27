@@ -306,7 +306,7 @@ coverage_func: $(filter $(DJANGO_INSTALLED_APPS),$(MAKECMDGOALS)) $(filter $(DJA
 
 coverage-report: ##@coverage Get the coverage report.
 coverage-report: coverage_func
-	cd $(DJANGO_BASE) && $(COVERAGE) report
+	cd $(DJANGO_BASE) && $(COVERAGE) report -m
 
 coverage-html: ##@coverage Get the coverage report as HTML.
 coverage-html: coverage_func
