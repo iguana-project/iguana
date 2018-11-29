@@ -78,8 +78,8 @@ class CommentForm(ModelForm):
         fields = ['text']
 
 
-attachment_help_text = _nl("Please make sure that you don't violate any copyright by uploading a file. "
-                           "Also keep in mind that any previous metadata of the images will be removed.")
+attachment_help_text = _nl("Please make sure that you don't violate any copyright by uploading files. "
+                           "Also keep in mind that any previous metadata of images will be removed.")
 
 
 class AttachmentForm(ModelForm):
