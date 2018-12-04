@@ -8,14 +8,14 @@ Creative Commons Attribution-ShareAlike 4.0 International License.
 You should have received a copy of the license along with this
 work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 """
+import inspect
+import pkgutil
 import sys
 
 from django.apps import AppConfig
+from django.test import tag
 
-import inspect
 from lib.selenium_test_case import SeleniumTestCase
-import pkgutil
-from unittest import skip
 
 
 def getModules(parentPackageModule):
@@ -45,19 +45,17 @@ class FunctionalTestsConfig(AppConfig):
     name = 'functional_tests'
 
     def ready(self):
-        # check if the passed arguments contain the name of the functional tests package
-        # if it's not in the parameters, skip all functional tests
-        if not any(self.name in arg for arg in sys.argv):
-            # collect all modules of this package
-            modules = getModules(sys.modules[self.name])
+        # tag all functional tests with 'functional'
+        # collect all modules of this package
+        modules = getModules(sys.modules[self.name])
 
-            # iterate over the moules
-            for module in modules:
-                # get the classes of the module
-                clsmembers = inspect.getmembers(module, inspect.isclass)
-                for clsName, cls in clsmembers:
-                    # check if it's a selenium test case
-                    if cls.__module__ == module.__name__ and \
-                            issubclass(cls, SeleniumTestCase):
-                        # mark it class to skip the tests
-                        setattr(module, clsName, skip(cls))
+        # iterate over the moules
+        for module in modules:
+            # get the classes of the module
+            clsmembers = inspect.getmembers(module, inspect.isclass)
+            for clsName, cls in clsmembers:
+                # check if it's a selenium test case
+                if cls.__module__ == module.__name__ and \
+                        issubclass(cls, SeleniumTestCase):
+                    # tag it
+                    setattr(module, clsName, tag("functional")(cls))

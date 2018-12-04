@@ -36,6 +36,8 @@ MAKE_SETTINGS_FILE = os.path.join(BASE, ".makeSettings")
 
 # virtualenv settings
 VIRTUALENV_BASE = os.path.join(BASE, "virtualenv")
+# add virtualenv bin directory to the PATH (because some executables need to be in PATH)
+os.environ["PATH"] += ":" + os.path.join(VIRTUALENV_BASE, "bin")
 
 # tools directory
 TOOLS = os.path.join(BASE, "tools")
@@ -695,16 +697,19 @@ class _TestTarget(_Target):
             sys.stderr = _TestTarget.IgnImpErrsOutWrapper(sys.stderr)
 
         # execute the tests
-        if not argument_values["app"]:
+        if argument_values["complete-test"]:
+            # execute all tests (including the functional ones)
             _CommonTargets.exec_django_cmd("test", DJANGO_BASE, no_input=True, nomigrations=nomigrations,
                                            settings=DJANGO_SETTINGS)
         else:
-            _CommonTargets.exec_django_cmd("test", argument_values["app"], no_input=True, nomigrations=nomigrations,
-                                           settings=DJANGO_SETTINGS)
-        if argument_values["complete-test"]:
-            # also execute the functional tests
-            _CommonTargets.exec_django_cmd("test", "functional_tests", no_input=True, nomigrations=nomigrations,
-                                           settings=DJANGO_SETTINGS)
+            if not argument_values["app"]:
+                # execute all tests except the functional ones
+                _CommonTargets.exec_django_cmd("test", DJANGO_BASE, exclude_tags=["functional"], no_input=True,
+                                               nomigrations=nomigrations, settings=DJANGO_SETTINGS)
+            else:
+                # execute only the specific application tests
+                _CommonTargets.exec_django_cmd("test", argument_values["app"], no_input=True, nomigrations=nomigrations,
+                                               settings=DJANGO_SETTINGS)
 
         # restore stdout and stderr
         if argument_values["ign-imp-errs"]:
