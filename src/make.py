@@ -765,7 +765,11 @@ class _RequirementsTarget(_Target):
 
             # install the requirements
             _CommonTargets.activate_virtual_environment()
-            from pip._internal import main as pipmain
+            # fix for pip versions below 10.0
+            try:
+                from pip._internal import main as pipmain
+            except ImportError:
+                from pip import main as pipmain
             code = pipmain(["install", "-r", requirements_file])
 
             # check for possible errors
@@ -842,7 +846,7 @@ class _SetWebdriverTarget(_Target):
         if response.code != 200:
             _CommonTargets.exit("No connection to the GitHub API is possible! Please try again later.", 1)
         # the API returns json
-        github_json = json.load(response)
+        github_json = json.loads(response.read().decode(response.info().get_param("charset") or "utf-8"))
 
         # get the underlining system and architecture
         system = platform.system()
