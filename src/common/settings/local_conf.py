@@ -82,4 +82,4 @@ CELERY_TASK_EAGER_PROPAGATES = True
 
 # directory for files used for testing - This is the place where to put files used for testing but the recreation
 # for each test run is too expensive
-TEST_FILE_PATH = "../testing_files"
+TEST_FILE_PATH = os.path.join(BASE_DIR, "..", "..", "testing_files")
