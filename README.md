@@ -41,6 +41,19 @@ For more detailed documentation including a list of features see our github docu
 
 ## Installation
 
+### Dependencies
+
+We generally try to avoid any non-python dependencies but this doesn't always work well. The test cases need the Exempi library so for the [development environment](README.md#Development) this is required and can be installed like [this](https://python-xmp-toolkit.readthedocs.io/en/latest/installation.html#exempi):
+
+```bash
+apt-get install libexempi3 # Ubuntu/Debian
+brew install exempi        # OS X
+```
+
+It seems like there is also a package for arch but I didn't test it yet.
+
+
+
 ### Docker
 You can use docker to run iguana in production. The docker-compose file comes with automated letsencrypt certificate generation.
 * adapt [docker/settings.json](docker/settings.json):
