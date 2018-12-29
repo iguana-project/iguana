@@ -9,5 +9,5 @@ pycodestyle==2.4.0
 piexif==1.1.2
 piprot==0.9.10
 python-xmp-toolkit==2.0.1
-requests==2.20.1
+requests==2.21.0
 selenium==3.141.0
