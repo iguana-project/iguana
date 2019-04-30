@@ -11,7 +11,7 @@
 			"PLATFORM_NAME": "",
 			"LANGUAGE_CODE": "",
 			"TIME_ZONE": "",
-			"CAPTCHA_LENGTH": ""
+			"CAPTCHA_LENGTH": "",
 			"ADMINS": [
 				["user", "email@example.com"]
 			]
