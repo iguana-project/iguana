@@ -828,8 +828,8 @@ class _SetWebdriverTarget(_Target):
     def __install_chromedriver(cls):
         system = platform.system()
         if system == "Linux":
-                # only 64bit driver is available for chromedriver
-                system += "64"
+            # only 64bit driver is available for chromedriver
+            system += "64"
 
         # the link destination
         dest_file = os.path.join(VIRTUALENV_BASE, "bin", "chromedriver")
@@ -867,12 +867,14 @@ class _SetWebdriverTarget(_Target):
         for asset in github_json["assets"]:
             if system in asset["browser_download_url"]:
                 # download the driver
+                print("Downloading geckodriver...")
                 driver_archive = os.path.join(VIRTUALENV_BASE, "geckodriver.tar.gz")
                 response = urlopen(asset["browser_download_url"])
                 with open(driver_archive, 'wb') as out:
                     out.write(response.read())
 
                 # extract the driver
+                print("Extracting geckodriver...")
                 driver_file = "geckodriver"
                 with tarfile.open(driver_archive, "r:gz") as archive_file:
                     archive_file.extract(driver_file, path=VIRTUALENV_BASE)
@@ -880,10 +882,12 @@ class _SetWebdriverTarget(_Target):
                 # remove the archive
                 os.remove(driver_archive)
                 # move the driver to the virtualenv bin directory
+                print("Installing geckodriver...")
                 shutil.move(os.path.join(VIRTUALENV_BASE, driver_file),
                             os.path.join(VIRTUALENV_BASE, "bin", driver_file))
 
                 # nothing more to do
+                print("...done")
                 break
 
     @classmethod
