@@ -1083,7 +1083,7 @@ class _NewReleaseTarget(_Target):
 
 @cmd("production")
 @group("Main")
-@call_after([_SetupVirtualenvTarget, _CSSTarget])
+@call_after([_SetupVirtualenvTarget, _CSSTarget, _MigrationsTarget.Create, _MigrationsTarget.Apply])
 @help("Configure everything to be ready for production.")
 class _ProductionTarget(_Target):
     @classmethod
@@ -1108,7 +1108,7 @@ class _StagingTarget(_Target):
 
 @cmd("development")
 @group("Main")
-@call_after([_ProductionTarget, _SetWebdriverTarget, _MigrationsTarget.Apply])
+@call_after([_ProductionTarget, _SetWebdriverTarget])
 @help("Configure everything to be ready for development.")
 class _DevelopmentTarget(_Target):
     @arg("webdriver")
