@@ -47,8 +47,7 @@ urlpatterns = [
     url(r'^timelog/', include('timelog.urls')),
     url(r'^user/', include('user_profile.urls')),
     url(r'^', include('discussion.urls')),
-    url(r'^media/avatars/.*', views.ShowProtectedFilesView.as_view()),
-    url(r'^media/attachments/.*', views.ShowProtectedFilesView.as_view()),
+    url(r'^media/.*', views.ShowProtectedFilesView.as_view()),
     url(r'^api/', include('api.urls', namespace='api')),
     url(r'^api-token-auth/', obtain_jwt_token),
     ] + [
