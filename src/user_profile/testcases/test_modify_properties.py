@@ -12,7 +12,6 @@ from django.test.testcases import TestCase
 from django.urls.base import reverse
 import json
 
-from common.settings import BASE_DIR, MEDIA_ROOT
 from django.contrib.auth import get_user_model
 from project.models import Project
 

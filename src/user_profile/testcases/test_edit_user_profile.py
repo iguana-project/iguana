@@ -36,7 +36,7 @@ second_user_password = "test21234"
 second_user_email = "test2@testing.com"
 
 no_image_byte_code = b'no_image'
-image_path = os.path.join(os.path.dirname(BASE_DIR), "user_profile/testcases/test_image.png")
+image_path = os.path.join(BASE_DIR, "user_profile", "testcases", "test_image.png")
 file_path_png = os.path.join(MEDIA_ROOT, "avatars", user_name, "file.png")
 uploaded_image_path = os.path.join(MEDIA_ROOT, "avatars", user_name, "test_image.png")
 

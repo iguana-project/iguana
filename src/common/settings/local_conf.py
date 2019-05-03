@@ -29,9 +29,9 @@ ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 # Database
 DATABASES['default'] = {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'NAME': os.path.join(FILES_DIR, 'db.sqlite3'),
         'TEST': {
-            'NAME': os.path.join(BASE_DIR, 'test_db.sqlite3'),
+            'NAME': os.path.join(FILES_DIR, 'test_db.sqlite3'),
         },
     }
 
@@ -76,4 +76,4 @@ CELERY_TASK_EAGER_PROPAGATES = True
 
 # directory for files used for testing - This is the place where to put files used for testing but the recreation
 # for each test run is too expensive
-TEST_FILE_PATH = os.path.join(BASE_DIR, "..", "..", "testing_files")
+TEST_FILE_PATH = os.path.join(ROOT_DIR, "testing_files")

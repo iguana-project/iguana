@@ -21,7 +21,7 @@ import os
 import stat
 import json
 
-from common.settings.common import REPOSITORY_ROOT, BASE_DIR
+from common.settings.common import REPOSITORY_ROOT
 
 from project.models import Project
 from issue.models import Issue

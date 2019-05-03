@@ -18,11 +18,11 @@ The common settings file.
 """
 
 
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# The base path of the project (where the manage.py lies)
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".."))
 
-# The root path of the project (two directories up)
-ROOT_DIR = os.path.abspath(os.path.join(BASE_DIR, "..", ".."))
+# The root path of the project (one directory up)
+ROOT_DIR = os.path.dirname(BASE_DIR)
 
 # In this path files created by Iguana are stored
 FILES_DIR = os.path.join(ROOT_DIR, "files")
@@ -108,7 +108,7 @@ ROOT_URLCONF = 'common.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'DIRS': [os.path.join(BASE_DIR, "common", "templates")],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -146,8 +146,7 @@ AUTH_PASSWORD_VALIDATORS = [
         # NOTE: you might wanna adjust the password list once again but please zip it after you did that
         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
         'OPTIONS': {
-            'password_list_path': os.path.realpath(os.path.join(BASE_DIR, "..", "..", "common_passwords",
-                                                                "bigger_common_password_file.txt.gz"))
+            'password_list_path': os.path.join(ROOT_DIR, "common_passwords", "bigger_common_password_file.txt.gz"),
         }
     },
     {
@@ -188,7 +187,7 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(ROOT_DIR, "static_files")
 
 # the directory were all media is stored
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = os.path.join(BASE_DIR, "common", "media")
 MEDIA_URL = '/media/'
 
 

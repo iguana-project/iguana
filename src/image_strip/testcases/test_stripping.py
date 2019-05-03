@@ -22,7 +22,7 @@ from django.urls.base import reverse
 from project.models import Project
 from issue.models import Issue
 from django.contrib.auth import get_user_model
-from common.settings import ALLOWED_IMG_EXTENSIONS, BASE_DIR, MEDIA_ROOT, TEST_FILE_PATH
+from common.settings import ALLOWED_IMG_EXTENSIONS, MEDIA_ROOT, TEST_FILE_PATH
 
 
 user_name = 'a'
