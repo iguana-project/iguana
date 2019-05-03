@@ -18,8 +18,8 @@ install:
   - make development
   # requirement for coveralls.io
   - pip install coveralls
-  # Ansible is required for deployment
-  - pip install ansible
+#   # Ansible is required for deployment
+#   - pip install ansible
 
 before_script:
   - "export DISPLAY=:99.0"
@@ -36,10 +36,10 @@ after_success:
   - coveralls
   - popd
 
-deploy:
-  # deploy to the staging environment
-  - provider: script
-    script: bash tools/scripts/deploy_staging.sh
-  # deploy to production
-  - provider: script
-    script: bash tools/scripts/deploy_production.sh
+# deploy:
+#   # deploy to the staging environment
+#   - provider: script
+#     script: bash tools/scripts/deploy_staging.sh
+#   # deploy to production
+#   - provider: script
+#     script: bash tools/scripts/deploy_production.sh
