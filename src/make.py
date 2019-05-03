@@ -952,7 +952,7 @@ class _CoverageTarget(_Target):
         @classmethod
         def execute_target(cls, *unused):
             cov = cls.parent_target.load_coverage()
-            cov.html()
+            cov.html_report()
 
     @cmd("xml")
     @help("Create the coverage report as XML.")
@@ -960,7 +960,7 @@ class _CoverageTarget(_Target):
         @classmethod
         def execute_target(cls, *unused):
             cov = cls.parent_target.load_coverage()
-            cov.xml()
+            cov.xml_report()
 
     @cmd("erase")
     @help("Erase a previously created coverage report.")
