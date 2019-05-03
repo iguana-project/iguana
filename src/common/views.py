@@ -53,7 +53,7 @@ class ShowProtectedFilesView(LoginRequiredMixin, View):
             response['Content-Type'] = ''
 
         else:
-            response = serve(request, request.path, settings.BASE_DIR)
+            response = serve(request, request.path, settings.FILES_DIR)
 
         return response
 

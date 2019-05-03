@@ -38,11 +38,9 @@ src/celerybeat-schedule.db
 !/src/common/static/css/cal-heatmap.css
 !/src/common/static/css/pagedown.css
 /src/common/settings/webdriver.py
-/src/common/media/avatars/*/*
-/src/common/media/attachments/*/*
-/src/common/media/git_sshkeys/*/*
-/src/common/media/repos/*
 /tools/scripts/tools/bin/vnu.jar
 /validation/*
 /virtualenv
 /static_files
+/files/*
+!/files/media/avatars/default.svg
