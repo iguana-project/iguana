@@ -6,7 +6,7 @@ branches:
 python:
   - "3.5"
 cache: pip
-sudo: required 
+sudo: required
 addons:
   apt:
     sources:
@@ -28,7 +28,7 @@ before_script:
   - fluxbox >/dev/null 2>&1 &
   
 script:
-  - make coverage_func
+  - make coverage +c
 
 # send coverage report to coveralls.io
 after_success:
