@@ -21,6 +21,12 @@ The common settings file.
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+# The root path of the project (two directories up)
+ROOT_DIR = os.path.abspath(os.path.join(BASE_DIR, "..", ".."))
+
+# In this path files created by Iguana are stored
+FILES_DIR = os.path.join(ROOT_DIR, "files")
+
 
 # Disable debugging by default
 DEBUG = False
@@ -179,7 +185,7 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, "static")
+STATIC_ROOT = os.path.join(ROOT_DIR, "static_files")
 
 # the directory were all media is stored
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

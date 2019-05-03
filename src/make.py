@@ -586,7 +586,7 @@ class _RunTarget(_Target):
     @classmethod
     def execute_target(cls, *unused):
         # start the server
-        _CommonTargets.exec_django_cmd("runserver")
+        _CommonTargets.exec_django_cmd("runserver", settings=DJANGO_SETTINGS)
 
 
 @cmd("create-app")
@@ -740,6 +740,16 @@ class _MessagesTarget(_Target):
         @classmethod
         def execute_target(cls, *unused):
             _CommonTargets.exec_django_cmd("compilemessages", settings=DJANGO_SETTINGS)
+
+
+@cmd("collectstatic")
+@group("Django management")
+@help("Collect static files and copy them into /static_files.")
+class _CollectionTarget(_Target):
+    @classmethod
+    def execute_target(cls, *unused):
+        # collect the static files
+        _CommonTargets.exec_django_cmd("collectstatic", settings=DJANGO_SETTINGS)
 
 
 @cmd("requirements")
@@ -1088,7 +1098,7 @@ class _NewReleaseTarget(_Target):
 
 @cmd("production")
 @group("Main")
-@call_after([_SetupVirtualenvTarget, _CSSTarget, _MigrationsTarget.Create, _MigrationsTarget.Apply])
+@call_after([_SetupVirtualenvTarget, _CSSTarget, _MigrationsTarget.Create, _MigrationsTarget.Apply, _CollectionTarget])
 @help("Configure everything to be ready for production.")
 class _ProductionTarget(_Target):
     @classmethod

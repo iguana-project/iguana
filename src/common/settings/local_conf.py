@@ -60,12 +60,6 @@ INSTALLED_APPS += [
     'functional_tests',
 ]
 
-# STATICFILES_DIRS is needed for developing instead of STATIC_ROOT
-STATICFILES_DIRS = [
-   STATIC_ROOT,
-]
-STATIC_ROOT = ""
-
 
 SENDFILE_BACKEND = 'sendfile.backends.development'
 

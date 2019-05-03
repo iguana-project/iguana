@@ -45,3 +45,4 @@ src/celerybeat-schedule.db
 /tools/scripts/tools/bin/vnu.jar
 /validation/*
 /virtualenv
+/static_files
