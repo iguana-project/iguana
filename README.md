@@ -71,6 +71,8 @@ This command runs the following Makefile targets:
 
 * `setup-virtualenv`
 * `css`
+* `migrations create`
+* `migrations apply`
 
 ### Staging
 To setup Iguana in a staging environment you simply have to call:
@@ -86,10 +88,8 @@ To setup Iguana in a development you simply have to call:
 
 The `<webdriver>` option the driver for the `setup-webriver` target can be specified ("chrome" is used as default). Beside that the following targets are executed:
 
-* `setup-virtualenv`
-* `css`
+* `production`
 * `setup-webdriver <webdriver>`
-* `migrations apply`
 
 ### Starting Iguana
 Currently Iguana supports only [Nginx](https://nginx.org/en/) as web server backend. For configuring Nginx and using [Gunicorn](http://gunicorn.org/) together with Django please stick to the official documentation: https://docs.djangoproject.com/en/dev/howto/deployment/wsgi/gunicorn/
@@ -111,7 +111,7 @@ These targets can be run with:
 
     make <target> [++option]
 
-Note that options have to begin with `+` or `++` instead of `-` or `--`. This is due to a bug that prevents passing options to make targets.
+**Note** that options have to begin with `+` or `++` instead of `-` or `--`. This is due to a bug that prevents passing options to make targets.
 
 ### Main:
 * **help**<br />
@@ -123,7 +123,7 @@ See subsection [Production](README.md#Production).
 * **staging**<br />
 See subsection [Staging](README.md#Staging).
 
-* **development** `[-w <webdriver>]`<br />
+* **development** `[+w <webdriver>]`<br />
 See subsection [Development](README.md#Development).
 
 ### Django management:
@@ -136,14 +136,14 @@ See subsection [Development](README.md#Development).
 * **create-app** `<appname>`<br />
 Create a new Django application with the specified name.
 
-* **test** `[-a <appname>|-f|-c] [-i]`<br />
-Run the Django unit tests. If an application name is provided with `-a`, only that app is tested. To run the functional tests use the `-f` option. If all tests should be run, use option `-c`. With the option `-i` the warnings and errors from imported packages get suppressed.
+* **test** `[+a <appname>|+f|+c] [+i]`<br />
+Run the Django unit tests. If an application name is provided with `+a`, only that app is tested. To run the functional tests use the `+f` option. If all tests should be run, use option `+c`. With the option `+i` the warnings and errors from imported packages get suppressed.
 
 * **run**<br />
 Run the default django server.
 
 * **messages**<br />
-    * **create** `[-l <lang-code>]`<br />
+    * **create** `[+l <lang-code>]`<br />
     See section [Translation](README.md#Translation).
     * **compile**<br />
     Compile the Django messages.
@@ -164,8 +164,8 @@ This target configures the webdriver for the functional tests. You can replace `
     * **check**<br />
     Check whether the used requirements are up to date or not.
 
-* **coverage** `[-a <appname>|-f|-c]`<br />
-Run the coverage tool on the Django tests. With argument `-a` anapp for which the coverage should be measured can be specified. `-f` measures the coverage for all funtional tests and `-c` performs a measurement across all tests. To get a better output you can run one of the following commands:
+* **coverage** `[+a <appname>|+f|+c] {report,html,xml,erase}`<br />
+Run the coverage tool on the Django tests. With argument `+a` anapp for which the coverage should be measured can be specified. `+f` measures the coverage for all funtional tests and `+c` performs a measurement across all tests. To get a better output you can run one of the following commands:
     * **report**<br />
     Get the coverage in text form.
     * **html**<br />
@@ -312,4 +312,3 @@ Besides the following plug-ins were used:
 | [selenium](http://www.seleniumhq.org) | [Apache License 2.0](https://github.com/SeleniumHQ/selenium/blob/master/LICENSE)
 | [sendgrid-django](https://github.com/elbuo8/sendgrid-django) | [MIT License](https://github.com/elbuo8/sendgrid-django/blob/master/LICENSE) |
 | [slackclient](https://github.com/slackapi/python-slackclient) | [MIT License](https://github.com/slackapi/python-slackclient/blob/master/LICENSE) |
-
