@@ -205,10 +205,10 @@ class _Target(argparse.Action, metaclass=_MetaTarget):
     _argument_values = {}
 
     @classmethod
-    def execute_target(cls, parser, argument_values):
+    def execute_target(cls, parser, argument_values, argv_rest):
         # override this method!
         # by default it shows the help message
-        _HelpTarget.execute_target(parser, argument_values)
+        _HelpTarget.execute_target(parser, argument_values, argv_rest)
 
     @classmethod
     def _get_callable_targets(cls, target_list=[]):
@@ -217,19 +217,19 @@ class _Target(argparse.Action, metaclass=_MetaTarget):
                 yield target
 
     @classmethod
-    def _call_targets(cls, parser, argument_values):
+    def _call_targets(cls, parser, argument_values, argv_rest):
         # call dependency targets
         for target in cls._get_callable_targets(cls.call_before):
-            target._call_targets(parser, argument_values)
+            target._call_targets(parser, argument_values, argv_rest)
 
         # call the target
-        cls.execute_target(parser, argument_values)
+        cls.execute_target(parser, argument_values, argv_rest)
 
         # call dependent targets
         for target in cls._get_callable_targets(cls.call_after):
-            target._call_targets(parser, argument_values)
+            target._call_targets(parser, argument_values, argv_rest)
 
-    def __call__(self, parser, *unused):
+    def __call__(self, parser, _, argv_rest, *unused):
         # do not execute the target if it has child targets and one of them is used
         choice_made_and_possible = False
         for action in parser._actions:
@@ -241,7 +241,7 @@ class _Target(argparse.Action, metaclass=_MetaTarget):
             return
 
         # call the target with its dependecies
-        self._call_targets(parser, type(self).argument_values[type(self).super_parent_target.cmd])
+        self._call_targets(parser, type(self).argument_values[type(self).super_parent_target.cmd], argv_rest)
 
 
 class _MetaArgument(type):
@@ -600,7 +600,7 @@ class _CreateAppTarget(_Target):
         pass
 
     @classmethod
-    def execute_target(cls, unused, argument_values):
+    def execute_target(cls, unused1, argument_values, unused2):
         # create the new django application
         # a change to the Django directory is necessary because of a bug in the current 'startapp [destination]'
         #   implementation
@@ -679,7 +679,7 @@ class _TestTarget(_Target):
             self.__stdout.write(StringIO.read(self, *args, **kwargs))
 
     @classmethod
-    def execute_target(cls, unused, argument_values):
+    def execute_target(cls, unused1, argument_values, unused2):
         if _CommonTargets.is_development:
             nomigrations = True
         else:
@@ -731,7 +731,7 @@ class _MessagesTarget(_Target):
             pass
 
         @classmethod
-        def execute_target(cls, unused, argument_values):
+        def execute_target(cls, unused1, argument_values, unused2):
             _CommonTargets.exec_django_cmd("makemessages", "-l", argument_values["lang-code"], settings=DJANGO_SETTINGS)
 
     @cmd("compile")
@@ -920,11 +920,11 @@ class _SetWebdriverTarget(_Target):
             cls.__install_geckodriver()
 
     @classmethod
-    def execute_target(cls, parser, argument_values):
+    def execute_target(cls, parser, argument_values, argv_rest):
         if "webdriver" in argument_values:
             cls.use_browser(argument_values["webdriver"])
         else:
-            _HelpTarget.execute_target(parser, argument_values)
+            _HelpTarget.execute_target(parser, argument_values, argv_rest)
 
 
 @cmd("coverage")
@@ -1002,14 +1002,14 @@ class _CoverageTarget(_Target):
         return cov
 
     @classmethod
-    def execute_target(cls, parser, argument_values):
+    def execute_target(cls, parser, argument_values, argv_rest):
         cov = cls.__initialize_coverage()
         # start the coverage process
         cov._auto_save = True
         cov.start()
         # perform the tests
         argument_values["ign-imp-errs"] = False
-        _TestTarget.execute_target(parser, argument_values)
+        _TestTarget.execute_target(parser, argument_values, argv_rest)
 
 
 @cmd("css")
@@ -1102,7 +1102,7 @@ class _NewReleaseTarget(_Target):
 @help("Configure everything to be ready for production.")
 class _ProductionTarget(_Target):
     @classmethod
-    def execute_target(cls, unused, argument_values):
+    def execute_target(cls, unused1, argument_values, unused2):
         # write the production settings
         _CommonTargets.save_dev_stage_setting(development=argument_values.get("development", False),
                                               staging=argument_values.get("staging", False))
@@ -1117,7 +1117,7 @@ class _ProductionTarget(_Target):
 @help("Configure everything to be ready for staging.")
 class _StagingTarget(_Target):
     @classmethod
-    def execute_target(cls, unused, argument_values):
+    def execute_target(cls, unused1, argument_values, unused2):
         argument_values["staging"] = True
 
 
@@ -1133,7 +1133,7 @@ class _DevelopmentTarget(_Target):
         pass
 
     @classmethod
-    def execute_target(cls, unused, argument_values):
+    def execute_target(cls, unused1, argument_values, unused2):
         argument_values["development"] = True
 
         # link the git hooks
