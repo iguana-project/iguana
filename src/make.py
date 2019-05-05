@@ -584,9 +584,9 @@ class _HelpTarget(_Target):
 @help("Run the Django server locally.")
 class _RunTarget(_Target):
     @classmethod
-    def execute_target(cls, *unused):
+    def execute_target(cls, unused1, unused2, argv_rest):
         # start the server
-        _CommonTargets.exec_django_cmd("runserver", settings=DJANGO_SETTINGS)
+        _CommonTargets.exec_django_cmd("runserver", argv_rest, settings=DJANGO_SETTINGS)
 
 
 @cmd("create-app")
