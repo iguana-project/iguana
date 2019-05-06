@@ -27,7 +27,7 @@ linkgraph.*
 /ansiblevenv
 ansible/*.retry
 src/htmlcov
-src/celerybeat-schedule.db
+src/celerybeat-schedule
 /src/common/settings/__init__.py
 /src/common/static/css/*.css
 !/src/common/static/css/activity_stream.css

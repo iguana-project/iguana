@@ -25,6 +25,7 @@ import tarfile
 import textwrap
 from urllib.request import urlopen
 import venv
+from subprocess import Popen, STDOUT
 
 
 ###########
@@ -58,6 +59,9 @@ COVERAGE_DATA_FILE = os.path.join(DJANGO_BASE, ".coverage")
 GITHOOK_DIR = os.path.join(BASE, ".git", "hooks")
 # custom git hook directory
 CUSTOM_GIT_HOOK_DIR = os.path.join(TOOLS, "git-hooks")
+
+# log files directory
+LOG_DIR = os.path.join(BASE, "logs")
 
 
 ############################
@@ -223,7 +227,7 @@ class _Target(argparse.Action, metaclass=_MetaTarget):
             target._call_targets(parser, argument_values, argv_rest)
 
         # call the target
-        cls.execute_target(parser, argument_values, argv_rest)
+        cls.execute_target(parser, argument_values, argv_rest or "")
 
         # call dependent targets
         for target in cls._get_callable_targets(cls.call_after):
@@ -585,8 +589,24 @@ class _HelpTarget(_Target):
 class _RunTarget(_Target):
     @classmethod
     def execute_target(cls, unused1, unused2, argv_rest):
-        # start the server
-        _CommonTargets.exec_django_cmd("runserver", argv_rest, settings=DJANGO_SETTINGS)
+        if _CommonTargets.is_development:
+            # start the development server
+            _CommonTargets.exec_django_cmd("runserver", argv_rest, settings=DJANGO_SETTINGS)
+        else:
+            _CommonTargets.activate_virtual_environment()
+
+            # start celery (worker and beat)
+            Popen(["celery", "-A", "common", "worker", "-l", "info"],
+                  stderr=STDOUT, stdout=open(os.path.join(LOG_DIR, "celery-worker.log"), "w+"), bufsize=0,
+                  cwd=DJANGO_BASE)
+            Popen(["celery", "-A", "common", "beat", "-l", "info"],
+                  stderr=STDOUT, stdout=open(os.path.join(LOG_DIR, "celery-beat.log"), "w+"), bufsize=0,
+                  cwd=DJANGO_BASE)
+
+            # start gunicorn
+            gunicorn = Popen(["gunicorn", "-w", "8", "common.wsgi:application"],
+                             stderr=STDOUT, bufsize=0, cwd=DJANGO_BASE)
+            gunicorn.wait()
 
 
 @cmd("create-app")
