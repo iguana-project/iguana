@@ -27,13 +27,15 @@ ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 
 # Database
-DATABASES['default'] = {
+DATABASES = {
+    'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(FILES_DIR, 'db.sqlite3'),
         'TEST': {
             'NAME': os.path.join(FILES_DIR, 'test_db.sqlite3'),
-        },
+        }
     }
+}
 
 # dummy cache
 CACHES = {

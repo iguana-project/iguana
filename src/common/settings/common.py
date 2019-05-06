@@ -125,10 +125,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'common.wsgi.application'
 
 
-# Database (should be set in the site specific settings)
-DATABASES = {}
-
-
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -260,7 +256,7 @@ CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
 
 CELERY_TRACK_STARTED = True
 CELERY_ENABLE_UTC = True
-CELERY_TIMEZONE = 'Europe/London'
+CELERY_TIMEZONE = TIME_ZONE
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'

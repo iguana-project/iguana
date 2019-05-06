@@ -10,8 +10,8 @@ import sys
 
 # load the user settings JSON file
 # the location is defined in the Ansible scripts
-settings_file = open("/var/lib/iguana/settings/settings.json").read()
-settings = json.loads(settings_file)
+_settings_file = open("/var/lib/iguana/settings/settings.json").read()
+_settings = json.loads(_settings_file)
 
 
 # function to get a setting from the settings.json
@@ -24,7 +24,7 @@ def get_setting(names, required=True, default=""):
     if(not len(names)):
         raise Exception("\033[31mrequested values for empty keys\33[0m")
 
-    setting = settings
+    setting = _settings
     for i in range(len(names)):
         # if the value is not required and a default exists there is no need
         # for the relative setting to be in the json file
@@ -81,7 +81,8 @@ ADMINS = [tuple(user) for user in get_setting(["django", "optional_settings", "A
 # The settings for the database that should be used by django
 # Iguana uses a Postgres SQL database
 # see https://docs.djangoproject.com/en/1.11/ref/settings/#databases
-DATABASES['default'] = {
+DATABASES = {
+    'default': {
         'ENGINE': "django.db.backends.postgresql_psycopg2",
         'NAME': get_setting(["database", "DATABASE_NAME"]),
         'USER': get_setting(["database", "USER"]),
@@ -89,6 +90,7 @@ DATABASES['default'] = {
         'HOST': get_setting(["database", "HOST"]),
         'PORT': get_setting(["database", "PORT"]),
     }
+}
 
 
 REDIS_URL = get_setting(["redis", "HOST"], False, 'localhost')
