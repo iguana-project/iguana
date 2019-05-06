@@ -758,7 +758,7 @@ class _RequirementsTarget(_Target):
             # get the requirements file
             requirements_file = _CommonTargets.get_requirements_file()
             # execute piprot
-            piprot.main([open(requirements_file, 'r')], outdated=True)
+            piprot.main([open(requirements_file, 'r')], verbose=True, outdated=True)
 
     @cmd("install")
     @help("(Re-)Install the requirements.")
