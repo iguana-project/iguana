@@ -1,0 +1,55 @@
+{
+    "django": {
+        "required_settings": {
+            "SECRET_KEY": "#### Change ME!!! ####",
+            "HOST": "localhost",
+            "ALLOWED_HOSTS": [
+                "*"
+            ]
+        },
+        "optional_settings": {
+            "PLATFORM_NAME": "",
+            "LANGUAGE_CODE": "",
+            "TIME_ZONE": "",
+            "CAPTCHA_LENGTH": "",
+            "ADMINS": [
+                [
+                    "",
+                    ""
+                ]
+            ],
+            "OLEA": {
+                "REPLACE_DEVS": ""
+            }
+        }
+    },
+    "database": {
+        "ENGINE": "sqlite",
+        "HOST": "",
+        "PORT": "",
+        "DATABASE_NAME": "",
+        "USER": "",
+        "PASSWORD": ""
+    },
+    "cache": {
+        "BACKEND": "local",
+        "REDIS_HOST": ""
+    },
+    "email": {
+        "BACKEND": "local",
+        "SENDGRID_API_KEY": "",
+        "smtp": {
+            "HOST": "",
+            "PORT": "",
+            "USER": "",
+            "PASSWORD": "",
+            "FROM_EMAIL_ADDRESS": "",
+            "USE_TLS": ""
+        }
+    },
+    "slack": {
+        "ID": "",
+        "SECRET": "",
+        "VERIFICATION": ""
+    }
+}
