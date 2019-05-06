@@ -749,7 +749,7 @@ class _CollectionTarget(_Target):
     @classmethod
     def execute_target(cls, *unused):
         # collect the static files
-        _CommonTargets.exec_django_cmd("collectstatic", settings=DJANGO_SETTINGS)
+        _CommonTargets.exec_django_cmd("collectstatic", "--noinput", settings=DJANGO_SETTINGS)
 
 
 @cmd("requirements")
