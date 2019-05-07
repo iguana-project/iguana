@@ -31,37 +31,43 @@ from subprocess import Popen, STDOUT
 ###########
 # VARIABLES
 ###########
-BASE = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+# base directories
+BASE_DIR = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+FILES_DIR = os.path.join(BASE_DIR, "files")
+STATIC_FILES = os.path.join(BASE_DIR, "static_files")
+
 # settings file for the Makefile
-MAKE_SETTINGS_FILE = os.path.join(BASE, ".makeSettings")
+MAKE_SETTINGS_FILE = os.path.join(BASE_DIR, ".makeSettings")
 
 # virtualenv settings
-VIRTUALENV_BASE = os.path.join(BASE, "virtualenv")
+VIRTUALENV_BASE_DIR = os.path.join(BASE_DIR, "virtualenv")
 # add virtualenv bin directory to the PATH (because some executables need to be in PATH)
-os.environ["PATH"] += ":" + os.path.join(VIRTUALENV_BASE, "bin")
+os.environ["PATH"] += ":" + os.path.join(VIRTUALENV_BASE_DIR, "bin")
 
 # tools directory
-TOOLS = os.path.join(BASE, "tools")
+TOOLS = os.path.join(BASE_DIR, "tools")
+
+# Iguana settings
+IGUANA_BASE_DIR = os.path.join(BASE_DIR, "src")
+IGUANA_SCSS_DIR = os.path.join(IGUANA_BASE_DIR, "common", "scss")
+IGUANA_SETTINGS_FILE = os.path.join(FILES_DIR, "settings.json")
+WEBDRIVER_CONF_FILE = os.path.join(IGUANA_BASE_DIR, "common", "settings", "webdriver.py")
 
 # django settings
-DJANGO_BASE = os.path.join(BASE, "src")
-DJANGO_SETTINGS = "common.settings"
-DJANGO_STATIC = os.path.join(DJANGO_BASE, "common", "static")
-DJANGO_SCSS = os.path.join(DJANGO_BASE, "common", "scss")
-DJANGO_SETTINGS_FILE = os.path.join(DJANGO_BASE, "common", "settings", "__init__.py")
-WEBDRIVER_CONF = os.path.join(DJANGO_BASE, "common", "settings", "webdriver.py")
+DJANGO_SETTINGS_MODULE = "common.settings"
+DJANGO_SETTINGS_FILE = os.path.join(IGUANA_BASE_DIR, "common", "settings", "__init__.py")
 
 # coverage settings
-COVERAGE_SETTINGS_FILE = os.path.join(DJANGO_BASE, ".coveragerc")
-COVERAGE_DATA_FILE = os.path.join(DJANGO_BASE, ".coverage")
+COVERAGE_SETTINGS_FILE = os.path.join(IGUANA_BASE_DIR, ".coveragerc")
+COVERAGE_DATA_FILE = os.path.join(IGUANA_BASE_DIR, ".coverage")
 
 # git hooks directory
-GITHOOK_DIR = os.path.join(BASE, ".git", "hooks")
+GITHOOK_DIR = os.path.join(BASE_DIR, ".git", "hooks")
 # custom git hook directory
 CUSTOM_GIT_HOOK_DIR = os.path.join(TOOLS, "git-hooks")
 
 # log files directory
-LOG_DIR = os.path.join(BASE, "files", "logs")
+LOG_DIR = os.path.join(FILES_DIR, "logs")
 
 
 ############################
@@ -404,8 +410,8 @@ class _CommonTargets(metaclass=_MetaCommonTargets):
 
     @classmethod
     def remove_virtualenv_directory(cls):
-        if os.path.isdir(VIRTUALENV_BASE):
-            shutil.rmtree(VIRTUALENV_BASE, ignore_errors=True)
+        if os.path.isdir(VIRTUALENV_BASE_DIR):
+            shutil.rmtree(VIRTUALENV_BASE_DIR, ignore_errors=True)
 
     @classmethod
     def activate_virtual_environment(cls):
@@ -414,7 +420,7 @@ class _CommonTargets(metaclass=_MetaCommonTargets):
             return
 
         # check if a virtual environment can be activated
-        virt_python = os.path.join(VIRTUALENV_BASE, "bin", "python")
+        virt_python = os.path.join(VIRTUALENV_BASE_DIR, "bin", "python")
         if not os.path.isfile(virt_python):
             cls.exit("No virtual environment is present! Please run 'setup-virtualenv'.", 1)
 
@@ -435,7 +441,7 @@ class _CommonTargets(metaclass=_MetaCommonTargets):
     def get_requirements_file(cls):
         # check which requirements should be installed
         settings = cls._get_dev_stage_setting()
-        requirements_file = os.path.join(BASE, "requirements")
+        requirements_file = os.path.join(BASE_DIR, "requirements")
         if settings["development"]:
             requirements_file = os.path.join(requirements_file, "development.req")
         elif settings["staging"]:
@@ -448,7 +454,7 @@ class _CommonTargets(metaclass=_MetaCommonTargets):
     @classmethod
     def check_webdriver(cls):
         global WEBDRIVER
-        if os.path.isfile(WEBDRIVER_CONF):
+        if os.path.isfile(WEBDRIVER_CONF_FILE):
             import common.settings.webdriver as driver
             WEBDRIVER = driver.WEBDRIVER
         else:
@@ -509,7 +515,7 @@ class _CommonTargets(metaclass=_MetaCommonTargets):
                 os.remove(hook_dest)
 
             # the relative path to the source file
-            hook_src = os.path.join(os.path.relpath(BASE, GITHOOK_DIR), hook)
+            hook_src = os.path.join(os.path.relpath(BASE_DIR, GITHOOK_DIR), hook)
 
             # create the system link
             os.symlink(hook_src, hook_dest)
@@ -591,22 +597,22 @@ class _RunTarget(_Target):
     def execute_target(cls, unused1, unused2, argv_rest):
         if _CommonTargets.is_development:
             # start the development server
-            _CommonTargets.exec_django_cmd("runserver", argv_rest, settings=DJANGO_SETTINGS)
+            _CommonTargets.exec_django_cmd("runserver", argv_rest, settings=DJANGO_SETTINGS_MODULE)
         else:
             _CommonTargets.activate_virtual_environment()
 
             # start celery (worker and beat)
             Popen(["celery", "-A", "common", "worker", "-l", "info"],
                   stderr=STDOUT, stdout=open(os.path.join(LOG_DIR, "celery-worker.log"), "w+"), bufsize=0,
-                  cwd=DJANGO_BASE)
+                  cwd=IGUANA_BASE_DIR)
             Popen(["celery", "-A", "common", "beat", "-l", "info"],
                   stderr=STDOUT, stdout=open(os.path.join(LOG_DIR, "celery-beat.log"), "w+"), bufsize=0,
-                  cwd=DJANGO_BASE)
+                  cwd=IGUANA_BASE_DIR)
 
             # start gunicorn
             gunicorn = Popen(["gunicorn", "-w", "8", "common.wsgi:application",
-                              "--bind", "unix:" + os.path.join(BASE, "gunicorn.sock")],
-                             stderr=STDOUT, bufsize=0, cwd=DJANGO_BASE)
+                              "--bind", "unix:" + os.path.join(BASE_DIR, "gunicorn.sock")],
+                             stderr=STDOUT, bufsize=0, cwd=IGUANA_BASE_DIR)
             gunicorn.wait()
 
 
@@ -625,9 +631,9 @@ class _CreateAppTarget(_Target):
         # create the new django application
         # a change to the Django directory is necessary because of a bug in the current 'startapp [destination]'
         #   implementation
-        os.chdir(DJANGO_BASE)
-        _CommonTargets.exec_django_cmd("startapp", argument_values["APP_NAME"], settings=DJANGO_SETTINGS)
-        os.chdir(BASE)
+        os.chdir(IGUANA_BASE_DIR)
+        _CommonTargets.exec_django_cmd("startapp", argument_values["APP_NAME"], settings=DJANGO_SETTINGS_MODULE)
+        os.chdir(BASE_DIR)
 
 
 @cmd("migrations")
@@ -639,14 +645,14 @@ class _MigrationsTarget(_Target):
     class Create(_Target):
         @classmethod
         def execute_target(cls, *unused):
-            _CommonTargets.exec_django_cmd("makemigrations", settings=DJANGO_SETTINGS)
+            _CommonTargets.exec_django_cmd("makemigrations", settings=DJANGO_SETTINGS_MODULE)
 
     @cmd("apply")
     @help("Apply the Django migrations.")
     class Apply(_Target):
         @classmethod
         def execute_target(cls, *unused):
-            _CommonTargets.exec_django_cmd("migrate", settings=DJANGO_SETTINGS)
+            _CommonTargets.exec_django_cmd("migrate", settings=DJANGO_SETTINGS_MODULE)
 
 
 @cmd("test")
@@ -720,17 +726,17 @@ class _TestTarget(_Target):
         # execute the tests
         if argument_values["complete-test"]:
             # execute all tests (including the functional ones)
-            _CommonTargets.exec_django_cmd("test", DJANGO_BASE, no_input=True, nomigrations=nomigrations,
-                                           settings=DJANGO_SETTINGS)
+            _CommonTargets.exec_django_cmd("test", IGUANA_BASE_DIR, no_input=True, nomigrations=nomigrations,
+                                           settings=DJANGO_SETTINGS_MODULE)
         else:
             if not argument_values["app"]:
                 # execute all tests except the functional ones
-                _CommonTargets.exec_django_cmd("test", DJANGO_BASE, exclude_tags=["functional"], no_input=True,
-                                               nomigrations=nomigrations, settings=DJANGO_SETTINGS)
+                _CommonTargets.exec_django_cmd("test", IGUANA_BASE_DIR, exclude_tags=["functional"], no_input=True,
+                                               nomigrations=nomigrations, settings=DJANGO_SETTINGS_MODULE)
             else:
                 # execute only the specific application tests
                 _CommonTargets.exec_django_cmd("test", argument_values["app"], no_input=True, nomigrations=nomigrations,
-                                               settings=DJANGO_SETTINGS)
+                                               settings=DJANGO_SETTINGS_MODULE)
 
         # restore stdout and stderr
         if argument_values["ign-imp-errs"]:
@@ -753,14 +759,15 @@ class _MessagesTarget(_Target):
 
         @classmethod
         def execute_target(cls, unused1, argument_values, unused2):
-            _CommonTargets.exec_django_cmd("makemessages", "-l", argument_values["lang-code"], settings=DJANGO_SETTINGS)
+            _CommonTargets.exec_django_cmd("makemessages", "-l", argument_values["lang-code"],
+                                           settings=DJANGO_SETTINGS_MODULE)
 
     @cmd("compile")
     @help("Compile the Django messages.")
     class Compile(_Target):
         @classmethod
         def execute_target(cls, *unused):
-            _CommonTargets.exec_django_cmd("compilemessages", settings=DJANGO_SETTINGS)
+            _CommonTargets.exec_django_cmd("compilemessages", settings=DJANGO_SETTINGS_MODULE)
 
 
 @cmd("collectstatic")
@@ -770,7 +777,7 @@ class _CollectionTarget(_Target):
     @classmethod
     def execute_target(cls, *unused):
         # collect the static files
-        _CommonTargets.exec_django_cmd("collectstatic", "--noinput", settings=DJANGO_SETTINGS)
+        _CommonTargets.exec_django_cmd("collectstatic", "--noinput", settings=DJANGO_SETTINGS_MODULE)
 
 
 @cmd("requirements")
@@ -824,10 +831,10 @@ class _SetupVirtualenvTarget(_Target):
     @classmethod
     def execute_target(cls, *unused):
         # check if already a virtual environment is present
-        virt_python = os.path.join(VIRTUALENV_BASE, "bin", "python")
+        virt_python = os.path.join(VIRTUALENV_BASE_DIR, "bin", "python")
         if not os.path.isfile(virt_python):
             # create a new environment
-            venv.create(VIRTUALENV_BASE, with_pip=True)
+            venv.create(VIRTUALENV_BASE_DIR, with_pip=True)
 
 
 @cmd("set-webdriver")
@@ -863,10 +870,10 @@ class _SetWebdriverTarget(_Target):
             system += "64"
 
         # the link destination
-        dest_file = os.path.join(VIRTUALENV_BASE, "bin", "chromedriver")
+        dest_file = os.path.join(VIRTUALENV_BASE_DIR, "bin", "chromedriver")
 
         # the binary driver file (relative to the destination path above)
-        driver_file = os.path.join(VIRTUALENV_BASE,
+        driver_file = os.path.join(VIRTUALENV_BASE_DIR,
                                    "src", "chromedriver", "chromedriver", "bin", "chromedriver-" + system)
         driver_file = os.path.relpath(driver_file, os.path.dirname(dest_file))
 
@@ -899,7 +906,7 @@ class _SetWebdriverTarget(_Target):
             if system in asset["browser_download_url"]:
                 # download the driver
                 print("Downloading geckodriver...")
-                driver_archive = os.path.join(VIRTUALENV_BASE, "geckodriver.tar.gz")
+                driver_archive = os.path.join(VIRTUALENV_BASE_DIR, "geckodriver.tar.gz")
                 response = urlopen(asset["browser_download_url"])
                 with open(driver_archive, 'wb') as out:
                     out.write(response.read())
@@ -908,14 +915,14 @@ class _SetWebdriverTarget(_Target):
                 print("Extracting geckodriver...")
                 driver_file = "geckodriver"
                 with tarfile.open(driver_archive, "r:gz") as archive_file:
-                    archive_file.extract(driver_file, path=VIRTUALENV_BASE)
+                    archive_file.extract(driver_file, path=VIRTUALENV_BASE_DIR)
 
                 # remove the archive
                 os.remove(driver_archive)
                 # move the driver to the virtualenv bin directory
                 print("Installing geckodriver...")
-                shutil.move(os.path.join(VIRTUALENV_BASE, driver_file),
-                            os.path.join(VIRTUALENV_BASE, "bin", driver_file))
+                shutil.move(os.path.join(VIRTUALENV_BASE_DIR, driver_file),
+                            os.path.join(VIRTUALENV_BASE_DIR, "bin", driver_file))
 
                 # nothing more to do
                 print("...done")
@@ -931,7 +938,7 @@ class _SetWebdriverTarget(_Target):
                        "# Do not manually edit it!\n"
                        "\n"
                        "WEBDRIVER = \"{webdriver}\"\n".format(webdriver=browser))
-        with open(WEBDRIVER_CONF, 'w') as f:
+        with open(WEBDRIVER_CONF_FILE, 'w') as f:
             f.write(config_text)
 
         # install the selenium driver for chrome and firefox
@@ -1006,7 +1013,7 @@ class _CoverageTarget(_Target):
         _CommonTargets.activate_virtual_environment()
         from coverage import Coverage
         return Coverage(data_file=COVERAGE_DATA_FILE, config_file=COVERAGE_SETTINGS_FILE,
-                        include=[os.path.join(DJANGO_BASE, '*')])
+                        include=[os.path.join(IGUANA_BASE_DIR, '*')])
 
     @classmethod
     def load_coverage(cls):
@@ -1051,12 +1058,12 @@ class _CSSTarget(_Target):
             print("WARNING: sassc not installed!")
         else:
             # get the SCSS files
-            scss_files = [css for css in os.listdir(DJANGO_SCSS)
-                          if os.path.isfile(os.path.join(DJANGO_SCSS, css)) and css.endswith(".sccs")]
+            scss_files = [css for css in os.listdir(IGUANA_SCSS_DIR)
+                          if os.path.isfile(os.path.join(IGUANA_SCSS_DIR, css)) and css.endswith(".sccs")]
 
             # iterate over the SCSS files
             for scss in scss_files:
-                out_css_file = os.path.join(DJANGO_STATIC, "css",
+                out_css_file = os.path.join(STATIC_FILES, "css",
                                             os.path.splitext(os.path.basename(scss))[0] + ".css")
                 # call sassc
                 subprocess.run([sassc_file, scss, out_css_file])
@@ -1072,7 +1079,7 @@ class _ListTarget(_Target):
         @classmethod
         def execute_target(cls, *unused):
             subprocess.run('grep --color -n -i -R -H "TODO BUG" --exclude=' + os.path.basename(__file__) + ' *',
-                           shell=True, cwd=DJANGO_BASE)
+                           shell=True, cwd=IGUANA_BASE_DIR)
 
     @cmd("missing-testcases")
     @help("List missing testcases.")
@@ -1080,7 +1087,7 @@ class _ListTarget(_Target):
         @classmethod
         def execute_target(cls, *unused):
             subprocess.run('grep --color -n -i -R -H "TODO TESTCASE" --exclude=' + os.path.basename(__file__) + ' *',
-                           shell=True, cwd=DJANGO_BASE)
+                           shell=True, cwd=IGUANA_BASE_DIR)
 
 
 @cmd("add-license")
@@ -1089,7 +1096,7 @@ class _ListTarget(_Target):
 class _AddLicenseTarget(_Target):
     @classmethod
     def execute_target(cls, *unused):
-        subprocess.run([os.path.join(DJANGO_BASE, "add_header.sh")], cwd=DJANGO_BASE)
+        subprocess.run([os.path.join(IGUANA_BASE_DIR, "add_header.sh")], cwd=IGUANA_BASE_DIR)
 
 
 @cmd("new-release")
@@ -1102,7 +1109,7 @@ class _NewReleaseTarget(_Target):
 
         # get the git repository
         from git import Repo
-        repo = Repo(BASE)
+        repo = Repo(BASE_DIR)
         # get only tags that start with 'production-' and sort them descending by their number
         tags = sorted(repo.tags, key=lambda t: t.name.startswith("production-") and int(t.name.split('-')[1]),
                       reverse=True)
@@ -1208,8 +1215,8 @@ def __add_target_to_parser(subparser, target):
         target_parser._actions.sort(key=sort_actions)
 
 
-# custom git hooks (relative to the BASE path)
-CUSTOM_GIT_HOOKS = [os.path.relpath(os.path.join(CUSTOM_GIT_HOOK_DIR, hook), BASE)
+# custom git hooks (relative to the BASE_DIR path)
+CUSTOM_GIT_HOOKS = [os.path.relpath(os.path.join(CUSTOM_GIT_HOOK_DIR, hook), BASE_DIR)
                     for hook in os.listdir(CUSTOM_GIT_HOOK_DIR)
                     if os.path.isfile(os.path.join(CUSTOM_GIT_HOOK_DIR, hook))]
 
