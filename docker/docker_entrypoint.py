@@ -3,6 +3,10 @@ from os import path, symlink, system, sep, chown, setgid, setuid, environ, stat,
 from distutils.dir_util import copy_tree, remove_tree
 from pwd import getpwuid
 from subprocess import Popen
+import string
+from random import SystemRandom
+from collections import OrderedDict
+import json
 
 
 IGUANA_DIR = path.abspath(environ.get("APP_DIR"))
@@ -49,6 +53,27 @@ for dir in [IGUANA_DIR, FILES_DIR]:
 
         # don't forget the root directory
         chown(dir, IGUANA_PUID, IGUANA_PGID, follow_symlinks=False)
+
+
+# if not in development mode, set SECRET_KEY in _settings.json
+if VARIANT != "development":
+    _settings_file = path.join(FILES_DIR, "_settings.json")
+    with open(_settings_file, 'r') as f:
+        _settings = json.load(f, object_pairs_hook=OrderedDict)
+        f.close()
+
+    # do not override the given value
+    if _settings["django"]["required_settings"]["SECRET_KEY"] == "#### Change ME!!! ####":
+        # generate a secret key for Django
+        _secret_key = ''.join([SystemRandom().choice(string.digits + string.ascii_uppercase
+                                                     + string.ascii_lowercase + '!@#$%^&*(-_=+)')
+                              for _ in range(50)])
+
+        _settings["django"]["required_settings"]["SECRET_KEY"] = _secret_key
+
+        with open(_settings_file, 'w') as f:
+            json.dump(_settings, f, indent=4)
+            f.close()
 
 
 # start Iguana
