@@ -1,7 +1,13 @@
 # global variables
 ARG BUILD_DIR=/build
-ARG APP_DIR=/iguana
-ARG VARIANT=development
+
+ARG APP_DIR
+ENV APP_DIR ${APP_DIR:-/iguana}
+ARG FILES_DIR
+ENV FILES_DIR ${FILES_DIR:-/files}
+ARG USE_NGINX
+ENV USE_NGINX ${USE_NGINX:-false}
+ARG VARIANT
 ENV VARIANT ${VARIANT:-development}
 
 
@@ -28,15 +34,18 @@ ENV PUID=1000
 ENV PGID=1000
 ENV TZ=UTC
 ARG BUILD_DIR
-ARG APP_DIR
-ARG FILES_DIR=/files
 
 # for better log output
 ENV PYTHONUNBUFFERED 1
 
 # install dependencies
 RUN apk update && \
-	apk add git libjpeg zlib libmagic
+	apk add git libjpeg zlib libmagic && \
+
+	# install nginx if wanted for non development builds
+	if [ "$USE_NGINX" == "true" ] && [ "$VARIANT" != "development"]; then \
+	   apk add nginx; \
+	fi
 
 # setup entrypoint
 COPY ./docker/docker_entrypoint.py /usr/local/bin
@@ -49,6 +58,16 @@ COPY --from=builder $BUILD_DIR $APP_DIR
 
 # create files directory
 RUN mkdir $FILES_DIR
+
+# copy template config files (not needed in development mode)
+RUN if [ "$VARIANT" != "development"]; then \
+        if [ "$USE_NGINX" == "true" ]; then \
+            cp $APP_DIR/docker/nginx_temlate.conf $APP_DIR/files/nginx.conf; \
+            sed -i "s|{{APP_DIR}}|$APP_DIR|g" $APP_DIR/files/nginx.conf; \
+            sed -i "s|{{FILES_DIR}}|$FILES_DIR|g" $APP_DIR/files/nginx.conf; \
+        fi; \
+        cp $APP_DIR/docker/settings_temlate.json $APP_DIR/files/settings.json; \
+    fi
 
 
 ENV PYTHONPATH $APP_DIR/src

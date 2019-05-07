@@ -2,14 +2,18 @@
 from os import path, symlink, system, sep, chown, setgid, setuid, environ, stat, walk
 from distutils.dir_util import copy_tree, remove_tree
 from pwd import getpwuid
+from subprocess import Popen
 
 
-IGUANA_DIR = path.join(sep, "iguana")
+IGUANA_DIR = path.abspath(environ.get("APP_DIR"))
 IGUANA_FILES_DIR = path.join(IGUANA_DIR, "files")
-FILES_DIR = path.join(sep, "files")
+FILES_DIR = path.abspath(environ.get("FILES_DIR"))
 
 IGUANA_PUID = int(environ.get("PUID"))
 IGUANA_PGID = int(environ.get("PGID"))
+
+VARIANT = environ.get("VAIRANT")
+USE_NGINX = bool(environ.get("USE_NGINX"))
 
 
 # move /iguana/files to /files directory and symlink to it
@@ -51,4 +55,12 @@ for dir in [IGUANA_DIR, FILES_DIR]:
 print("Starting Iguana.")
 setgid(IGUANA_PGID)
 setuid(IGUANA_PUID)
-system("python ./src/make.py run 0.0.0.0:80")
+
+if VARIANT != "development" and USE_NGINX:
+    # start nginx
+    Popen("nginx", "-c", path.join(FILES_DIR, "nginx.conf"))
+
+if VARIANT == "development":
+    system("python ./src/make.py run 0.0.0.0:80")
+else:
+    system("python ./src/make.py run")

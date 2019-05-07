@@ -604,7 +604,8 @@ class _RunTarget(_Target):
                   cwd=DJANGO_BASE)
 
             # start gunicorn
-            gunicorn = Popen(["gunicorn", "-w", "8", "common.wsgi:application"],
+            gunicorn = Popen(["gunicorn", "-w", "8", "common.wsgi:application",
+                              "--bind", "unix:" + os.path.join(BASE, "gunicorn.sock")],
                              stderr=STDOUT, bufsize=0, cwd=DJANGO_BASE)
             gunicorn.wait()
 
