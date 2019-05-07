@@ -26,6 +26,7 @@ import textwrap
 from urllib.request import urlopen
 import venv
 from subprocess import Popen, STDOUT
+from collections import OrderedDict
 
 
 ###########
@@ -464,18 +465,33 @@ class _CommonTargets(metaclass=_MetaCommonTargets):
     def initialize_settings(cls):
         settings = cls._get_dev_stage_setting()
 
+        # generate a secret key for django; this is needed
+        secret_key = ''.join([random.SystemRandom().choice(string.digits + string.ascii_uppercase
+                                                           + string.ascii_lowercase + '!@#$%^&*(-_=+)')
+                              for _ in range(50)])
+
+        # advise django to use the right settings file
         with open(DJANGO_SETTINGS_FILE, 'w') as f:
             if settings["development"]:
                 f.write("from .local_conf import *")
-
-                # generate a secret key for Django; this is needed
-                secret_key = ''.join([random.SystemRandom().choice(string.digits + string.ascii_uppercase
-                                                                   + string.ascii_lowercase + '!@#$%^&*(-_=+)')
-                                      for _ in range(50)])
                 f.write('\n\n')
                 f.write("SECRET_KEY = \"" + secret_key + "\"\n")
             else:
                 f.write("from .global_conf import *")
+
+        # initialize the Iguana settings file if not in development mode
+        if not settings["development"]:
+            with open(IGUANA_SETTINGS_FILE, 'r') as f:
+                global_settings = json.load(f, object_pairs_hook=OrderedDict)
+                f.close()
+
+            # do not override an already set value
+            if global_settings["django"]["required_settings"]["SECRET_KEY"] == "#### Change ME!!! ####":
+                global_settings["django"]["required_settings"]["SECRET_KEY"] = secret_key
+
+                with open(IGUANA_SETTINGS_FILE, 'w') as f:
+                    json.dump(global_settings, f, indent=4)
+                    f.close()
 
     @classmethod
     def _get_dev_stage_setting(cls):

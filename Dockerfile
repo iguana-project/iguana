@@ -1,4 +1,5 @@
 # global variables
+ARG BASE_IMAGE=python:3.5-alpine
 ARG BUILD_DIR=/build
 
 ARG APP_DIR
@@ -11,7 +12,7 @@ ARG VARIANT
 ENV VARIANT ${VARIANT:-development}
 
 
-FROM python:3.5-alpine AS builder
+FROM $BASE_IMAGE AS builder
 
 # variables
 ARG BUILD_DIR
@@ -27,7 +28,7 @@ WORKDIR $BUILD_DIR
 RUN python ./src/make.py $VARIANT
 
 
-FROM python:3.5-alpine
+FROM $BASE_IMAGE
 
 # variables
 ENV PUID=1000
@@ -56,18 +57,20 @@ RUN chmod a+x /usr/local/bin/docker_entrypoint.py && \
 RUN mkdir $APP_DIR
 COPY --from=builder $BUILD_DIR $APP_DIR
 
+# copy nginx template config (not needed in development mode)
+RUN if [ "$VARIANT" != "development"] && [ "$USE_NGINX" == "true" ]; then \
+        cp $APP_DIR/docker/nginx_temlate.conf $APP_DIR/files/nginx.conf; \
+        sed -i "s|{{APP_DIR}}|$APP_DIR|g" $APP_DIR/files/nginx.conf; \
+        sed -i "s|{{FILES_DIR}}|$FILES_DIR|g" $APP_DIR/files/nginx.conf; \
+    fi
+
+# the settings.json file is not required in development mode
+RUN if [ "$VARIANT" == "development"]; then \
+        mv $APP_DIR/files/settings.json $APP_DIR/files/settings.json.not_required; \
+    fi
+
 # create files directory
 RUN mkdir $FILES_DIR
-
-# copy template config files (not needed in development mode)
-RUN if [ "$VARIANT" != "development"]; then \
-        if [ "$USE_NGINX" == "true" ]; then \
-            cp $APP_DIR/docker/nginx_temlate.conf $APP_DIR/files/nginx.conf; \
-            sed -i "s|{{APP_DIR}}|$APP_DIR|g" $APP_DIR/files/nginx.conf; \
-            sed -i "s|{{FILES_DIR}}|$FILES_DIR|g" $APP_DIR/files/nginx.conf; \
-        fi; \
-        cp $APP_DIR/docker/settings_temlate.json $APP_DIR/files/settings.json; \
-    fi
 
 
 ENV PYTHONPATH $APP_DIR/src

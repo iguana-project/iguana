@@ -44,3 +44,4 @@ src/celerybeat-schedule
 /static_files
 /files/*
 !/files/media/avatars/default.svg
+!/files/settings.json
