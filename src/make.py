@@ -61,7 +61,7 @@ GITHOOK_DIR = os.path.join(BASE, ".git", "hooks")
 CUSTOM_GIT_HOOK_DIR = os.path.join(TOOLS, "git-hooks")
 
 # log files directory
-LOG_DIR = os.path.join(BASE, "logs")
+LOG_DIR = os.path.join(BASE, "files", "logs")
 
 
 ############################
