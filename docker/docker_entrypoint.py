@@ -3,11 +3,15 @@ from os import path, symlink, system, sep, chown, setgid, setuid, environ, stat,
 from distutils.dir_util import copy_tree, remove_tree
 from pwd import getpwuid
 from subprocess import Popen
+from random import SystemRandom
+import string
+import json
+from collections import OrderedDict
 
 
-IGUANA_DIR = path.abspath(environ.get("APP_DIR"))
-IGUANA_FILES_DIR = path.join(IGUANA_DIR, "files")
-FILES_DIR = path.abspath(environ.get("FILES_DIR"))
+BASE_DIR = path.abspath(environ.get("APP_DIR"))
+IGUANA_DIR = path.join(BASE_DIR, "src")
+IGUANA_FILES_DIR = path.abspath(environ.get("IGUANA_FILES_DIR"))
 
 IGUANA_PUID = int(environ.get("PUID"))
 IGUANA_PGID = int(environ.get("PGID"))
@@ -15,13 +19,16 @@ IGUANA_PGID = int(environ.get("PGID"))
 VARIANT = environ.get("VAIRANT")
 USE_NGINX = bool(environ.get("USE_NGINX"))
 
+FIRST_RUN_FILE = path.join(BASE_DIR, ".initialized")
+
 
 # move /iguana/files to /files directory and symlink to it
-if not path.islink(IGUANA_FILES_DIR):
+if not path.islink(_iguana_files_dir):
     print("Creating default files on the volume.")
-    copy_tree(IGUANA_FILES_DIR, FILES_DIR)
-    remove_tree(IGUANA_FILES_DIR)
-    symlink(FILES_DIR, IGUANA_FILES_DIR)
+    _iguana_files_dir = path.join(BASE_DIR, "files")
+    copy_tree(_iguana_files_dir, IGUANA_FILES_DIR)
+    remove_tree(_iguana_files_dir)
+    symlink(IGUANA_FILES_DIR, _iguana_files_dir)
 
 
 # create Iguana user
@@ -37,7 +44,7 @@ except Exception:
 
 # chown the application path to the Iguana user
 print('Setting file permissions.')
-for dir in [IGUANA_DIR, FILES_DIR]:
+for dir in [BASE_DIR, IGUANA_FILES_DIR]:
     if stat(dir).st_uid != IGUANA_PUID or \
             stat(dir).st_gid != IGUANA_PGID:
         # recursive chown
@@ -51,16 +58,36 @@ for dir in [IGUANA_DIR, FILES_DIR]:
         chown(dir, IGUANA_PUID, IGUANA_PGID, follow_symlinks=False)
 
 
-# start Iguana
-print("Starting Iguana.")
+# switch to user iguana
 setgid(IGUANA_PGID)
 setuid(IGUANA_PUID)
 
+
+# reinitialize settings on first run
+if not path.isfile(FIRST_RUN_FILE):
+    # load side _side_module
+    _spec = importlib.util.spec_from_file_location('manage_settings',
+                                                   path.join(IGUANA_DIR, "lib", "manage_settings.py"))
+    _side_module = importlib.util.module_from_spec(_spec)
+    _spec.loader.exec_module(_side_module)
+
+    # reinitialize settings (override!)
+    _django_settings_file = path.join(IGUANA_DIR, "common", "settings", "__init__.py")
+    _iguana_settings_file = path.join(IGUANA_FILES_DIR, "settings.json")
+    _is_development = VARIANT == "development"
+    _side_module.initialize_settings(_django_settings_file, _iguana_settings_file, _is_development, True)
+
+    # mark as reinitialized
+    open(FIRST_RUN_FILE, 'a').close()
+
+
+# start Iguana
+print("Starting Iguana.")
 if VARIANT != "development" and USE_NGINX:
     # start nginx
-    Popen("nginx", "-c", path.join(FILES_DIR, "nginx.conf"))
+    Popen("nginx", "-c", path.join(IGUANA_FILES_DIR, "nginx.conf"))
 
 if VARIANT == "development":
-    system("python ./src/make.py run 0.0.0.0:80")
+    system("python " + path.join(IGUANA_DIR, "make.py") + " run 0.0.0.0:80")
 else:
-    system("python ./src/make.py run")
+    system("python " + path.join(IGUANA_DIR, "make.py") + " run")
