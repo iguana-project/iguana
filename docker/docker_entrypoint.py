@@ -19,6 +19,9 @@ IGUANA_PGID = int(environ.get("PGID"))
 VARIANT = environ.get("VAIRANT")
 USE_NGINX = bool(environ.get("USE_NGINX"))
 
+SETTING_TIME_ZONE = environ.get("TZ")
+SETTING_LANGUAGE = environ.get("LANG")
+
 FIRST_RUN_FILE = path.join(BASE_DIR, ".initialized")
 
 
@@ -76,6 +79,16 @@ if not path.isfile(FIRST_RUN_FILE):
     _iguana_settings_file = path.join(IGUANA_FILES_DIR, "settings.json")
     _is_development = VARIANT == "development"
     _side_module.initialize_secret_key(_django_settings_file, _iguana_settings_file, _is_development, True)
+
+    # set additional settings
+    _settings = {
+        'TIME_ZONE': SETTING_TIME_ZONE,
+        'LANGUAGE_CODE': SETTING_LANGUAGE
+    }
+    if _is_development:
+        set_django_settings(_django_settings_file, _settings)
+    else:
+        set_django_settings(_iguana_settings_file, _settings)
 
     # mark as reinitialized
     open(FIRST_RUN_FILE, 'a').close()
