@@ -71,11 +71,11 @@ if not path.isfile(FIRST_RUN_FILE):
     _side_module = importlib.util.module_from_spec(_spec)
     _spec.loader.exec_module(_side_module)
 
-    # reinitialize settings (override!)
+    # recreate the django secret key (override!)
     _django_settings_file = path.join(IGUANA_DIR, "common", "settings", "__init__.py")
     _iguana_settings_file = path.join(IGUANA_FILES_DIR, "settings.json")
     _is_development = VARIANT == "development"
-    _side_module.initialize_settings(_django_settings_file, _iguana_settings_file, _is_development, True)
+    _side_module.initialize_secret_key(_django_settings_file, _iguana_settings_file, _is_development, True)
 
     # mark as reinitialized
     open(FIRST_RUN_FILE, 'a').close()

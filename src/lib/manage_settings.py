@@ -14,7 +14,12 @@ import json
 from collections import OrderedDict
 
 
-def initialize_settings(django_settings_file, iguana_settings_file, development_mode, override=False):
+def initialize_secret_key(django_settings_file, iguana_settings_file, is_development_mode, override=False):
+    """
+    Initialize the secret key in the django settings.
+
+    Set 'override=True' to force the creation of a new secret key.
+    """
     # generate a secret key for django; this is needed
     secret_key = ''.join([SystemRandom().choice(string.digits + string.ascii_uppercase
                                                 + string.ascii_lowercase + '!@#$%^&*(-_=+)')
@@ -22,19 +27,21 @@ def initialize_settings(django_settings_file, iguana_settings_file, development_
 
     # advise django to use the right settings file
     with open(django_settings_file, 'r+') as f:
-        if development_mode:
+        if is_development_mode:
             # do not override the secret key by default
             if "SECRET_KEY" not in f.read() or override:
                 f.write("from .local_conf import *")
                 f.write('\n\n')
-                f.write("SECRET_KEY = \"" + secret_key + "\"\n")
+                f.write("SECRET_KEY = \"" + secret_key + "\"")
+                f.write('\n')
         else:
             f.write("from .global_conf import *")
+            f.write('\n')
 
         f.close()
 
     # initialize the Iguana settings file if not in development mode
-    if not development_mode:
+    if not is_development_mode:
         with open(iguana_settings_file, 'r') as f:
             global_settings = json.load(f, object_pairs_hook=OrderedDict)
             f.close()

@@ -469,7 +469,7 @@ class _CommonTargets(metaclass=_MetaCommonTargets):
         spec.loader.exec_module(side_module)
 
         # initialize settings
-        side_module.initialize_settings(DJANGO_SETTINGS_FILE, IGUANA_SETTINGS_FILE, settings["development"])
+        side_module.initialize_secret_key(DJANGO_SETTINGS_FILE, IGUANA_SETTINGS_FILE, settings["development"])
 
     @classmethod
     def _get_dev_stage_setting(cls):
