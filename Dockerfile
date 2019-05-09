@@ -50,7 +50,7 @@ ENV LANG=en
 ENV PYTHONUNBUFFERED 1
 
 # install dependencies
-RUN apk add --no-cache git libjpeg zlib libmagic freetype libpq
+RUN apk add --no-cache git libjpeg zlib libmagic freetype libpq logrotate
 
 # install nginx if wanted for non development builds
 RUN if [ "$USE_NGINX" == "true" ] && [ "$VARIANT" != "development" ]; then \
@@ -71,6 +71,9 @@ RUN if [ "$VARIANT" != "development" ] && [ "$USE_NGINX" == "true" ]; then \
         cp $APP_DIR/docker/nginx_template.conf $APP_DIR/files/nginx.conf; \
         sed -i "s|{{APP_DIR}}|$APP_DIR|g" $APP_DIR/files/nginx.conf; \
         sed -i "s|{{FILES_DIR}}|$FILES_DIR|g" $APP_DIR/files/nginx.conf; \
+        cp $APP_DIR/docker/logrotate.conf /etc/logrotate.conf; \
+        cp $APP_DIR/docker/nginx.logrotate /etc/logrotate.d/nginx; \
+        sed -i "s|{{FILES_DIR}}|$FILES_DIR|g" /etc/logrotate.d/nginx; \
     fi
 
 # the settings.json file is not required in development mode

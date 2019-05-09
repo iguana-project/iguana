@@ -1,0 +1,7 @@
+{{FILES_DIR}}/logs/nginx_*.log {
+	missingok
+	sharedscripts
+	postrotate
+		/usr/bin/pkill -SIGUSR1 nginx
+	endscript
+}
