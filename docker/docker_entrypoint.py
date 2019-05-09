@@ -101,6 +101,6 @@ if VARIANT != "development" and USE_NGINX:
     Popen("nginx", "-c", path.join(IGUANA_FILES_DIR, "nginx.conf"))
 
 if VARIANT == "development":
-    system("python " + path.join(IGUANA_DIR, "make.py") + " run 0.0.0.0:80")
+    system("python " + path.join(IGUANA_DIR, "make.py") + " run 0.0.0.0:8000")
 else:
     system("python " + path.join(IGUANA_DIR, "make.py") + " run")
