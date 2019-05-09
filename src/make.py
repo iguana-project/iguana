@@ -10,6 +10,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 """
 import argparse
 import importlib
+from importlib import util as import_util
 import inspect
 from io import StringIO
 import json
@@ -426,7 +427,7 @@ class _CommonTargets(metaclass=_MetaCommonTargets):
         script_file = __file__
         if script_file.endswith('.pyc'):
             script_file = script_file[:-1]
-        popen = subprocess.Popen([virt_python, script_file] + sys.argv[1:])
+        popen = Popen([virt_python, script_file] + sys.argv[1:])
         try:
             result = popen.wait()
         except KeyboardInterrupt:
@@ -463,9 +464,9 @@ class _CommonTargets(metaclass=_MetaCommonTargets):
         settings = cls._get_dev_stage_setting()
 
         # load side side_module
-        spec = importlib.util.spec_from_file_location('manage_settings',
-                                                      os.path.join(IGUANA_BASE_DIR, "lib", "manage_settings.py"))
-        side_module = importlib.util.module_from_spec(spec)
+        spec = import_util.spec_from_file_location('manage_settings',
+                                                   os.path.join(IGUANA_BASE_DIR, "lib", "manage_settings.py"))
+        side_module = import_util.module_from_spec(spec)
         spec.loader.exec_module(side_module)
 
         # initialize settings
