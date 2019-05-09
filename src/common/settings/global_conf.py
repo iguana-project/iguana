@@ -137,7 +137,7 @@ elif _backend == "redis":
 _backend = get_setting(["email", "BACKEND"], True, "local")
 if _backend == "local":
     EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
-    EMAIL_FILE_PATH = '/tmp/test_email_iguana_directory'
+    EMAIL_FILE_PATH = EMAIL_DIR
     EMAIL_RECIPIENT_IN_TO_HEADER = True
 else:
     if _backend == "smtp":

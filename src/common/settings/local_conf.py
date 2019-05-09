@@ -48,7 +48,7 @@ CACHES = {
 # NOTE: these settings are not suitable for production!!
 # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
-EMAIL_FILE_PATH = '/tmp/test_email_iguana_directory'
+EMAIL_FILE_PATH = EMAIL_DIR
 EMAIL_RECIPIENT_IN_TO_HEADER = True
 
 # NOTE: WARNING this is for testing-purpose only! This cause the captcha to accept "PASSED" as a valid input

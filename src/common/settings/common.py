@@ -27,6 +27,9 @@ ROOT_DIR = os.path.dirname(BASE_DIR)
 # In this path files created by Iguana are stored
 FILES_DIR = os.path.join(ROOT_DIR, "files")
 
+# All emails send by Iguana are saved in this directory if no email server is provided
+EMAIL_DIR = os.path.join(FILES_DIR, "emails")
+
 
 # Disable debugging by default
 DEBUG = False
