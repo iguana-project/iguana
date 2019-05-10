@@ -20,6 +20,7 @@ SETTING_TIME_ZONE = environ.get("TZ")
 SETTING_LANGUAGE = environ.get("LANG")
 
 FIRST_RUN_FILE = path.join(FILES_DIR, ".initialized")
+MIGRATIONS_APPLIED_FILE = path.join(BASE_DIR, ".migrations_applied")
 
 
 # move /iguana/files to /files directory and symlink to it
@@ -102,6 +103,13 @@ if not path.isfile(FIRST_RUN_FILE):
 
 # start Iguana
 print("Starting Iguana.")
+# apply migrations first (this may be necessary after an update)
+# the file below only exists if the same container already ran before; it doesn't exist on a new started container
+if not path.isfile(MIGRATIONS_APPLIED_FILE):
+    system("python " + path.join(IGUANA_DIR, "make.py") + " migrations apply")
+    # mark as updated
+    open(MIGRATIONS_APPLIED_FILE, 'x').close()
+
 if VARIANT == "development":
     system("python " + path.join(IGUANA_DIR, "make.py") + " run 0.0.0.0:8000")
 else:
