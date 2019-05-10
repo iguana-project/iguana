@@ -19,7 +19,7 @@ USE_NGINX = bool(environ.get("USE_NGINX"))
 SETTING_TIME_ZONE = environ.get("TZ")
 SETTING_LANGUAGE = environ.get("LANG")
 
-FIRST_RUN_FILE = path.join(BASE_DIR, ".initialized")
+FIRST_RUN_FILE = path.join(FILES_DIR, ".initialized")
 
 
 # move /iguana/files to /files directory and symlink to it
