@@ -56,12 +56,43 @@ It seems like there is also a package for arch but I didn't test it yet.
 
 
 ### Docker
-You can use docker to run iguana in production. The docker-compose file comes with automated letsencrypt certificate generation.
-* adapt [docker/settings.json](docker/settings.json):
-  * `SECRET_KEY and HOST/ALLOWED_HOSTS`
-  * email: either use a sendgrid api key or a normal mail server
-* adapt the env variables of the web service in `docker-compose.yml`
-* run `sudo docker-compose up`
+#### Build images
+Three images can be built with the Dockerfile:
+
+* **development** (default)
+
+  `docker build -f Dockerfile .`
+* **staging/production**
+
+  `docker build -f Dockerfile . --build-arg VARIANT=[staging|production] [--build-arg USE_NGINX=[false|true]]`
+
+  The `USE_NGINX` variable indicates if a (basic) Nginx server should be included in the image. The default value is `false`!
+
+#### Start a container
+Each Iguana docker image can be started with the following command:
+```
+docker exec -d \
+	-p 80:8000 \
+	-v <data_directory>:/files \
+	-e TZ=<time zone> \
+	-e PUID=<user ID> \
+	-e PGID=<group ID> \
+	<Iguana image ID>
+```
+
+| Environment variable | Default value | Description |
+|-|-|-|
+| TZ | UTC | Set the time zone for the container, e.g. Europe/Berlin |
+| PUID | 1000 | The ID of the user running Iguana in the container |
+| PGID | 1000 | The group ID of the above user |
+
+But in staging/production environment more configuration should be done by the user! Therefore a [settings.json](files/settings.json) file is placed in the Docker volume after the first run. You can edit this file to your needs (see [Configuration section -> settings.json](README.md#settings.json)). To apply the canges simply restart the container. Please look especially at the `SECRET_KEY` and `HOST/ALLOWED_HOSTS` settings!
+
+If a Nginx server was included in the image (with `USE_NGINX=true`), the `nginx.conf` file can also be found on the Docker volume. But for real production environments, a separate Nginx container is recommended!
+
+All files uploaded to Iguana are placed in the `media` directory on the Docker volume.
+
+**TODO**: add DockerHub badges and links
 
 ### Production
 To setup Iguana in a production environment you simply have to call:
@@ -243,11 +274,14 @@ This file contains the basic settings that are the same for the other two config
 
 #### global_conf.py
 Basically this file contains all settings that are required to run Iguana in an staging or production environment.<br />
-But the settings that should be changed by the user are loaded from the file `/var/lib/iguana/settings/settings.json`. This file gets created when installing Iguana through Ansible. A template for this file can be found in [ansible/roles/user/files/settings_template.json](ansible/roles/user/files/settings_template.json).
+But the settings that should be changed by the user are loaded from the file [settings.json](files/settings.json). See section [settings.json](README.md#settings.json).
 
 #### local_conf.py
 This file contains all settings that are required to run Iguana in a development environment.<br />
 Normally there's no need to change these settings.
+
+#### settings.json
+**TODO**: describe settings.json
 
 
 ## License
