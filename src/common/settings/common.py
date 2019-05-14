@@ -173,14 +173,6 @@ MAXIMUM_FILE_SIZE = MAX_FILE_SIZE_BASE*1024**2
 AUTHENTICATION_BACKENDS = ['user_management.auth_backend.AuthBackend', ]
 
 
-# Internationalization
-LANGUAGE_CODE = 'en'
-TIME_ZONE = 'UTC'
-USE_I18N = True
-USE_L10N = True
-USE_TZ = True
-
-
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(ROOT_DIR, "static_files")
@@ -257,7 +249,6 @@ JWT_AUTH = {
 # global celery settings
 CELERY_TRACK_STARTED = True
 CELERY_ENABLE_UTC = True
-CELERY_TIMEZONE = TIME_ZONE
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'

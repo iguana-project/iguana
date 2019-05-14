@@ -63,6 +63,15 @@ INSTALLED_APPS += [
 ]
 
 
+# Internationalization
+LANGUAGE_CODE = "en-us"
+USE_I18N = False
+USE_L10N = False
+TIME_ZONE = "UTC"
+USE_TZ = True
+CELERY_TIMEZONE = TIME_ZONE
+
+
 SENDFILE_BACKEND = 'sendfile.backends.development'
 
 # To make integration tests run

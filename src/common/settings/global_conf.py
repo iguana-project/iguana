@@ -59,10 +59,13 @@ PLATFORM = get_setting(["django", "optional_settings", "PLATFORM_NAME"], False, 
 CAPTCHA_LENGTH = int(get_setting(["django", "optional_settings", "CAPTCHA_LENGTH"], False, CAPTCHA_LENGTH))
 
 # Language setting
-LANGUAGE_CODE = get_setting(["django", "optional_settings", "LANGUAGE_CODE"], False, LANGUAGE_CODE)
+LANGUAGE_CODE = get_setting(["django", "optional_settings", "LANGUAGE_CODE"], False, "en-us")
+USE_I18N = True
+USE_L10N = True
 
 # Time zone setting
-TIME_ZONE = get_setting(["django", "optional_settings", "TIME_ZONE"], False, TIME_ZONE)
+TIME_ZONE = get_setting(["django", "optional_settings", "TIME_ZONE"], False, "UTC")
+USE_TZ = True
 
 
 # The host settings
@@ -109,6 +112,7 @@ elif _engine == "postgresql" or _engine == "mysql":
 
 # The cache settings
 _backend = get_setting(["cache", "BACKEND"], True, "local")
+CELERY_TIMEZONE = TIME_ZONE
 if _backend == "local":
     CELERY_BROKER_BACKEND = "memory"
     CELERY_BROKER_URL = "memory://localhost/"
