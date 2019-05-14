@@ -26,7 +26,9 @@ FIRST_RUN_FILE = path.join(FILES_DIR, ".initialized")
 _iguana_files_dir = path.join(BASE_DIR, "files")
 if not path.islink(_iguana_files_dir):
     print("Creating default files on the volume.")
-    copy_tree(_iguana_files_dir, FILES_DIR)
+    if not path.isfile(FIRST_RUN_FILE):
+        # copy the files only in the initializing step
+        copy_tree(_iguana_files_dir, FILES_DIR)
     remove_tree(_iguana_files_dir)
     symlink(FILES_DIR, _iguana_files_dir)
 
