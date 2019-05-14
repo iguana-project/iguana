@@ -26,7 +26,7 @@ def initialize_secret_key(django_settings_file, iguana_settings_file, is_develop
                           for _ in range(50)])
 
     # advise django to use the right settings file
-    with open(django_settings_file, 'r+') as f:
+    with open(django_settings_file, 'w+') as f:
         if is_development_mode:
             # do not override the secret key by default
             if "SECRET_KEY" not in f.read() or override:
