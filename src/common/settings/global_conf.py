@@ -91,10 +91,9 @@ if _engine == "sqlite":
             }
         }
     }
-elif _engine == "postgres":
+elif _engine == "postgresql" or _engine == "mysql":
     DATABASES = {
         'default': {
-            'ENGINE': "django.db.backends.postgresql_psycopg2",
             'NAME': get_setting(["database", "DATABASE_NAME"]),
             'USER': get_setting(["database", "USER"]),
             'PASSWORD': get_setting(["database", "PASSWORD"]),
@@ -102,6 +101,10 @@ elif _engine == "postgres":
             'PORT': get_setting(["database", "PORT"]),
         }
     }
+    if _engine == "postgres":
+        DATABASES['default']['ENGINE'] = "django.db.backends.postgresql_psycopg2"
+    elif _engine == "mysql":
+        DATABASES['default']['ENGINE'] = "django.db.backends.mysql"
 
 
 # The cache settings

@@ -4,3 +4,4 @@ django-redis==4.7.0
 gunicorn==19.6.0
 psycopg2==2.8.2
 sendgrid-django==4.0.4
+mysqlclient==1.4.2.post1
