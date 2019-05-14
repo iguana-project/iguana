@@ -9,7 +9,7 @@ You should have received a copy of the license along with this
 work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 """
 from django.test import Client
-from lib.selenium_test_case import StaticSeleniumTestCase
+from lib.selenium_test_case import SeleniumTestCase
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import WebDriverException
@@ -25,7 +25,7 @@ from project.models import Project
 
 # NOTE: This tests a lot of funtionality - even across app boarders
 #       So it contains redundant testing of other apps, but one bigger test is nice to have
-class SprintBoardTest(StaticSeleniumTestCase):
+class SprintBoardTest(SeleniumTestCase):
 
     def setUp(self):
         self.user = get_user_model().objects.create_user('a', 'b', 'c')

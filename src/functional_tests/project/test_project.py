@@ -9,7 +9,7 @@ You should have received a copy of the license along with this
 work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 """
 from django.test import Client
-from lib.selenium_test_case import StaticSeleniumTestCase
+from lib.selenium_test_case import SeleniumTestCase
 from django.urls import reverse
 
 from django.contrib.auth import get_user_model
@@ -17,7 +17,7 @@ from project.models import Project
 
 
 # TODO we might wanna test the href-links on those pages
-class ProjectTest(StaticSeleniumTestCase):
+class ProjectTest(SeleniumTestCase):
 
     def setUp(self):
         self.user = get_user_model().objects.create_user('test', 'test@test.com', 'test')

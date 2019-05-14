@@ -9,7 +9,7 @@ You should have received a copy of the license along with this
 work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 """
 from django.test import Client
-from lib.selenium_test_case import StaticSeleniumTestCase
+from lib.selenium_test_case import SeleniumTestCase
 from django.urls import reverse
 import os
 
@@ -19,7 +19,7 @@ from django.test.utils import override_settings
 
 
 # TODO TESTCASE we might wanna test the href-links on those pages
-class InviteUsersTest(StaticSeleniumTestCase):
+class InviteUsersTest(SeleniumTestCase):
     def setUp(self):
         self.user = get_user_model().objects.create_user('a_user', 'a@a.com', 'a1234568')
         # Uses the cookie hack from:

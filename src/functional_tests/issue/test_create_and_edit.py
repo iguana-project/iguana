@@ -9,7 +9,7 @@ You should have received a copy of the license along with this
 work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 """
 from django.test import Client
-from lib.selenium_test_case import StaticSeleniumTestCase
+from lib.selenium_test_case import SeleniumTestCase
 from selenium.webdriver.common.keys import Keys
 from django.urls import reverse
 from selenium.webdriver.support.ui import Select
@@ -23,7 +23,7 @@ from issue.models import Issue
 
 
 # TODO we might wanna test the href-links on those pages
-class CreateAndEditTest(StaticSeleniumTestCase):
+class CreateAndEditTest(SeleniumTestCase):
     def setUp(self):
         self.user = get_user_model().objects.create_user('a', 'b', 'c')
         self.project = Project(creator=self.user, name="asdf", name_short="PRJ")

@@ -10,7 +10,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 """
 from django.test import Client
 import time
-from lib.selenium_test_case import StaticSeleniumTestCase
+from lib.selenium_test_case import SeleniumTestCase
 from django.urls import reverse
 
 from unittest.mock import patch
@@ -26,7 +26,7 @@ except ImportError:
     SLACK_ID = None
 
 
-class SlackTest(StaticSeleniumTestCase):
+class SlackTest(SeleniumTestCase):
     def setUp(self):
         # Uses the cookie hack from:
         # https://stackoverflow.com/questions/22494583/login-with-code-when-using-liveservertestcase-with-django

@@ -10,7 +10,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 """
 import time
 from django.test import Client
-from lib.selenium_test_case import StaticSeleniumTestCase
+from lib.selenium_test_case import SeleniumTestCase
 from django.urls import reverse
 
 from django.contrib.auth import get_user_model
@@ -19,7 +19,7 @@ from tag.models import Tag
 from issue.models import Issue
 
 
-class FilterTest(StaticSeleniumTestCase):
+class FilterTest(SeleniumTestCase):
     def setUp(self):
         self.user = get_user_model().objects.create_user('a_user', 'a@a.com', 'a1234568')
         self.project = Project(name="Projectname", name_short="proj", creator=self.user)

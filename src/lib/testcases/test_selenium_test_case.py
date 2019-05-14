@@ -9,7 +9,7 @@ You should have received a copy of the license along with this
 work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 """
 from django.test.testcases import TestCase
-from lib.selenium_test_case import StaticSeleniumTestCase, wait_for, decorateAllAssertFunctions
+from lib.selenium_test_case import SeleniumTestCase, wait_for, decorateAllAssertFunctions
 from lib import selenium_test_case
 import time
 
@@ -29,7 +29,7 @@ def delayAssert():
 
 
 @decorateAllAssertFunctions(wait_for)
-class TempTestAsserts(StaticSeleniumTestCase):
+class TempTestAsserts(SeleniumTestCase):
     # this variable is just for checking if the decorator works
     assert_variable = "bla"
 
@@ -54,8 +54,8 @@ class SeleniumTest(TestCase):
 
     def test_setup_and_teardown(self):
         # test if the selenium driver works
-        StaticSeleniumTestCase.setUpClass()
-        StaticSeleniumTestCase.tearDownClass()
+        SeleniumTestCase.setUpClass()
+        SeleniumTestCase.tearDownClass()
 
     def test_temporary_testcaseclass_works(self):
         self.tempCase.assertTrue(True)

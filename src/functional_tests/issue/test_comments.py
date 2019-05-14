@@ -9,7 +9,7 @@ You should have received a copy of the license along with this
 work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 """
 from django.test import Client
-from lib.selenium_test_case import StaticSeleniumTestCase
+from lib.selenium_test_case import SeleniumTestCase
 from django.urls import reverse
 
 import os
@@ -24,7 +24,7 @@ from issue.models import Issue
 from common.settings import MEDIA_ROOT
 
 
-class CommentsTest(StaticSeleniumTestCase):
+class CommentsTest(SeleniumTestCase):
 
     def setUp(self):
         self.user = get_user_model().objects.create_user('a_user', 'a@a.com', 'a1234568')

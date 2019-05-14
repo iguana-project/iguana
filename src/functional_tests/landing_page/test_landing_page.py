@@ -9,13 +9,13 @@ You should have received a copy of the license along with this
 work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 """
 from django.test import Client
-from lib.selenium_test_case import StaticSeleniumTestCase
+from lib.selenium_test_case import SeleniumTestCase
 from django.urls import reverse
 
 from django.contrib.auth import get_user_model
 
 
-class LandingPageTest(StaticSeleniumTestCase):
+class LandingPageTest(SeleniumTestCase):
 
     def setUp(self):
         client = Client()

@@ -8,7 +8,7 @@ Creative Commons Attribution-ShareAlike 4.0 International License.
 You should have received a copy of the license along with this
 work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 """
-from lib.selenium_test_case import StaticSeleniumTestCase
+from lib.selenium_test_case import SeleniumTestCase
 from django.core import mail
 from django.urls import reverse
 import os
@@ -43,7 +43,7 @@ test_email = "test@thrash.com"
 test_pw = "randomPa$_$word123"
 
 
-class SignUpTest(StaticSeleniumTestCase):
+class SignUpTest(SeleniumTestCase):
     def setUp(self):
         pass
 

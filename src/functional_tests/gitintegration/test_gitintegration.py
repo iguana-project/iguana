@@ -9,7 +9,7 @@ You should have received a copy of the license along with this
 work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 """
 from django.test import Client
-from lib.selenium_test_case import StaticSeleniumTestCase
+from lib.selenium_test_case import SeleniumTestCase
 from django.urls import reverse
 from selenium.webdriver.common.keys import Keys
 
@@ -26,7 +26,7 @@ from gitintegration.frontend import Frontend
 from django.contrib.auth import get_user_model
 
 
-class GitIntegrationTest(StaticSeleniumTestCase):
+class GitIntegrationTest(SeleniumTestCase):
 
     def setUp(self):
         self.user = get_user_model().objects.create_user('a', 'b', 'c')

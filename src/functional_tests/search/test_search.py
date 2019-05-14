@@ -9,7 +9,7 @@ You should have received a copy of the license along with this
 work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 """
 from django.test import Client
-from lib.selenium_test_case import StaticSeleniumTestCase
+from lib.selenium_test_case import SeleniumTestCase
 from django.urls import reverse
 import time
 
@@ -20,7 +20,7 @@ from search.models import Search
 from search.frontend import SearchFrontend
 
 
-class SearchTest(StaticSeleniumTestCase):
+class SearchTest(SeleniumTestCase):
 
     def setUp(self):
 

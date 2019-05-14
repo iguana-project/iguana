@@ -8,7 +8,7 @@ Creative Commons Attribution-ShareAlike 4.0 International License.
 You should have received a copy of the license along with this
 work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 """
-from lib.selenium_test_case import StaticSeleniumTestCase
+from lib.selenium_test_case import SeleniumTestCase
 from django.urls import reverse
 
 from django.contrib.auth import get_user_model
@@ -18,7 +18,7 @@ email = 'django@example.com'
 pw = 'unchained'
 
 
-class LoginTest(StaticSeleniumTestCase):
+class LoginTest(SeleniumTestCase):
 
     def setUp(self):
         self.user = get_user_model().objects.create_user(username, email, pw)
