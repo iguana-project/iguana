@@ -1053,13 +1053,17 @@ class _CSSTarget(_Target):
             print("WARNING: sassc not installed!")
         else:
             # get the SCSS files
-            scss_files = [css for css in os.listdir(IGUANA_SCSS_DIR)
-                          if os.path.isfile(os.path.join(IGUANA_SCSS_DIR, css)) and css.endswith(".sccs")]
+            scss_files = [os.path.join(IGUANA_SCSS_DIR, css) for css in os.listdir(IGUANA_SCSS_DIR)
+                          if os.path.isfile(os.path.join(IGUANA_SCSS_DIR, css)) and css.endswith(".scss")]
 
             # iterate over the SCSS files
             for scss in scss_files:
                 out_css_file = os.path.join(STATIC_FILES, "css",
                                             os.path.splitext(os.path.basename(scss))[0] + ".css")
+
+                # create the output directory if it doesn't exist
+                os.makedirs(os.path.dirname(out_css_file), exist_ok=True)
+
                 # call sassc
                 subprocess.run([sassc_file, scss, out_css_file])
 
