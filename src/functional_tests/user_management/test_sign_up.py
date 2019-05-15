@@ -11,7 +11,6 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 from lib.selenium_test_case import SeleniumTestCase
 from django.core import mail
 from django.urls import reverse
-import os
 import re
 import sqlite3
 
@@ -34,9 +33,9 @@ NOTE: django uses a separated database for testing, which is not the production 
 """
 
 # this needs to be the same as defined in common/settings/development.py - NAME
-DATABASE_PATH = settings.BASE_DIR + '/db.sqlite3'
+DATABASE_PATH = settings.DATABASES['default']['NAME']
 # this needs to be the same as defined in common/settings/development.py - TEST - NAME
-TEST_DATABASE_PATH = settings.BASE_DIR + '/test_db.sqlite3'
+TEST_DATABASE_PATH = settings.DATABASES['default']['TEST']['NAME']
 
 test_username = "testuserName"
 test_email = "test@thrash.com"
