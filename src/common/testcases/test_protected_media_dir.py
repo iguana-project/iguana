@@ -68,4 +68,4 @@ class ProtectedMediaDirTest(TestCase):
         response = self.client.get(testMediaUrl)
         accel = response["X-Accel-Redirect"]
 
-        self.assertEqual("/__prefix__" + testMediaUrl, accel)
+        self.assertEqual(os.path.join("/__prefix__", "avatars", "testFile"), accel)

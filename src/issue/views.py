@@ -578,7 +578,7 @@ class AttachmentDownloadView(LoginRequiredMixin, UserPassesTestMixin, View):
         # TODO BUG For some reason this is reported as a leak of resources: there is an unclosed file,
         #          which has been opened with mode='rb' and closefd=True
         #          So I assume the development-backend doesn't close the file properly
-        return sendfile(request, attachment.file.path, attachment=False)
+        return sendfile(request, attachment.file.path, attachment=True)
 
     def test_func(self):
         return get_r_object_or_404(self.request.user, Project,

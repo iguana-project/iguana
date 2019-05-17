@@ -46,10 +46,10 @@ class ShowProtectedFilesView(LoginRequiredMixin, View):
     def get(self, request, content_disposition_type="inline", *args, **kwargs):
         if USE_X_ACCEL_REDIRECT:
             response = HttpResponse('')
-            if X_ACCEL_REDIRECT_PREFIX is None:
-                response['X-Accel-Redirect'] = request.path
-            else:
-                response['X-Accel-Redirect'] = '/' + X_ACCEL_REDIRECT_PREFIX + request.path
+            if X_ACCEL_REDIRECT_PREFIX is not None:
+                first_path_element = re.compile("^/([^/]*)/").search(request.path).group(1)
+                request.path = request.path.replace(first_path_element, X_ACCEL_REDIRECT_PREFIX, 1)
+            response['X-Accel-Redirect'] = request.path
             response['Content-Type'] = ''
 
         else:
