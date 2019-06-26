@@ -18,17 +18,17 @@ install:
   - make development
   # requirement for coveralls.io
   - pip install coveralls
-#   # Ansible is required for deployment
-#   - pip install ansible
 
 before_script:
+  # start virtual X server (needed for the functional tests)
   - "export DISPLAY=:99.0"
   - "sh -e /etc/init.d/xvfb start"
   - sleep 3
   - fluxbox >/dev/null 2>&1 &
   
 script:
-  - make coverage +c
+  # run all tests
+  make coverage +c
 
 # send coverage report to coveralls.io
 after_success:
@@ -36,10 +36,7 @@ after_success:
   - coveralls
   - popd
 
-# deploy:
-#   # deploy to the staging environment
-#   - provider: script
-#     script: bash tools/scripts/deploy_staging.sh
-#   # deploy to production
-#   - provider: script
-#     script: bash tools/scripts/deploy_production.sh
+deploy:
+  # deploy / build the docker image
+  provider: script
+  script: curl --data build=true -X POST $DOCKERHUB_WEBHOOK_URL
