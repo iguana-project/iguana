@@ -1009,11 +1009,12 @@ class _CSSTarget(_Target):
     @classmethod
     def execute_target(cls, *unused):
         # check if sassc executable exists
-        sassc_file = None
         for path in os.environ["PATH"].split(os.pathsep):
             sassc_file = os.path.join(path, "sassc")
             if os.path.isfile(sassc_file) and os.access(sassc_file, os.X_OK):
                 break
+            else:
+                sassc_file = None
 
         if sassc_file is None:
             print("WARNING: sassc not installed!")
