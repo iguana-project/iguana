@@ -415,7 +415,9 @@ class _CommonTargets(metaclass=_MetaCommonTargets):
     @classmethod
     def activate_virtual_environment(cls):
         # check if already a virtual environment is present
-        if sys.base_prefix != sys.prefix:
+        # or running on Travis CI
+        if sys.base_prefix != sys.prefix or \
+                os.environ.get('TRAVIS') == 'true':
             return
 
         # check if a virtual environment can be activated
