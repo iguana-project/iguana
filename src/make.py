@@ -427,9 +427,8 @@ class _CommonTargets(metaclass=_MetaCommonTargets):
         script_file = __file__
         if script_file.endswith('.pyc'):
             script_file = script_file[:-1]
-        popen = Popen([virt_python, script_file] + sys.argv[1:])
         try:
-            result = popen.wait()
+            result = subprocess.run([virt_python, script_file] + sys.argv[1:]).returncode
         except KeyboardInterrupt:
             # return no error when the process is interrupted by ctrl-c
             raise SystemExit(0)
@@ -605,10 +604,8 @@ class _RunTarget(_Target):
                   cwd=IGUANA_BASE_DIR)
 
             # start gunicorn
-            gunicorn = Popen(["gunicorn", "-w", "8", "common.wsgi:application",
-                              "--bind", "unix:" + os.path.join(BASE_DIR, "gunicorn.sock")],
-                             stderr=STDOUT, bufsize=0, cwd=IGUANA_BASE_DIR)
-            gunicorn.wait()
+            subprocess.run(["gunicorn", "-w", "8", "common.wsgi:application",
+                            "--bind", "unix:" + os.path.join(BASE_DIR, "gunicorn.sock")], cwd=IGUANA_BASE_DIR)
 
 
 @cmd("create-app")
