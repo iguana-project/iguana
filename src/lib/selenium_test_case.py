@@ -11,6 +11,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 from functools import wraps
 import linecache
 import re
+import os
 import sys
 import time
 
@@ -226,7 +227,12 @@ class SeleniumTestCase(LiveServerTestCase):
         if WEBDRIVER == "firefox":
             cls.selenium = webdriver.Firefox()
         elif WEBDRIVER == "chrome":
-            cls.selenium = webdriver.Chrome()
+            # run Chrome in headless mode when testing on Travis
+            chrome_opt = None
+            if os.environ.get('TRAVIS') == 'true':
+                chrome_opt = webdriver.ChromeOptions()
+                chrome_opt.headless = True
+            cls.selenium = webdriver.Chrome(options=chrome_opt)
         elif WEBDRIVER == "safari":
             cls.selenium = webdriver.Safari()
         else:

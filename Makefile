@@ -13,9 +13,12 @@ PYTHON3 = $(shell command -v python3 2> /dev/null)
 ifeq ($(strip $(PYTHON3)),)
 $(error "Error: python3 is not installed!")
 else
+# do not show bytes warnings on Travis, because then the build/test will fail
+ifndef TRAVIS
 # the -bb "-b Issue warnings about str(bytes_instance), str(bytearray_instance) and comparing bytes/bytearray  with str. (-bb: issue errors)"
 # s.a. https://docs.djangoproject.com/en/2.0/releases/2.0/#removed-support-for-bytestrings-in-some-places
 PYTHON3 += -bb
+endif
 endif
 
 

@@ -10,20 +10,18 @@ sudo: required
 addons:
   apt:
     sources:
-     - google-chrome
+    - google-chrome
     packages:
-     - google-chrome-stable fluxbox
-services:
-  - xvfb
-     
+    - google-chrome-stable
+    - libexempi3
 install:
   - make development
   # requirement for coveralls.io
   - pip install coveralls
 
 before_script:
-  # start window manager (needed for chrome)
-  - fluxbox >/dev/null 2>&1 &
+  # add the chromedriver binary to the PATH
+  - export PATH=$PATH:`chromedriver-path`
   
 script:
   # run all tests
@@ -38,4 +36,4 @@ after_success:
 deploy:
   # deploy / build the docker image
   provider: script
-  script: curl --data build=true -X POST $DOCKERHUB_WEBHOOK_URL
+  script: curl --request POST --header Content-Type:application/json --data {"build":true} --url $DOCKERHUB_WEBHOOK_URL

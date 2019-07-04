@@ -717,6 +717,20 @@ class _TestTarget(_Target):
             sys.stdout = _TestTarget.IgnImpErrsOutWrapper(sys.stdout)
             sys.stderr = _TestTarget.IgnImpErrsOutWrapper(sys.stderr)
 
+        # ######### BLOCK START ##########
+        # TODO workaround for failing testcases, if functional tests are executed right after the unit tests
+        # the test cases have to be checked what exactly causes the problem
+        # there are also errors if the unit tests get not executed in the default order
+        # TODO remove this block after these errors are fixed
+        if argument_values["complete-test"]:
+            # execute the functional tests first
+            _CommonTargets.exec_django_cmd("test", IGUANA_BASE_DIR, tags=["functional"], no_input=True,
+                                           nomigrations=nomigrations, settings=DJANGO_SETTINGS_MODULE)
+
+            # prevent the functional tests from getting executed again
+            argument_values["complete-test"] = False
+        # ######### BLOCK END ##########
+
         # execute the tests
         if argument_values["complete-test"]:
             # execute all tests (including the functional ones)
