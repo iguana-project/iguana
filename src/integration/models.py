@@ -83,7 +83,8 @@ class SlackIntegration(Integration):
             self.slack = SlackClient(self.api_token)
 
     def on_issue_signal(self, sender, signal, **kwargs):
-        if kwargs['instance'].project != self.project:
+        if "instance" not in kwargs or \
+                kwargs['instance'].project != self.project:
             return
         self.slack_on()
         issue = kwargs['instance']
@@ -151,15 +152,18 @@ class SlackIntegration(Integration):
                 }]
             )
 
-    def on_comment_signal(self, sender, signal, instance, user, **kwargs):
-        if instance.issue.project != self.project:
+    def on_comment_signal(self, sender, signal, **kwargs):
+        if "instance" not in kwargs or \
+                kwargs['instance'].issue.project != self.project:
             return
         self.slack_on()
+        comment = kwargs['instance']
+        user = kwargs['user']
         protocol = 'https://'
         if DEBUG:
             protocol = 'http://'
-        title_link = protocol + HOST + instance.issue.get_absolute_url()
-        issue_title = instance.issue.get_ticket_identifier() + ' ' + instance.issue.title
+        title_link = protocol + HOST + comment.issue.get_absolute_url()
+        issue_title = comment.issue.get_ticket_identifier() + ' ' + comment.issue.title
         user_link = protocol + HOST + user.get_absolute_url()
         user_avatar = protocol + HOST + user.avatar.url
 
@@ -171,7 +175,7 @@ class SlackIntegration(Integration):
                 attachments=[{
                     'fallback': text,
                     'pretext': 'New comment:',
-                    'text': instance.text,
+                    'text': comment.text,
                     'title': issue_title,
                     'title_link': title_link,
                     'author_name': str(user),
@@ -181,15 +185,18 @@ class SlackIntegration(Integration):
                 }]
             )
 
-    def on_sprint_signal(self, sender, signal, instance, user, **kwargs):
-        if instance.project != self.project:
+    def on_sprint_signal(self, sender, signal, **kwargs):
+        if "instance" not in kwargs or \
+                kwargs['instance'].project != self.project:
             return
         self.slack_on()
+        sprint = kwargs['instance']
+        user = kwargs['user']
         protocol = 'https://'
         if DEBUG:
             protocol = 'http://'
         title_link = protocol + HOST + reverse("backlog:backlog", kwargs={'project': self.project.name_short})
-        title = "sprint {}".format(instance.seqnum)
+        title = "sprint {}".format(sprint.seqnum)
         user_link = protocol + HOST + user.get_absolute_url()
         user_avatar = protocol + HOST + user.avatar.url
 
@@ -207,19 +214,19 @@ class SlackIntegration(Integration):
         fields = []
         fields.append({
             'title': _("Started"),
-            'value': instance.startdate.strftime(date_format),
+            'value': sprint.startdate.strftime(date_format),
             'short': True,
         })
         if action == "stopped":
             fields.append({
                 'title': _("Stopped"),
-                'value': instance.enddate.strftime(date_format),
+                'value': sprint.enddate.strftime(date_format),
                 'short': True,
             })
-        if instance.plandate:
+        if sprint.plandate:
             fields.append({
                 'title': _("Planned end"),
-                'value': instance.plandate.strftime(date_format),
+                'value': sprint.plandate.strftime(date_format),
                 'short': True,
             })
 
