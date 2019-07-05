@@ -1054,31 +1054,17 @@ class _CoverageTarget(_Target):
 class _CSSTarget(_Target):
     @classmethod
     def execute_target(cls, *unused):
-        # check if sassc executable exists
-        for path in os.environ["PATH"].split(os.pathsep):
-            sassc_file = os.path.join(path, "sassc")
-            if os.path.isfile(sassc_file) and os.access(sassc_file, os.X_OK):
-                break
-            else:
-                sassc_file = None
+        _CommonTargets.activate_virtual_environment()
+        import sass
 
-        if sassc_file is None:
-            print("WARNING: sassc not installed!")
-        else:
-            # get the SCSS files
-            scss_files = [os.path.join(IGUANA_SCSS_DIR, css) for css in os.listdir(IGUANA_SCSS_DIR)
-                          if os.path.isfile(os.path.join(IGUANA_SCSS_DIR, css)) and css.endswith(".scss")]
+        out_css_dir = os.path.join(STATIC_FILES, "css")
 
-            # iterate over the SCSS files
-            for scss in scss_files:
-                out_css_file = os.path.join(STATIC_FILES, "css",
-                                            os.path.splitext(os.path.basename(scss))[0] + ".css")
+        # create the output directory if it doesn't exist
+        os.makedirs(os.path.dirname(out_css_dir), exist_ok=True)
 
-                # create the output directory if it doesn't exist
-                os.makedirs(os.path.dirname(out_css_file), exist_ok=True)
-
-                # call sassc
-                subprocess.run([sassc_file, scss, out_css_file])
+        # use python libsass for compiling the sccs files
+        # output them to the normal css folder
+        sass.compile(dirname=(IGUANA_SCSS_DIR, out_css_dir))
 
 
 @cmd("list")

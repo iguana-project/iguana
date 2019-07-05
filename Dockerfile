@@ -17,7 +17,7 @@ ARG APP_DIR
 ARG VARIANT
 
 # install dependencies
-RUN apk add --no-cache sassc git jpeg-dev zlib-dev freetype-dev build-base postgresql-dev mariadb-connector-c-dev
+RUN apk add --no-cache git jpeg-dev zlib-dev freetype-dev build-base postgresql-dev mariadb-connector-c-dev
 
 # build the application
 RUN mkdir $APP_DIR
