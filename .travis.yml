@@ -1,6 +1,7 @@
 branches:
   only:
     - master
+    - /^production-[0-9]+/
 sudo: required
 
 env:
