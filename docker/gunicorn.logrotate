@@ -1,0 +1,8 @@
+{{FILES_DIR}}/logs/gunicorn-*.log {
+	missingok
+	notifempty
+	sharedscripts
+	postrotate
+		/usr/bin/pkill -SIGUSR1 gunicorn
+	endscript
+}

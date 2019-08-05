@@ -607,7 +607,9 @@ class _RunTarget(_Target):
 
             # start gunicorn
             subprocess.run(["gunicorn", "-w", "8", "common.wsgi:application",
-                            "--bind", "unix:" + os.path.join(BASE_DIR, "gunicorn.sock")], cwd=IGUANA_BASE_DIR)
+                            "--bind", "unix:" + os.path.join(BASE_DIR, "gunicorn.sock"),
+                            "--access-logfile", os.path.join(LOG_DIR, "gunicorn-accesslog.log"),
+                            "--error-logfile", os.path.join(LOG_DIR, "gunicorn-errorlog.log")], cwd=IGUANA_BASE_DIR)
 
 
 @cmd("create-app")
