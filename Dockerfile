@@ -72,8 +72,12 @@ RUN if [ "$VARIANT" != "development" ] && [ "$USE_NGINX" == "true" ]; then \
         sed -i "s|{{APP_DIR}}|$APP_DIR|g" $APP_DIR/files/nginx.conf; \
         sed -i "s|{{FILES_DIR}}|$FILES_DIR|g" $APP_DIR/files/nginx.conf; \
         cp $APP_DIR/docker/logrotate.conf /etc/logrotate.conf; \
-        cp $APP_DIR/docker/nginx.logrotate /etc/logrotate.d/nginx; \
-        sed -i "s|{{FILES_DIR}}|$FILES_DIR|g" /etc/logrotate.d/nginx; \
+        for orig_file in $APP_DIR/docker/*.logrotate; do \
+            [ -f "$orig_file" ] || break; \
+            dest_file=/etc/logrotate.d/$(basename $orig_file .logrotate); \
+            cp $orig_file $dest_file; \
+            sed -i "s|{{FILES_DIR}}|$FILES_DIR|g" $dest_file; \
+        done; \
     fi
 
 # the settings.json file is not required in development mode

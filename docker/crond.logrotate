@@ -1,0 +1,6 @@
+{{FILES_DIR}}/logs/cron.log {
+	missingok
+	notifempty
+	copytruncate
+	delaycompress
+}
