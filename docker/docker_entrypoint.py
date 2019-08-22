@@ -1,6 +1,6 @@
 #!/usr/local/bin/python
-from os import path, symlink, system, chown, setgid, setuid, environ, stat, walk
-from distutils.dir_util import copy_tree, remove_tree
+from os import path, symlink, system, chown, setgid, setuid, environ, stat, walk, rename, makedirs, remove
+from distutils.file_util import copy_file
 from pwd import getpwuid
 from subprocess import Popen, STDOUT
 from importlib import util as import_util
@@ -20,17 +20,39 @@ SETTING_TIME_ZONE = environ.get("TZ")
 SETTING_LANGUAGE = environ.get("LANG")
 
 FIRST_RUN_FILE = path.join(FILES_DIR, ".initialized")
+FORCE_CHOWN = False
 
 
-# move /iguana/files to /files directory and symlink to it
+# prepare the /files directory
 _iguana_files_dir = path.join(BASE_DIR, "files")
+# rename the existing /BASE_DIR/files directory to /BASE_DIR/files_default
 if not path.islink(_iguana_files_dir):
-    print("Creating default files on the volume.")
-    if not path.isfile(FIRST_RUN_FILE):
-        # copy the files only in the initializing step
-        copy_tree(_iguana_files_dir, FILES_DIR)
-    remove_tree(_iguana_files_dir)
+    rename(_iguana_files_dir, path.join(BASE_DIR, "files_default"))
+
+    # symlink /files to /BASE_DIR/files
     symlink(FILES_DIR, _iguana_files_dir)
+
+# after the previous step files dir is moved to /BASE_DIR/files_default
+_iguana_files_dir = path.join(BASE_DIR, "files_default")
+
+# these files must exist everytime when the Docker container is started
+print("Creating default files on the volume.")
+for df in ("logs", path.join("media", "avatars", "default.svg"), "settings.json"):
+    # copy the file if it doesn't exists or create the directory
+    if not path.exists(path.join(FILES_DIR, df)):
+        src_path = path.join(_iguana_files_dir, df)
+        if path.isdir(src_path):
+            makedirs(path.join(FILES_DIR, df), exist_ok=True)
+        else:
+            makedirs(path.dirname(path.join(FILES_DIR, df)), exist_ok=True)
+            copy_file(src_path, path.join(FILES_DIR, df))
+
+        # force a chown after a file was copied
+        FORCE_CHOWN = True
+
+        # force reinitialization of the settings later if the settings.json file was recovered
+        if df == "settings.json" and path.isfile(FIRST_RUN_FILE):
+            remove(FIRST_RUN_FILE)
 
 
 # create Iguana user
@@ -48,7 +70,8 @@ except Exception:
 print('Setting file permissions.')
 for dir in [BASE_DIR, FILES_DIR]:
     if stat(dir).st_uid != IGUANA_PUID or \
-            stat(dir).st_gid != IGUANA_PGID:
+            stat(dir).st_gid != IGUANA_PGID or \
+            FORCE_CHOWN:
         # recursive chown
         for root, dirs, files in walk(dir):
             for d in dirs:
