@@ -14,7 +14,7 @@ IGUANA_PUID = int(environ.get("PUID"))
 IGUANA_PGID = int(environ.get("PGID"))
 
 VARIANT = environ.get("VARIANT")
-USE_NGINX = bool(environ.get("USE_NGINX"))
+USE_NGINX = environ.get("USE_NGINX").lower() in ("true", "1")
 
 SETTING_TIME_ZONE = environ.get("TZ")
 SETTING_LANGUAGE = environ.get("LANG")
