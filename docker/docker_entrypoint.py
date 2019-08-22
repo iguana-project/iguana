@@ -38,7 +38,14 @@ _iguana_files_dir = path.join(BASE_DIR, "files_default")
 
 # these files must exist everytime when the Docker container is started
 print("Creating default files on the volume.")
-for df in ("logs", path.join("media", "avatars", "default.svg"), "settings.json"):
+_necessary_files = ["logs", path.join("media", "avatars", "default.svg")]
+# the settings.json file is also mandatory if we're not in development mode
+if VARIANT != "development":
+    _necessary_files.append("settings.json")
+# if Nginx is installed, the config is also necessary
+if USE_NGINX:
+    _necessary_files.append("nginx.conf")
+for df in _necessary_files:
     # copy the file if it doesn't exists or create the directory
     if not path.exists(path.join(FILES_DIR, df)):
         src_path = path.join(_iguana_files_dir, df)

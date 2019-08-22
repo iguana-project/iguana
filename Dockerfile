@@ -86,7 +86,7 @@ RUN if [ "$VARIANT" != "development" ]; then \
 
 # the settings.json file is not required in development mode
 RUN if [ "$VARIANT" == "development" ]; then \
-        mv $APP_DIR/files/settings.json $APP_DIR/files/settings.json.not_required; \
+        rm $APP_DIR/files/settings.json; \
     fi
 
 # create files directory
