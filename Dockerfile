@@ -23,7 +23,9 @@ RUN apk add --no-cache git jpeg-dev zlib-dev freetype-dev build-base postgresql-
 RUN mkdir $APP_DIR
 ADD . $APP_DIR
 WORKDIR $APP_DIR
-RUN python ./src/make.py $VARIANT
+RUN python ./src/make.py $VARIANT && \
+    # remove the generated sqlite database file
+    rm $APP_DIR/files/db.sqlite3
 
 
 ################################################################################

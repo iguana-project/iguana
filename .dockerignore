@@ -1,0 +1,53 @@
+# copied from .gitignore
+########################
+
+# python files
+__pycache__/
+*.py[cod]
+
+# eclipse files
+/.project
+/.pydevproject
+/.settings
+
+# vim-template
+[._]*.s[a-w][a-z]
+[._]s[a-w][a-z]
+
+# other temp files
+*.swp
+*.log
+
+# project specific files
+BAD_MSG
+parser.out
+parsetab.py
+linkgraph.*
+.coverage
+.makeSettings
+*.mo
+*.sqlite3
+/ansiblevenv
+ansible/*.retry
+src/htmlcov
+src/celerybeat-schedule
+/src/common/settings/__init__.py
+/src/common/static/css/*.css
+!/src/common/static/css/activity_stream.css
+!/src/common/static/css/bootstrap.css
+!/src/common/static/css/bootstrap.min.css
+!/src/common/static/css/bootstrap-theme.css
+!/src/common/static/css/bootstrap-theme.min.css
+!/src/common/static/css/cal-heatmap.css
+!/src/common/static/css/pagedown.css
+/src/common/settings/webdriver.py
+/tools/scripts/tools/bin/vnu.jar
+/validation/*
+/virtualenv
+/static_files
+/files/*
+!/files/media/avatars/default.svg
+!/files/settings.json
+
+# .dockerignore in subdirectories is not possible due https://github.com/moby/moby/issues/20944
+!/files/logs
