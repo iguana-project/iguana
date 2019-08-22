@@ -66,14 +66,16 @@ RUN chmod a+x /usr/local/bin/docker_entrypoint.py && \
 RUN mkdir $APP_DIR
 COPY --from=builder $APP_DIR $APP_DIR
 
-# copy nginx template config (not needed in development mode)
-RUN if [ "$VARIANT" != "development" ] && [ "$USE_NGINX" == "true" ]; then \
-        cp $APP_DIR/docker/nginx_template.conf $APP_DIR/files/nginx.conf; \
-        sed -i "s|{{APP_DIR}}|$APP_DIR|g" $APP_DIR/files/nginx.conf; \
-        sed -i "s|{{FILES_DIR}}|$FILES_DIR|g" $APP_DIR/files/nginx.conf; \
+# copy config files that are not needed in development mode)
+RUN if [ "$VARIANT" != "development" ]; then \
+        if [ "$USE_NGINX" == "true" ]; then \
+            cp $APP_DIR/docker/nginx_template.conf $APP_DIR/files/nginx.conf; \
+            sed -i "s|{{APP_DIR}}|$APP_DIR|g" $APP_DIR/files/nginx.conf; \
+            sed -i "s|{{FILES_DIR}}|$FILES_DIR|g" $APP_DIR/files/nginx.conf; \
+        fi; \
         cp $APP_DIR/docker/logrotate.conf /etc/logrotate.conf; \
         for orig_file in $APP_DIR/docker/*.logrotate; do \
-            [ -f "$orig_file" ] || break; \
+            [ -f "$orig_file" ] || continue; \
             dest_file=/etc/logrotate.d/$(basename $orig_file .logrotate); \
             cp $orig_file $dest_file; \
             sed -i "s|{{FILES_DIR}}|$FILES_DIR|g" $dest_file; \
