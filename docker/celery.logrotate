@@ -1,6 +1,5 @@
 {{FILES_DIR}}/logs/celery-*.log {
 	missingok
 	notifempty
-	copytruncate
 	delaycompress
 }
