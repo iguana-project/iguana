@@ -59,10 +59,12 @@ for dir in [BASE_DIR, FILES_DIR]:
         # don't forget the root directory
         chown(dir, IGUANA_PUID, IGUANA_PGID, follow_symlinks=False)
 
-# start nginx and cron daemon (for logrotate) as root
-if VARIANT != "development" and USE_NGINX:
-    # start nginx
-    Popen(["nginx", "-c", path.join(FILES_DIR, "nginx.conf")])
+# start helper processes as root
+if VARIANT != "development":
+    if USE_NGINX:
+        # start nginx if it is used
+        Popen(["nginx", "-c", path.join(FILES_DIR, "nginx.conf")])
+
     # start cron for logrotate
     Popen(["crond", "-L", path.join(FILES_DIR, "logs", "cron.log")])
 
