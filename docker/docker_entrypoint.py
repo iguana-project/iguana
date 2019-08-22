@@ -1,9 +1,10 @@
 #!/usr/local/bin/python
-from os import path, symlink, system, chown, setgid, setuid, environ, stat, walk, rename, makedirs, remove
+from os import path, symlink, system, chown, setgid, setuid, environ, stat, walk, makedirs, remove
 from distutils.file_util import copy_file
 from pwd import getpwuid
 from subprocess import Popen, STDOUT
 from importlib import util as import_util
+from shutil import move
 
 
 BASE_DIR = path.abspath(environ.get("APP_DIR"))
@@ -27,7 +28,7 @@ FORCE_CHOWN = False
 _iguana_files_dir = path.join(BASE_DIR, "files")
 # rename the existing /BASE_DIR/files directory to /BASE_DIR/files_default
 if not path.islink(_iguana_files_dir):
-    rename(_iguana_files_dir, path.join(BASE_DIR, "files_default"))
+    move(_iguana_files_dir, path.join(BASE_DIR, "files_default"))
 
     # symlink /files to /BASE_DIR/files
     symlink(FILES_DIR, _iguana_files_dir)
