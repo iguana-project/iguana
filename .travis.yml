@@ -61,16 +61,19 @@ jobs:
 
     # after that build the docker images
     - <<: *build_tmp
+      if: tag IS blank
       env:
         - VARIANT=development
         - USE_NGINX=false
         - DOCKER_TAG=develop
     - <<: *build_tmp
+      if: tag IS blank
       env:
         - VARIANT=staging
         - USE_NGINX=false
         - DOCKER_TAG=stage
     - <<: *build_tmp
+      if: tag IS blank
       env:
         - VARIANT=staging
         - USE_NGINX=true
