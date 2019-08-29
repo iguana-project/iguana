@@ -598,10 +598,10 @@ class _RunTarget(_Target):
             _CommonTargets.activate_virtual_environment()
 
             # start celery (worker and beat)
-            Popen(["celery", "-A", "common", "worker", "-l", "info"],
+            Popen(["celery", "-A", "common", "worker", "-l", "info", "--pidfile="],
                   stderr=STDOUT, stdout=open(os.path.join(LOG_DIR, "celery-worker.log"), "w+"), bufsize=0,
                   cwd=IGUANA_BASE_DIR)
-            Popen(["celery", "-A", "common", "beat", "-l", "info"],
+            Popen(["celery", "-A", "common", "beat", "-l", "info", "--pidfile="],
                   stderr=STDOUT, stdout=open(os.path.join(LOG_DIR, "celery-beat.log"), "w+"), bufsize=0,
                   cwd=IGUANA_BASE_DIR)
 
