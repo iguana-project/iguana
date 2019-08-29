@@ -66,6 +66,16 @@ jobs:
         - USE_NGINX=false
         - DOCKER_TAG=develop
     - <<: *build_tmp
+      env:
+        - VARIANT=staging
+        - USE_NGINX=false
+        - DOCKER_TAG=stage
+    - <<: *build_tmp
+      env:
+        - VARIANT=staging
+        - USE_NGINX=true
+        - DOCKER_TAG=stage_nginx
+    - <<: *build_tmp
       if: tag =~ ^production-[0-9]+
       env:
         - VARIANT=production
