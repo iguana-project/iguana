@@ -22,6 +22,7 @@ from django.contrib.auth import get_user_model
 from django.conf import settings
 from django.conf.urls import url
 from user_management.urls import urlpatterns
+from common.testcases.generic_testcase_helper import view_and_template, redirect_to_login_and_login_required
 
 
 # creates a temporary view to be able to test the ?next= argument
@@ -63,9 +64,7 @@ class LoginTest(TestCase):
         cls.user = get_user_model().objects.create_user(username, email, password)
 
     def test_login_view_and_template(self):
-        response = self.client.get(reverse('login'))
-        self.assertTemplateUsed(response, 'registration/login.html')
-        self.assertEqual(response.resolver_match.func.__name__, LoginView.as_view().__name__)
+        view_and_template(self, LoginView, 'registration/login.html', 'login')
 
         response = self.client.post(reverse('login'), {'username': username, 'password': password})
         self.assertEqual(response.resolver_match.func.__name__, LoginView.as_view().__name__)

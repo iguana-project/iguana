@@ -20,6 +20,7 @@ from landing_page.views import HomeView
 
 from django.conf import settings
 from django.test.utils import override_settings
+from common.testcases.generic_testcase_helper import view_and_template, redirect_to_login_and_login_required
 
 
 username = 'a'
@@ -32,9 +33,9 @@ sign_up_dict = {'username': username, 'email': email, 'password1': password, 'pa
 class SignUpTest(TestCase):
 
     def test_sign_up_view_and_template(self):
-        response = self.client.get(reverse('sign_up'))
-        self.assertTemplateUsed(response, 'registration/sign_up.html')
+        view_and_template(self, SignUpView, 'registration/sign_up.html', 'sign_up')
 
+        # TODO uses post maybe this can be merged into the view_and_template?
         response = self.client.post(reverse('sign_up'), sign_up_dict)
         self.assertEqual(response.resolver_match.func.__name__, SignUpView.as_view().__name__)
 

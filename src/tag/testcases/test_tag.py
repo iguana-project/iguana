@@ -21,6 +21,8 @@ from project.models import Project
 from tag.models import Tag
 from search.frontend import SearchFrontend
 from django.contrib.auth import get_user_model, login
+from common.testcases.generic_testcase_helper import view_and_template, redirect_to_login_and_login_required
+
 
 p0_name = 'project0'
 p1_name = 'project1'
@@ -62,19 +64,12 @@ class TagTest(TestCase):
         return d[name]
 
     def test_tag_view_and_template(self):
-        response = self.client.get(reverse('tag:tag', kwargs={'project': p0_short}), follow=True)
-        self.assertTemplateUsed(response, 'tag/tag_manage.html')
-        self.assertEqual(response.resolver_match.func.__name__, TagView.as_view().__name__)
+        view_and_template(self, TagView, 'tag/tag_manage.html', 'tag:tag', address_kwargs={'project': p0_short})
 
     def test_redirect_to_login_and_login_required(self):
         self.client.logout()
-        response = self.client.get(reverse('tag:tag', kwargs={'project': p0_short}))
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(response['location'], '/login/?next=' + reverse('tag:tag', kwargs={'project': p0_short}))
-        response = self.client.get(response['location'])
-        # verify the login-required mixin
-        self.assertEqual(response.resolver_match.func.__name__, LoginView.as_view().__name__)
-        self.assertContains(response, 'Please login to see this page.')
+
+        redirect_to_login_and_login_required(self, 'tag:tag', address_kwargs={'project': p0_short})
 
     def test_form(self):
         response = self.client.get(reverse('tag:tag', kwargs={'project': p0_short}))

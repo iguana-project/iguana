@@ -13,6 +13,11 @@ from django.views.generic import View
 
 from django.contrib.auth import get_user_model
 
+from backlog.views import BacklogListView
+from project.models import Project
+from sprint.models import Sprint
+from common.testcases.generic_testcase_helper import view_and_template, redirect_to_login_and_login_required
+
 
 # TODO see sprint/testcases/test_sprint.py for already existing tests and move them if there are only-backlog-tests
 class BacklogTest(TestCase):
@@ -22,24 +27,46 @@ class BacklogTest(TestCase):
         cls.user = get_user_model().objects.create_user('django', 'django@example.com', 'unchained')
 
     def setUp(self):
+        self.project = Project(creator=self.user, name_short='PRJ')
+        self.project.save()
+        # TODO hopefully this will correctly create this sprint as already completed.
+        self.sprint = Sprint(project=self.project, seqnum=3, startdate='2016-03-04', enddate='2016-03-05')
+        self.sprint.save()
         self.client.force_login(self.user)
 
     def test_backlog_view_and_template(self):
-        # TODO TESTCASE see invite_users/testcases/test_invite_users.py as example
+
+        # TODO TESTCASE verify
+        # general backlog
+        # TODO TESTCASE what is wrong here?
+        # view_and_template(self, BacklogListView, 'backlog/backlog_list.html', 'backlog:backlog',
+        #                   address_kwargs={'project': self.project.name_short})
+        # backlog for specific sprint
+        # TODO TESTCASE what is wrong here?
+        # view_and_template(self, BacklogListView, 'backlog/backlog_list.html', 'backlog:backlog',
+        #                   address_kwargs={'project': self.project.name_short, 'sqn_s': 3})
         pass
 
-    def test_rediret_to_login_and_login_required(self):
-        # TODO TESTCASE see invite_users/testcases/test_invite_users.py as example
-        pass
+    def test_redirect_to_login_and_login_required(self):
+        # TODO TESTCASE verify
+        self.client.logout()
+        # general backlog
+        redirect_to_login_and_login_required(self, 'backlog:backlog',
+                                             address_kwargs={'project': self.project.name_short})
+        # backlog for specific sprint
+        redirect_to_login_and_login_required(self, 'backlog:backlog',
+                                             address_kwargs={'project': self.project.name_short, 'sqn_s': 3})
 
-    # TODO see sprint/testcases/test_sprint.py for already existing tests and move them if there are only-backlog-tests
     def test_backlog_list(self):
         # TODO TESTCASE
+        # TODO see sprint/testcases/test_sprint.py for already existing tests
+        #      and move them if there are only-backlog-tests
         pass
 
-    # TODO see sprint/testcases/test_sprint.py for already existing tests and move them if there are only-backlog-tests
     def test_list_current_sprint(self):
         # TODO TESTCASE
+        # TODO see sprint/testcases/test_sprint.py for already existing tests
+        #      and move them if there are only-backlog-tests
         pass
 
     # TODO see sprint/testcases/test_sprint.py for already existing tests and move them if there are only-backlog-tests

@@ -43,6 +43,7 @@ class ProjectUniversalTest(TestCase):
         pass
 
     def test_redirect_to_login_and_login_required(self):
+        # TODO simplify with redirect_to_login_and_login_required - some different status codes are used here
         self.client.force_login(self.user2)
 
         project = Project(creator=self.user, name_short='PRJ')

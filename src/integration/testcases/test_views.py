@@ -17,6 +17,8 @@ from project.models import Project
 from integration.models import SlackIntegration
 from django.contrib.auth import get_user_model
 from integration.views import SlackIntegrationOAuthView
+from common.testcases.generic_testcase_helper import view_and_template, redirect_to_login_and_login_required
+
 
 try:
     from common.settings import SLACK_SECRET, SLACK_VERIFICATION, SLACK_ID, HOST
@@ -46,20 +48,23 @@ class ViewTest(TestCase):
 
     def test_redirect_to_login_and_login_required(self):
         self.client.force_login(self.user2)
-
+        # TODO TESTCASE this uses post - include this in redirect_to_login_required()
         response = self.client.post(reverse('integration:slack:update', kwargs={'pk': 1, 'project': self.short}),
                                     {'channel': 'foo'},
                                     follow=True
                                     )
         self.assertContains(response, "Your account doesn't have access to this page")
+
         si = SlackIntegration.objects.get(pk=self.si.pk)
         self.assertEqual(si.channel, 'channel')
 
+        # TODO TESTCASE this uses post - include this in redirect_to_login_required()
         response = self.client.post(reverse('integration:slack:delete', kwargs={'pk': 1, 'project': self.short}),
                                     {'delete': True},
                                     follow=True
                                     )
         self.assertContains(response, "Your account doesn't have access to this page")
+
         si = SlackIntegration.objects.get(pk=self.si.pk)
         self.assertEqual(si.channel, 'channel')
 

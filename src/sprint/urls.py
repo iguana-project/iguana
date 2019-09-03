@@ -21,7 +21,7 @@ urlpatterns = [
     url(r'^$', views.SprintboardView.as_view(), name='sprintboard'),
     url(r'^newsprint/?$', views.NewSprintView.as_view(), name='newsprint'),
     url(r'^editsprint/'+sprint_sqn_s_pattern+r'/?$', views.SprintEditView.as_view(), name='editsprint'),
-    # NOTE WARNING: this page is broken as ****, in case of the errors described in the relative template
+    # NOTE WARNING: this page is broken because of the errors described in the relative template
     #      the WHOLE PROJECT WILL BE DELETED!!! NOTE DON'T REACTIVATE WITHOUT FIX!!!!!!!!!!!!
     # url(r'^deletesprint/'+sprint_sqn_s_pattern+r'/?$', views.Sprint_Delete_View.as_view(), name='deletesprint'),
     url(r'toggletofromsprint/?$', views.ToggleIssueToFromSprintView.as_view(), name='assigntosprint',),

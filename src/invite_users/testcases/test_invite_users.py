@@ -14,6 +14,7 @@ from django.urls import reverse
 from invite_users.views import InviteUserView, SuccessView
 from user_management.views import LoginView
 from django.contrib.auth import get_user_model, login
+from common.testcases.generic_testcase_helper import view_and_template, redirect_to_login_and_login_required
 
 
 class InviteUsersTest(TestCase):
@@ -27,24 +28,15 @@ class InviteUsersTest(TestCase):
 
     def test_view_and_template(self):
         # invite_users
-        response = self.client.get(reverse('invite_users:invite_users'), follow=True)
-        self.assertTemplateUsed(response, 'invite_users/invite_users.html')
-        self.assertEqual(response.resolver_match.func.__name__, InviteUserView.as_view().__name__)
+        view_and_template(self, InviteUserView, 'invite_users/invite_users.html', 'invite_users:invite_users')
 
         # successfully_invited
-        response = self.client.get(reverse('invite_users:successfully_invited'))
-        self.assertTemplateUsed(response, 'invite_users/successfully_invited.html')
-        self.assertEqual(response.resolver_match.func.__name__, SuccessView.as_view().__name__)
+        view_and_template(self, SuccessView, 'invite_users/successfully_invited.html',
+                          'invite_users:successfully_invited')
 
     def test_redirect_to_login_and_login_required(self):
         self.client.logout()
-        response = self.client.get(reverse('invite_users:invite_users'))
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(response['location'], '/login/?next=' + reverse('invite_users:invite_users'))
-        response = self.client.get(response['location'])
-        # verify the login-required mixin
-        self.assertEqual(response.resolver_match.func.__name__, LoginView.as_view().__name__)
-        self.assertContains(response, 'Please login to see this page.')
+        redirect_to_login_and_login_required(self, 'invite_users:invite_users')
 
     def test_form(self):
         response = self.client.get(reverse('invite_users:invite_users'))

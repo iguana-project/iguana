@@ -25,6 +25,7 @@ from django.core.files import File
 
 from user_management.views import LoginView
 from issue.views import IssueCreateView, IssueEditView, IssueDetailView
+from common.testcases.generic_testcase_helper import view_and_template, redirect_to_login_and_login_required
 
 
 create_template = 'issue/issue_create_view.html'
@@ -54,9 +55,8 @@ class CreateEditDetailTest(TestCase):
 
     def test_view_and_template(self):
         # create
-        response = self.client.get(reverse('issue:create', kwargs={'project': self.project.name_short}))
-        self.assertTemplateUsed(response, create_template)
-        self.assertEqual(response.resolver_match.func.__name__, IssueCreateView.as_view().__name__)
+        view_and_template(self, IssueCreateView, create_template, 'issue:create',
+                          address_kwargs={'project': self.project.name_short})
 
         # create issue for edit and detail tests
         issue = Issue(title="foo")
@@ -65,27 +65,16 @@ class CreateEditDetailTest(TestCase):
         number = issue.number
 
         # edit
-        response = self.client.get(reverse('issue:edit', kwargs={'project': self.project.name_short, 'sqn_i': number}))
-        self.assertTemplateUsed(response, edit_template)
-        self.assertEqual(response.resolver_match.func.__name__, IssueEditView.as_view().__name__)
-
+        view_and_template(self, IssueEditView, edit_template, 'issue:edit',
+                          address_kwargs={'project': self.project.name_short, 'sqn_i': number})
         # detail
-        response = self.client.get(reverse('issue:detail',
-                                           kwargs={'project': self.project.name_short, 'sqn_i': number}))
-        self.assertTemplateUsed(response, detail_template)
-        self.assertEqual(response.resolver_match.func.__name__, IssueDetailView.as_view().__name__)
+        view_and_template(self, IssueDetailView, detail_template, 'issue:detail',
+                          address_kwargs={'project': self.project.name_short, 'sqn_i': number})
 
     def test_redirect_to_login_and_login_required(self):
         self.client.logout()
         # create
-        response = self.client.get(reverse('issue:create', kwargs={'project': self.project.name_short}))
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(response['location'], '/login/?next=' +
-                         reverse('issue:create', kwargs={'project': self.project.name_short}))
-        response = self.client.get(response['location'])
-        # verify the login-required mixin
-        self.assertEqual(response.resolver_match.func.__name__, LoginView.as_view().__name__)
-        self.assertContains(response, 'Please login to see this page.')
+        redirect_to_login_and_login_required(self, 'issue:create', address_kwargs={'project': self.project.name_short})
 
         # create issue for edit and detail tests
         issue = Issue(title="foo")
@@ -94,26 +83,11 @@ class CreateEditDetailTest(TestCase):
         number = issue.number
 
         # edit
-        response = self.client.get(reverse('issue:edit', kwargs={'project': self.project.name_short, 'sqn_i': number}))
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(response['location'], '/login/?next=' +
-                         reverse('issue:edit', kwargs={'project': self.project.name_short, 'sqn_i': number}))
-        response = self.client.get(response['location'])
-        # verify the login-required mixin
-        self.assertEqual(response.resolver_match.func.__name__, LoginView.as_view().__name__)
-        self.assertContains(response, 'Please login to see this page.')
-
+        redirect_to_login_and_login_required(self, 'issue:edit',
+                                             address_kwargs={'project': self.project.name_short, 'sqn_i': number})
         # detail
-        response = self.client.get(reverse('issue:detail',
-                                           kwargs={'project': self.project.name_short, 'sqn_i': number}))
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(response['location'], '/login/?next=' +
-                         reverse('issue:detail', kwargs={'project': self.project.name_short, 'sqn_i': number}))
-        response = self.client.get(response['location'])
-        # verify the login-required mixin
-        self.assertEqual(response.resolver_match.func.__name__, LoginView.as_view().__name__)
-        self.assertContains(response, 'Please login to see this page.')
-        pass
+        redirect_to_login_and_login_required(self, 'issue:detail',
+                                             address_kwargs={'project': self.project.name_short, 'sqn_i': number})
 
     def test_user_passes_test_mixin(self):
         # TODO TESTCASE

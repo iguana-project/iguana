@@ -12,6 +12,8 @@ from django.test import TestCase
 from django.urls.base import reverse
 
 from django.contrib.auth import get_user_model
+from landing_page.views import HomeView
+from common.testcases.generic_testcase_helper import view_and_template, redirect_to_login_and_login_required
 
 
 testUserName = "test"
@@ -29,8 +31,8 @@ class ShowDashboardTest(TestCase):
         self.client.force_login(self.user)
 
     def test_dashboard_view_and_template(self):
-        # TODO TESTCASE see invite_users/testcases/test_invite_users.py as example
-        pass
+        # user is authenticated
+        view_and_template(self, HomeView, 'landing_page/dashboard.html', 'landing_page:home')
 
     def test_rediret_to_login_and_login_required(self):
         # TODO TESTCASE see invite_users/testcases/test_invite_users.py as example

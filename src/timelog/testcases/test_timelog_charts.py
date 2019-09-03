@@ -18,6 +18,7 @@ from issue.models import Issue
 from timelog.models import Timelog
 from kanbancol.models import KanbanColumn
 from django.contrib.auth import get_user_model
+from common.testcases.generic_testcase_helper import view_and_template, redirect_to_login_and_login_required
 
 
 # some fake tests for coverage, todo: QUnit, javascript unit testing
@@ -42,14 +43,10 @@ class TimelogChartsTest(TestCase):
 
     def test_view_and_template(self):
         # activity_chart
-        response = self.client.get(reverse('timelog:activity'))
-        self.assertTemplateUsed(response, 'timelog/timelog_activity.html')
-        self.assertEqual(response.resolver_match.func.__name__, TimelogGetActivityDataView.as_view().__name__)
+        view_and_template(self, TimelogGetActivityDataView, 'timelog/timelog_activity.html', 'timelog:activity')
 
         # last seven day chart
-        response = self.client.get(reverse('timelog:d3'))
-        self.assertTemplateUsed(response, 'timelog/timelog_d3.html')
-        self.assertEqual(response.resolver_match.func.__name__, TimelogD3View.as_view().__name__)
+        view_and_template(self, TimelogD3View, 'timelog/timelog_d3.html', 'timelog:d3')
 
     def test_redirect_to_login_and_login_required(self):
         # TODO TESTCASE

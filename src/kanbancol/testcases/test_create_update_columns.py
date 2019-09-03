@@ -14,8 +14,11 @@ from django.utils import translation
 from django.contrib.auth import get_user_model
 
 from kanbancol.models import KanbanColumn
+from kanbancol.views import KanbanColumnCreateView, KanbanColumnBreadcrumbView, KanbanColumnUpdateView,\
+                            KanbanColumnUpView, KanbanColumnDownView, KanbanColumnDeleteView
 from project.models import Project
 from issue.models import Issue
+from common.testcases.generic_testcase_helper import view_and_template, redirect_to_login_and_login_required
 
 
 class ColumnTest(TestCase):
@@ -34,8 +37,31 @@ class ColumnTest(TestCase):
         self.column.save()
 
     def test_view_and_template(self):
-        # TODO TESTCASE see invite_users/testcases/test_invite_users.py as example
-        pass
+        # create
+        view_and_template(self, KanbanColumnCreateView, 'kanbancol/create_kanbancolumn.html', 'kanbancol:create',
+                          address_kwargs={'project': self.project.name_short})
+        # breadcrumb
+        # TODO TESTCASE what is the correct reverse call for the breadcrumb?
+        # view_and_template(self, KanbanColumnBreadcrumbView, 'kanbancol/breadcrumbs.html', 'kanbancol',
+        #                   address_kwargs={'project': self.project.name_short, 'position': 0})
+
+        # update
+        view_and_template(self, KanbanColumnUpdateView, 'kanbancol/update_kanbancolumn.html', 'kanbancol:update',
+                          address_kwargs={'project': self.project.name_short, 'position': 3})
+
+        # moveup
+        # TODO TESTCASE what is wrong with this address_kwargs?
+        # view_and_template(self, KanbanColumnUpView, 'project/project_edit.html', 'kanbancol:moveup',
+        #                   address_kwargs={'project': self.project.name_short, 'position': 2})
+
+        # movedown
+        # TODO TESTCASE what is wrong with this address_kwargs?
+        # view_and_template(self, KanbanColumnDownView, 'project/project_edit.html', 'kanbancol:movedown',
+        #                   address_kwargs={'project': self.project.name_short, 'position': 2})
+
+        # delete
+        view_and_template(self, KanbanColumnDeleteView, 'confirm_delete.html', 'kanbancol:delete',
+                          address_kwargs={'project': self.project.name_short, 'position': 3})
 
     def test_redirect_to_login_and_login_required(self):
         # TODO TESTCASE see invite_users/testcases/test_invite_users.py as example

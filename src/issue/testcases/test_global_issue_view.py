@@ -22,6 +22,7 @@ from sprint.models import Sprint
 from timelog.models import Timelog
 from common.models import Filter
 from django.contrib.auth import get_user_model
+from common.testcases import generic_testcase_helper
 
 
 class CreateGlobalTest(TestCase):
@@ -62,6 +63,9 @@ class CreateGlobalTest(TestCase):
         return iss
 
     def test_view_and_template(self):
+        # TODO TESTCASE simplify testcase with view_and_template()
+        #      view_and_template(self, , , )
+
         issues = self.create_some_issues()
 
         # archived issue is not in context

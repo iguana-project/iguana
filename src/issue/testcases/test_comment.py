@@ -25,6 +25,7 @@ from issue.models import Issue, Comment
 from django.contrib.auth import get_user_model
 
 from common.settings import MEDIA_ROOT
+from common.testcases.generic_testcase_helper import view_and_template, redirect_to_login_and_login_required
 
 
 class CommentTest(TestCase):
@@ -53,11 +54,9 @@ class CommentTest(TestCase):
         comment.save()
 
         # edit comment-view
-        response = self.client.get(reverse('issue:edit_comment',
-                                   kwargs={'project': self.project.name_short, 'sqn_i': 1, 'pk_c': 1}),
-                                   {'text': "comment text"})
-        self.assertTemplateUsed(response, 'comment/comment_edit.html')
-        self.assertEqual(response.resolver_match.func.__name__, IssueEditCommentView.as_view().__name__)
+        view_and_template(self, IssueEditCommentView, 'comment/comment_edit.html', 'issue:edit_comment',
+                          address_kwargs={'project': self.project.name_short, 'sqn_i': 1, 'pk_c': 1},
+                          get_kwargs={'text': "comment text"})
 
     def test_redirect_to_login_and_login_required(self):
         # create comment + logout
@@ -66,15 +65,8 @@ class CommentTest(TestCase):
         self.client.logout()
 
         # edit comment-view
-        response = self.client.get(reverse('issue:edit_comment',
-                                   kwargs={'project': self.project.name_short, 'sqn_i': 1, 'pk_c': 1}))
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(response['location'], '/login/?next=' + reverse('issue:edit_comment',
-                         kwargs={'project': self.project.name_short, 'sqn_i': 1, 'pk_c': 1}))
-        response = self.client.get(response['location'])
-        # verify the login-required mixin
-        self.assertEqual(response.resolver_match.func.__name__, LoginView.as_view().__name__)
-        self.assertContains(response, 'Please login to see this page.')
+        redirect_to_login_and_login_required(self, 'issue:edit_comment',
+                                             address_kwargs={'project': self.project.name_short, 'sqn_i': 1, 'pk_c': 1})
 
     def test_user_passes_test_mixin(self):
         proj_name2 = "project"
