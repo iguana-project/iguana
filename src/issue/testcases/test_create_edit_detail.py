@@ -71,6 +71,8 @@ class CreateEditDetailTest(TestCase):
         view_and_template(self, IssueDetailView, detail_template, 'issue:detail',
                           address_kwargs={'project': self.project.name_short, 'sqn_i': number})
 
+        # TODO TESTCASE delete
+
     def test_redirect_to_login_and_login_required(self):
         self.client.logout()
         # create
@@ -88,6 +90,8 @@ class CreateEditDetailTest(TestCase):
         # detail
         redirect_to_login_and_login_required(self, 'issue:detail',
                                              address_kwargs={'project': self.project.name_short, 'sqn_i': number})
+
+        # TODO TESTCASE delete
 
     def test_user_passes_test_mixin(self):
         # TODO TESTCASE

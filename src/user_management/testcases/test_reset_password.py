@@ -29,9 +29,23 @@ class PasswordResetTest(TestCase):
         # NOTE: this element gets modified by some of those tests, so this shall NOT be created in setUpTestData()
         self.user = get_user_model().objects.create_user(username, email, password)
 
-    def test_password_reset_template(self):
+    def test_view_and_template(self):
+        # TODO use view_and_template()
         response = self.client.get(reverse('password_reset'))
         self.assertTemplateUsed(response, pw_reset_template)
+        # TODO TESTCASE see invite_users
+        #      use view_and_template()
+        # TODO which views?
+        #      - PasswordResetView - password_reset
+        #      - PasswordResetSuccessView - password_reset_done
+
+    def test_redirect_to_login_and_login_required(self):
+        self.client.logout()
+        # TODO TESTCASE see invite_users
+        #      redirect_to_login_and_login_required()
+        # TODO which views?
+        #      - PasswordResetView - password_reset
+        #      - PasswordResetSuccessView - password_reset_done
 
     def test_post_mail_get_response_set_new_password(self):
         response = self.client.post(reverse('password_reset'), {'email': email})

@@ -32,12 +32,14 @@ sign_up_dict = {'username': username, 'email': email, 'password1': password, 'pa
 
 class SignUpTest(TestCase):
 
-    def test_sign_up_view_and_template(self):
+    def test_view_and_template(self):
         view_and_template(self, SignUpView, 'registration/sign_up.html', 'sign_up')
 
         # TODO uses post maybe this can be merged into the view_and_template?
         response = self.client.post(reverse('sign_up'), sign_up_dict)
         self.assertEqual(response.resolver_match.func.__name__, SignUpView.as_view().__name__)
+
+        # TODO TESTCASE VerifyEmailAddress - verify_email
 
     def test_email_verification_view_and_template(self):
         # trigger email

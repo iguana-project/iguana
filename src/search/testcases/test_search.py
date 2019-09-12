@@ -56,25 +56,33 @@ class SearchTest(TestCase):
         cls.issuep2.due_date = datetime.date(2000, 1, 1)
         cls.issuep2.save()
 
-    def views_and_templates(self):
-        # TODO TESTCASE
-        # TODO RecentQueriesView
-        # TODO ResultView
-        # TODO AdvancedSearchView
-        # TODO SearchEditView
-        # TODO MakeSearchPersistentView
-        # TODO DelSearchPersistentView
+    def test_view_and_template(self):
+        # TODO TESTCASE see invite_users
+        #      use view_and_template()
+        # TODO which views?
+        #      - SearchView - search
+        #      - ResultView - resultpage
+        #      - AdvancedSearchView - advanced
+        #      - SearchEditView - edit
+        #      - MakeSearchPersistentView - makepersistent
+        #      - DelSearchPersistentView - delpersistent
+        #      - RecentQueriesView - TODO this doesn't exist anymore - which one represents this now?
+        #      - ...
         pass
 
-    def redirect_to_login_and_login_required(self):
-        # TODO TESTCASE
-        # TODO RecentQueriesView
-        # TODO ResultView
-        # TODO AdvancedSearchView
-        # TODO SearchEditView
-        # TODO MakeSearchPersistentView
-        # TODO DelSearchPersistentView
-        # TODO ProjectAutocomplete
+    def test_redirect_to_login_and_login_required(self):
+        self.client.logout()
+        # TODO TESTCASE see invite_users
+        #      redirect_to_login_and_login_required()
+        # TODO which views?
+        #      - SearchView - search
+        #      - ResultView - resultpage
+        #      - AdvancedSearchView - advanced
+        #      - SearchEditView - edit
+        #      - MakeSearchPersistentView - makepersistent
+        #      - DelSearchPersistentView - delpersistent
+        #      - RecentQueriesView - TODO this doesn't exist anymore - which one represents this now?
+        #      - ...
         pass
 
     def forms(self):

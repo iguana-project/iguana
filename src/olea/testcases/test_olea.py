@@ -45,6 +45,23 @@ class FormTest(TestCase):
         kanbancol = KanbanColumn(project=self.project, position=4, name='ReallyDone')
         kanbancol.save()
 
+    def test_view_and_template(self):
+        # TODO TESTCASE see invite_users
+        #      use view_and_template()
+        # TODO which views?
+        #      - ProcessOleaView - processOlea
+        #      - ...
+        pass
+
+    def test_redirect_to_login_and_login_required(self):
+        self.client.logout()
+        # TODO TESTCASE see invite_users
+        #      redirect_to_login_and_login_required()
+        # TODO which views?
+        #      - ProcessOleaView - processOlea
+        #      - ...
+        pass
+
     def test_lexer(self):
         lexer = lex.lex(module=issue.lexer)
 

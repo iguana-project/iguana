@@ -57,6 +57,14 @@ class TimelogTest(TestCase):
         self.issue2.save()
         self.issue.assignee.add(self.user)
 
+    def test_view_and_template(self):
+        # TODO TESTCASE
+        pass
+
+    def test_redirect_to_login_and_login_required(self):
+        # TODO TESTCASE
+        pass
+
     def test_punch_in_out_0(self):
         response = self.client.post(reverse('issue:punch',
                                             kwargs={"project": self.issue.project.name_short,

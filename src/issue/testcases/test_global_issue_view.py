@@ -65,7 +65,43 @@ class CreateGlobalTest(TestCase):
     def test_view_and_template(self):
         # TODO TESTCASE simplify testcase with view_and_template()
         #      view_and_template(self, , , )
+        # TODO which views?
+        #      - url(r'^$', views.IssueGlobalView.as_view(), name='issue_global_view'),
+        #      - url(r'^project/'+project_pattern+r'issue/', include([
+        #      -   url(r'assigntome/?$', views.AssignIssueToMeView.as_view(), name='assigntome',),
+        #      -   url(r'^rmfromme/?$', views.RemoveIssueFromMeView.as_view(), name='rmfromme',),
+        #      -   url(r'^setkanbancol/?$', views.AddIssueToKanbancolView.as_view(), name='setkanbancol',),
+        #      -   url(r'^archivecol/?$', views.ArchiveMultipleIssueView.as_view(), name='archivecol',),
+        #      -   url(r'^archiveissue/?$', views.ArchiveSingleIssueView.as_view(), name='archiveissue',),
+        #      -   url(r'^unarchiveissue/?$', views.UnArchiveSingleIssueView.as_view(), name='unarchiveissue',),
+        #      - url(r'^(?P<sqn_i>[0-9]+)/', include([
+        #      -     url(r'^delete/?$', views.IssueDeleteView.as_view(), name='delete'),
+        #      - ]))
+        #      - url(r'^(?P<sqn_i>[0-9]+)/', include([
+        #      -    url(r'^punch/?$', tl_views.PunchView.as_view(), name='punch'),
+        pass
 
+    def test_redirect_to_login_and_loign_required(self):
+        # TODO TESTCASE simplify testcase with view_and_template()
+        #      redirect_to_login_and_login_required(self, address_pattern, address_kwargs=None, get_kwargs=None,
+        #                                 alternate_error_message=None):
+        # TODO which views?
+        #      - url(r'^$', views.IssueGlobalView.as_view(), name='issue_global_view'),
+        #      - url(r'^project/'+project_pattern+r'issue/', include([
+        #      -   url(r'assigntome/?$', views.AssignIssueToMeView.as_view(), name='assigntome',),
+        #      -   url(r'^rmfromme/?$', views.RemoveIssueFromMeView.as_view(), name='rmfromme',),
+        #      -   url(r'^setkanbancol/?$', views.AddIssueToKanbancolView.as_view(), name='setkanbancol',),
+        #      -   url(r'^archivecol/?$', views.ArchiveMultipleIssueView.as_view(), name='archivecol',),
+        #      -   url(r'^archiveissue/?$', views.ArchiveSingleIssueView.as_view(), name='archiveissue',),
+        #      -   url(r'^unarchiveissue/?$', views.UnArchiveSingleIssueView.as_view(), name='unarchiveissue',),
+        #      - url(r'^(?P<sqn_i>[0-9]+)/', include([
+        #      -     url(r'^delete/?$', views.IssueDeleteView.as_view(), name='delete'),
+        #      - ]))
+        #      - url(r'^(?P<sqn_i>[0-9]+)/', include([
+        #      -    url(r'^punch/?$', tl_views.PunchView.as_view(), name='punch'),
+        pass
+
+    def test_issue_properties(self):
         issues = self.create_some_issues()
 
         # archived issue is not in context

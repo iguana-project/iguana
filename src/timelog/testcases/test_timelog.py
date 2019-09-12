@@ -60,30 +60,50 @@ class TimelogTest(TestCase):
         self.time = now().strftime("%Y-%m-%d %H:%M:%S")
 
     def test_view_and_template(self):
-        # TODO TESTCASE
-        # TODO timelog:loginfo
-        # TODO issue:log
-        # TODO issue:logedit
-        # TODO project:usertimelog
-        # TODO project:timelog
+        # TODO TESTCASE see invite_users
+        #      use view_and_template()
+        # TODO which views?
+        #      - timelog:loginfo
+        #      - timelog:archiv
+        #      - issue:log
+        #      - issue:logs with (?P<sqn_l>[0-9]+)/edit/ (logedit)
+        #      - issue:logs with  (?P<sqn_l>[0-9]+)/delete/? (logdelete)
+        #      - issue:logedit
+        #      - issue:logdelete
+        #      - ProjectUserTimelogView - project:usertimelog
+        #      - ProjectDetailTimelogView - project:timelog
+        #      - ...
         pass
 
     def test_redirect_to_login_and_login_required(self):
-        # TODO TESTCASE
-        # TODO timelog:loginfo
-        # TODO issue:log
-        # TODO issue:logedit
-        # TODO project:usertimelog
-        # TODO project:timelog
+        self.client.logout()
+        # TODO TESTCASE see invite_users
+        #      redirect_to_login_and_login_required()
+        # TODO which views?
+        #      - timelog:loginfo
+        #      - timelog:archiv
+        #      - issue:log
+        #      - issue:logs with (?P<sqn_l>[0-9]+)/edit/ (logedit)
+        #      - issue:logs with  (?P<sqn_l>[0-9]+)/delete/? (logdelete)
+        #      - issue:logedit
+        #      - issue:logdelete
+        #      - ProjectUserTimelogView - project:usertimelog
+        #      - ProjectDetailTimelogView - project:timelog
+        #      - ...
         pass
 
     def test_user_passes_test_mixin(self):
         # TODO TESTCASE
-        # TODO timelog:loginfo
-        # TODO issue:log
-        # TODO issue:logedit
-        # TODO project:usertimelog
-        # TODO project:timelog
+        #      - timelog:loginfo
+        #      - timelog:archiv
+        #      - issue:log
+        #      - issue:logs with (?P<sqn_l>[0-9]+)/edit/ (logedit)
+        #      - issue:logs with  (?P<sqn_l>[0-9]+)/delete/? (logdelete)
+        #      - issue:logedit
+        #      - issue:logdelete
+        #      - ProjectUserTimelogView - project:usertimelog
+        #      - ProjectDetailTimelogView - project:timelog
+        #      - ...
         pass
 
     def test_log_time_and_redirect(self):

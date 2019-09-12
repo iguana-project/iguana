@@ -34,15 +34,29 @@ class ProjectUniversalTest(TestCase):
         self.client.force_login(self.user)
 
     def test_view_and_template(self):
-        # TODO TESTCASE
-        # TODO your projects
-        # TODO create new projects
-        # TODO detail project
-        # TODO edit project
-        # TODO delete project
+        # TODO TESTCASE see invite_users
+        #      use view_and_template()
+        # TODO which views?
+        #      - ProjectListAllView - list
+        #      - ProjectCreateView - create
+        #      - ProjectDetailView - detail
+        #      - ProjectEditView - edit
+        #      - ProjectDeleteView - delete
+        #      - LeaveProjectView - leave
         pass
 
     def test_redirect_to_login_and_login_required(self):
+        self.client.logout()
+        # TODO TESTCASE see invite_users
+        #      redirect_to_login_and_login_required()
+        # TODO which views?
+        #      - ProjectListAllView - list
+        #      - ProjectCreateView - create
+        #      - ProjectDetailView - detail
+        #      - ProjectEditView - edit
+        #      - LeaveProjectView - leave
+        #      - ...
+
         # TODO simplify with redirect_to_login_and_login_required - some different status codes are used here
         self.client.force_login(self.user2)
 

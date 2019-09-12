@@ -64,7 +64,17 @@ class ColumnTest(TestCase):
                           address_kwargs={'project': self.project.name_short, 'position': 3})
 
     def test_redirect_to_login_and_login_required(self):
-        # TODO TESTCASE see invite_users/testcases/test_invite_users.py as example
+        self.client.logout()
+        # TODO TESTCASE see invite_users
+        #      redirect_to_login_and_login_required()
+        # TODO which views?
+        #      - create
+        #      - update
+        #      - delete
+        #      - moveup
+        #      - movedown
+        #      - breadcrumb
+        #      - ...
         pass
 
     def test_user_passes_test_mixin(self):

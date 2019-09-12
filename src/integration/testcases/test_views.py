@@ -46,6 +46,16 @@ class ViewTest(TestCase):
         self.si.project = self.project
         self.si.save()
 
+    def test_view_and_template(self):
+        # TODO TESTCASE invite_users
+        #      use view_and_template()
+        # TODO which views?
+        #      - integration:slack:update
+        #      - integration:slack:delete
+        #      - integration:slack:auth
+        #      - ...
+        pass
+
     def test_redirect_to_login_and_login_required(self):
         self.client.force_login(self.user2)
         # TODO TESTCASE this uses post - include this in redirect_to_login_required()
@@ -67,6 +77,8 @@ class ViewTest(TestCase):
 
         si = SlackIntegration.objects.get(pk=self.si.pk)
         self.assertEqual(si.channel, 'channel')
+
+        # TODO TESTCASE SlackIntegrationOAuthView - integration:slack:auth
 
         self.client.force_login(self.user)
 

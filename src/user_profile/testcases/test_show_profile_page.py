@@ -32,6 +32,30 @@ class ShowProfilePageTest(TestCase):
         self.client.force_login(self.user)
 
     def test_view_and_template(self):
+        # TODO TESTCASE see invite_users
+        #      use view_and_template()
+        # TODO which views?
+        #      - breadcrumb?
+        #      - ShowProfilePageView - user_profile_page
+        #      - EditProfilePageView - edit_profile
+        #      - ToggleNotificationView - toggle_notification
+        #      - ...
+        pass
+
+    def test_redirect_to_login_and_login_required(self):
+        self.client.logout()
+        redirect_to_login_and_login_required(self, 'user_profile:user_profile_page',
+                                             address_kwargs={"username": user_name})
+
+        # TODO TESTCASE see invite_users
+        #      use view_and_template()
+        # TODO which views?
+        #      - breadcrumb?
+        #      - EditProfilePageView - edit_profile
+        #      - ToggleNotificationView - toggle_notification
+        #      - ...
+
+    def test_show_other_user_profile_page(self):
         otheruser = get_user_model().objects.create_user('uname', 'umail@a.b', 'abcd')
 
         sharedproject = Project(creator=self.user, name_short='SPRJ')
@@ -50,18 +74,12 @@ class ShowProfilePageTest(TestCase):
         notsharedissue.save()
         notsharedissue.assignee.add(self.user)
 
-        # TODO this doesn't look like the typical view_and_template test - TODO add proper view_and_template test
         response = self.client.get(reverse('user_profile:user_profile_page', kwargs={"username": otheruser.username}))
         self.assertContains(response, otheruser.username)
         self.assertContains(response, sharedproject)
         self.assertContains(response, sharedissue)
         self.assertNotIn(notsharedissue, response.context['sharedissues'])
         self.assertNotIn(notsharedproject, response.context['sharedprojects'])
-
-    def test_redirect_to_login_and_login_required(self):
-        self.client.logout()
-        redirect_to_login_and_login_required(self, 'user_profile:user_profile_page',
-                                             address_kwargs={"username": user_name})
 
     def test_show_user_profile_page(self):
         response = self.client.get(reverse('user_profile:user_profile_page', kwargs={"username": user_name}))

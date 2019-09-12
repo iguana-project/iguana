@@ -58,6 +58,8 @@ class CommentTest(TestCase):
                           address_kwargs={'project': self.project.name_short, 'sqn_i': 1, 'pk_c': 1},
                           get_kwargs={'text': "comment text"})
 
+        # TODO TESTCASE issue:delete_comment
+
     def test_redirect_to_login_and_login_required(self):
         # create comment + logout
         comment = Comment(text="comment text", creator=self.user, issue=self.issue)
@@ -67,6 +69,8 @@ class CommentTest(TestCase):
         # edit comment-view
         redirect_to_login_and_login_required(self, 'issue:edit_comment',
                                              address_kwargs={'project': self.project.name_short, 'sqn_i': 1, 'pk_c': 1})
+
+        # TODO TESTCASE issue:delete_comment
 
     def test_user_passes_test_mixin(self):
         proj_name2 = "project"

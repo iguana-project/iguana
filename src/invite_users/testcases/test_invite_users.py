@@ -37,6 +37,7 @@ class InviteUsersTest(TestCase):
     def test_redirect_to_login_and_login_required(self):
         self.client.logout()
         redirect_to_login_and_login_required(self, 'invite_users:invite_users')
+        redirect_to_login_and_login_required(self, 'invite_users:successfully_invited')
 
     def test_form(self):
         response = self.client.get(reverse('invite_users:invite_users'))

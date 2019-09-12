@@ -35,6 +35,25 @@ class ProtectedMediaDirTest(TestCase):
     def setUp(self):
         self.client.force_login(self.user)
 
+    def test_view_and_template(self):
+        # TODO TESTCASE invite_users
+        #      use view_and_template()
+        # TODO which views?
+        #      - ShowProtectedFilesView - media/avatars
+        #      - ShowProtectedFilesView - media/attachments
+        #      - ...
+        pass
+
+    def test_redirect_to_login_and_login_required(self):
+        self.client.logout()
+        # TODO TESTCASE invite_users
+        #      redirect_to_login_and_login_required()
+        # TODO which views?
+        #      - ShowProtectedFilesView - media/avatars
+        #      - ShowProtectedFilesView - media/attachments
+        #      - ...
+        pass
+
     @classmethod
     def tearDownClass(cls):
         # remove the media file again

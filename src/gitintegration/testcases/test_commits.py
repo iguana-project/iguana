@@ -46,6 +46,20 @@ class GitFrontendTest(TestCase):
                            type="Bug")
         self.issue.save()
 
+    def test_view_and_template(self):
+        # TODO TESTCASE invite_users
+        #      use view_and_template()
+        # TODO which views?
+        #      - issue:commit_diff
+        pass
+
+    def test_redirect_to_login_and_login_required(self):
+        self.client.logout()
+        # TODO TESTCASE invite_users
+        #      redirect_to_login_and_login_required()
+        # TODO which views?
+        #      - issue:commit_diff
+
     def test_clone_and_import(self):
         repo_path = '/tmp/gitpythonrepo'
 

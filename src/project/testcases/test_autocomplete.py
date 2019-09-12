@@ -53,6 +53,27 @@ class AutocompletetTest(TestCase):
                             due_date='2016-12-16', kanbancol=self.kanbancol, storypoints='3')
         self.issue2.save()
 
+    def test_view_and_template(self):
+        # TODO TESTCASE see invite_users
+        #      use view_and_template()
+        # TODO which views?
+        #      - UserAutocompleteView - usarac
+        #      - IssueAutocompleteView - issueac
+        #      - TagAutocompleteView - tagac
+        #      - ...
+        pass
+
+    def test_redirect_to_login_and_login_required(self):
+        self.client.logout()
+        # TODO TESTCASE see invite_users
+        #      redirect_to_login_and_login_required()
+        # TODO which views?
+        #      - UserAutocompleteView - usarac
+        #      - IssueAutocompleteView - issueac
+        #      - TagAutocompleteView - tagac
+        #      - ...
+        pass
+
     # create project(developer: all), edit project(developer: all, manager: all)
     def test_create_edit_project(self):
         # all user

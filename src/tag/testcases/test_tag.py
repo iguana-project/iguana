@@ -68,7 +68,6 @@ class TagTest(TestCase):
 
     def test_redirect_to_login_and_login_required(self):
         self.client.logout()
-
         redirect_to_login_and_login_required(self, 'tag:tag', address_kwargs={'project': p0_short})
 
     def test_form(self):

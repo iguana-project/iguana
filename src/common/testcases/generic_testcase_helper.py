@@ -12,6 +12,7 @@ def view_and_template(self, view, template, address_pattern, address_kwargs=None
         response = self.client.get(reverse(address_pattern, kwargs=address_kwargs), follow=True)
     self.assertTemplateUsed(response, template)
     self.assertEqual(response.resolver_match.func.__name__, view.as_view().__name__)
+    return response
 
 
 def redirect_to_login_and_login_required(self, address_pattern, address_kwargs=None, get_kwargs=None,

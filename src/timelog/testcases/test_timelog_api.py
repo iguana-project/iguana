@@ -46,15 +46,26 @@ class TimelogApiTest(TestCase):
         self.issue2.save()
 
     def test_view_and_template(self):
-        # TODO TESTCASE
-        # TODO timelog:activity
-        # TODO timelog:lastweek
+        # TODO TESTCASE see invite_users
+        #      use view_and_template()
+        # TODO which views?
+        #      - timelog:api_last_7_days
+        #      - timelog:api_activity
+        #      - timelog:api_project_activity
+        #      - timelog:api_logs_on_date
+        #      - ...
         pass
 
     def test_redirect_to_login_and_login_required(self):
-        # TODO TESTCASE
-        # TODO timelog:activity
-        # TODO timelog:lastweek
+        self.client.logout()
+        # TODO TESTCASE see invite_users
+        #      redirect_to_login_and_login_required()
+        # TODO which views?
+        #      - timelog:api_last_7_days
+        #      - timelog:api_activity
+        #      - timelog:api_project_activity
+        #      - timelog:api_logs_on_date
+        #      - ...
         pass
 
     def test_user_passes_test_mixin(self):

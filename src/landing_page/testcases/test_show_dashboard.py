@@ -30,12 +30,21 @@ class ShowDashboardTest(TestCase):
     def setUp(self):
         self.client.force_login(self.user)
 
-    def test_dashboard_view_and_template(self):
-        # user is authenticated
+    def test_view_and_template(self):
         view_and_template(self, HomeView, 'landing_page/dashboard.html', 'landing_page:home')
+        # TODO TESTCASE see invite_users
+        #      use view_and_template()
+        # TODO which views?
+        #      - ...
+        pass
 
-    def test_rediret_to_login_and_login_required(self):
-        # TODO TESTCASE see invite_users/testcases/test_invite_users.py as example
+    def test_redirect_to_login_and_login_required(self):
+        self.client.logout()
+        # TODO TESTCASE see invite_users
+        #      redirect_to_login_and_login_required()
+        # TODO which views?
+        #      - HomeView - landing_page:home
+        #      - ...
         pass
 
     def test_show_dashboard_when_logged_in(self):

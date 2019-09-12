@@ -36,6 +36,23 @@ class CreateArchiveTest(TestCase):
         self.project.manager.add(self.user)
         self.project.developer.add(self.user)
 
+    def test_view_and_template(self):
+        # TODO TESTCASE invite_users
+        #      use view_and_template()
+        # TODO which views?
+        #      - 'archive'
+        #      - ...
+        pass
+
+    def test_redirect_to_login_and_login_required(self):
+        self.client.logout()
+        # TODO TESTCASE invite_users
+        #      redirect_to_login_and_login_required()
+        # TODO which views?
+        #      - 'archive'
+        #      - ...
+        pass
+
     def test_sprints_and_issues_in_archive_view(self):
         newsprint = Sprint(project=self.project)
         newsprint.save()

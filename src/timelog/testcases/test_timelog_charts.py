@@ -47,11 +47,20 @@ class TimelogChartsTest(TestCase):
 
         # last seven day chart
         view_and_template(self, TimelogD3View, 'timelog/timelog_d3.html', 'timelog:d3')
+        # TODO TESTCASE see invite_users
+        #      use view_and_template()
+        # TODO which views?
+        #      - ...
+        pass
 
     def test_redirect_to_login_and_login_required(self):
-        # TODO TESTCASE
-        # TODO activity
-        # TODO d3
+        self.client.logout()
+        # TODO TESTCASE see invite_users
+        #      redirect_to_login_and_login_required()
+        # TODO which views?
+        #      - timelog:activity
+        #      - timelog:d3
+        #      - ...
         pass
 
     def test_user_passes_test_mixin(self):

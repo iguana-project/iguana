@@ -38,19 +38,30 @@ class SprintTest(TestCase):
         self.sprint.save()
 
     def test_view_and_template(self):
-        # TODO TESTCASE
-        # TODO NewSprint
-        # TODO StartSprint
-        # TODO StopSprint
-        # TODO Sprint_Edit_View
+        # TODO TESTCASE see invite_users
+        #      use view_and_template()
+        # TODO which views?
+        #      - Sprintboard - sprintboard
+        #      - NewSprint - newsprint
+        #      - StartSprint - startsprint
+        #      - StopSprint - stopsprint
+        #      - SprintEditView - editsprint
+        #      - ToggleIssueToFromSprintView - assigntosprint
+        #      - ...
         pass
 
     def test_redirect_to_login_and_login_required(self):
-        # TODO TESTCASE
-        # TODO NewSprint
-        # TODO StartSprint
-        # TODO StopSprint
-        # TODO Sprint_Edit_View
+        self.client.logout()
+        # TODO TESTCASE see invite_users
+        #      redirect_to_login_and_login_required()
+        # TODO which views?
+        #      - Sprintboard - sprintboard
+        #      - NewSprint - newsprint
+        #      - StartSprint - startsprint
+        #      - StopSprint - stopsprint
+        #      - SprintEditView - editsprint
+        #      - ToggleIssueToFromSprintView - assigntosprint
+        #      - ...
         pass
 
     def test_user_passes_test_mixin(self):

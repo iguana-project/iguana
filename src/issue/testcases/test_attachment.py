@@ -45,6 +45,23 @@ class AttachmentTest(TestCase):
         self.issue = Issue(title="Test-Issue", project=self.project, kanbancol=self.column, type="Bug")
         self.issue.save()
 
+    def test_view_and_template(self):
+        # TODO TESTCASE invite_users
+        #      use view_and_template()
+        # TODO which views?
+        #      - issue:download_attachment
+        #      - issue:delete_attachment
+        #      - ...
+        pass
+
+    def test_redirect_to_login_and_login_required(self):
+        self.client.logout()
+        # TODO TESTCASE invite_users
+        #      redirect_to_login_and_login_required()
+        # TODO which views?
+        #      - issue:download_attachment
+        pass
+
     def test_attachments_from_other_issues_of_same_project_invisible(self):
         # TODO TESTCASE
         pass
