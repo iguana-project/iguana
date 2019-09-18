@@ -39,6 +39,8 @@ For more detailed documentation including a list of features see our github docu
 	For nicer formatting of comments and descriptions.
 * [Ansible](#using-ansible-for-deployment)<br />
 	Easy and fast start due to the usage of ansible
+* [Docker](#docker)<br />
+	Alternatively an even easier and faster start with Docker
 
 ## Installation
 
