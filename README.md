@@ -287,6 +287,9 @@ Normally there's no need to change these settings.
 **TODO**: describe settings.json
 
 
+## Plan of the future
+For short and long term plans see the [official documentation](https://iguana-project.github.io/#plans).
+
 ## License
 Iguana was mainly developed with the Django framework (https://www.djangoproject.com).
 
