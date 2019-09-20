@@ -22,6 +22,9 @@ from sprint.models import Sprint
 from timelog.models import Timelog
 from django.contrib.auth import get_user_model
 
+from archive.views import ArchivedIssuesView
+from common.testcases.generic_testcase_helper import view_and_template, redirect_to_login_and_login_required
+
 
 class CreateArchiveTest(TestCase):
     @classmethod
@@ -37,21 +40,12 @@ class CreateArchiveTest(TestCase):
         self.project.developer.add(self.user)
 
     def test_view_and_template(self):
-        # TODO TESTCASE invite_users
-        #      use view_and_template()
-        # TODO which views?
-        #      - 'archive'
-        #      - ...
-        pass
+        view_and_template(self, ArchivedIssuesView,  'archive/archived_issues_view.html',
+                          'archive:archive', address_kwargs={'project': 'PRJ'})
 
     def test_redirect_to_login_and_login_required(self):
         self.client.logout()
-        # TODO TESTCASE invite_users
-        #      redirect_to_login_and_login_required()
-        # TODO which views?
-        #      - 'archive'
-        #      - ...
-        pass
+        redirect_to_login_and_login_required(self, 'archive:archive', address_kwargs={'project': 'PRJ'})
 
     def test_sprints_and_issues_in_archive_view(self):
         newsprint = Sprint(project=self.project)

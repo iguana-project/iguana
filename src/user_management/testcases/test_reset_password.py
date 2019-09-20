@@ -14,6 +14,9 @@ from django.core import mail
 
 from django.contrib.auth import get_user_model
 
+from user_management.views import PasswordResetView, PasswordResetSuccessView
+from common.testcases.generic_testcase_helper import view_and_template, redirect_to_login_and_login_required
+
 username = 'test'
 email = 'test@testing.com'
 password = 'test1234'
@@ -30,22 +33,27 @@ class PasswordResetTest(TestCase):
         self.user = get_user_model().objects.create_user(username, email, password)
 
     def test_view_and_template(self):
-        # TODO use view_and_template()
-        response = self.client.get(reverse('password_reset'))
-        self.assertTemplateUsed(response, pw_reset_template)
-        # TODO TESTCASE see invite_users
-        #      use view_and_template()
-        # TODO which views?
-        #      - PasswordResetView - password_reset
-        #      - PasswordResetSuccessView - password_reset_done
+        # this tests only the get requests
+        # PasswordResetView
+        view_and_template(self, PasswordResetView, pw_reset_template, 'password_reset')
+        # PasswordResetSuccessView
+        view_and_template(self, PasswordResetSuccessView, pw_reset_done_template, 'password_reset_done')
 
-    def test_redirect_to_login_and_login_required(self):
+        # TODO TESTCASE VerifyEmailAddress - this requires a post request
+
+    # there is no test_redirect_to_login_and_login_required() because the actual use of this view
+    # is to provide logged out
+    def test_redirect_to_login_and_login_NOT_required(self):
         self.client.logout()
-        # TODO TESTCASE see invite_users
-        #      redirect_to_login_and_login_required()
-        # TODO which views?
-        #      - PasswordResetView - password_reset
-        #      - PasswordResetSuccessView - password_reset_done
+        # PasswordResetView
+        response = self.client.get(reverse('password_reset'))
+        self.assertContains(response, "Forgot your password? Enter your email address below, " +
+                            "and we'll email instructions for setting a new one.")
+        # PasswordResetSuccessView
+        response = self.client.get(reverse('password_reset_done'))
+        self.assertContains(response, "We've emailed instructions to you for setting your password.")
+
+        # TODO TESTCASE VerifyEmailAddress - this requires a post request
 
     def test_post_mail_get_response_set_new_password(self):
         response = self.client.post(reverse('password_reset'), {'email': email})

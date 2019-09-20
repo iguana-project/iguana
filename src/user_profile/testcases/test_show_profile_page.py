@@ -15,6 +15,7 @@ from project.models import Project
 from issue.models import Issue
 from user_management.views import LoginView
 from django.contrib.auth import get_user_model
+from user_profile.views import ShowProfilePageView, EditProfilePageView, ToggleNotificationView
 from common.testcases.generic_testcase_helper import view_and_template, redirect_to_login_and_login_required
 
 user_name = "test"
@@ -32,28 +33,30 @@ class ShowProfilePageTest(TestCase):
         self.client.force_login(self.user)
 
     def test_view_and_template(self):
-        # TODO TESTCASE see invite_users
-        #      use view_and_template()
-        # TODO which views?
-        #      - breadcrumb?
-        #      - ShowProfilePageView - user_profile_page
-        #      - EditProfilePageView - edit_profile
-        #      - ToggleNotificationView - toggle_notification
+        # ShowProfilePageView
+        view_and_template(self, ShowProfilePageView, 'user_profile/user_profile_page.html',
+                          'user_profile:user_profile_page', address_kwargs={'username': user_name})
+        # EditProfilePageView
+        view_and_template(self, EditProfilePageView, 'user_profile/edit_user_profile.html',
+                          'user_profile:edit_profile', address_kwargs={'username': user_name})
+
+        # TODO TESTCASE - this needs to be post
+        # view_and_template(self, ToggleNotificationView, 'user_profile/user_profile_page.html',
+        #                   'user_profile:toggle_notification', address_kwargs={'username': user_name})
         #      - ...
-        pass
 
     def test_redirect_to_login_and_login_required(self):
         self.client.logout()
+        # ShowProfilePageView
         redirect_to_login_and_login_required(self, 'user_profile:user_profile_page',
                                              address_kwargs={"username": user_name})
+        # EditProfilePageView
+        redirect_to_login_and_login_required(self, 'user_profile:edit_profile',
+                                             address_kwargs={"username": user_name})
 
-        # TODO TESTCASE see invite_users
-        #      use view_and_template()
-        # TODO which views?
-        #      - breadcrumb?
-        #      - EditProfilePageView - edit_profile
-        #      - ToggleNotificationView - toggle_notification
-        #      - ...
+        # TODO TESTCASE - this needs to be post
+        # redirect_to_login_and_login_required(self, 'user_profile:toggle_notification',
+        #                                      address_kwargs={"username": user_name})
 
     def test_show_other_user_profile_page(self):
         otheruser = get_user_model().objects.create_user('uname', 'umail@a.b', 'abcd')

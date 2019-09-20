@@ -17,7 +17,7 @@ from django.db import transaction
 from django.urls.base import reverse
 from django.utils import translation
 from django.utils.datastructures import MultiValueDictKeyError
-from django.shortcuts import render, redirect
+from django.shortcuts import redirect
 from django.core.cache import cache
 from django.http import Http404
 from lib.multiform import MultiFormsView, MultiFormMixin
@@ -109,7 +109,7 @@ class ShowProfilePageView(LoginRequiredMixin, ShowMoreMixin, DetailView):
     def get_context_data(self, **kwargs):
         # get the user for this profile page
         user = get_r_object_or_404(self.request.user, get_user_model(), username=self.kwargs.get("username"))
-        # get the actor stream for the requested user profil
+        # get the actor stream for the requested user profile
         item_list = cache.get('activity_items_actor_'+user.username)
         if not item_list:
             item_list = actor_stream(user)

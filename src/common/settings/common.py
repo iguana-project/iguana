@@ -162,10 +162,10 @@ ALLOWED_IMG_EXTENSION_VALIDATOR = [FileExtensionValidator(ALLOWED_IMG_EXTENSIONS
 # they won't get delivered successfully in all browser:        pbm, pgm, ppm, tif, tiff
 
 
-# maximum file size for an image to be uploaded: 7 MB
+# maximum file size for an image to be uploaded: 7 MiB
 MAX_IMG_SIZE_BASE = 7
 MAXIMUM_IMG_SIZE = MAX_IMG_SIZE_BASE*1024**2
-# maximum file size for a file to be uploaded: 15 MB
+# maximum file size for a file to be uploaded: 15 MiB
 MAX_FILE_SIZE_BASE = 15
 MAXIMUM_FILE_SIZE = MAX_FILE_SIZE_BASE*1024**2
 

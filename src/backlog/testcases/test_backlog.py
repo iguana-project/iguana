@@ -29,26 +29,21 @@ class BacklogTest(TestCase):
     def setUp(self):
         self.project = Project(creator=self.user, name_short='PRJ')
         self.project.save()
+        self.project.developer.add(self.user)
         # TODO hopefully this will correctly create this sprint as already completed.
         self.sprint = Sprint(project=self.project, seqnum=3, startdate='2016-03-04', enddate='2016-03-05')
         self.sprint.save()
         self.client.force_login(self.user)
 
-    def test_backlog_view_and_template(self):
-
-        # TODO TESTCASE verify
+    def test_view_and_template(self):
         # general backlog
-        # TODO TESTCASE what is wrong here?
-        # view_and_template(self, BacklogListView, 'backlog/backlog_list.html', 'backlog:backlog',
-        #                   address_kwargs={'project': self.project.name_short})
+        view_and_template(self, BacklogListView, 'backlog/backlog_list.html', 'backlog:backlog',
+                          address_kwargs={'project': self.project.name_short})
         # backlog for specific sprint
-        # TODO TESTCASE what is wrong here?
-        # view_and_template(self, BacklogListView, 'backlog/backlog_list.html', 'backlog:backlog',
-        #                   address_kwargs={'project': self.project.name_short, 'sqn_s': 3})
-        pass
+        view_and_template(self, BacklogListView, 'backlog/backlog_list.html', 'backlog:backlog',
+                          address_kwargs={'project': self.project.name_short, 'sqn_s': 3})
 
     def test_redirect_to_login_and_login_required(self):
-        # TODO TESTCASE verify
         self.client.logout()
         # general backlog
         redirect_to_login_and_login_required(self, 'backlog:backlog',
