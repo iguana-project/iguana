@@ -13,12 +13,12 @@ from django.urls import reverse_lazy
 from django.forms.widgets import NumberInput
 from datetimewidget.widgets import DateWidget
 from dal import autocomplete
-from pagedown.widgets import PagedownWidget
 
 from .models import Issue, Comment, Attachment
 from django.utils.translation import ugettext as _nl
 
 from image_strip.image_strip import strip_if_file_is_an_img
+from common.widgets import CustomPagedownWidget
 
 
 class LimitKanbanForm(ModelForm):
@@ -54,8 +54,7 @@ class LimitKanbanForm(ModelForm):
         self.fields['tags'].widget.choices = self.fields['tags'].choices
         self.fields['title'].widget.attrs['autofocus'] = 'autofocus'
 
-    description = CharField(widget=PagedownWidget(css=("pagedown/demo/browser/demo.css", "css/pagedown.css")),
-                            required=False)
+    description = CharField(widget=CustomPagedownWidget(), required=False)
 
     class Meta:
         model = Issue
@@ -69,9 +68,7 @@ class LimitKanbanForm(ModelForm):
 
 
 class CommentForm(ModelForm):
-    text = CharField(widget=PagedownWidget(attrs={'rows': 3},
-                                           css=("pagedown/demo/browser/demo.css", "css/pagedown.css")
-                                           ))
+    text = CharField(widget=CustomPagedownWidget(attrs={'rows': 3}))
 
     class Meta:
         model = Comment

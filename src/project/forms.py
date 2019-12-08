@@ -10,12 +10,12 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 """
 from django.forms import ModelForm, CharField
 from dal import autocomplete
-from pagedown.widgets import PagedownWidget
 
 from .models import Project
 from landing_page.actstream_util import unfollow_project
 
 import json
+from common.widgets import CustomPagedownWidget
 
 
 def remove_notification_settings(user, project):
@@ -59,7 +59,7 @@ class ProjectCreateForm(ModelForm):
 
 
 class ProjectEditForm(ModelForm):
-    description = CharField(widget=PagedownWidget(css=("pagedown/demo/browser/demo.css", "css/pagedown.css")),
+    description = CharField(widget=CustomPagedownWidget(),
                             required=False)
 
     class Meta:
