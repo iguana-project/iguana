@@ -150,7 +150,7 @@ class SignUpTest(TestCase):
         response = self.client.get(reverse('sign_up'))
         content = response.content.decode()
         csrf_token_index = content.index("csrfmiddlewaretoken")
-        csrf_token = re.findall("value='(.*)'", content[csrf_token_index:])[0]
+        csrf_token = re.findall(r"value=['\"]{1}.*['\"]{1}", content[csrf_token_index:])[0]
         return csrf_token
 
     def captcha_protects_username_and_email(self, captcha=None):
