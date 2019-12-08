@@ -27,7 +27,7 @@ class AuthBackend(object):
         except self.User.DoesNotExist:
             return None
 
-    def authenticate(self, username=None, password=None):
+    def authenticate(self, request, username=None, password=None):
         if username is None or password is None:
             return None
 
