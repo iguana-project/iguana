@@ -11,7 +11,6 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 from django.forms import ModelForm, CharField
 from django.urls import reverse_lazy
 from django.forms.widgets import NumberInput
-from datetimewidget.widgets import DateWidget
 from dal import autocomplete
 
 from .models import Issue, Comment, Attachment
@@ -19,6 +18,8 @@ from django.utils.translation import ugettext as _nl
 
 from image_strip.image_strip import strip_if_file_is_an_img
 from common.widgets import CustomPagedownWidget
+from bootstrap_datepicker_plus import DateTimePickerInput
+from lib.user_language import get_user_locale_lazy
 
 
 class LimitKanbanForm(ModelForm):
@@ -62,7 +63,8 @@ class LimitKanbanForm(ModelForm):
                   'priority', 'description', 'storypoints', 'dependsOn', 'tags']
         widgets = {
             # Use localization and bootstrap 3
-            'due_date': DateWidget(attrs={'id': "due_date"}, usel10n=True, bootstrap_version=3),
+            'due_date': DateTimePickerInput(attrs={'id': "due_date"},
+                                            options={'locale': get_user_locale_lazy()}),
             'storypoints': NumberInput(attrs={'min': 0})
             }
 

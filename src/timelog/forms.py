@@ -10,7 +10,6 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 """
 from django.forms import Field, ModelForm, ValidationError
 
-from datetimewidget.widgets import DateTimeWidget
 from datetime import timedelta
 import re
 
@@ -19,6 +18,8 @@ from issue.models import Issue
 
 from django.utils.translation import ugettext_lazy as _
 from timelog.widgets import DurationWidget
+from bootstrap_datepicker_plus import DateTimePickerInput
+from lib.user_language import get_user_locale_lazy
 
 duration_field_help_text = _('e.g. 1d2h10m')
 
@@ -33,8 +34,9 @@ class TimelogCreateForm(ModelForm):
         fields = ('time', 'created_at')
         widgets = {
             # Use localization and bootstrap 3
-            'created_at': DateTimeWidget(attrs={'id': "created_at"}, usel10n=True, bootstrap_version=3),
-                }
+            'created_at': DateTimePickerInput(attrs={'id': "created_at"},
+                                              options={'locale': get_user_locale_lazy()}),
+        }
 
 
 class TimelogCreateForm2(ModelForm):
@@ -49,7 +51,8 @@ class TimelogCreateForm2(ModelForm):
         fields = ('time', 'created_at', 'issue')
         widgets = {
             # Use localization and bootstrap 3
-            'created_at': DateTimeWidget(attrs={'id': "created_at"}, usel10n=True, bootstrap_version=3),
+            'created_at': DateTimePickerInput(attrs={'id': "created_at"},
+                                              options={'locale': get_user_locale_lazy()}),
         }
 
 
@@ -63,7 +66,8 @@ class TimelogEditForm(ModelForm):
         fields = ['time', 'created_at']
         widgets = {
             # Use localization and bootstrap 3
-            'created_at': DateTimeWidget(attrs={'id': "created_at"}, usel10n=True, bootstrap_version=3),
+            'created_at': DateTimePickerInput(attrs={'id': "created_at"},
+                                              options={'locale': get_user_locale_lazy()}),
         }
 
 

@@ -10,9 +10,10 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 """
 from django.forms import ModelForm, ValidationError
 from sprint.models import Sprint
-from datetimewidget.widgets import DateWidget
 
 from django.utils.translation import ugettext_lazy as _
+from bootstrap_datepicker_plus import DateTimePickerInput
+from lib.user_language import get_user_locale_lazy
 
 
 class SprintForm(ModelForm):
@@ -21,10 +22,12 @@ class SprintForm(ModelForm):
         fields = ['plandate']
 
         widgets = {
-            'startdate': DateWidget(attrs={'id': "startdate"}, usel10n=True, bootstrap_version=3),
-            'enddate': DateWidget(attrs={'id': "enddate"}, usel10n=True, bootstrap_version=3),
-            'plandate': DateWidget(attrs={'id': "plandate"}, usel10n=True, bootstrap_version=3),
-
+            'startdate': DateTimePickerInput(attrs={'id': "startdate"},
+                                             options={'locale': get_user_locale_lazy()}),
+            'enddate': DateTimePickerInput(attrs={'id': "enddate"},
+                                           options={'locale': get_user_locale_lazy()}),
+            'plandate': DateTimePickerInput(attrs={'id': "plandate"},
+                                            options={'locale': get_user_locale_lazy()}),
         }
 
     # verify that startdate < enddate

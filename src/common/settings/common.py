@@ -42,7 +42,7 @@ ADMIN_ENABLED = False
 # Application definition
 INSTALLED_APPS = [
     'bootstrap3',
-    'datetimewidget',
+    'bootstrap_datepicker_plus',
     'rest_framework',
     'refreshtoken',
     'django_filters',
