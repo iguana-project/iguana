@@ -226,7 +226,7 @@ REST_FRAMEWORK = {
         'PAGE_SIZE': 20,
 
         'DEFAULT_FILTER_BACKENDS': (
-            'rest_framework_filters.backends.DjangoFilterBackend',
+            'django_filters.rest_framework.DjangoFilterBackend',
             ),
 
         'DEFAULT_AUTHENTICATION_CLASSES': (
