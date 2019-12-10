@@ -30,7 +30,7 @@ class DurationWidget(Widget):
             ret += str(minutes) + 'm'
         return ret.strip()
 
-    def render(self, name, value, attrs=None):
+    def render(self, name, value, attrs=None, renderer=None):
         if value is None:
             value = ''
         final_attrs = self.build_attrs(attrs, {'type': self.input_type, 'name': name})
