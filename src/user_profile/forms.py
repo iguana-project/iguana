@@ -11,10 +11,8 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 from django.forms import CharField, PasswordInput, ValidationError
 from django.forms.models import ModelForm
 from django.forms.fields import ImageField
-from django.forms.widgets import ClearableFileInput
 from django.contrib.auth import password_validation, get_user_model
 from django.contrib.auth.forms import PasswordChangeForm, UsernameField
-from django.db.models.fields.files import ImageFieldFile
 
 import os
 
@@ -25,43 +23,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import ugettext as _nl
 
 from image_strip.image_strip import strip_img_metadata
-
-
-class CustomClearableFileInput(ClearableFileInput):
-    defaultAvatar = None
-
-    def value_from_datadict(self, data, files, name):
-        value = super(CustomClearableFileInput, self).value_from_datadict(data, files, name)
-
-        # value is false if the clear image check box is set
-        if value is False:
-            userModelAvatarField = get_user_model().avatar.field
-            value = self.__class__.defaultAvatar = ImageFieldFile(instance=None,
-                                                                  field=userModelAvatarField, name=defaultAvatar)
-
-        return value
-
-    def value_omitted_from_data(self, data, files, name):
-        # the files field is empty if the default avatar is set
-        if self.__class__.defaultAvatar:
-            # so check for the name in data
-            return name not in data
-
-        return ClearableFileInput.value_omitted_from_data(self, data, files, name)
-
-    def __del__(self):
-        # clean up the default avatar again when this object is destroyed
-        self.__class__.defaultAvatar = None
-
-    @classmethod
-    def isDefaultAvatar(cls, data):
-        """
-        Returns True if the provided data is the default avatar.
-        """
-        if cls.defaultAvatar is not None and cls.defaultAvatar == data:
-            return True
-        else:
-            return False
+from user_profile.widgets import CustomClearableFileInput
 
 
 custom_image_help_text = _nl("Please make sure that you don't violate any copyright by uploading an image. "

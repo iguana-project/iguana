@@ -8,9 +8,7 @@ Creative Commons Attribution-ShareAlike 4.0 International License.
 You should have received a copy of the license along with this
 work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 """
-from django.forms import Field, ModelForm, ValidationError, Widget
-from django.forms.utils import flatatt, to_current_timezone
-from django.utils.html import conditional_escape, format_html, html_safe
+from django.forms import Field, ModelForm, ValidationError
 
 from datetimewidget.widgets import DateTimeWidget
 from datetime import timedelta
@@ -20,6 +18,7 @@ from .models import Timelog
 from issue.models import Issue
 
 from django.utils.translation import ugettext_lazy as _
+from timelog.widgets import DurationWidget
 
 duration_field_help_text = _('e.g. 1d2h10m')
 
@@ -66,32 +65,6 @@ class TimelogEditForm(ModelForm):
             # Use localization and bootstrap 3
             'created_at': DateTimeWidget(attrs={'id': "created_at"}, usel10n=True, bootstrap_version=3),
         }
-
-
-class DurationWidget(Widget):
-
-    input_type = 'text'
-
-    def format_value(self, value):
-        ret = ''
-        hours = value.seconds // 3600
-        minutes = (value.seconds % 3600) // 60
-        if value.days > 0:
-            ret += str(value.days)+'d '
-        if hours > 0:
-            ret += str(hours)+'h '
-        if minutes > 0:
-            ret += str(minutes) + 'm'
-        return ret.strip()
-
-    def render(self, name, value, attrs=None):
-        if value is None:
-            value = ''
-        final_attrs = self.build_attrs(attrs, {'type': self.input_type, 'name': name})
-
-        if isinstance(value, timedelta):
-            final_attrs['value'] = self.format_value(value)
-        return format_html('<input{} />', flatatt(final_attrs))
 
 
 class DurationField(Field):

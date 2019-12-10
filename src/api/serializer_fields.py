@@ -13,7 +13,8 @@ from project.models import Project
 from timelog.models import Timelog
 from issue.models import Comment
 from django.core.exceptions import ImproperlyConfigured, ObjectDoesNotExist
-from timelog.forms import DurationField, DurationWidget
+from timelog.forms import DurationField
+from timelog.forms import DurationWidget
 from timelog.templatetags.filter import duration
 from lib.rattr import *
 

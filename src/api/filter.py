@@ -14,7 +14,8 @@ from django.contrib.auth import get_user_model
 from project.models import Project
 from timelog.models import Timelog
 from kanbancol.models import KanbanColumn
-from timelog.forms import DurationField, DurationWidget
+from timelog.forms import DurationField
+from timelog.widgets import DurationWidget
 
 
 class DurationFilter(filters.Filter):
