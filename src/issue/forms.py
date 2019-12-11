@@ -17,9 +17,7 @@ from .models import Issue, Comment, Attachment
 from django.utils.translation import ugettext as _nl
 
 from image_strip.image_strip import strip_if_file_is_an_img
-from common.widgets import CustomPagedownWidget
-from bootstrap_datepicker_plus import DateTimePickerInput
-from lib.user_language import get_user_locale_lazy
+from common.widgets import CustomPagedownWidget, LocalizedDateTimePickerInput
 
 
 class LimitKanbanForm(ModelForm):
@@ -63,10 +61,9 @@ class LimitKanbanForm(ModelForm):
                   'priority', 'description', 'storypoints', 'dependsOn', 'tags']
         widgets = {
             # Use localization and bootstrap 3
-            'due_date': DateTimePickerInput(attrs={'id': "due_date"},
-                                            options={'locale': get_user_locale_lazy()}),
+            'due_date': LocalizedDateTimePickerInput(attrs={'id': "due_date"}),
             'storypoints': NumberInput(attrs={'min': 0})
-            }
+        }
 
 
 class CommentForm(ModelForm):

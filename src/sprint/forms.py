@@ -12,8 +12,7 @@ from django.forms import ModelForm, ValidationError
 from sprint.models import Sprint
 
 from django.utils.translation import ugettext_lazy as _
-from bootstrap_datepicker_plus import DateTimePickerInput
-from lib.user_language import get_user_locale_lazy
+from common.widgets import LocalizedDateTimePickerInput
 
 
 class SprintForm(ModelForm):
@@ -22,12 +21,9 @@ class SprintForm(ModelForm):
         fields = ['plandate']
 
         widgets = {
-            'startdate': DateTimePickerInput(attrs={'id': "startdate"},
-                                             options={'locale': get_user_locale_lazy()}),
-            'enddate': DateTimePickerInput(attrs={'id': "enddate"},
-                                           options={'locale': get_user_locale_lazy()}),
-            'plandate': DateTimePickerInput(attrs={'id': "plandate"},
-                                            options={'locale': get_user_locale_lazy()}),
+            'startdate': LocalizedDateTimePickerInput(attrs={'id': "startdate"}),
+            'enddate': LocalizedDateTimePickerInput(attrs={'id': "enddate"}),
+            'plandate': LocalizedDateTimePickerInput(attrs={'id': "plandate"}),
         }
 
     # verify that startdate < enddate

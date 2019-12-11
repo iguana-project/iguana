@@ -9,36 +9,10 @@ You should have received a copy of the license along with this
 work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 """
 from cuser.middleware import CuserMiddleware
-from django.utils.functional import lazy, Promise
+from django.utils.functional import lazy
 from django.utils.translation import to_locale
-from common import settings
-from django.core.serializers.json import DjangoJSONEncoder
-from django.utils.encoding import force_text
-import json
-
-
-"""
-This JSON encoder is needed for encoding lazy objects (mostly translated language strings)
-"""
-
-
-class LazyEncoder(DjangoJSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, Promise):
-            return force_text(obj)
-        return super(LazyEncoder, self).default(obj)
-
-
-# register the encoder as the default one
-json._default_encoder = LazyEncoder(
-    skipkeys=False,
-    ensure_ascii=True,
-    check_circular=True,
-    allow_nan=True,
-    indent=None,
-    separators=None,
-    default=None,
-)
+from django.conf import settings
+from django.utils import formats
 
 
 """
@@ -63,3 +37,34 @@ def get_user_locale():
 
 
 get_user_locale_lazy = lazy(get_user_locale, str)
+
+
+# PHP datetime format => python datetime format
+# this is needed because django.utils.formats works with the PHP format
+php_py_format_map = (
+    ('z', r'%j'),
+    ('d', r'%d'),
+    ('F', r'%B'),
+    ('M', r'%b'),
+    ('m', r'%m'),
+    ('Y', r'%Y'),
+    ('y', r'%y'),
+    ('H', r'%H'),
+    ('h', r'%I'),
+    ('i', r'%M'),
+    ('s', r'%S'),
+    ('a', r'%p'),
+    ('O', r'%z'),
+    ('P', r'%I:%M %p'),
+)
+
+
+def get_user_locale_format(format_key):
+    lang = get_user_language()
+    frmat = formats.get_format(format_key, lang=lang, use_l10n=True)
+    for php_format, py_format in php_py_format_map:
+        frmat = frmat.replace(php_format, py_format)
+    return frmat
+
+
+get_user_locale_format_lazy = lazy(get_user_locale_format, str)
