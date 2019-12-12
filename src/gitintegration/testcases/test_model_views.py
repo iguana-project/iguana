@@ -204,8 +204,8 @@ class GitIntegrationTest(TestCase):
                                             kwargs={'project': self.project.name_short}
                                             ),
                                     {'url': 'blubber-url',
-                                     'rsa_priv_path': None,
-                                     'rsa_pub_path': None,
+                                     'rsa_priv_path': '',
+                                     'rsa_pub_path': '',
                                      },
                                     follow=True)
         self.assertContains(response, "Your account doesn't have access to this page")
@@ -234,8 +234,8 @@ class GitIntegrationTest(TestCase):
                                                     'repository': '1'}
                                             ),
                                     {'url': 'blubber',
-                                     'rsa_priv_path': None,
-                                     'rsa_pub_path': None,
+                                     'rsa_priv_path': '',
+                                     'rsa_pub_path': '',
                                      },
                                     follow=True)
         self.assertContains(response, "Your account doesn't have access to this page")
@@ -373,8 +373,8 @@ class GitIntegrationTest(TestCase):
                                             kwargs={'project': self.project.name_short}
                                             ),
                                     {'url': 'blubber',
-                                     'rsa_priv_path': None,
-                                     'rsa_pub_path': None,
+                                     'rsa_priv_path': '',
+                                     'rsa_pub_path': '',
                                      },
                                     follow=True)
         self.assertEqual(response.status_code, 200)
@@ -385,8 +385,8 @@ class GitIntegrationTest(TestCase):
                                                     'repository': repo.pk}
                                             ),
                                     {'url': 'blubber',
-                                     'rsa_priv_path': None,
-                                     'rsa_pub_path': None,
+                                     'rsa_priv_path': '',
+                                     'rsa_pub_path': '',
                                      },
                                     follow=True)
         self.assertEqual(response.status_code, 200)
