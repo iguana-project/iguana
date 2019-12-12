@@ -64,12 +64,12 @@ INSTALLED_APPS = [
     'search.apps.SearchConfig',
     'sprint.apps.SprintConfig',
     'tag.apps.TagConfig',
-    'timelog',
+    'timelog.apps.TimelogConfig',
     'olea.apps.OleaConfig',
-    'user_management',
+    'user_management.apps.UserManagementConfig',
     'user_profile.apps.UserProfileConfig',
     'captcha',  # django-simple-captcha
-    'common',
+    'common.apps.CommonConfig',
     # NOTE: to get the activity stream plugim working under django 1.10 the following fix has to be applied:
     # NOTE: https://github.com/justquick/django-activity-stream/pull/311
     # NOTE: it has been fixed in master, but the latest release of the plugin is from summer last year
