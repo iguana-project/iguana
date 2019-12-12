@@ -13,3 +13,8 @@ from django.apps import AppConfig
 
 class CommonConfig(AppConfig):
     name = 'common'
+
+    def ready(self):
+        # do some patches on the django code at runtime
+        # see this module for more information
+        import lib.monkey_patches  # noqa
