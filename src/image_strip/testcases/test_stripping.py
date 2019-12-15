@@ -232,9 +232,12 @@ class StripImgMetadataTest(TestCase):
                               {'prop_array_is_ordered': True, 'prop_value_is_array': True})
 
         # gif xmp
-        gif_image = XMPFiles(file_path=image_wmeta + '_gif' + ".gif", open_forupdate=True)
-        gif_image.put_xmp(xmp)
-        gif_image.close_file()
+        # TODO BUG Exempi library version >= 2.5 does not work with GIF images created by Pillow.
+        # TODO BUG The format gets not recognized by Exempi.
+        # TODO BUG Maybe a newer Pillow or Exempi version will fix this...
+        # gif_image = XMPFiles(file_path=image_wmeta + '_gif' + ".gif", open_forupdate=True)
+        # gif_image.put_xmp(xmp)
+        # gif_image.close_file()
 
         # png part 2
         png_image = XMPFiles(file_path=image_wmeta + '_png' + ".png", open_forupdate=True)
