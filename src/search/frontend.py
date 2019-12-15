@@ -15,14 +15,18 @@ from django.db.models import Q
 from django.urls import reverse
 
 from search.models import Search
+from search.fieldcheckings import SearchableMixin
 
 
 app_list = {}
 searchable_fields = {}
+# get all models that implement the SearchableMixin
 for app in apps.get_models():
-    if hasattr(app, 'searchable_fields'):
-        app_list[app.__name__] = app
-        searchable_fields[app.__name__] = app.searchable_fields
+    if issubclass(app, SearchableMixin) and \
+            hasattr(app, "searchable_fields"):
+        app_name = app.get_search_name()
+        app_list[app_name] = app
+        searchable_fields[app_name] = app.searchable_fields
 
 
 class SearchFrontend():

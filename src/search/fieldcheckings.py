@@ -24,6 +24,11 @@ class SearchableMixin():
     def search_allowed_for_user(self, user):
         return True
 
+    # when searching for a specific object type, this name is used by the parser to identify the class
+    @classmethod
+    def get_search_name(cls):
+        return cls.__name__
+
     # This can be overwritten to use another function than __str__() as result title
     def get_search_title(self):
         return self.__str__()

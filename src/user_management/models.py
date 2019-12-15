@@ -34,9 +34,6 @@ def avatarDir(instance, filename):
 
 
 class CustomUser(SearchableMixin, AbstractUser, CustomModel):
-    # object name for search
-    __name__ = 'User'
-
     # NOTE: if we need some additional fields we might add those fields into the settings/common.py
     # NOTE: into the UserAttributeSimilarityValidator
     # NOTE: plus if one field name is changed, we also need to adjust ^this
@@ -96,6 +93,10 @@ class CustomUser(SearchableMixin, AbstractUser, CustomModel):
             pref = UserPreference(user=self, key=key, value=value)
             pref.save()
             self.preferences.add(pref)
+
+    @classmethod
+    def get_search_name(cls):
+        return "User"
 
     searchable_fields = ['first_name', 'last_name', 'username']
 
