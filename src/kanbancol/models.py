@@ -16,9 +16,10 @@ from project.models import Project
 from lib.custom_model import CustomModel
 
 from django.utils.translation import ugettext_lazy as _
+from search.fieldcheckings import SearchableMixin
 
 
-class KanbanColumn(CustomModel):
+class KanbanColumn(SearchableMixin, CustomModel):
     name = models.CharField(_("name"), max_length=100)
     project = models.ForeignKey(Project, models.CASCADE, verbose_name=_('project'), related_name="kanbancol")
     position = models.IntegerField(_("position"))
