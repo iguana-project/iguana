@@ -12,6 +12,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 {% load i18n %}
 {% load static %}
 {% load breadcrumbs %}
+{% load bootstrap3 %}
 {% get_current_language as LANGUAGE_CODE %}
 <html lang="{{LANGUAGE_CODE}}">
 <head>
@@ -28,18 +29,19 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 		<link rel="stylesheet" href="{% static "css/style.css" %}" />
 	{% endblock css %}
 
+    {% block javascript %}
+        <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+        <script src="{% static "js/jquery.min.js" %}" type="text/javascript"></script>
+        <script src="{% static "js/bootstrap.js" %}" type="text/javascript"></script>
+    {% endblock javascript %}
+    {% block extra_script %}
+        <!-- Include individual files as needed -->
+    {% endblock %}
+
 	{% block additional_stuff %}{% trans "" %}{% endblock %}
 </head>
 
 <body>
-	{% block javascript %}
-		<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-		<script src="{% static "js/jquery.min.js" %}"></script>
-		<script src="{% static "js/bootstrap.js" %}"></script>
-		<!-- Include individual files as needed -->
-	{% endblock javascript %}
-	{% block extra_script %}
-	{% endblock %}
 	{% include "navigation.html" %}
 	<div id="content">
 		<div class="container">
