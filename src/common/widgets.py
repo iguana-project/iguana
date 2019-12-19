@@ -41,6 +41,9 @@ class LocalizedBasePickerInput(BasePickerInput):
     # the default format key how the value is displayed
     display_format_key = 'DATE_FORMAT'
 
+    # don't show the current date and/or time when opening the picker the first time
+    BasePickerInput.options["useCurrent"] = False
+
     def __init__(self, attrs=None, format=None, options={}):
         if settings.USE_I18N:
             options["locale"] = get_user_locale_lazy()
@@ -79,3 +82,7 @@ class LocalizedBasePickerInput(BasePickerInput):
 
 class LocalizedDateTimePickerInput(DateTimePickerInput, LocalizedBasePickerInput):
     display_format_key = 'SHORT_DATETIME_FORMAT'
+
+
+class LocalizedDatePickerInput(DatePickerInput, LocalizedBasePickerInput):
+    display_format_key = 'DATE_FORMAT'

@@ -75,7 +75,8 @@ class CreateAndEditTest(SeleniumTestCase):
 
         Select(driver.find_element_by_id("id_kanbancol")).select_by_visible_text("Todo")
         driver.find_element_by_name("due_date").click()
-        driver.find_element_by_css_selector("#due_date.form-control").send_keys(str(datetime.date.today()))
+        driver.find_element_by_name("due_date").send_keys(str(datetime.date.today().strftime("%m/%d/%Y")))
+        driver.find_element_by_name("due_date").send_keys(Keys.TAB)  # close datepicker
         # assert that we have one assignee in selection field
         driver.find_element_by_css_selector("input.select2-search__field").click()
         self.assertEqual(len(driver.find_elements_by_css_selector('#select2-id_assignee-results li')), 1)

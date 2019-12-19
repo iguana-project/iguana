@@ -17,7 +17,7 @@ from .models import Issue, Comment, Attachment
 from django.utils.translation import ugettext as _nl
 
 from image_strip.image_strip import strip_if_file_is_an_img
-from common.widgets import CustomPagedownWidget, LocalizedDateTimePickerInput
+from common.widgets import CustomPagedownWidget, LocalizedDatePickerInput
 
 
 class LimitKanbanForm(ModelForm):
@@ -61,7 +61,7 @@ class LimitKanbanForm(ModelForm):
                   'priority', 'description', 'storypoints', 'dependsOn', 'tags']
         widgets = {
             # Use localization and bootstrap 3
-            'due_date': LocalizedDateTimePickerInput(attrs={'id': "due_date"}),
+            'due_date': LocalizedDatePickerInput(attrs={'id': "due_date"}),
             'storypoints': NumberInput(attrs={'min': 0})
         }
 
