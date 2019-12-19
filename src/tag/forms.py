@@ -9,12 +9,11 @@ You should have received a copy of the license along with this
 work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 """
 from django.forms import ModelForm, ValidationError
-from dal import autocomplete
 
-from project.models import Project
 from tag.models import Tag
 
 from django.utils.translation import ugettext_lazy as _
+from common.widgets import CustomAutoCompleteWidgetSingle
 
 
 class TagForm(ModelForm):
@@ -24,7 +23,7 @@ class TagForm(ModelForm):
         model = Tag
         fields = ['tag_text', 'color']
         widget = {
-            'color': autocomplete.ModelSelect2(),
+            'color': CustomAutoCompleteWidgetSingle(),
         }
 
     def __init__(self, *args, **kwargs):

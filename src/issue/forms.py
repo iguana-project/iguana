@@ -11,45 +11,45 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 from django.forms import ModelForm, CharField
 from django.urls import reverse_lazy
 from django.forms.widgets import NumberInput
-from dal import autocomplete
 
 from .models import Issue, Comment, Attachment
 from django.utils.translation import ugettext as _nl
 
 from image_strip.image_strip import strip_if_file_is_an_img
-from common.widgets import CustomPagedownWidget, LocalizedDatePickerInput
+from common.widgets import CustomPagedownWidget, LocalizedDatePickerInput,\
+    CustomAutoCompleteWidgetMultiple
 
 
 class LimitKanbanForm(ModelForm):
     def __init__(self, proj, issue, *args, **kwargs):
         super(LimitKanbanForm, self).__init__(*args, **kwargs)
-        self.fields['assignee'].widget = autocomplete.ModelSelect2Multiple(reverse_lazy('project:userac',
-                                                                                        kwargs={"project": proj}
-                                                                                        ),
-                                                                           attrs={'data-html': 'true'}
-                                                                           )
+        self.fields['assignee'].widget = CustomAutoCompleteWidgetMultiple(reverse_lazy('project:userac',
+                                                                                       kwargs={"project": proj}
+                                                                                       ),
+                                                                          attrs={'data-html': 'true'}
+                                                                          )
         self.fields['assignee'].widget.choices = self.fields['assignee'].choices
         if issue is not None:  # issue-edit
-            self.fields['dependsOn'].widget = autocomplete.ModelSelect2Multiple(reverse_lazy('project:issueac',
-                                                                                             kwargs={"project": proj,
-                                                                                                     "issue": issue
-                                                                                                     }
-                                                                                             ),
-                                                                                attrs={'data-html': 'true'}
-                                                                                )
+            self.fields['dependsOn'].widget = CustomAutoCompleteWidgetMultiple(reverse_lazy('project:issueac',
+                                                                                            kwargs={"project": proj,
+                                                                                                    "issue": issue
+                                                                                                    }
+                                                                                            ),
+                                                                               attrs={'data-html': 'true'}
+                                                                               )
         else:   # issue-create
-            self.fields['dependsOn'].widget = autocomplete.ModelSelect2Multiple(reverse_lazy('project:issueac',
-                                                                                             kwargs={"project": proj}
-                                                                                             ),
-                                                                                attrs={'data-html': 'true'}
-                                                                                )
+            self.fields['dependsOn'].widget = CustomAutoCompleteWidgetMultiple(reverse_lazy('project:issueac',
+                                                                                            kwargs={"project": proj}
+                                                                                            ),
+                                                                               attrs={'data-html': 'true'}
+                                                                               )
         self.fields['dependsOn'].widget.choices = self.fields['dependsOn'].choices
         # NOTE: data-html true could become a problem, when users can input their own colors
-        self.fields['tags'].widget = autocomplete.ModelSelect2Multiple(reverse_lazy('project:tagac',
-                                                                                    kwargs={"project": proj}
-                                                                                    ),
-                                                                       attrs={'data-html': 'true'}
-                                                                       )
+        self.fields['tags'].widget = CustomAutoCompleteWidgetMultiple(reverse_lazy('project:tagac',
+                                                                                   kwargs={"project": proj}
+                                                                                   ),
+                                                                      attrs={'data-html': 'true'}
+                                                                      )
         self.fields['tags'].widget.choices = self.fields['tags'].choices
         self.fields['title'].widget.attrs['autofocus'] = 'autofocus'
 

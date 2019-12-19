@@ -10,7 +10,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 """
 from django.forms import ModelForm
 from search.models import Search
-from dal import autocomplete
+from common.widgets import CustomAutoCompleteWidgetMultiple
 
 
 class SearchEditForm(ModelForm):
@@ -18,5 +18,5 @@ class SearchEditForm(ModelForm):
         model = Search
         fields = ('description', 'searchexpression', 'shared_with', 'persistent')
         widgets = {
-                'shared_with': autocomplete.ModelSelect2Multiple('search:projectac', attrs={'data-html': 'true'})
+            'shared_with': CustomAutoCompleteWidgetMultiple('search:projectac', attrs={'data-html': 'true'})
         }

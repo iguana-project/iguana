@@ -9,13 +9,12 @@ You should have received a copy of the license along with this
 work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 """
 from django.forms import ModelForm, CharField
-from dal import autocomplete
 
 from .models import Project
 from landing_page.actstream_util import unfollow_project
 
 import json
-from common.widgets import CustomPagedownWidget
+from common.widgets import CustomPagedownWidget, CustomAutoCompleteWidgetMultiple
 
 
 def remove_notification_settings(user, project):
@@ -50,11 +49,11 @@ class ProjectCreateForm(ModelForm):
         model = Project
         fields = ('name', 'name_short', 'description', 'developer')
         widgets = {
-                'developer': autocomplete.ModelSelect2Multiple('project:userac',
-                                                               attrs={'data-html': 'true',
-                                                                      'data-minimum-input-length': 2
-                                                                      }
-                                                               )
+            'developer': CustomAutoCompleteWidgetMultiple('project:userac',
+                                                          attrs={'data-html': 'true',
+                                                                 'data-minimum-input-length': 2
+                                                                 }
+                                                          )
         }
 
 
@@ -66,8 +65,8 @@ class ProjectEditForm(ModelForm):
         model = Project
         fields = ('name', 'description', 'manager', 'developer', 'activity_only_for_managers')
         widgets = {
-                'developer': autocomplete.ModelSelect2Multiple('project:userac', attrs={'data-html': 'true'}),
-                'manager': autocomplete.ModelSelect2Multiple('project:userac', attrs={'data-html': 'true'})
+            'developer': CustomAutoCompleteWidgetMultiple('project:userac', attrs={'data-html': 'true'}),
+            'manager': CustomAutoCompleteWidgetMultiple('project:userac', attrs={'data-html': 'true'})
         }
 
     def save(self, commit=True):
