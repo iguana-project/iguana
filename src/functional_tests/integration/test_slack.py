@@ -127,7 +127,7 @@ class SlackTest(SeleniumTestCase):
                     reverse('issue:detail', kwargs={'project': self.project.name_short, 'sqn_i': issue.number})
                     )
                 )
-        f = self.selenium.find_element_by_id("id_text")
+        f = self.selenium.find_element_by_id("wmd-input-id_text")
         f.send_keys(self.comment)
         self.selenium.find_element_by_name("action").click()
         slackmock().api_call.assert_called_with(

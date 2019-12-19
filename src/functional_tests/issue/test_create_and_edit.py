@@ -91,8 +91,8 @@ class CreateAndEditTest(SeleniumTestCase):
         for i in driver.find_elements_by_css_selector('#select2-id_dependsOn-results li'):
             self.assertEqual(i.text, "No results found")
 
-        driver.find_element_by_id("id_description").clear()
-        driver.find_element_by_id("id_description").send_keys("blubber")
+        driver.find_element_by_id("wmd-input-id_description").clear()
+        driver.find_element_by_id("wmd-input-id_description").send_keys("blubber")
         driver.find_element_by_id("id_submit_create").click()
         self.assertIn(title, driver.page_source)
 

@@ -59,13 +59,13 @@ class CommentsTest(SeleniumTestCase):
                                  kwargs={'project': self.project.name_short, 'sqn_i': issue.number})))
 
         # add comment
-        driver.find_element_by_id("id_text").clear()
-        driver.find_element_by_id("id_text").send_keys("test-comment")
+        driver.find_element_by_id("wmd-input-id_text").clear()
+        driver.find_element_by_id("wmd-input-id_text").send_keys("test-comment")
         driver.find_element_by_name("action").click()
 
         # add another comment with attachment
-        driver.find_element_by_id("id_text").clear()
-        driver.find_element_by_id("id_text").send_keys("another comment")
+        driver.find_element_by_id("wmd-input-id_text").clear()
+        driver.find_element_by_id("wmd-input-id_text").send_keys("another comment")
         driver.find_element_by_id("id_file").clear()
         driver.find_element_by_id("id_file").send_keys(temp1.name)
         driver.find_element_by_name("action").click()
@@ -89,8 +89,8 @@ class CommentsTest(SeleniumTestCase):
 
         # edit comment
         driver.find_element_by_id("issue_detail_comment_edit_1").click()
-        driver.find_element_by_id("id_text").clear()
-        driver.find_element_by_id("id_text").send_keys("text-comment")
+        driver.find_element_by_id("wmd-input-id_text").clear()
+        driver.find_element_by_id("wmd-input-id_text").send_keys("text-comment")
         driver.find_element_by_id("comment-btn").click()
 
         # assert that text was saved
@@ -127,13 +127,13 @@ class CommentsTest(SeleniumTestCase):
                                  kwargs={'project': self.project.name_short, 'sqn_i': issue.number})))
 
         # add comment
-        driver.find_element_by_id("id_text").clear()
-        driver.find_element_by_id("id_text").send_keys("test-comment")
+        driver.find_element_by_id("wmd-input-id_text").clear()
+        driver.find_element_by_id("wmd-input-id_text").send_keys("test-comment")
         driver.find_element_by_name("action").click()
 
         # edit comment with empty text field => should fail
         driver.find_element_by_id("issue_detail_comment_edit_1").click()
-        driver.find_element_by_id("id_text").clear()
+        driver.find_element_by_id("wmd-input-id_text").clear()
         driver.find_element_by_id("comment-btn").click()
         self.assertIn("Edit comment", driver.page_source)
         self.assertEqual(issue.comments.first().text, "test-comment")
