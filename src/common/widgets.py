@@ -17,7 +17,11 @@ from django.utils.encoding import force_text
 from json import dumps as json_dumps
 from lib.user_language import get_user_locale_lazy, get_user_locale_format_lazy
 from django.utils import formats
-from bootstrap_datepicker_plus import DateTimePickerInput
+from bootstrap_datepicker_plus import DateTimePickerInput, DatePickerInput
+from dal_select2.widgets import ModelSelect2Multiple, Select2WidgetMixin,\
+    ModelSelect2
+import re
+from django.forms.widgets import Media
 
 
 class CustomPagedownWidget(PagedownWidget):
@@ -86,3 +90,32 @@ class LocalizedDateTimePickerInput(DateTimePickerInput, LocalizedBasePickerInput
 
 class LocalizedDatePickerInput(DatePickerInput, LocalizedBasePickerInput):
     display_format_key = 'DATE_FORMAT'
+
+
+class CustomSelect2WidgetMixin(Select2WidgetMixin):
+    @property
+    def media(self):
+        # get the default js and css media
+        media = super().media
+
+        # remove the jQuery script manually
+        # this causes errors with datepicker-plus,
+        # see https://github.com/monim67/django-bootstrap-datepicker-plus/issues/42
+        # TODO this code patch can be removed in future,
+        # because of https://github.com/yourlabs/django-autocomplete-light/commit/e46300d
+        regex = re.compile(r"^admin/.*jquery(\.min)?\.js$")
+        filtered_js = [item for item in media._js if not regex.search(item)]
+
+        # add custom css
+        new_css = media._css
+        new_css["screen"].append("css/autocomplete-light.css")
+
+        return Media(js=tuple(filtered_js), css=new_css)
+
+
+class CustomAutoCompleteWidgetSingle(ModelSelect2, CustomSelect2WidgetMixin):
+    pass
+
+
+class CustomAutoCompleteWidgetMultiple(ModelSelect2Multiple, CustomSelect2WidgetMixin):
+    pass

@@ -1,0 +1,12 @@
+/* fixes autocomplete-light display errors */
+.select2.select2-container.select2-container--default.select2-container--below {
+	width: 100% !important;
+}
+
+.select2-dropdown.select2-dropdown--below {
+	left: 15px;
+}
+
+.select2-container--default .select2-selection--multiple {
+	padding-top: unset;
+}
