@@ -46,10 +46,32 @@ class SeleniumTestCase(LiveServerTestCase):
             raise Exception("Webdriver not configured probably!")
         cls.selenium.implicitly_wait(DEFAULT_WAIT)
 
+        cls.processedScreenshots = []
+
     @classmethod
     def tearDownClass(cls):
         cls.selenium.quit()
         super(SeleniumTestCase, cls).tearDownClass()
+
+    def __make_screenshot(self, _list, _type):
+        for item in _list:
+            if hash(item) not in self.processedScreenshots:
+                file_name = "%s - %s.png" % (_type, str(item[0]))
+                self.selenium.get_screenshot_as_file(file_name)
+
+                self.processedScreenshots.append(hash(item))
+                break
+
+    def run(self, result=None):
+        res = LiveServerTestCase.run(self, result=result)
+
+        # save screenshot of an error or failure
+        if res.errors:
+            self.__make_screenshot(res.errors, "Error")
+        elif res.failures:
+            self.__make_screenshot(res.errors, "Failure")
+
+        return res
 
 
 class StaticSeleniumTestCase(StaticLiveServerTestCase, SeleniumTestCase):

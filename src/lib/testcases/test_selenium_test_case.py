@@ -17,3 +17,7 @@ class SeleniumTest(TestCase):
         # test if the selenium driver works
         SeleniumTestCase.setUpClass()
         SeleniumTestCase.tearDownClass()
+
+    # TODO TESTCASE test if screenshots are made
+    def test_error_screenshot(self):
+        pass
