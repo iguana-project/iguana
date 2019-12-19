@@ -23,8 +23,10 @@ from bootstrap_datepicker_plus import DateTimePickerInput
 class CustomPagedownWidget(PagedownWidget):
     class Media:
         css = {
-            'all': ("pagedown/demo/browser/demo.css",
-                    "css/pagedown.css")
+            'all': (
+                "pagedown/demo/browser/demo.css",
+                "css/pagedown.css",
+            )
         }
 
 
