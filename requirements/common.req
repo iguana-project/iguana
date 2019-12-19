@@ -4,7 +4,7 @@ Django==2.2.8
 django-activity-stream==0.8.0
 celery==4.3.0
 django-autocomplete-light==3.5.0
-django-bootstrap3==12.0.0
+django-bootstrap3==12.0.1
 django-cuser==2017.3.16
 django-bootstrap-datepicker-plus==3.0.5
 django-filter==2.2.0
