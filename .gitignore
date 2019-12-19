@@ -29,14 +29,6 @@ ansible/*.retry
 src/htmlcov
 src/celerybeat-schedule
 /src/common/settings/__init__.py
-/src/common/static/css/*.css
-!/src/common/static/css/activity_stream.css
-!/src/common/static/css/bootstrap.css
-!/src/common/static/css/bootstrap.min.css
-!/src/common/static/css/bootstrap-theme.css
-!/src/common/static/css/bootstrap-theme.min.css
-!/src/common/static/css/cal-heatmap.css
-!/src/common/static/css/pagedown.css
 /src/common/settings/webdriver.py
 /tools/scripts/tools/bin/vnu.jar
 /validation/*
