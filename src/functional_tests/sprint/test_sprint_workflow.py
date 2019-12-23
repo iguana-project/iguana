@@ -63,12 +63,13 @@ class SprintWorkFlowTest(SeleniumTestCase):
         driver.find_element_by_id("id_title").clear()
         driver.find_element_by_id("id_title").send_keys("Issue 1")
         driver.find_element_by_name("due_date").click()
-        driver.find_element_by_xpath("//div[@id='due_date']//input").send_keys(str(datetime.date.today()))
+        driver.find_element_by_name("due_date").send_keys(str(datetime.date.today().strftime("%m/%d/%Y")))
+        driver.find_element_by_name("due_date").send_keys(Keys.TAB)  # close datepicker
         driver.find_element_by_css_selector("ul.select2-selection__rendered").click()
         driver.find_element_by_id("id_storypoints").clear()
         driver.find_element_by_id("id_storypoints").send_keys("1")
-        driver.find_element_by_id("id_description").clear()
-        driver.find_element_by_id("id_description").send_keys("aaa")
+        driver.find_element_by_id("wmd-input-id_description").clear()
+        driver.find_element_by_id("wmd-input-id_description").send_keys("aaa")
         driver.find_element_by_css_selector(".save").send_keys(Keys.RETURN)
         driver.find_element_by_link_text("Backlog").click()
 
