@@ -131,7 +131,7 @@ class SignUpTest(SeleniumTestCase):
         test_email2 = "test@thrash.com2"
         self.create_user(test_username, test_email2, test_pw, test_pw)
         self.assertIn('A user with that username already exists.', self.selenium.page_source)
-        user_doesnt_exists = database.execute("SELECT * FROM "+user_table+" WHERE username=? OR email=?",
+        user_doesnt_exists = database.execute("SELECT * FROM "+user_table+" WHERE username=? AND email=?",
                                               (test_username, test_email2, ))
         self.assertTrue(user_doesnt_exists.fetchone() is None)
 
@@ -139,7 +139,7 @@ class SignUpTest(SeleniumTestCase):
         test_username2 = "testuserName2"
         self.create_user(test_username2, test_email, test_pw, test_pw)
         self.assertIn('User with this Email address already exists.', self.selenium.page_source)
-        user_doesnt_exists = database.execute("SELECT * FROM "+user_table+" WHERE username=? OR email=?",
+        user_doesnt_exists = database.execute("SELECT * FROM "+user_table+" WHERE username=? AND email=?",
                                               (test_username2, test_email, ))
         self.assertTrue(user_doesnt_exists.fetchone() is None)
 

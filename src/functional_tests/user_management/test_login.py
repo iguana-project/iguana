@@ -50,7 +50,10 @@ class LoginTest(SeleniumTestCase):
         self.assertEqual(self.selenium.title, 'Dashboard')
 
         self.selenium.get('{}{}'.format(self.live_server_url, reverse('login')))
-        self.assertEqual(self.selenium.title, 'Home')
+        self.assertIn("Welcome " + self.user.username + ", you are already a member and logged in.",
+                      self.selenium.find_element_by_tag_name('body').text)
+        self.selenium.find_element_by_id("id_submit_home").click()
+        self.assertEqual(self.selenium.title, 'Dashboard')
 
     def test_buttons(self):
         self.selenium.get('{}{}'.format(self.live_server_url, reverse('login')))
