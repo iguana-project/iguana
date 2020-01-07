@@ -24,6 +24,7 @@ from issue.models import Issue
 from gitintegration.models import Repository
 from gitintegration.frontend import Frontend
 from django.contrib.auth import get_user_model
+from time import sleep
 
 
 class GitIntegrationTest(SeleniumTestCase):
@@ -113,7 +114,12 @@ class GitIntegrationTest(SeleniumTestCase):
         driver.find_element_by_link_text("SLN-1").click()
         self.assertEqual("(" + remote_repo_master.hexsha[:7] + ") initial commit",
                          driver.find_element_by_id("commit_1").text)
+
+        # open the commit overview
         driver.find_element_by_id("commit_1").click()
+        # wait for the fade-in animation to finish
+        sleep(2)
+
         self.assertEqual("initial commit (" + remote_repo_master.hexsha[:7] + ")",
                          driver.find_element_by_id("title_commit_1").text)
         self.assertEqual("testfile1", driver.find_element_by_css_selector("td").text)
