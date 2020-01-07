@@ -16,7 +16,7 @@ from django.urls import set_urlconf
 from importlib import import_module, reload
 import sys
 
-from user_management.views import LoginView
+from user_management.views import LoginView, LogoutView
 from landing_page.views import HomeView
 from django.contrib.auth import get_user_model
 from django.conf import settings
@@ -101,7 +101,7 @@ class LoginTest(TestCase):
 
         response = self.client.get(reverse('logout'), follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.resolver_match.func.__name__, LoginView.as_view().__name__)
+        self.assertEqual(response.resolver_match.func.__name__, LogoutView.as_view().__name__)
         self.assertTemplateUsed(response, 'registration/login.html')
 
         tempURL = createTempViewURL()
@@ -111,5 +111,5 @@ class LoginTest(TestCase):
     def test_logout_while_logged_out(self):
         response = self.client.get(reverse('logout'), follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.resolver_match.func.__name__, LoginView.as_view().__name__)
+        self.assertEqual(response.resolver_match.func.__name__, LogoutView.as_view().__name__)
         self.assertTemplateUsed(response, 'registration/login.html')

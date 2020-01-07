@@ -9,7 +9,7 @@ You should have received a copy of the license along with this
 work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 """
 from django.views.generic import View
-from django.contrib.auth import authenticate, login, logout, get_user_model
+from django.contrib.auth import authenticate, login, get_user_model
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.views import LoginView as D_LIV, LogoutView as D_LOV, \
                                       PasswordResetView as D_PRV, PasswordResetDoneView as D_PRDV
@@ -33,7 +33,8 @@ from .generate_activation_token import account_activation_token
 # NOTE: ugettext_lazy "is essential when calls to these functions are located in code
 #       paths that are executed at module load time."
 from django.utils.translation import ugettext as _, ugettext_lazy as _l
-from django.urls.base import reverse_lazy
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import never_cache
 
 
 # TODO FormView might help to simplify this class
@@ -49,15 +50,15 @@ class LoginView(D_LIV):
 class LogoutView(D_LOV):
     hide_breadcrumbs = True
     template_name = "registration/login.html"
-    next_page = reverse_lazy("login")
 
-    def get(self, request, *args, **kwargs):
+    @method_decorator(never_cache)
+    def dispatch(self, request, *args, **kwargs):
         logged_out = 0
         if request.user.is_active:
-            logout(request)
+            # the user gets logged out in the super() call later
             logged_out = 1
         self.extra_context = {'form': AuthenticationForm(), 'logged_out': logged_out}
-        return D_LOV.get(self, request, *args, **kwargs)
+        return D_LOV.dispatch(self, request, *args, **kwargs)
 
 
 # https://docs.djangoproject.com/en/1.10/topics/forms/
