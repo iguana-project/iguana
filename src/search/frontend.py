@@ -80,7 +80,7 @@ class SearchFrontend():
         for app in app_list.values():
             q_expression = None
             for field in app.searchable_fields:
-                if SearchFrontend.check_field_searchability(app.__name__, field):
+                if SearchFrontend.check_field_searchability(app.get_search_name(), field):
 
                     q_or = None
                     for part_or in expr_or:
@@ -150,7 +150,7 @@ class SearchFrontend():
         for i in valid_items:
             linktext = i.get_search_title()
             link = i.get_absolute_url()
-            objname = i.__class__.__name__
+            objname = i.__class__.get_search_name()
             relative_project = i.get_relative_project()
 
             retval.append([linktext, link, objname, relative_project])
