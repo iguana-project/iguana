@@ -13,9 +13,39 @@ import os
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.test import LiveServerTestCase
 from selenium import webdriver
+from selenium.common.exceptions import WebDriverException
+from functools import wraps
+from time import sleep
 
 
 DEFAULT_WAIT = 5
+
+DEFAULT_RETRY_CNT = 3
+
+
+def retry(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        count = DEFAULT_RETRY_CNT
+        latest_exception = None
+        while count > 0:
+            try:
+                # execute the function
+                return func(*args, **kwargs)
+            except WebDriverException as we:
+                latest_exception = we
+                # if there was a webriver exception, wait a bit and retry it
+                sleep(DEFAULT_WAIT / DEFAULT_RETRY_CNT)
+            except Exception as e:
+                # raise any other exception
+                raise e
+            finally:
+                count = count - 1
+
+        if count == 0:
+            raise latest_exception
+
+    return wrapper
 
 
 class SeleniumTestCase(LiveServerTestCase):
@@ -44,6 +74,15 @@ class SeleniumTestCase(LiveServerTestCase):
             cls.selenium = webdriver.Safari()
         else:
             raise Exception("Webdriver not configured probably!")
+
+        # override all find* methods of the webdriver object
+        for func_name in [method_name for method_name in dir(cls.selenium)
+                          if method_name.startswith("find") and callable(getattr(cls.selenium, method_name))]:
+            # the old function pointer
+            old_func = getattr(cls.selenium, func_name)
+            # use the retry decorator from above
+            setattr(cls.selenium, func_name, retry(old_func))
+
         cls.selenium.implicitly_wait(DEFAULT_WAIT)
 
         cls.processedScreenshots = []
