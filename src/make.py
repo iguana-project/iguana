@@ -1169,8 +1169,7 @@ class _StagingTarget(_Target):
 
 @cmd("development")
 @group("Main")
-@call_after([_SetupVirtualenvTarget, _CSSTarget, _MigrationsTarget.Create, _MigrationsTarget.Apply,
-             _SetWebdriverTarget])
+@call_after([_ProductionTarget, _SetWebdriverTarget])
 @help("Configure everything to be ready for development.")
 class _DevelopmentTarget(_Target):
     @arg("webdriver")
