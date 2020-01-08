@@ -25,14 +25,15 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 	<meta name="keywords" content="{% block keywords %}{% trans "Kanban, board, issue, ticket, software, development, open" %}{% endblock %}">
 
 	{% block css %}
-		<link rel="stylesheet" href="{% static "css/bootstrap.css" %}" />
+		{% bootstrap_css %}
+		<link rel="stylesheet" href="{% static "css/custom_bootstrap.css" %}" />
 		<link rel="stylesheet" href="{% static "css/style.css" %}" />
 	{% endblock css %}
 
     {% block javascript %}
         <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
         <script src="{% static "js/jquery.min.js" %}" type="text/javascript"></script>
-        <script src="{% static "js/bootstrap.js" %}" type="text/javascript"></script>
+        {% bootstrap_javascript %}
     {% endblock javascript %}
     {% block extra_script %}
         <!-- Include individual files as needed -->
