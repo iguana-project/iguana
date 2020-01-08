@@ -3,10 +3,12 @@
 	width: 100% !important;
 }
 
-.select2-dropdown.select2-dropdown--below {
-	left: 15px;
+.select2-container--open:not(.select2) {
+	/* fix for scrollbar jumping fix in style.scss */
+	margin-left: calc(100vw - 100%);
 }
 
 .select2-container--default .select2-selection--multiple {
 	padding-top: unset;
+	height: auto;
 }
