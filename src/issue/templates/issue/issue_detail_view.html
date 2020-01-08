@@ -390,7 +390,6 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 {% block extra_script %}
 	{{ forms.comment.media }}
 	<script src="{% static "js/bootstrap3-typeahead.min.js" %}"></script>
-	<script src="{% static "js/caret.js" %}"></script>
 	<script src="{% static "js/mention.js" %}"></script>
 	<script>
 $(document).ready(function(){
@@ -400,7 +399,7 @@ $(document).ready(function(){
 		$(hash).css('border', '2px solid #00e5ff').css('border-radius', '5px');
 	var list = JSON.parse('{{ issue.project.get_members|mention_list|safe }}')
 		console.log(list)
-		$("#id_text").mention({
+		$("#wmd-input-id_text").mention({
 			delimiter: '@',
 			users: list,
 			emptyQuery: true,
