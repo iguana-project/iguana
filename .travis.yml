@@ -38,16 +38,18 @@ jobs:
       cache: pip
       addons:
         apt:
-          sources:
-          - google-chrome
           packages:
-          - google-chrome-stable
           - libexempi3
+        chrome: stable
       install:
         - make development
         # requirement for coveralls.io
         - pip install coveralls
       before_script:
+        # install latest Chrome version
+        - LATEST_CHROMEDRIVER_VERSION=`curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE"`
+        - curl "https://chromedriver.storage.googleapis.com/${LATEST_CHROMEDRIVER_VERSION}/chromedriver_linux64.zip" -O
+        - unzip chromedriver_linux64.zip -d ~/bin
         # add the chromedriver binary to the PATH
         - export PATH=$PATH:`chromedriver-path`
       script:
