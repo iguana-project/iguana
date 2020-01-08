@@ -49,6 +49,7 @@ TOOLS = os.path.join(BASE_DIR, "tools")
 # Iguana settings
 IGUANA_BASE_DIR = os.path.join(BASE_DIR, "src")
 IGUANA_SCSS_DIR = os.path.join(IGUANA_BASE_DIR, "common", "scss")
+IGUANA_STATIC_FILES_DIR = os.path.join(IGUANA_BASE_DIR, "common", "static")
 IGUANA_SETTINGS_FILE = os.path.join(FILES_DIR, "settings.json")
 WEBDRIVER_CONF_FILE = os.path.join(IGUANA_BASE_DIR, "common", "settings", "webdriver.py")
 
@@ -802,6 +803,9 @@ class _MessagesTarget(_Target):
 class _CollectionTarget(_Target):
     @classmethod
     def execute_target(cls, *unused):
+        # create the output directory if it doesn't exist
+        os.makedirs(STATIC_FILES, exist_ok=True)
+
         # collect the static files
         _CommonTargets.exec_django_cmd("collectstatic", "--noinput", settings=DJANGO_SETTINGS_MODULE)
 
@@ -1076,13 +1080,10 @@ class _CSSTarget(_Target):
         _CommonTargets.activate_virtual_environment()
         import sass
 
-        out_css_dir = os.path.join(STATIC_FILES, "css")
-
-        # create the output directory if it doesn't exist
-        os.makedirs(os.path.dirname(out_css_dir), exist_ok=True)
+        out_css_dir = os.path.join(IGUANA_STATIC_FILES_DIR, "css")
 
         # use python libsass for compiling the sccs files
-        # output them to the normal css folder
+        # output them to the iguana static files css directory
         sass.compile(dirname=(IGUANA_SCSS_DIR, out_css_dir))
 
 
@@ -1168,7 +1169,8 @@ class _StagingTarget(_Target):
 
 @cmd("development")
 @group("Main")
-@call_after([_ProductionTarget, _SetWebdriverTarget])
+@call_after([_SetupVirtualenvTarget, _CSSTarget, _MigrationsTarget.Create, _MigrationsTarget.Apply,
+             _SetWebdriverTarget])
 @help("Configure everything to be ready for development.")
 class _DevelopmentTarget(_Target):
     @arg("webdriver")
