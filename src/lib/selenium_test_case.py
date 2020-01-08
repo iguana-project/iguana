@@ -16,6 +16,7 @@ from selenium import webdriver
 from selenium.common.exceptions import WebDriverException
 from functools import wraps
 from time import sleep
+from selenium.webdriver.remote.webelement import WebElement
 
 
 DEFAULT_WAIT = 5
@@ -46,6 +47,24 @@ def retry(func):
             raise latest_exception
 
     return wrapper
+
+
+def wait_after_function_execution(func):
+    """
+    Wait 0.1 seconds after the execution of the function
+    """
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        result = func(*args, **kwargs)
+        sleep(0.1)
+        return result
+
+    return wrapper
+
+
+# monkey patch the WebElement class
+# sometimes the browser needs some time to react to the clicking event (executing JS, etc.)
+WebElement.click = wait_after_function_execution(WebElement.click)
 
 
 class SeleniumTestCase(LiveServerTestCase):
