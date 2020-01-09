@@ -21,7 +21,3 @@ class SeleniumTest(TestCase):
     # TODO TESTCASE test if screenshots are made
     def test_error_screenshot(self):
         pass
-
-    # TODO TESTCASE test if retry decorater works for the find* methods of the webdriver
-    def test_retry_decorator(self):
-        pass
