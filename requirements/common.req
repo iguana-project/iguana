@@ -2,9 +2,9 @@ wheel==0.33.6
 bleach==3.1.0
 Django==2.2.8
 django-activity-stream==0.8.0
-celery==4.3.0
+celery==4.4.0
 django-autocomplete-light==3.5.0
-django-bootstrap3==12.0.1
+django-bootstrap3==12.0.3
 django-cuser==2017.3.16
 django-bootstrap-datepicker-plus==3.0.5
 django-filter==2.2.0
@@ -17,7 +17,7 @@ django-simple-captcha==0.5.12
 GitPython==3.0.5
 markdown==3.1.1
 markdown-urlize==0.2.0
-Pillow==6.2.1
+Pillow==7.0.0
 ply==3.11
 python-dateutil==2.8.1
 python-magic==0.4.15
