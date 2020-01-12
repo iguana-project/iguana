@@ -29,7 +29,6 @@ from lib.show_more_mixin import ShowMoreMixin
 from project.models import Project
 from user_profile.forms import CustomUserChangeForm, CustomPasswordChangeForm
 from discussion.models import Notitype
-from refreshtoken.models import RefreshToken
 
 # NOTE: ugettext_lazy "is essential when calls to these functions are located in code
 #       paths that are executed at module load time."
@@ -245,12 +244,6 @@ class EditProfilePageView(LoginRequiredMixin, UserPassesTestMixin, SingleObjectM
 
     def passwordChange_form_valid(self, forms, form):
         self.object = form.save()
-        # delete refresh token
-        try:
-            refresh_token = self.object.refresh_tokens.get(app='iguana')
-            refresh_token.delete()
-        except RefreshToken.DoesNotExist:
-            pass
         # login with the new password
         login(self.request, self.object)
         return super(EditProfilePageView, self).form_valid(forms, form)

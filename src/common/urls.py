@@ -13,9 +13,6 @@ from django.contrib import admin
 from django.conf.urls.i18n import i18n_patterns
 from django.conf import settings
 from django.conf.urls.static import static
-from rest_framework_jwt.views import obtain_jwt_token, refresh_jwt_token
-from refreshtoken.routers import router as rt_router
-from refreshtoken.views import DelegateJSONWebToken
 
 
 from common import views
@@ -49,10 +46,6 @@ urlpatterns = [
     url(r'^', include('discussion.urls')),
     url(r'^media/.*', views.ShowProtectedFilesView.as_view()),
     url(r'^api/', include('api.urls', namespace='api')),
-    url(r'^api-token-auth/', obtain_jwt_token),
-    ] + [
-    url(r'^delegate/$', DelegateJSONWebToken.as_view(),
-        name='delegate-tokens'),
 ]
 
 

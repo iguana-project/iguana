@@ -13,6 +13,8 @@ from rest_framework import routers, serializers, viewsets
 from api.views import IssueViewSet, ProjectIssuesViewSet, ProjectTimelogsViewSet, ProjectViewSet, NotificationViewSet
 from api.views import TimelogViewSet, UserViewSet, ProjectIssuesCommentsViewSet, ProjectIssuesTimelogsViewSet
 from api.views import ProjectSprintsViewSet
+from rest_framework_simplejwt.views import TokenRefreshView
+from api.custom_jwt_auth import CustomTokenObtainPairView
 
 app_name = 'api'
 
@@ -34,5 +36,7 @@ router.register(r'projects/' + project_pattern+r'issues/'+issue_pattern+r'commen
 router.register(r'projects/' + project_pattern+r'issues/'+issue_pattern+r'timelogs',
                 ProjectIssuesTimelogsViewSet, 'project_issues_timelogs')
 urlpatterns = [
-        url(r'^', include(router.urls)),
-        ]
+    url(r'^', include(router.urls)),
+    url(r'^token/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
+    url(r'^token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+]

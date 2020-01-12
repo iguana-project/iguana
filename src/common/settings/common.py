@@ -44,7 +44,6 @@ INSTALLED_APPS = [
     'bootstrap3',
     'bootstrap_datepicker_plus',
     'rest_framework',
-    'refreshtoken',
     'django_filters',
     'pagedown',
     'cuser',
@@ -230,7 +229,7 @@ REST_FRAMEWORK = {
             ),
 
         'DEFAULT_AUTHENTICATION_CLASSES': (
-            'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+            'rest_framework_simplejwt.authentication.JWTAuthentication',
             'rest_framework.authentication.BasicAuthentication',
             ),
         'DEFAULT_PERMISSION_CLASSES': (
@@ -238,11 +237,10 @@ REST_FRAMEWORK = {
             )
         }
 
-JWT_AUTH = {
-    'JWT_EXPIRATION_DELTA': datetime.timedelta(minutes=5),
-    'JWT_ALLOW_REFRESH': True,
-    'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=28*6),
-    'JWT_RESPONSE_PAYLOAD_HANDLER': 'lib.jwt_response_payload_handler.jwt_response_payload_handler',
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': datetime.timedelta(minutes=5),
+    'REFRESH_TOKEN_LIFETIME': datetime.timedelta(days=28*6),
+    'AUTH_TOKEN_CLASSES': ('api.custom_jwt_auth.AccessTokenWithUserValidation',),
 }
 
 
