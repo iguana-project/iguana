@@ -10,7 +10,6 @@ django-bootstrap-datepicker-plus==3.0.5
 django-filter==2.2.0
 django-pagedown==2.0.3
 djangorestframework==3.11.0
-djangorestframework-filters==1.0.0.dev0
 djangorestframework-simplejwt==4.3.0
 django-sendfile==0.3.11
 django-simple-captcha==0.5.12

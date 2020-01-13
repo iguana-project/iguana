@@ -8,7 +8,7 @@ Creative Commons Attribution-ShareAlike 4.0 International License.
 You should have received a copy of the license along with this
 work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 """
-import rest_framework_filters as filters
+from django_filters import rest_framework as filters
 from issue.models import Issue, Comment
 from django.contrib.auth import get_user_model
 from project.models import Project
