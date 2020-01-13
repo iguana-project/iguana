@@ -741,16 +741,16 @@ class _TestTarget(_Target):
         # execute the tests
         if argument_values["complete-test"]:
             # execute all tests (including the functional ones)
-            _CommonTargets.exec_django_cmd("test", IGUANA_BASE_DIR, no_input=True, nomigrations=nomigrations,
+            _CommonTargets.exec_django_cmd("test", IGUANA_BASE_DIR, interactive=False, nomigrations=nomigrations,
                                            settings=DJANGO_SETTINGS_MODULE)
         else:
             if not argument_values["app"]:
                 # execute all tests except the functional ones
-                _CommonTargets.exec_django_cmd("test", IGUANA_BASE_DIR, exclude_tags=["functional"], no_input=True,
+                _CommonTargets.exec_django_cmd("test", IGUANA_BASE_DIR, exclude_tags=["functional"], interactive=False,
                                                nomigrations=nomigrations, settings=DJANGO_SETTINGS_MODULE)
             else:
                 # execute only the specific application tests
-                _CommonTargets.exec_django_cmd("test", argument_values["app"], no_input=True, nomigrations=nomigrations,
+                _CommonTargets.exec_django_cmd("test", argument_values["app"], interactive=False, nomigrations=nomigrations,
                                                settings=DJANGO_SETTINGS_MODULE)
 
         # restore stdout and stderr
