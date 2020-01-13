@@ -44,6 +44,8 @@ class SeleniumTestCase(LiveServerTestCase):
     SeleniumTestCase tries to provide a fix for selenium race conditions
     (wait_for) and overrides all assert methods from unittest.TestCase
     """
+    processed_screenshots = []
+
     @classmethod
     def setUpClass(cls):
         super(SeleniumTestCase, cls).setUpClass()
@@ -67,8 +69,6 @@ class SeleniumTestCase(LiveServerTestCase):
             raise Exception("Webdriver not configured probably!")
         cls.selenium.implicitly_wait(DEFAULT_WAIT)
 
-        cls.processedScreenshots = []
-
     @classmethod
     def tearDownClass(cls):
         cls.selenium.quit()
@@ -76,11 +76,11 @@ class SeleniumTestCase(LiveServerTestCase):
 
     def __make_screenshot(self, _list, _type):
         for item in _list:
-            if hash(item) not in self.processedScreenshots:
+            if hash(item) not in SeleniumTestCase.processed_screenshots:
                 file_name = "%s - %s.png" % (_type, str(item[0]))
                 self.selenium.get_screenshot_as_file(file_name)
 
-                self.processedScreenshots.append(hash(item))
+                SeleniumTestCase.processed_screenshots.append(hash(item))
                 break
 
     def run(self, result=None):
@@ -89,8 +89,8 @@ class SeleniumTestCase(LiveServerTestCase):
         # save screenshot of an error or failure
         if res.errors:
             self.__make_screenshot(res.errors, "Error")
-        elif res.failures:
-            self.__make_screenshot(res.errors, "Failure")
+        if res.failures:
+            self.__make_screenshot(res.failures, "Failure")
 
         return res
 
