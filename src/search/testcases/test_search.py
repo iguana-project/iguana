@@ -27,6 +27,20 @@ from django.contrib.auth import get_user_model
 
 class SearchTest(TestCase):
     @classmethod
+    def setUpClass(cls):
+        super(SearchTest, cls).setUpClass()
+
+        # this model attribute gets changed in the tests, so take a backup first
+        cls.sf_backup = list(Project.searchable_fields)
+
+    @classmethod
+    def tearDownClass(cls):
+        # rollback above changes
+        Project.searchable_fields = cls.sf_backup
+
+        super(SearchTest, cls).tearDownClass()
+
+    @classmethod
     def setUpTestData(cls):
         # NOTE: if you modify those elements they need to be created in setUp, instead of here
         cls.user = get_user_model().objects.create_user('a', 'b', 'c')

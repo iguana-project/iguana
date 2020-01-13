@@ -54,14 +54,14 @@ class SlackTest(SeleniumTestCase):
         self.title_name = 'This is title'
         self.comment = "This is comment"
 
-    @patch('integration.models.WebClient')
+    @patch('integration.models.SlackIntegration.slack')
     def test_issue_create(self, slackmock):
         self.selenium.get('{}{}'.format(self.live_server_url, reverse('issue:create',
                                         kwargs={'project': self.short})))
         f = self.selenium.find_element_by_id('id_title')
         f.send_keys(self.title_name)
         self.selenium.find_element_by_id('id_submit_create').click()
-        slackmock().api_call.assert_called_with(
+        slackmock.api_call.assert_called_with(
             "chat.postMessage",
             channel="channel",
             attachments=[{
@@ -77,7 +77,7 @@ class SlackTest(SeleniumTestCase):
             }]
         )
 
-    @patch('integration.models.WebClient')
+    @patch('integration.models.SlackIntegration.slack')
     def test_issue_modify(self, slackmock):
         issue = Issue()
         issue.title = self.title_name
@@ -94,7 +94,7 @@ class SlackTest(SeleniumTestCase):
         time.sleep(1)
         self.selenium.find_elements_by_css_selector('#select2-id_assignee-results li')[0].click()
         self.selenium.find_element_by_id('id_submit_edit').click()
-        slackmock().api_call.assert_called_with(
+        slackmock.api_call.assert_called_with(
             "chat.postMessage",
             channel="channel",
             attachments=[{
@@ -114,7 +114,7 @@ class SlackTest(SeleniumTestCase):
             }]
         )
 
-    @patch('integration.models.WebClient')
+    @patch('integration.models.SlackIntegration.slack')
     def test_comment(self, slackmock):
         issue = Issue()
         issue.title = self.title_name
@@ -130,7 +130,7 @@ class SlackTest(SeleniumTestCase):
         f = self.selenium.find_element_by_id("wmd-input-id_text")
         f.send_keys(self.comment)
         self.selenium.find_element_by_name("action").click()
-        slackmock().api_call.assert_called_with(
+        slackmock.api_call.assert_called_with(
             "chat.postMessage",
             channel="channel",
             attachments=[{
