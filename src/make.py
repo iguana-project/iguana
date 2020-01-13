@@ -116,6 +116,10 @@ def boolean(cls):
     return _add_variable_decorator(cls, "is_boolean", True)
 
 
+def multiple(cls):
+    return _add_variable_decorator(cls, "is_multiple", True)
+
+
 def group(group=""):
     def wrap(cls):
         return _add_variable_decorator(cls, "group", group)
@@ -305,6 +309,7 @@ class _Argument(argparse.Action, metaclass=_MetaArgument):
     default = None
     is_required = False
     is_boolean = False
+    is_multiple = False
     help = ""
 
     def __init__(self,
@@ -338,6 +343,11 @@ class _Argument(argparse.Action, metaclass=_MetaArgument):
             # call _StoreConstAction action
             argparse._StoreTrueAction.__call__(self, parser, namespace, values, option_string)
             values = True
+
+        # if multiple arguments are allowed, add them to a list
+        if self.is_multiple:
+            current_values = self.__class__.parent_target_value or []
+            values = current_values + [values]
 
         # add the value to the target
         self.__class__.parent_target_value = values
@@ -492,9 +502,9 @@ class _CommonTargets(metaclass=_MetaCommonTargets):
     def save_dev_stage_setting(cls, development=False, staging=False):
         # add the settings to a dictionary
         settings = {
-                "development": development,
-                "staging": staging
-            }
+            "development": development,
+            "staging": staging
+        }
 
         # open the settings file
         with open(MAKE_SETTINGS_FILE, 'w') as f:
@@ -656,6 +666,7 @@ class _MigrationsTarget(_Target):
 @help("Execute the Django tests.")
 class _TestTarget(_Target):
     @arg("app")
+    @multiple
     @help("The Django application name to test.")
     class AppName(_Argument):
         pass
@@ -712,10 +723,10 @@ class _TestTarget(_Target):
         if argument_values["func-tests"]:
             if argument_values["app"]:
                 # execute only the functional tests of the specified app
-                argument_values["app"] = "functional_tests.%s" % argument_values["app"]
+                argument_values["app"] = ["functional_tests.%s" % app for app in argument_values["app"]]
             else:
                 # execute all functional tests
-                argument_values["app"] = "functional_tests"
+                argument_values["app"] = ["functional_tests"]
 
         # override stdout and stderr
         if argument_values["ign-imp-errs"]:
@@ -750,8 +761,8 @@ class _TestTarget(_Target):
                                                nomigrations=nomigrations, settings=DJANGO_SETTINGS_MODULE)
             else:
                 # execute only the specific application tests
-                _CommonTargets.exec_django_cmd("test", argument_values["app"], interactive=False, nomigrations=nomigrations,
-                                               settings=DJANGO_SETTINGS_MODULE)
+                _CommonTargets.exec_django_cmd("test", *argument_values["app"], interactive=False,
+                                               nomigrations=nomigrations, settings=DJANGO_SETTINGS_MODULE)
 
         # restore stdout and stderr
         if argument_values["ign-imp-errs"]:
@@ -975,6 +986,7 @@ class _SetWebdriverTarget(_Target):
 @help("Execute coverage on the source code.")
 class _CoverageTarget(_Target):
     @arg("app")
+    @multiple
     @help("The Django application name to test.")
     class AppName(_Argument):
         pass
