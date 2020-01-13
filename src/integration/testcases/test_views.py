@@ -109,7 +109,7 @@ class ViewTest(TestCase):
         self.assertRedirects(response, reverse('project:edit', kwargs={'project': self.short}))
         self.assertEqual(len(SlackIntegration.objects.all()), 1)
 
-    @patch('integration.views.SlackClient')
+    @patch('integration.views.WebClient')
     def test_oauth_view_not_ok(self, slackmock):
         slackmock().api_call.return_value = {'ok': False}
         response = self.client.post(reverse('integration:slack:auth', kwargs={'project': self.short}) + "?code=foo")
@@ -123,7 +123,7 @@ class ViewTest(TestCase):
             redirect_uri="https://" + HOST + reverse("integration:slack:auth", kwargs={'project': self.short}),
         )
 
-    @patch('integration.views.SlackClient')
+    @patch('integration.views.WebClient')
     def test_oauth_view_ok(self, slackmock):
         slackmock().api_call.return_value = {'ok': True, 'access_token': "foo"}
         response = self.client.post(reverse('integration:slack:auth', kwargs={'project': self.short}) + "?code=foo")

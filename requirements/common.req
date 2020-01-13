@@ -22,6 +22,6 @@ python-dateutil==2.8.1
 python-magic==0.4.15
 pytz==2019.3
 redis==3.3.11
-slackclient==1.3.2
+slackclient==2.5.0
 piprot==0.9.11
 libsass==0.19.4

@@ -54,7 +54,7 @@ class SlackTest(SeleniumTestCase):
         self.title_name = 'This is title'
         self.comment = "This is comment"
 
-    @patch('integration.models.SlackClient')
+    @patch('integration.models.WebClient')
     def test_issue_create(self, slackmock):
         self.selenium.get('{}{}'.format(self.live_server_url, reverse('issue:create',
                                         kwargs={'project': self.short})))
@@ -77,7 +77,7 @@ class SlackTest(SeleniumTestCase):
             }]
         )
 
-    @patch('integration.models.SlackClient')
+    @patch('integration.models.WebClient')
     def test_issue_modify(self, slackmock):
         issue = Issue()
         issue.title = self.title_name
@@ -114,7 +114,7 @@ class SlackTest(SeleniumTestCase):
             }]
         )
 
-    @patch('integration.models.SlackClient')
+    @patch('integration.models.WebClient')
     def test_comment(self, slackmock):
         issue = Issue()
         issue.title = self.title_name

@@ -16,7 +16,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _l
 
-from slackclient import SlackClient
+from slack.web.client import WebClient
 
 from integration.models import SlackIntegration
 from lib.custom_model import get_r_object_or_404, get_w_object_or_404
@@ -78,7 +78,7 @@ class SlackIntegrationOAuthView(RedirectView):
     def get_redirect_url(self, *args, **kwargs):
         if not SLACK_ID:
             return reverse("project:edit", kwargs={'project': self.kwargs['project']})
-        slack = SlackClient("")
+        slack = WebClient("")
         code = self.request.GET['code']
         resp = slack.api_call(
             "oauth.access",

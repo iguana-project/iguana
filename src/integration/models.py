@@ -9,7 +9,7 @@ You should have received a copy of the license along with this
 work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 """
 from django.db import models
-from slackclient import SlackClient
+from slack.web.client import WebClient
 
 from issue.models import Issue, Comment
 from project.models import Project
@@ -80,7 +80,7 @@ class SlackIntegration(Integration):
 
     def slack_on(self):
         if not self.slack:
-            self.slack = SlackClient(self.api_token)
+            self.slack = WebClient(token=self.api_token)
 
     def on_issue_signal(self, sender, signal, **kwargs):
         if "instance" not in kwargs or \
