@@ -710,7 +710,12 @@ class _TestTarget(_Target):
 
         # check if functional tests should be run
         if argument_values["func-tests"]:
-            argument_values["app"] = "functional_tests"
+            if argument_values["app"]:
+                # execute only the functional tests of the specified app
+                argument_values["app"] = "functional_tests.%s" % argument_values["app"]
+            else:
+                # execute all functional tests
+                argument_values["app"] = "functional_tests"
 
         # override stdout and stderr
         if argument_values["ign-imp-errs"]:
