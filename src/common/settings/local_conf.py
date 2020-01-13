@@ -87,6 +87,7 @@ CELERY_TASK_EAGER_PROPAGATES = True
 
 # settings for functional tests
 FUNCTESTS_DEFAULT_WAIT_TIMEOUT = 5
+FUNCTESTS_HEADLESS_TESTING = True
 
 # directory for files used for testing - This is the place where to put files used for testing but the recreation
 # for each test run is too expensive

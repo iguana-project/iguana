@@ -8,8 +8,6 @@ Creative Commons Attribution-ShareAlike 4.0 International License.
 You should have received a copy of the license along with this
 work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 """
-import os
-
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.test import LiveServerTestCase
 from selenium import webdriver
@@ -53,15 +51,20 @@ class SeleniumTestCase(LiveServerTestCase):
         from common.settings.webdriver import WEBDRIVER
 
         if WEBDRIVER == "firefox":
-            cls.selenium = webdriver.Firefox()
+            firefox_opt = None
+            if settings.FUNCTESTS_HEADLESS_TESTING:
+                firefox_opt = webdriver.FirefoxOptions()
+                firefox_opt.headless = True
+            cls.selenium = webdriver.Firefox(firefox_options=firefox_opt)
         elif WEBDRIVER == "chrome":
-            # run Chrome in headless mode when testing on Travis
             chrome_opt = None
-            if os.environ.get('TRAVIS') == 'true':
+            if settings.FUNCTESTS_HEADLESS_TESTING:
                 chrome_opt = webdriver.ChromeOptions()
                 chrome_opt.headless = True
             cls.selenium = webdriver.Chrome(options=chrome_opt)
         elif WEBDRIVER == "safari":
+            # headless mode is not possible right now in Safari
+            # see https://github.com/SeleniumHQ/selenium/issues/5985
             cls.selenium = webdriver.Safari()
         else:
             raise Exception("Webdriver not configured probably!")
