@@ -323,13 +323,13 @@ Besides the following plug-ins were used:
 | [django-autocomplete-light](https://django-autocomplete-light.readthedocs.io) | [MIT License](https://github.com/yourlabs/django-autocomplete-light/blob/master/LICENSE) |
 | [django-bootstrap3](https://django-bootstrap3.readthedocs.io) | [Apache License 2.0](https://github.com/dyve/django-bootstrap3/blob/master/LICENSE) |
 | [django-cuser](https://github.com/Alir3z4/django-cuser) | [BSD License](https://github.com/Alir3z4/django-cuser/blob/master/LICENSE) |
-| [django-datetime-widget](https://github.com/asaglimbeni/django-datetime-widget) | [BSD License](https://github.com/asaglimbeni/django-datetime-widget/blob/master/LICENSE.txt) |
-| [django-extensions](https://django-extensions.readthedocs.io) | [MIT License](https://github.com/django-extensions/django-extensions/blob/master/LICENSE)
+| [django-bootstrap-datepicker-plus](https://github.com/monim67/django-bootstrap-datepicker-plus) | [Apache License 2.0](https://github.com/monim67/django-bootstrap-datepicker-plus/blob/master/LICENSE) |
+| [django-extensions](https://github.com/django-extensions/django-extensions) | [MIT License](https://github.com/django-extensions/django-extensions/blob/master/LICENSE)
 | [django-filter](https://github.com/carltongibson/django-filter) | [BSD License](https://github.com/carltongibson/django-filter/blob/develop/LICENSE) |
 | [django-pagedown](https://github.com/timmyomahony/django-pagedown) | [BSD License](https://github.com/timmyomahony/django-pagedown/blob/master/LICENSE.txt) |
 | [django-redis](https://github.com/niwinz/django-redis) | [BSD License](https://github.com/niwinz/django-redis/blob/master/LICENSE) |
 | [djangorestframework](https://github.com/encode/django-rest-framework) | [BSD License](https://github.com/encode/django-rest-framework/blob/master/LICENSE.md) |
-| [djangorestframework-jwt](https://github.com/GetBlimp/django-rest-framework-jwt) | [MIT License](https://github.com/GetBlimp/django-rest-framework-jwt/blob/master/LICENSE) |
+| [djangorestframework-simplejwt](https://github.com/davesque/django-rest-framework-simplejwt) | [MIT License](https://github.com/davesque/django-rest-framework-simplejwt/blob/master/LICENSE.txt) |
 | [django-sendfile](https://github.com/johnsensible/django-sendfile) | [BSD License](https://github.com/johnsensible/django-sendfile/blob/master/LICENSE) |
 | [django-simple-captcha](https://github.com/mbi/django-simple-captcha) | [MIT License](https://github.com/mbi/django-simple-captcha/blob/master/LICENSE) |
 | [django-test-without-migrations](https://github.com/henriquebastos/django-test-without-migrations/) | [MIT License](https://github.com/henriquebastos/django-test-without-migrations/blob/master/LICENSE) |
@@ -338,12 +338,12 @@ Besides the following plug-ins were used:
 | [markdown](https://pythonhosted.org/Markdown/) | [BSD License](https://github.com/waylan/Python-Markdown/blob/master/LICENSE.md) |
 | [markdown-urlize](https://github.com/r0wb0t/markdown-urlize) | [BSD License](https://github.com/r0wb0t/markdown-urlize/blob/master/LICENSE) |
 | [model-mommy](https://model-mommy.readthedocs.org) | [Apache License 2.0](https://github.com/vandersonmota/model_mommy/blob/master/LICENSE) |
-| [pep8](https://pep8.readthedocs.io) | [MIT License](https://github.com/PyCQA/pycodestyle/blob/master/LICENSE) |
 | [Pillow](https://python-pillow.org) | [PIL Software License](https://github.com/python-pillow/Pillow/blob/master/LICENSE) |
 | [piprot](https://github.com/sesh/piprot) | [MIT License](https://github.com/sesh/piprot/blob/master/LICENCE.txt) |
 | [Piexif](https://github.com/hMatoba/Piexif) | [MIT License](https://github.com/hMatoba/Piexif/blob/master/LICENSE.txt) |
 | [ply](http://www.dabeaz.com/ply/) | BSD License |
 | [psycopg2](http://initd.org/psycopg/) | [GNU LGPL v3.0](https://github.com/psycopg/psycopg2/blob/master/LICENSE) |
+| [pycodestyle](https://github.com/PyCQA/pycodestyle) | [Expat License](https://github.com/PyCQA/pycodestyle/blob/master/LICENSE) |
 | [python-dateutil](https://github.com/dateutil/dateutil/) | [BSD License](https://github.com/dateutil/dateutil/blob/master/LICENSE) |
 | [python-magic](https://github.com/ahupp/python-magic) | [MIT license](https://github.com/dateutil/dateutil/blob/master/LICENSE) |
 | [python-xmp-toolkit](https://github.com/python-xmp-toolkit/python-xmp-toolkit) | [ESA/ESO and CRS4 license](https://github.com/python-xmp-toolkit/python-xmp-toolkit/blob/master/LICENSE) |
