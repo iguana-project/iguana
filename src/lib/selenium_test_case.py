@@ -16,9 +16,7 @@ from selenium import webdriver
 from functools import wraps
 from time import sleep
 from selenium.webdriver.remote.webelement import WebElement
-
-
-DEFAULT_WAIT = 5
+from django.conf import settings
 
 
 def wait_after_function_execution(func):
@@ -67,7 +65,7 @@ class SeleniumTestCase(LiveServerTestCase):
             cls.selenium = webdriver.Safari()
         else:
             raise Exception("Webdriver not configured probably!")
-        cls.selenium.implicitly_wait(DEFAULT_WAIT)
+        cls.selenium.implicitly_wait(settings.FUNCTESTS_DEFAULT_WAIT_TIMEOUT)
 
     @classmethod
     def tearDownClass(cls):

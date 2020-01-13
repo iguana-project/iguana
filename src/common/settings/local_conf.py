@@ -85,6 +85,9 @@ CELERY_BROKER_BACKEND = 'memory'
 CELERY_TASK_ALWAYS_EAGER = True
 CELERY_TASK_EAGER_PROPAGATES = True
 
+# settings for functional tests
+FUNCTESTS_DEFAULT_WAIT_TIMEOUT = 5
+
 # directory for files used for testing - This is the place where to put files used for testing but the recreation
 # for each test run is too expensive
 TEST_FILE_PATH = os.path.join(ROOT_DIR, "testing_files")
