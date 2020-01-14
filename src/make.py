@@ -405,11 +405,6 @@ class _MetaCommonTargets(type):
         settings = self._get_dev_stage_setting()
         return settings["development"]
 
-    @property
-    def is_staging(self):
-        settings = self._get_dev_stage_setting()
-        return settings["staging"]
-
 
 class _CommonTargets(metaclass=_MetaCommonTargets):
     @classmethod
@@ -451,12 +446,9 @@ class _CommonTargets(metaclass=_MetaCommonTargets):
     @classmethod
     def get_requirements_file(cls):
         # check which requirements should be installed
-        settings = cls._get_dev_stage_setting()
         requirements_file = os.path.join(BASE_DIR, "requirements")
-        if settings["development"]:
+        if cls.is_development:
             requirements_file = os.path.join(requirements_file, "development.req")
-        elif settings["staging"]:
-            requirements_file = os.path.join(requirements_file, "staging.req")
         else:
             requirements_file = os.path.join(requirements_file, "production.req")
 
@@ -473,8 +465,6 @@ class _CommonTargets(metaclass=_MetaCommonTargets):
 
     @classmethod
     def initialize_settings(cls):
-        settings = cls._get_dev_stage_setting()
-
         # load side side_module
         spec = import_util.spec_from_file_location('manage_settings',
                                                    os.path.join(IGUANA_BASE_DIR, "lib", "manage_settings.py"))
@@ -482,7 +472,7 @@ class _CommonTargets(metaclass=_MetaCommonTargets):
         spec.loader.exec_module(side_module)
 
         # initialize settings
-        side_module.initialize_secret_key(DJANGO_SETTINGS_FILE, IGUANA_SETTINGS_FILE, settings["development"])
+        side_module.initialize_secret_key(DJANGO_SETTINGS_FILE, IGUANA_SETTINGS_FILE, cls.is_development)
 
     @classmethod
     def _get_dev_stage_setting(cls):
@@ -493,18 +483,16 @@ class _CommonTargets(metaclass=_MetaCommonTargets):
         else:
             # default settings
             settings = {
-                "development": False,
-                "staging": False
+                "development": False
             }
 
         return settings
 
     @classmethod
-    def save_dev_stage_setting(cls, development=False, staging=False):
+    def save_make_settings(cls, development=False):
         # add the settings to a dictionary
         settings = {
-            "development": development,
-            "staging": staging
+            "development": development
         }
 
         # open the settings file
@@ -1136,8 +1124,7 @@ class _ProductionTarget(_Target):
     @classmethod
     def execute_target(cls, unused1, argument_values, unused2):
         # write the production settings
-        _CommonTargets.save_dev_stage_setting(development=argument_values.get("development", False),
-                                              staging=argument_values.get("staging", False))
+        _CommonTargets.save_make_settings(development=argument_values.get("development", False))
 
         # initialize the rest of the settings
         _CommonTargets.initialize_settings()
@@ -1148,9 +1135,8 @@ class _ProductionTarget(_Target):
 @call_after(_ProductionTarget)
 @help("Configure everything to be ready for staging.")
 class _StagingTarget(_Target):
-    @classmethod
-    def execute_target(cls, unused1, argument_values, unused2):
-        argument_values["staging"] = True
+    # this target is basically the same as production
+    pass
 
 
 @cmd("development")

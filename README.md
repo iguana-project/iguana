@@ -185,7 +185,7 @@ Run the default django server.
 
 ### Source code management:
 * **setup-virtualenv**<br />
-This target prepares the virtual python environment in which this project is executed. The packages for the virtual environment are defined in the file [production.req](requirements/production.req), [development.req](requirements/development.req) or [staging.req](requirements/staging.req). This depends on which main target you have chosen before.
+This target prepares the virtual python environment in which this project is executed. The packages for the virtual environment are defined in the file [production.req](requirements/production.req) or [development.req](requirements/development.req). This depends on which main target you have chosen before.
 
 * **css**<br />
 See section [Styling](README.md#Styling).
