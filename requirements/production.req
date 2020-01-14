@@ -1,6 +1,6 @@
 -r common.req
 
-django-redis==4.7.0
-gunicorn==19.6.0
-psycopg2==2.8.2
-mysqlclient==1.4.2.post1
+django-redis==4.11.0
+gunicorn==20.0.4
+psycopg2==2.8.4
+mysqlclient==1.4.6
