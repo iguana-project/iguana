@@ -164,7 +164,15 @@ else:
     elif _backend == "sendgrid":
         # use SendGrid
         SENDGRID_API_KEY = get_setting(["email", "SENDGRID_API_KEY"], True, None)
-        EMAIL_BACKEND = "sgbackend.SendGridBackend"
+        # these settings are from the official SendGrid site:
+        #     https://sendgrid.com/docs/for-developers/sending-email/django/
+        # no extra plugin needed for simple mail delivery
+        EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+        EMAIL_HOST = 'smtp.sendgrid.net'
+        EMAIL_HOST_USER = 'apikey'
+        EMAIL_HOST_PASSWORD = SENDGRID_API_KEY
+        EMAIL_PORT = 587
+        EMAIL_USE_TLS = True
 
     # see https://docs.djangoproject.com/en/1.11/ref/settings/#std:setting-DEFAULT_FROM_EMAIL
     DEFAULT_FROM_EMAIL = get_setting(["email", "smtp", "FROM_EMAIL_ADDRESS"])
