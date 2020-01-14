@@ -50,12 +50,10 @@ TOOLS = os.path.join(BASE_DIR, "tools")
 IGUANA_BASE_DIR = os.path.join(BASE_DIR, "src")
 IGUANA_SCSS_DIR = os.path.join(IGUANA_BASE_DIR, "common", "scss")
 IGUANA_STATIC_FILES_DIR = os.path.join(IGUANA_BASE_DIR, "common", "static")
-IGUANA_SETTINGS_FILE = os.path.join(FILES_DIR, "settings.json")
 WEBDRIVER_CONF_FILE = os.path.join(IGUANA_BASE_DIR, "common", "settings", "webdriver.py")
 
 # django settings
 DJANGO_SETTINGS_MODULE = "common.settings"
-DJANGO_SETTINGS_FILE = os.path.join(IGUANA_BASE_DIR, "common", "settings", "__init__.py")
 
 # coverage settings
 COVERAGE_SETTINGS_FILE = os.path.join(IGUANA_BASE_DIR, ".coveragerc")
@@ -472,7 +470,7 @@ class _CommonTargets(metaclass=_MetaCommonTargets):
         spec.loader.exec_module(side_module)
 
         # initialize settings
-        side_module.initialize_secret_key(DJANGO_SETTINGS_FILE, IGUANA_SETTINGS_FILE, cls.is_development)
+        side_module.initialize_secret_key(cls.is_development)
 
     @classmethod
     def _get_dev_stage_setting(cls):

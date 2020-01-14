@@ -116,20 +116,15 @@ if not path.isfile(FIRST_RUN_FILE):
     _spec.loader.exec_module(_side_module)
 
     # recreate the django secret key (override!)
-    _django_settings_file = path.join(IGUANA_DIR, "common", "settings", "__init__.py")
-    _iguana_settings_file = path.join(FILES_DIR, "settings.json")
     _is_development = VARIANT == "development"
-    _side_module.initialize_secret_key(_django_settings_file, _iguana_settings_file, _is_development, True)
+    _side_module.initialize_secret_key(_is_development, True)
 
     # set additional settings
     _settings = {
         'TIME_ZONE': SETTING_TIME_ZONE,
         'LANGUAGE_CODE': SETTING_LANGUAGE
     }
-    if _is_development:
-        _side_module.set_django_settings(_django_settings_file, _settings)
-    else:
-        _side_module.set_django_settings(_iguana_settings_file, _settings)
+    _side_module.set_django_settings(_is_development, _settings)
 
     # mark as reinitialized
     open(FIRST_RUN_FILE, 'x').close()
