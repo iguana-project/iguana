@@ -10,5 +10,6 @@
 
 .select2-container--default .select2-selection--multiple {
 	padding-top: unset;
+	padding-bottom: unset;
 	height: auto;
 }
