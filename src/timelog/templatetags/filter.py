@@ -13,12 +13,10 @@ from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 from django.template import Library, Node, TemplateSyntaxError
-from django.db.models.query import QuerySet
 from django.http import QueryDict
 from django.utils.encoding import smart_str
 from urllib.parse import urlparse
 from issue.models import Issue
-import json
 import re
 import datetime
 import markdown
@@ -78,22 +76,6 @@ def markdownify(text):
                               "strong", "blockquote", "table", "tr", "td", "th", "thead", "tbody",
                               ]
                         )
-
-
-@register.filter(name='mention_list')
-def mention_list(object):
-    if isinstance(object, QuerySet):
-        userlist = []
-        for user in object:
-            us = {}
-            us['username'] = user.username
-            us['image'] = user.avatar.url
-            userlist.append(us)
-        us = {}
-        us['username'] = 'all'
-        us['image'] = '/media/avatars/default.svg'
-        userlist.append(us)
-    return json.dumps(userlist)
 
 
 @register.filter(name='issue_title')

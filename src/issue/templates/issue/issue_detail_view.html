@@ -13,6 +13,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 {% load static %}
 {% load bootstrap3 %}
 {% load filter %}
+{% load user_mention %}
 {% block title %}
 	{{ issue.title }}
 {% endblock title %}
@@ -397,7 +398,7 @@ $(document).ready(function(){
 	var hash = url.substring(url.indexOf("#"));
 	if (hash.includes('#comment'))
 		$(hash).css('border', '2px solid #00e5ff').css('border-radius', '5px');
-	var list = JSON.parse('{{ issue.project.get_members|mention_list|safe }}')
+	var list = JSON.parse('{{ issue.project.get_members|user_list_to_json|safe }}')
 		console.log(list)
 		$("#wmd-input-id_text").mention({
 			delimiter: '@',
