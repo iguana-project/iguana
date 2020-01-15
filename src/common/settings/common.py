@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     'bootstrap_datepicker_plus',
     'rest_framework',
     'django_filters',
-    'pagedown',
+    'pagedown.apps.PagedownConfig',
     'cuser',
     'dal',
     'dal_select2',
