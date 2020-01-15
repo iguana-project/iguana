@@ -11,7 +11,6 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth.views import redirect_to_login
 from django.contrib.auth.mixins import UserPassesTestMixin
-import mdx_urlize
 
 
 """
@@ -31,12 +30,3 @@ def handle_no_permission(self):
 
 
 UserPassesTestMixin.handle_no_permission = handle_no_permission
-
-
-# TODO the regex matching of markdown-urlize is not working correctly
-# TODO see https://github.com/r0wb0t/markdown-urlize/issues/16
-# TODO replace it with a working pattern, thanks to https://mathiasbynens.be/demo/url-regex; thanks @stephenhay
-mdx_urlize.URLIZE_RE = r"(%s)" % '|'.join([
-    r"\b(?:https?|ftp)://[^\s/$.?#].[^\s]*\b",
-    r"\b[^(<\s]+\.(?:com|edu|gov|int|mil|net|org|de)\b"  # use the domains from djangos built-in template tag urlize
-])

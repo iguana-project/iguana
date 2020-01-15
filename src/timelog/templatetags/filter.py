@@ -12,15 +12,12 @@ from django import template
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
-from django.template import Library, Node, TemplateSyntaxError
+from django.template import Node, TemplateSyntaxError
 from django.http import QueryDict
 from django.utils.encoding import smart_str
-from urllib.parse import urlparse
 from issue.models import Issue
 import re
 import datetime
-import markdown
-import bleach
 register = template.Library()
 
 day_si = _("Day")
@@ -56,26 +53,6 @@ def autolink(text, project):
             return url
     text = re.sub(proj_short+'-[0-9]+', lambda m: check_if_number_is_in_project(m.group()), text)
     return text
-
-
-@register.filter
-def markdownify(text):
-    return bleach.clean(markdown.markdown(text,
-                                          extensions=['markdown.extensions.tables',
-                                                      'markdown.extensions.nl2br',
-                                                      'markdown.extensions.extra',
-                                                      'mdx_urlize',
-                                                      ]
-                                          ),
-                        attributes={u'img': [u'src', u'title', u'height', u'width'],
-                                    u'a': [u'href', u'title'],
-                                    u'td': [u'align'],
-                                    },
-                        tags=["p", "b", "a", "i", "img", "ul", "li", "ol", "br", "em",
-                              "hr", "h1", "h2", "h3", "h4", "h5", "h6", "pre", "code",
-                              "strong", "blockquote", "table", "tr", "td", "th", "thead", "tbody",
-                              ]
-                        )
 
 
 @register.filter(name='issue_title')
