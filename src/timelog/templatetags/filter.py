@@ -9,13 +9,11 @@ You should have received a copy of the license along with this
 work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 """
 from django import template
-from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 from django.template import Node, TemplateSyntaxError
 from django.http import QueryDict
 from django.utils.encoding import smart_str
-from issue.models import Issue
 import re
 import datetime
 register = template.Library()
@@ -27,32 +25,6 @@ hour_pl = _("Hours")
 minute_si = _("Minute")
 minute_pl = _("Minutes")
 und = _(" and ")
-
-
-@register.filter
-def autolink(text, project):
-    users = project.get_members()
-    proj_short = project.name_short
-    names = []
-
-    def get_user_url(user):
-        return '['+user.username+']('+reverse('user_profile:user_profile_page', kwargs={'username': user.username})+')'
-
-    for user in users:
-        text = re.sub(user.username, get_user_url(user), text)
-
-    def check_if_number_is_in_project(issue):
-        number = int(issue.split('-')[1])
-        if project.nextTicketId <= number:
-            return issue
-        else:
-            issue_object = Issue.objects.get(project=project, number=number)
-            url = '['+issue+']('
-            url += reverse('issue:detail', kwargs={'project': proj_short, 'sqn_i': number})
-            url += ' "'+issue_object.title+'")'
-            return url
-    text = re.sub(proj_short+'-[0-9]+', lambda m: check_if_number_is_in_project(m.group()), text)
-    return text
 
 
 @register.filter(name='issue_title')

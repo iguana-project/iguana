@@ -12,6 +12,11 @@ from django import template
 import bleach
 import markdown
 import mdx_urlize
+from markdown.inlinepatterns import Pattern
+from markdown.extensions import Extension
+from project.models import Project
+from django.urls.base import reverse
+from issue.models import Issue
 register = template.Library()
 
 
@@ -25,16 +30,23 @@ mdx_urlize.URLIZE_RE = r"(%s)" % '|'.join([
 
 
 @register.filter
-def markdownify(text):
+def markdownify(text, project=None):
     """
     Convert a markdown text to HTML.
     """
+    if project and isinstance(project, Project):
+        # if the project was specified as parameter, some custom extensions could be loaded
+        extra_extensions = [IssueExtension(project),
+                            UserExtension(project)]
+    else:
+        extra_extensions = []
+
     return bleach.clean(markdown.markdown(text,
                                           extensions=['markdown.extensions.tables',
                                                       'markdown.extensions.nl2br',
                                                       'markdown.extensions.extra',
                                                       'mdx_urlize',
-                                                      ]
+                                                      ] + extra_extensions
                                           ),
                         attributes={u'img': [u'src', u'title', u'height', u'width'],
                                     u'a': [u'href', u'title'],
@@ -45,3 +57,68 @@ def markdownify(text):
                               "strong", "blockquote", "table", "tr", "td", "th", "thead", "tbody",
                               ]
                         )
+
+
+class IssueExtension(Extension):
+    """
+    Resolve and link <project.name_short>-<number> to the right issue.
+    """
+    class IssuePattern(Pattern):
+        def __init__(self, pattern, project, md=None):
+            self.project = project
+            Pattern.__init__(self, pattern, md=md)
+
+        def handleMatch(self, m):
+            issue_short_name = m.group(2)
+
+            number = int(issue_short_name.split('-')[1])
+            if self.project.nextTicketId <= number:
+                return issue_short_name
+            else:
+                issue_object = Issue.objects.get(project=self.project, number=number)
+                el = markdown.util.etree.Element("a")
+                el.set('href', reverse('issue:detail',
+                                       kwargs={'project': self.project.name_short, 'sqn_i': number}))
+                el.set("title", markdown.util.AtomicString(issue_object.title))
+                el.text = markdown.util.AtomicString(issue_short_name)
+
+                return el
+
+    def __init__(self, project, **kwargs):
+        self.project = project
+        Extension.__init__(self, **kwargs)
+
+    def extendMarkdown(self, md):
+        issue_re_pattern = r"(\b%s-[0-9]+)" % self.project.name_short
+
+        md.inlinePatterns.register(IssueExtension.IssuePattern(issue_re_pattern, self.project, md),
+                                   "issuepattern",
+                                   100)
+
+
+class UserExtension(Extension):
+    """
+    Resolve and link @<username> to the right user.
+    """
+    class UserPattern(Pattern):
+        def handleMatch(self, m):
+            user_name_with_at = m.group(2)
+
+            el = markdown.util.etree.Element("a")
+            el.set('href', reverse('user_profile:user_profile_page',
+                                   kwargs={'username': user_name_with_at[1:]}))  # remove the @ character
+            el.text = markdown.util.AtomicString(user_name_with_at)
+
+            return el
+
+    def __init__(self, project, **kwargs):
+        self.project = project
+        Extension.__init__(self, **kwargs)
+
+    def extendMarkdown(self, md):
+        user_re_pattern = r"(@%s\b)" % r"\b|@".join([
+            user.username for user in self.project.get_members()
+        ])
+        md.inlinePatterns.register(UserExtension.UserPattern(user_re_pattern, md),
+                                   "userpattern",
+                                   100)

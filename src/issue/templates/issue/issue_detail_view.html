@@ -139,7 +139,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 				</div>
 					<div class="panel-body">
 				{% if issue.description %}
-						{{issue.description|autolink:issue.project|markdownify|safe}}
+						{{issue.description|markdownify:issue.project|safe}}
 					</div>
 				<div class="panel-footer text-muted" style="background-color: white">
 				{% endif %}
@@ -230,7 +230,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 								{% endif %}
 							</div>
 							<div class="comment-content" style="word-wrap:break-word">
-								{{comment.text|autolink:comment.issue.project|markdownify|safe}}
+								{{comment.text|markdownify:comment.issue.project|safe}}
 								{% if comment.modified %}
 									<span class="text-muted" title="{{comment.modified}}"><small><em>{% trans "last modified " %}{{comment.modified|timesince}}{% trans " ago"%}</em></small></span>
 								{% endif %}
