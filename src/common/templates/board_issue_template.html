@@ -66,7 +66,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 				</span>
 				<div class="pull-right">
 					<span class="issue-footer-text">
-						<a class="issue-id-link" href="{% url 'issue:detail' project=project.name_short sqn_i=issue.number %}" title="{{issue.description}}" style="z-index:999;position:relative">{{issue.get_ticket_identifier}}</a>
+						<a class="issue-id-link" href="{% url 'issue:detail' project=project.name_short sqn_i=issue.number %}" title="{{issue.description}}">{{issue.get_ticket_identifier}}</a>
 					</span>
 					<span class="issue-footer-text">
 					{% for dev in issue.assignee.all|slice:"1" %}
