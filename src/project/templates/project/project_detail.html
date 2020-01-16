@@ -16,7 +16,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 {% block title %}{{ project.name }}{% endblock title %}
 {% block content %}
 {% trans "overview" as viewpoint %}
-{% include "projectnavi.html" %}
+{% include "project/project_navigation_bar.html" %}
 
 <h1 class="page-header">
 	{{ project.name }} <small> {{ project.name_short }} </small>

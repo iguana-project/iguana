@@ -20,7 +20,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 {% endblock title %}
 
 {% block content %}
-	{% include "projectnavi.html" %}
+	{% include "project/project_navigation_bar.html" %}
 	<h1 class="page-header">
 		{{issue.get_ticket_identifier}} <small>
 			{% if issue.get_priority_display == "Critical" %}

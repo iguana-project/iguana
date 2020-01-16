@@ -16,7 +16,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 
 {% block content %}
 	{% trans "timelogging" as viewpoint %}
-	{% include "projectnavi.html" %}
+	{% include "project/project_navigation_bar.html" %}
 	<h1 class="page-header"><img src="{{ava_url}}" width="40" alt="{% trans "Avatar" %} {{ user }}"/>  {{ user }}</h1>
 	<ul class="list-group">
 		{% for l in logs %}
