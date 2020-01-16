@@ -16,7 +16,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 		<div class="issue-type text-muted {{issue.type|lower}}">
 			{{ issue.type|slice:":1" }}
 		</div>
-		{% include "issue_info_template.html" %}
+		{% include "issue/issue_info_template.html" %}
 	{% if view.get_sqn_s != -1 %}
 		<td style="padding-left: 0px">
 		<div class="pull-right">

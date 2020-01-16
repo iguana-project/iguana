@@ -31,7 +31,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 									<div class="issue-type text-muted {{issue.type|lower}}" title={{issue.type}}>
 										{{ issue.type|slice:":1" }}
 									</div>
-								{% include "issue_info_template.html"%}
+								{% include "issue/issue_info_template.html"%}
 							</tr>
 						{% endfor %}
 					</table>
@@ -63,7 +63,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 										<div class="issue-type text-muted {{issue.type|lower}}" title={{issue.type}}>
 											{{ issue.type|slice:":1" }}
 										</div>
-									{% include "issue_info_template.html"%}
+									{% include "issue/issue_info_template.html"%}
 								</tr>
 							{% endfor %}
 						</table>
