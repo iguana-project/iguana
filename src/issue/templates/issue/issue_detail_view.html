@@ -393,13 +393,14 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 	{{ forms.comment.media }}
 	<script src="{% static "js/bootstrap3-typeahead.min.js" %}"></script>
 	<script src="{% static "js/mention.js" %}"></script>
+	{{ issue.project.get_members|user_list_for_mention|json_script:"available_users_for_comment" }}
 	<script>
 $(document).ready(function(){
 	var url = window.location.href;
 	var hash = url.substring(url.indexOf("#"));
 	if (hash.includes('#comment'))
 		$(hash).css('border', '2px solid #00e5ff').css('border-radius', '5px');
-	var list = JSON.parse('{{ issue.project.get_members|user_list_to_json|safe }}')
+	var list = JSON.parse(document.getElementById('available_users_for_comment').textContent);
 		console.log(list)
 		$("#wmd-input-id_text").mention({
 			delimiter: '@',

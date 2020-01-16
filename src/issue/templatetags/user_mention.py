@@ -10,15 +10,13 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 """
 from django import template
 from django.db.models.query import QuerySet
-import json
 register = template.Library()
 
 
-@register.filter(name='user_list_to_json')
-def user_list_to_json(users):
+@register.filter(name='user_list_for_mention')
+def user_list_for_mention(users):
     """
-    This template tag is used to convert a list of users to a JSON string.
-    It can be used with the common/static/js/mention.js, which needs such a JSON string as input.
+    This template tag is used to convert a list of users to a dictionary, that is compatible with mention.js.
     """
     if isinstance(users, QuerySet):
         userlist = []
@@ -31,4 +29,4 @@ def user_list_to_json(users):
         us['username'] = 'all'
         us['image'] = '/media/avatars/default.svg'
         userlist.append(us)
-    return json.dumps(userlist)
+    return userlist
