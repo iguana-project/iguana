@@ -1045,6 +1045,7 @@ class _CoverageTarget(_Target):
 
 @cmd("css")
 @group("Source code management")
+@call_after(_CollectionTarget)
 @help("Compile the CSS-files with SASSC.")
 class _CSSTarget(_Target):
     @classmethod
