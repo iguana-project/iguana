@@ -72,10 +72,10 @@ LOG_DIR = os.path.join(FILES_DIR, "logs")
 # TARGET/ARGUMENT DECORATORS
 ############################
 
-def _add_variable_decorator(cls_to_decorate, name="", value=None, add_to_list=False):
-    if add_to_list:
-        if not isinstance(value, list):
-            value = [value]
+def _add_variable_decorator(cls_to_decorate, name="", value=None):
+    # the value can be passed as tuple, if multiple values are supported
+    if isinstance(value, tuple):
+        value = list(value)
 
         # add the value to a list
         value_list = getattr(cls_to_decorate, name, [])
@@ -131,15 +131,15 @@ def help(help=""):  # noqa
     return wrap
 
 
-def call_before(target=None):
+def call_before(*target):
     def wrap(cls):
-        return _add_variable_decorator(cls, "call_before", target, add_to_list=True)
+        return _add_variable_decorator(cls, "call_before", target)
     return wrap
 
 
-def call_after(target=None):
+def call_after(*target):
     def wrap(cls):
-        return _add_variable_decorator(cls, "call_after", target, add_to_list=True)
+        return _add_variable_decorator(cls, "call_after", target)
     return wrap
 
 
@@ -1116,7 +1116,7 @@ class _NewReleaseTarget(_Target):
 
 @cmd("production")
 @group("Main")
-@call_after([_SetupVirtualenvTarget, _CSSTarget, _MigrationsTarget.Create, _MigrationsTarget.Apply, _CollectionTarget])
+@call_after(_SetupVirtualenvTarget, _CSSTarget, _MigrationsTarget.Create, _MigrationsTarget.Apply, _CollectionTarget)
 @help("Configure everything to be ready for production.")
 class _ProductionTarget(_Target):
     @classmethod
@@ -1139,7 +1139,7 @@ class _StagingTarget(_Target):
 
 @cmd("development")
 @group("Main")
-@call_after([_ProductionTarget, _SetWebdriverTarget])
+@call_after(_ProductionTarget, _SetWebdriverTarget)
 @help("Configure everything to be ready for development.")
 class _DevelopmentTarget(_Target):
     @arg("webdriver")
