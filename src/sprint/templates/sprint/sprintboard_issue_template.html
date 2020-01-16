@@ -11,7 +11,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 {% load i18n %}
 {% load cache %}
 {% trans "Priority: " as priority_string %}
-{% cache 86400 board_issue_template issue.project.name_short issue.number request.user.username %}
+{% cache 86400 sprintboard_issue_template issue.project.name_short issue.number request.user.username %}
 <div id="board_issue_{{ issue.number }}" class="panel panel-default issuecard {% if request.user.punched_on.all.first.issue == issue %} punched-in {% endif %}" data-title="{{ issue.title }}" data-priority="{{ issue.priority }}" data-type="{{issue.type }}" data-storypoints="{{ issue.storypoints }}">
 	<div class="panel-body panel-body-nopad">
 		{% if issue.get_left_kCol_for_issue != -1 %}

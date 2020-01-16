@@ -78,10 +78,10 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 					{% if issue.kanbancol.name == column.name %}
 					{% if request.GET.myissues == 'true' %}
 					{% if request.user in issue.assignee.all  %}
-					{% include "board_issue_template.html" %}
+					{% include "sprint/sprintboard_issue_template.html" %}
 					{% endif %}
 					{% else %}
-					{% include "board_issue_template.html" %}
+					{% include "sprint/sprintboard_issue_template.html" %}
 					{% endif %}
 					{% endif %}
 					{% endif %}

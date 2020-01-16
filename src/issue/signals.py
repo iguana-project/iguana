@@ -63,7 +63,7 @@ def invalidate_cache(sender, instance, **kwargs):
                 cache.delete(key)
 
             if delete_board:
-                key2 = make_template_fragment_key('board_issue_template',
+                key2 = make_template_fragment_key('sprintboard_issue_template',
                                                   [iss.project.name_short, iss.number, user.username])
                 cache.delete(key2)
 
