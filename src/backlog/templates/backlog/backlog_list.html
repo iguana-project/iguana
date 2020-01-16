@@ -47,7 +47,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 			</div>
 			<table class="table">
 				{% for issue in view.get_backlog_issues %}
-					{% include "backlog_issue_template.html" %}
+					{% include "backlog/backlog_issue_template.html" %}
 				{% empty %}
 					<tr><td>{% trans "Congratulations! Your backlog is empty." %}</td></tr>
 				{% endfor %}
@@ -129,7 +129,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 						</tr>
 					{% endif %}
 					{% for issue in view.get_sprint_issues %}
-						{% include "backlog_issue_template.html" %}
+						{% include "backlog/backlog_issue_template.html" %}
 					{% endfor %}
 				</table>
 			{% else %}
