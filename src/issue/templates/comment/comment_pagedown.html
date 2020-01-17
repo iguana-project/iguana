@@ -1,0 +1,39 @@
+<!--
+Iguana (c) by Marc Ammon, Moritz Fickenscher, Lukas Fridolin,
+Michael Gunselmann, Katrin Raab, Christian Strate
+
+Iguana is licensed under a
+Creative Commons Attribution-ShareAlike 4.0 International License.
+
+You should have received a copy of the license along with this
+work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
+-->
+{% load i18n %}
+{% load static %}
+{% load bootstrap3 %}
+{% load user_mention %}
+
+
+{# display the widget #}
+{% bootstrap_form form layout='inline'%}
+
+{% block extra_script %}
+    {{ form.media }}
+    <script src="{% static "js/bootstrap3-typeahead.min.js" %}"></script>
+    <script src="{% static "js/mention.js" %}"></script>
+    {{ project.get_members|user_list_for_mention|json_script:"available_users_for_comment" }}
+    <script>
+    $(document).ready(function(){
+        var list = JSON.parse(document.getElementById('available_users_for_comment').textContent);
+            console.log(list)
+            $("#wmd-input-id_text").mention({
+                delimiter: '@',
+                users: list,
+                emptyQuery: true,
+                typeaheadOpts: {
+                    items: 10,
+                },
+            })
+    });
+    </script>
+{% endblock %}

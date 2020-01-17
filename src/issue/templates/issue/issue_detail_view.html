@@ -14,7 +14,6 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 {% load bootstrap3 %}
 {% load filter %}
 {% load markdownify %}
-{% load user_mention %}
 {% block title %}
 	{{ issue.title }}
 {% endblock title %}
@@ -208,13 +207,16 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 				<div class="panel-body">
 					{% if comment_order == 'newest' %}
 						<form class="post-form" method="POST" enctype="multipart/form-data">{% csrf_token %}
-							{% bootstrap_form forms.comment layout='inline' %}
-							{% bootstrap_form forms.attachmentCom layout='inline'%}
-							{% bootstrap_form_errors forms.attachmentCom error_types='all' %}
-							{% buttons %}
-								<button name='action' value='commentAtt' type="submit" class="save btn btn-default">{% trans "Add" %}</button>
-							{% endbuttons %}
-						</form>
+                            {% with project=issue.project form=forms.comment %}
+                                {% include "comment/comment_pagedown.html" %}
+                            {% endwith %}
+                            {% bootstrap_form forms.attachmentCom layout='inline'%}
+                            {{ forms.attachmentCom.file.help_text|safe }}
+                            {% bootstrap_form_errors forms.attachmentCom error_types='all' %}
+                            {% buttons %}
+                                <button name='action' value='commentAtt' type="submit" class="save btn btn-default">{% trans "Add" %}</button>
+                            {% endbuttons %}
+                        </form>
 					{% endif %}
 					{% for comment in comments %}
 						<div class="comment" id="comment{{comment.seqnum}}">
@@ -246,15 +248,17 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 						</div>
 					{% endfor %}
 					{% if comment_order != 'newest' %}
-						<form class="post-form" method="POST" enctype="multipart/form-data">{% csrf_token %}
-							{% bootstrap_form forms.comment layout='inline' %}
-							{% bootstrap_form forms.attachmentCom layout='inline'%}
-							{{forms.attachmentCom.file.help_text|safe}}
-							{% bootstrap_form_errors forms.attachmentCom error_types='all' %}
-							{% buttons %}
-								<button name='action' value='commentAtt' type="submit" class="save btn btn-default">{% trans "Add" %}</button>
-							{% endbuttons %}
-						</form>
+					    <form class="post-form" method="POST" enctype="multipart/form-data">{% csrf_token %}
+                            {% with project=issue.project form=forms.comment %}
+                                {% include "comment/comment_pagedown.html" %}
+                            {% endwith %}
+                            {% bootstrap_form forms.attachmentCom layout='inline'%}
+                            {{ forms.attachmentCom.file.help_text|safe }}
+                            {% bootstrap_form_errors forms.attachmentCom error_types='all' %}
+                            {% buttons %}
+                                <button name='action' value='commentAtt' type="submit" class="save btn btn-default">{% trans "Add" %}</button>
+                            {% endbuttons %}
+                        </form>
 					{% endif %}
 				</div>
 			</div>
@@ -390,26 +394,12 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 	</div>
 {% endblock content %}
 {% block extra_script %}
-	{{ forms.comment.media }}
-	<script src="{% static "js/bootstrap3-typeahead.min.js" %}"></script>
-	<script src="{% static "js/mention.js" %}"></script>
-	{{ issue.project.get_members|user_list_for_mention|json_script:"available_users_for_comment" }}
 	<script>
-$(document).ready(function(){
-	var url = window.location.href;
-	var hash = url.substring(url.indexOf("#"));
-	if (hash.includes('#comment'))
-		$(hash).css('border', '2px solid #00e5ff').css('border-radius', '5px');
-	var list = JSON.parse(document.getElementById('available_users_for_comment').textContent);
-		console.log(list)
-		$("#wmd-input-id_text").mention({
-			delimiter: '@',
-			users: list,
-			emptyQuery: true,
-			typeaheadOpts: {
-				items: 10,
-			},
-		})
-});
+    $(document).ready(function(){
+        var url = window.location.href;
+        var hash = url.substring(url.indexOf("#"));
+        if (hash.includes('#comment'))
+            $(hash).css('border', '2px solid #00e5ff').css('border-radius', '5px');
+    });
 	</script>
 {% endblock extra_script %}

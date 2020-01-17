@@ -16,15 +16,14 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 
 {% block content %}
 <h1 class="page-header">{% trans "Edit" %}:</h1>
-	<form method="POST" class="post-form">{% csrf_token %}
-	{% bootstrap_form form layout='inline'%}
-		{% buttons %}
-			<button id="comment-btn" type="submit" class="save btn btn-default">
-				{% trans "Save" %}
-			</button>
-		{% endbuttons %}
-	</form>
-{% endblock %}
-{% block extra_script %}
-{{ form.media }}
+    <form method="POST" class="post-form">{% csrf_token %}
+        {% with project=comment.issue.project %}
+            {% include "comment/comment_pagedown.html" %}
+        {% endwith %}
+        {% buttons %}
+            <button id="comment-btn" type="submit" class="save btn btn-default">
+                {% trans "Save" %}
+            </button>
+        {% endbuttons %}
+    </form>
 {% endblock %}
