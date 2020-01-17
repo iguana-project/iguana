@@ -27,7 +27,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 	<div class="panel-heading">{% trans "General Settings" %}</div>
 	<div class="panel-body">
 		<form method="POST" id="id_edit_form" class="post-form">{% csrf_token %}
-			{% bootstrap_form form %}
+			{% include "form_with_pagedown.html" %}
 			{% buttons %}
 				<button type="submit" class="save btn btn-default" id="id_submit_edit">
 					{% trans "Save" %}

@@ -17,7 +17,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 {% block content %}
 <h1 class="page-header">{% trans "New Issue" %}</h1>
 	<form method="POST" class="post-form">{% csrf_token %}
-	{% bootstrap_form form %}
+        {% include "form_with_pagedown.html" %}
 		{% buttons %}
 			<button type="submit" class="save btn btn-default" id="id_submit_create">
 				{% trans "Save" %}

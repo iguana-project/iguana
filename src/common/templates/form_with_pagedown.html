@@ -15,8 +15,13 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 {% load markdown_data %}
 
 
-{# display the widget #}
-{% bootstrap_form form layout='inline'%}
+{# display the form #}
+{% if form.fields|length > 1 %}
+    {% bootstrap_form form %}
+{% else %}
+    {# do not display the title if more than one field is in the form #}
+    {% bootstrap_form form layout='inline' %}
+{% endif %}
 
 {% block extra_script %}
     {{ form.media }}
@@ -29,7 +34,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
     $(document).ready(function(){
         var list = JSON.parse(document.getElementById('available_users_for_comment').textContent);
             console.log(list)
-            $("#wmd-input-id_text").mention({
+            $(".wmd-input").mention({
                 delimiter: '@',
                 users: list,
                 emptyQuery: true,
