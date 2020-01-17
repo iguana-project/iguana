@@ -77,6 +77,10 @@ class SeleniumTestCase(LiveServerTestCase):
 
     def __make_screenshot(self, _list, _type):
         for item in _list:
+            # skip items whithout selenium attribute, because a screenshot can be made only of those
+            if not hasattr(item[0], "selenium"):
+                continue
+
             if hash(item) not in SeleniumTestCase.processed_screenshots:
                 file_name = "%s - %s.png" % (_type, str(item[0]))
                 self.selenium.get_screenshot_as_file(file_name)
