@@ -20,7 +20,7 @@
     function getVariableById(id) {
         el = document.getElementById(id)
         if(el === null) {
-            return "";
+            return null;
         }
 
         return JSON.parse(el.textContent)
@@ -29,6 +29,10 @@
     // match any user name in the markdown text and replace it with a link to that user
     function includeUser(text) {
         var userData = getVariableById("user_markdown_data");
+        if(userData === null){
+            return text;
+        }
+
         var re = new RegExp(userData.re_pattern, "g");
         return text.replace(re, function(match, userName) {
             var userUrl = userData.user_url;
@@ -40,6 +44,10 @@
     // match any issue in the markdown text and replace it with a link to it
     function includeIssue(text) {
         var issueData = getVariableById("issue_markdown_data");
+        if(issueData === null){
+            return text;
+        }
+
         var re = new RegExp(issueData.re_pattern, "g");
         var maxTicketNumber = parseInt(issueData.max_ticket_number, 10);
         return text.replace(re, function(match, issueName) {
