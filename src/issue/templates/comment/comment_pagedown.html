@@ -12,6 +12,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 {% load static %}
 {% load bootstrap3 %}
 {% load user_mention %}
+{% load markdown_data %}
 
 
 {# display the widget #}
@@ -22,6 +23,8 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
     <script src="{% static "js/bootstrap3-typeahead.min.js" %}"></script>
     <script src="{% static "js/mention.js" %}"></script>
     {{ project.get_members|user_list_for_mention|json_script:"available_users_for_comment" }}
+    {{ project|get_issue_markdown_data|json_script:"issue_markdown_data" }}
+    {{ project|get_user_markdown_data|json_script:"user_markdown_data" }}
     <script>
     $(document).ready(function(){
         var list = JSON.parse(document.getElementById('available_users_for_comment').textContent);

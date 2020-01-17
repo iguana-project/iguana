@@ -17,6 +17,7 @@ from markdown.extensions import Extension
 from project.models import Project
 from django.urls.base import reverse
 from issue.models import Issue
+from builtins import staticmethod
 register = template.Library()
 
 
@@ -72,7 +73,8 @@ class IssueExtension(Extension):
             issue_short_name = m.group(2)
 
             number = int(issue_short_name.split('-')[1])
-            if self.project.nextTicketId <= number:
+            if number > 0 and \
+                    self.project.nextTicketId <= number:
                 return issue_short_name
             else:
                 issue_object = Issue.objects.get(project=self.project, number=number)
@@ -89,11 +91,15 @@ class IssueExtension(Extension):
         Extension.__init__(self, **kwargs)
 
     def extendMarkdown(self, md):
-        issue_re_pattern = r"(\b%s-[0-9]+)" % self.project.name_short
+        issue_re_pattern = self.create_issue_pattern(self.project)
 
         md.inlinePatterns.register(IssueExtension.IssuePattern(issue_re_pattern, self.project, md),
                                    "issuepattern",
                                    100)
+
+    @staticmethod
+    def create_issue_pattern(project):
+        return r"(\b%s-[0-9]+)" % project.name_short
 
 
 class UserExtension(Extension):
@@ -116,9 +122,13 @@ class UserExtension(Extension):
         Extension.__init__(self, **kwargs)
 
     def extendMarkdown(self, md):
-        user_re_pattern = r"(@%s\b)" % r"\b|@".join([
-            user.username for user in self.project.get_members()
-        ])
+        user_re_pattern = self.create_user_pattern(self.project)
         md.inlinePatterns.register(UserExtension.UserPattern(user_re_pattern, md),
                                    "userpattern",
                                    100)
+
+    @staticmethod
+    def create_user_pattern(project):
+        return r"(@%s\b)" % r"\b|@".join([
+            user.username for user in project.get_members()
+        ])
