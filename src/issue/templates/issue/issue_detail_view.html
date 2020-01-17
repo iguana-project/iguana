@@ -208,7 +208,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 					{% if comment_order == 'newest' %}
 						<form class="post-form" method="POST" enctype="multipart/form-data">{% csrf_token %}
                             {% with project=issue.project form=forms.comment %}
-                                {% include "comment/comment_pagedown.html" %}
+                                {% include "form_with_pagedown.html" %}
                             {% endwith %}
                             {% bootstrap_form forms.attachmentCom layout='inline'%}
                             {{ forms.attachmentCom.file.help_text|safe }}
@@ -250,7 +250,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 					{% if comment_order != 'newest' %}
 					    <form class="post-form" method="POST" enctype="multipart/form-data">{% csrf_token %}
                             {% with project=issue.project form=forms.comment %}
-                                {% include "comment/comment_pagedown.html" %}
+                                {% include "form_with_pagedown.html" %}
                             {% endwith %}
                             {% bootstrap_form forms.attachmentCom layout='inline'%}
                             {{ forms.attachmentCom.file.help_text|safe }}

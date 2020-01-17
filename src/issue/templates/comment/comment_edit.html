@@ -18,7 +18,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 <h1 class="page-header">{% trans "Edit" %}:</h1>
     <form method="POST" class="post-form">{% csrf_token %}
         {% with project=comment.issue.project %}
-            {% include "comment/comment_pagedown.html" %}
+            {% include "form_with_pagedown.html" %}
         {% endwith %}
         {% buttons %}
             <button id="comment-btn" type="submit" class="save btn btn-default">
