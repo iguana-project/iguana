@@ -426,18 +426,17 @@ class IssueCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(IssueCreateView, self).get_context_data(**kwargs)
-        context['project'] = self.kwargs.get('project')
+        context['project'] = Project.objects.get(name_short=self.kwargs.get('project'))
         return context
 
     def get_form(self, form_class=None):
         if form_class is None:
             form_class = self.get_form_class()
-        form = form_class(**self.get_form_kwargs(), proj=self.kwargs.get('project'), issue=None)
-        form.fields['kanbancol'].queryset = KanbanColumn.objects.filter(project__name_short=self.kwargs.get('project'))
-        form.fields['kanbancol'].initial = KanbanColumn.objects.filter(
-                                            project__name_short=self.kwargs.get('project')
-                                           ).first()
+
         project = Project.objects.get(name_short=self.kwargs.get('project'))
+        form = form_class(**self.get_form_kwargs(), proj=project.name_short, issue=None)
+        form.fields['kanbancol'].queryset = KanbanColumn.objects.filter(project__name_short=project.name_short)
+        form.fields['kanbancol'].initial = KanbanColumn.objects.filter(project__name_short=project.name_short).first()
 
         return form
 

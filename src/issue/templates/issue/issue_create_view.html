@@ -76,7 +76,7 @@ $(function () {
 
 	$("#send").click(function () {
 		$.ajax({
-			url: '/project/' +'{{ project }}' + '/tag/',
+			url: '/project/' +'{{ project.name_short }}' + '/tag/',
 			data: { 'tag_text': $("#new_tag").val(), 'create_tag': '', 'color': '', 'csrfmiddlewaretoken': csrftoken },
 			type: 'post',
 			cache: false,
