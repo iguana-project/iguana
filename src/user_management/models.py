@@ -37,6 +37,14 @@ class CustomUser(SearchableMixin, AbstractUser, CustomModel):
     # NOTE: if we need some additional fields we might add those fields into the settings/common.py
     # NOTE: into the UserAttributeSimilarityValidator
     # NOTE: plus if one field name is changed, we also need to adjust ^this
+    class Meta:
+        # the verbose values are required to identify the user model as "user" and not "customuser"
+        verbose_name = getattr(AbstractUser, "_meta").verbose_name
+        verbose_name_plural = getattr(AbstractUser, "_meta").verbose_name_plural
+
+        # avoid 'UnorderedObjectListWarning'
+        ordering = ["username"]
+
     email = models.EmailField(_('email address'), unique=True)
 
     # additional fields (first and last name are already part of AbstractUser)
