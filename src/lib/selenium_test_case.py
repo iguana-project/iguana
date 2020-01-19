@@ -17,22 +17,24 @@ from selenium.webdriver.remote.webelement import WebElement
 from django.conf import settings
 
 
-def wait_after_function_execution(func):
+def wait_after_function_execution(wait_time=0):
     """
-    Wait 0.1 seconds after the execution of the function
+    Wait specified time in seconds after the execution of the function.
     """
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        result = func(*args, **kwargs)
-        sleep(0.1)
-        return result
+    def real_decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            result = func(*args, **kwargs)
+            sleep(wait_time)
+            return result
 
-    return wrapper
+        return wrapper
+    return real_decorator
 
 
 # monkey patch the WebElement class
 # sometimes the browser needs some time to react to the clicking event (executing JS, etc.)
-WebElement.click = wait_after_function_execution(WebElement.click)
+WebElement.click = wait_after_function_execution(0.1)(WebElement.click)
 
 
 class SeleniumTestCase(LiveServerTestCase):
