@@ -15,17 +15,39 @@ from functools import wraps
 from time import sleep
 from selenium.webdriver.remote.webelement import WebElement
 from django.conf import settings
+from selenium.webdriver.common.keys import Keys
+from collections.abc import Iterable
 
 
-def wait_after_function_execution(wait_time=0):
+def wait_after_function_execution(wait_time=0, in_args=None):
     """
     Wait specified time in seconds after the execution of the function.
+    Only wait if the 'in_args' value is found in the functions *args or **kwargs. Is ignored if 'in_args' is None.
     """
     def real_decorator(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
+            in_args_found = True
+            if in_args:
+                in_args_found = False
+                for arg in args:
+                    if isinstance(arg, Iterable) and \
+                            in_args in arg:
+                        in_args_found = True
+                        break
+                for value in kwargs.values():
+                    if isinstance(value, Iterable) and \
+                            in_args in value:
+                        in_args_found = True
+                        break
+
+            # execute function
             result = func(*args, **kwargs)
-            sleep(wait_time)
+
+            # wait..
+            if in_args_found:
+                sleep(wait_time)
+
             return result
 
         return wrapper
@@ -33,8 +55,9 @@ def wait_after_function_execution(wait_time=0):
 
 
 # monkey patch the WebElement class
-# sometimes the browser needs some time to react to the clicking event (executing JS, etc.)
+# sometimes the browser needs some time to react to the clicking or KEY_RETURN event (executing JS, etc.)
 WebElement.click = wait_after_function_execution(0.1)(WebElement.click)
+WebElement.send_keys = wait_after_function_execution(0.2, in_args=Keys.RETURN)(WebElement.send_keys)
 
 
 class SeleniumTestCase(LiveServerTestCase):
