@@ -55,8 +55,9 @@ def wait_after_function_execution(wait_time=0, in_args=None):
 
 
 # monkey patch the WebElement class
-# sometimes the browser needs some time to react to the clicking or KEY_RETURN event (executing JS, etc.)
+# sometimes the browser needs some time to react to the clicking/submitting or KEY_RETURN event (executing JS, etc.)
 WebElement.click = wait_after_function_execution(0.1)(WebElement.click)
+WebElement.submit = wait_after_function_execution(0.2)(WebElement.submit)
 WebElement.send_keys = wait_after_function_execution(0.2, in_args=Keys.RETURN)(WebElement.send_keys)
 
 
