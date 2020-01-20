@@ -90,6 +90,23 @@ class LocalizedBasePickerInput(BasePickerInput):
         else:
             return super().format_value(value=value)
 
+    @property
+    def media(self):
+        # get the default js and css media
+        media = super().media
+
+        # add custom js
+        regex = re.compile(r"^https://cdnjs\.cloudflare\.com/.*$")
+        filtered_js = [item for item in media._js if not regex.search(item)]
+        filtered_js.append("js/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js")
+        filtered_js.append("js/bootstrap-datetimepicker/moment-with-locales.min.js")
+
+        # add custom css
+        filtered_css = [item for item in media._css["all"] if not regex.search(item)]
+        filtered_css.append("css/bootstrap-datetimepicker.min.css")
+
+        return Media(js=tuple(filtered_js), css={"all": filtered_css})
+
 
 class LocalizedDateTimePickerInput(DateTimePickerInput, LocalizedBasePickerInput):
     display_format_key = 'SHORT_DATETIME_FORMAT'
