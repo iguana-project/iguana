@@ -1135,7 +1135,10 @@ class _ProductionTarget(_Target):
 @help("Configure everything to be ready for staging.")
 class _StagingTarget(_Target):
     # this target is basically the same as production
-    pass
+    @classmethod
+    def execute_target(cls, parser, argument_values, argv_rest):
+        # this method must be overridden, because otherwise it prints the help message when it's called
+        pass
 
 
 @cmd("development")
