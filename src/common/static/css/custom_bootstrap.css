@@ -30,6 +30,17 @@ a:focus {
 hr {
 	border-top: 1px solid #ebeeef;
 }
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.h1,
+.h2,
+.h3,
+.h4,
+.h5,
 .h6 {
 	font-family: "Roboto Light", "robotolight", Helvetica, Arial, sans-serif;
 }
@@ -59,6 +70,7 @@ h6 .small,
 .h6 .small {
 	color: #96a6ab;
 }
+mark,
 .mark {
 	background-color: #feffe0;
 }
@@ -513,6 +525,9 @@ fieldset[disabled] .btn-link:hover,
 .btn-link[disabled]:focus,
 fieldset[disabled] .btn-link:focus {
 	color: #96a6ab;
+}
+.caret {
+	vertical-align: baseline;
 }
 .dropdown-menu > li > a {
 	color: #364d54;
