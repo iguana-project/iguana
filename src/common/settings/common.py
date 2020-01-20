@@ -198,6 +198,13 @@ MESSAGE_TAGS = {
     messages.ERROR: 'danger'
 }
 
+# use local bootstrap and jQuery files
+BOOTSTRAP3 = {
+    "css_url": os.path.join(STATIC_URL, "css", "bootstrap.min.css"),
+    "javascript_url": os.path.join(STATIC_URL, "js", "bootstrap.min.js"),
+    "jquery_url": os.path.join(STATIC_URL, "js", "jquery.min.js"),
+}
+
 
 # name of the platform
 PLATFORM = "iguana-project"

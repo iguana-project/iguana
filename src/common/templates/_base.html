@@ -32,8 +32,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 
     {% block javascript %}
         <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-        <script src="{% static "js/jquery.min.js" %}" type="text/javascript"></script>
-        {% bootstrap_javascript %}
+        {% bootstrap_javascript jquery=1 %}
     {% endblock javascript %}
     {% block extra_script %}
         <!-- Include individual files as needed -->
