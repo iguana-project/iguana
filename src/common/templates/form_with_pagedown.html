@@ -11,7 +11,6 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 {% load i18n %}
 {% load static %}
 {% load bootstrap3 %}
-{% load user_mention %}
 {% load markdown_data %}
 
 
@@ -23,25 +22,60 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
     {% bootstrap_form form layout='inline' %}
 {% endif %}
 
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static "css/tribute.css" %}" />
+    <style>
+        .tribute-container ul {
+            background: inherit;
+        }
+    </style>
+{% endblock %}
 {% block extra_script %}
     {{ form.media }}
-    <script src="{% static "js/bootstrap3-typeahead.min.js" %}"></script>
-    <script src="{% static "js/mention.js" %}"></script>
-    {{ project.get_members|user_list_for_mention|json_script:"available_users_for_comment" }}
+    <script src="{% static "js/tribute.min.js" %}"></script>
     {{ project|get_issue_markdown_data|json_script:"issue_markdown_data" }}
     {{ project|get_user_markdown_data|json_script:"user_markdown_data" }}
     <script>
     $(document).ready(function(){
-        var list = JSON.parse(document.getElementById('available_users_for_comment').textContent);
-            console.log(list)
-            $(".wmd-input").mention({
-                delimiter: '@',
-                users: list,
-                emptyQuery: true,
-                typeaheadOpts: {
-                    items: 10,
-                },
-            })
+        function remoteSearch(text, queryURL, cb) {
+            xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        var data = JSON.parse(xhr.responseText);
+                        cb(data.results);
+                    } else {
+                        cb([]);
+                    }
+                }
+            };
+            xhr.open("GET", queryURL + "?q=" + text, true);
+            xhr.send();
+        }
+
+        var tribute = new Tribute({
+            containerClass: 'tribute-container dropdown-menu',
+            trigger: '@',
+            values: function (text, cb) {
+                var URL = "/project/userac/" + "{{ project.name_short }}" + "/";
+                remoteSearch(text, URL, users => cb(users));
+            },
+            selectTemplate: function (item) {
+                // extract user name via regex
+                var userData = JSON.parse(document.getElementById("user_markdown_data").textContent);
+                // the markdown pattern assumes a '@' character before the username, but autocomplete serves the username without '@'
+                // -> remove all '@'s from the pattern
+                var regexPattern = userData.re_pattern.replace(/@/g, '');
+                var re = new RegExp(regexPattern, "g");
+                return '@' + item.original.text.match(re);
+             },
+             menuItemTemplate: function (item) {
+                return item.original.text;
+             },
+             lookup: "text",
+             fillAttr: "text",
+        });
+        tribute.attach(document.querySelectorAll(".wmd-input"));
     });
     </script>
 {% endblock %}

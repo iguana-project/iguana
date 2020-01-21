@@ -29,6 +29,9 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 		<link rel="stylesheet" href="{% static "css/custom_bootstrap.css" %}" />
 		<link rel="stylesheet" href="{% static "css/style.css" %}" />
 	{% endblock css %}
+	{% block extra_css %}
+        <!-- Include individual files as needed -->
+    {% endblock extra_css %}
 
     {% block javascript %}
         <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
