@@ -19,11 +19,9 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 {% trans "backlog" as viewpoint %}
 {% include "project/project_navigation_bar.html" %}
 	<div class="olea-container">
-		<form id="olea" method="post" class="olea-flex-element" action="{% url 'olea:processOlea' project=project.name_short %}">{% csrf_token %}
-			<input type="text" id="expression" title="{% include "static/olea_tooltip.html" %}" class="form-control" name="expression" {{oleafocus}} value="{{oleaexpression}}" placeholder="{% trans 'Place your change expression here' %}" autocomplete="off" />
-			<input type="hidden" name="currentsprint" value="">
-			<input type="hidden" name="next" value="{{request.get_full_path}}">
-		</form>
+		<div class="olea-flex-element">
+		    {% include "olea/olea-bar.html" %}
+		</div>
 		<a class="btn btn-default olea-flex-element" href="{% url 'sprint:newsprint' project=project.name_short %}"><span class="glyphicon glyphicon-plus"></span> {% trans "New sprint" %}</a>
 		<form class="olea-flex-element">
 			<input type="text" id="text-filter" onkeyup="filter_issues('backlog-issue')" placeholder="Filter issues" class="form-control">
