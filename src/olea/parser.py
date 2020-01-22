@@ -12,12 +12,12 @@ import ply.yacc as yacc
 import ply.lex as lex
 import re
 
-from issue.lexer import tokens
-import issue.lexer
+from olea.lexer import tokens
+import olea.lexer
 
 from django.db.models import Q
 
-from .models import Issue
+from issue.models import Issue
 from tag.models import Tag
 from kanbancol.models import KanbanColumn
 from timelog.models import Timelog
@@ -301,7 +301,7 @@ def compile(expression, project, user):
         raise Exception(u"No user permissions to modify issues in this project")
 
     # parse expression
-    lexer = lex.lex(module=issue.lexer)
+    lexer = lex.lex(module=olea.lexer)
     # writes to parsetab.py (this is closed internally) and parser.out (which seems to stay open)
     # I don't know why debuglog (parser.out) is still open if we provide our own PlyLogger with it's
     # own file descriptor in that case yacc should not open any files.

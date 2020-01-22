@@ -32,7 +32,6 @@ from kanbancol.models import KanbanColumn
 from project.models import Project
 from sprint.models import Sprint
 from event import signals
-from issue import parser
 
 # NOTE: ugettext_lazy "is essential when calls to these functions are located in code
 #       paths that are executed at module load time."

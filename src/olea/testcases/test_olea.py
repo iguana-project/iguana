@@ -12,8 +12,8 @@ from django.test import TestCase
 from django.urls import reverse
 
 import ply.lex as lex
-import issue.lexer
-from issue import parser
+import olea.lexer
+from olea import parser
 
 from project.models import Project
 from kanbancol.models import KanbanColumn
@@ -63,7 +63,7 @@ class FormTest(TestCase):
         pass
 
     def test_lexer(self):
-        lexer = lex.lex(module=issue.lexer)
+        lexer = lex.lex(module=olea.lexer)
 
         # contains test strings and their expected number of tokens
         tests = {

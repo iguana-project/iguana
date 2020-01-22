@@ -16,7 +16,7 @@ from django.shortcuts import redirect
 from lib.custom_model import get_r_object_or_404
 from project.models import Project
 from sprint.models import Sprint
-from issue import parser
+from olea import parser
 
 # NOTE: ugettext_lazy "is essential when calls to these functions are located in code
 #       paths that are executed at module load time."

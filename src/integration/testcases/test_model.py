@@ -21,7 +21,7 @@ from issue.models import Issue
 from sprint.models import Sprint
 from event import signals
 
-from issue import parser
+from olea import parser
 
 
 def cmp_deep(a, b):
