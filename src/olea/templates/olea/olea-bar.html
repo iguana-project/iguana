@@ -12,7 +12,12 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 {% load static %}
 
 <form id="olea" method="post" action="{% url 'olea:processOlea' project=project.name_short %}">{% csrf_token %}
-    <input type="text" id="expression" title="{% include "olea/olea_tooltip.html" %}" class="form-control" name="expression" {{oleafocus}} value="{{oleaexpression}}" placeholder="{% trans 'Place your change expression here' %}" autocomplete="off" />
+    <div class="input-group">
+        <input type="text" id="expression" title="{% include "olea/olea_tooltip.html" %}" class="form-control" name="expression" {{oleafocus}} value="{{oleaexpression}}" placeholder="{% trans 'Place your change expression here' %}" autocomplete="off" />
+        <span class="input-group-btn">
+            <button class="btn btn-default" type="submit">{% trans 'Go' %}</button>
+        </span>
+    </div>
     {# set the 'olea_sprint' variable to add any newly created issue right to that sprint #}
     {% if olea_sprint and olea_sprint.is_active %}
         <input type="hidden" name="currentsprint" value="{{olea_sprint.seqnum}}">
