@@ -37,71 +37,79 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 		<span><a class="issue-tag" style="background-color: #{{tag.color}}; color: #{{tag.font_color}}" href="{% url 'tag:tag' project=issue.project.name_short %}" target="tag">{{ tag }}</a></span>
 	{% endfor %}
 	<p></p>
-	<a class="btn btn-default" id="issue_detail_edit_link" href="{% url 'issue:edit' project=issue.project.name_short sqn_i=issue.number %}" title="{% trans "Edit this issue" %}">
-		<span class="glyphicon glyphicon-pencil"></span> {% trans "Edit"%}
-	</a>
-
-	{% if issue.archived %}
-		<form style="display:inline-block" method="post" action="{% url 'issue:unarchiveissue' project=project.name_short %}" >{% csrf_token %}
-			<input type="hidden" name="sqn_i" value="{{issue.number}}" />
-			<button type="submit" class="btn btn-default" title="{% trans "Move back to backlog" %}">
-				<span class="glyphicon glyphicon-book"></span> {% trans "Unarchive"%}
-			</button>
-		</form>
-		<a class="btn btn-default" id="issue_delete_link" href="{% url 'issue:delete' project=issue.project.name_short sqn_i=issue.number %}" title="{% trans "If no time is logged" %}">
-			<span class="glyphicon glyphicon-trash"></span> {% trans "Delete"%}
-		</a>
-	{% else %}
-		{% if not issue.sprint.is_active %}
-			<form style="display:inline-block" method="post" action="{% url 'issue:archiveissue' project=project.name_short %}" >{% csrf_token %}
-				<input type="hidden" name="sqn_i" value="{{issue.number}}" />
-				<button type="submit" class="btn btn-default" title="{% trans "Move to archive" %}">
-					<span class="glyphicon glyphicon-book"></span> {% trans "Archive"%}
-				</button>
-			</form>
-		{% endif %}
-	{% endif %}
-	{% if request.user in issue.participant.all %}
-		<form style="display:inline-block" method="post" action="{% url 'discussion:mute' project.name_short issue.number %}">{% csrf_token %}
-			<button type="submit" class="btn btn-default" title="{% trans "Turn off notifications for this issue" %}">
-				<span class="glyphicon glyphicon-eye-close"></span> {% trans "Mute"%}
-			</button>
-		</form>
-	{% else %}
-		<form style="display:inline-block" method="post" action="{% url 'discussion:follow' project.name_short issue.number %}">{% csrf_token %}
-			<button type="submit" class="btn btn-default"  title="{% trans "Turn on notifications for this issue" %}">
-				<span class="glyphicon glyphicon-eye-open"></span> {% trans "Follow"%}
-			</button>
-		</form>
-	{% endif %}
-	{% if request.user in issue.assignee.all %}
-		<form style="display:inline-block" id="atm{{issue.number}}" method="post" action="{% url 'issue:rmfromme' project=issue.project.name_short %}" >{% csrf_token %}
-			<input type="hidden" name="next" value={{request.get_full_path}} />
-			<input type="hidden" name="sqn_i" value={{issue.number}} />
-			<button type="submit" class="btn btn-default" title="{% trans "Remove me from assignees" %}">
-				<span class="glyphicon glyphicon-star"></span>{% trans "Remove from me" %}
-			</button>
-		</form>
-	{% else %}
-		<form style="display:inline-block" id="atm{{issue.number}}" method="post" action="{% url 'issue:assigntome' project=issue.project.name_short %}" >{% csrf_token %}
-			<input type="hidden" name="next" value={{request.get_full_path}} />
-			<input type="hidden" name="sqn_i" value={{issue.number}} />
-			<button type="submit" class="btn btn-default" title="{% trans "Assign to me" %}">
-				<span class="glyphicon glyphicon-star-empty"></span>{% trans "Assign to me" %}
-			</button>
-		</form>
-	{% endif %}
-	<form style="display:inline-block" id="punch{{issue.number}}"  method="post" action="{% url 'issue:punch' project=issue.project.name_short sqn_i=issue.number %}" >{% csrf_token %}
-		<input type="hidden" name="next" value={{request.get_full_path}} />
-		{% if request.user.punched_on.all.first.issue == issue %}
-			<button type="submit" class="btn btn-default" title="{% trans "Punch out" %}">
-				<span class="glyphicon glyphicon-record" style="color:red"></span> {% trans "Punch out" %}
-		{% else %}
-			<button type="submit" class="btn btn-default" title="{% trans "Punch in" %}">
-				<span class="glyphicon glyphicon-record"></span> {% trans "Punch in" %}
-		{% endif %}
-			</button>
-	</form>
+	<div class="row">
+    	<div class="col-md-12 olea-container">
+    	    <div class="olea-flex-element">
+                {% include "olea/olea-bar.html" %}
+            </div>
+            
+        	<a class="btn btn-default olea-element" id="issue_detail_edit_link" href="{% url 'issue:edit' project=issue.project.name_short sqn_i=issue.number %}" title="{% trans "Edit this issue" %}">
+        		<span class="glyphicon glyphicon-pencil"></span> {% trans "Edit"%}
+        	</a>
+            
+        	{% if issue.archived %}
+        		<form method="post" action="{% url 'issue:unarchiveissue' project=project.name_short %}" >{% csrf_token %}
+        			<input type="hidden" name="sqn_i" value="{{issue.number}}" />
+        			<button type="submit" class="btn btn-default olea-element" title="{% trans "Move back to backlog" %}">
+        				<span class="glyphicon glyphicon-book"></span> {% trans "Unarchive"%}
+        			</button>
+        		</form>
+        		<a class="btn btn-default olea-element" id="issue_delete_link" href="{% url 'issue:delete' project=issue.project.name_short sqn_i=issue.number %}" title="{% trans "If no time is logged" %}">
+        			<span class="glyphicon glyphicon-trash"></span> {% trans "Delete"%}
+        		</a>
+        	{% else %}
+        		{% if not issue.sprint.is_active %}
+        			<form method="post" action="{% url 'issue:archiveissue' project=project.name_short %}" >{% csrf_token %}
+        				<input type="hidden" name="sqn_i" value="{{issue.number}}" />
+        				<button type="submit" class="btn btn-default olea-element" title="{% trans "Move to archive" %}">
+        					<span class="glyphicon glyphicon-book"></span> {% trans "Archive"%}
+        				</button>
+        			</form>
+        		{% endif %}
+        	{% endif %}
+        	{% if request.user in issue.participant.all %}
+        		<form method="post" action="{% url 'discussion:mute' project.name_short issue.number %}">{% csrf_token %}
+        			<button type="submit" class="btn btn-default olea-element" title="{% trans "Turn off notifications for this issue" %}">
+        				<span class="glyphicon glyphicon-eye-close"></span> {% trans "Mute"%}
+        			</button>
+        		</form>
+        	{% else %}
+        		<form method="post" action="{% url 'discussion:follow' project.name_short issue.number %}">{% csrf_token %}
+        			<button type="submit" class="btn btn-default olea-element"  title="{% trans "Turn on notifications for this issue" %}">
+        				<span class="glyphicon glyphicon-eye-open"></span> {% trans "Follow"%}
+        			</button>
+        		</form>
+        	{% endif %}
+        	{% if request.user in issue.assignee.all %}
+        		<form id="atm{{issue.number}}" method="post" action="{% url 'issue:rmfromme' project=issue.project.name_short %}" >{% csrf_token %}
+        			<input type="hidden" name="next" value={{request.get_full_path}} />
+        			<input type="hidden" name="sqn_i" value={{issue.number}} />
+        			<button type="submit" class="btn btn-default olea-element" title="{% trans "Remove me from assignees" %}">
+        				<span class="glyphicon glyphicon-star"></span>{% trans "Remove from me" %}
+        			</button>
+        		</form>
+        	{% else %}
+        		<form id="atm{{issue.number}}" method="post" action="{% url 'issue:assigntome' project=issue.project.name_short %}" >{% csrf_token %}
+        			<input type="hidden" name="next" value={{request.get_full_path}} />
+        			<input type="hidden" name="sqn_i" value={{issue.number}} />
+        			<button type="submit" class="btn btn-default olea-element" title="{% trans "Assign to me" %}">
+        				<span class="glyphicon glyphicon-star-empty"></span>{% trans "Assign to me" %}
+        			</button>
+        		</form>
+        	{% endif %}
+        	<form id="punch{{issue.number}}"  method="post" action="{% url 'issue:punch' project=issue.project.name_short sqn_i=issue.number %}" >{% csrf_token %}
+        		<input type="hidden" name="next" value={{request.get_full_path}} />
+        		{% if request.user.punched_on.all.first.issue == issue %}
+        			<button type="submit" class="btn btn-default olea-element" title="{% trans "Punch out" %}">
+        				<span class="glyphicon glyphicon-record" style="color:red"></span> {% trans "Punch out" %}
+        		{% else %}
+        			<button type="submit" class="btn btn-default olea-element" title="{% trans "Punch in" %}">
+        				<span class="glyphicon glyphicon-record"></span> {% trans "Punch in" %}
+        		{% endif %}
+        			</button>
+        	</form>
+        </div>
+	</div>
 	<p></p>
 	<div class="row">
 		<div class="col-md-8">
