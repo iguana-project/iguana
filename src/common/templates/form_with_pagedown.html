@@ -68,8 +68,8 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
                         // the markdown pattern assumes a '@' character before the username, but autocomplete serves the username without '@'
                         // -> remove all '@'s from the pattern
                         var regexPattern = userData.re_pattern.replace(/@/g, '');
-                        var re = new RegExp(regexPattern, "g");
-                        return '@' + item.original.text.match(re);
+                        var re = new RegExp(regexPattern);
+                        return '@' + re.exec(item.original.text)[0];
                     },
                     menuItemTemplate: function (item) {
                         return item.original.text;
@@ -87,8 +87,8 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
                     selectTemplate: function (item) {
                         // extract issue name via regex
                         var issueData = JSON.parse(document.getElementById("issue_markdown_data").textContent);
-                        var re = new RegExp(issueData.re_pattern, "g");
-                        return item.original.text.match(re);
+                        var re = new RegExp(issueData.re_pattern);
+                        return re.exec(item.original.text)[0];
                     },
                     menuItemTemplate: function (item) {
                         return item.original.text;
