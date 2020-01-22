@@ -12,12 +12,12 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 {% load i18n %}
 {% load bootstrap3 %}
 
-{% block title %}{% trans "Edit" %} {{ Issue.get_ticket_identifier }}{% endblock title %}
+{% block title %}{% trans "Edit" %} {{ issue.get_ticket_identifier }}{% endblock title %}
 
 {% block content %}
-<h1 class="page-header">{% trans "Edit" %} {{ Issue.get_ticket_identifier }}</h1>
+<h1 class="page-header">{% trans "Edit" %} {{ issue.get_ticket_identifier }}</h1>
 	<form method="POST" class="post-form">{% csrf_token %}
-		{% include "form_with_pagedown.html" with project=Issue.project %}
+		{% include "form_with_pagedown.html" with project=issue.project %}
 		{% buttons %}
 			<button type="submit" class="save btn btn-default" id="id_submit_edit">
 				{% trans "Save" %}

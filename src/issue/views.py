@@ -480,7 +480,7 @@ class IssueDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
 class IssueEditView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Issue
-    context_object_name = 'Issue'
+    context_object_name = 'issue'
     template_name = 'issue/issue_edit.html'
     form_class = LimitKanbanForm
     breadcrumb = _l("Edit")
