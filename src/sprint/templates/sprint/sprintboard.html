@@ -20,17 +20,17 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 {% include "project/project_navigation_bar.html" %}
 
 <p></p>
-<div class="row" style="margin-bottom:10px">
-	<div class="col-sm-12 olea-container">
-		<div class="olea-flex-element">
+<div class="row">
+	<div class="col-md-12 olea-container">
+	    <div class="olea-flex-element">
 	       	{% include "olea/olea-bar.html" with olea_sprint=project.currentsprint %}
         </div>
-		<form class="olea-flex-element">
-			<input type="text" id="text-filter" onkeyup="filter_issues('issuecard')" placeholder="Filter issues" class="form-control">
+		<form>
+			<input type="text" id="text-filter" onkeyup="filter_issues('issuecard')" placeholder="Filter issues" class="form-control olea-element">
 		</form>
 
 		{% if issuelist %}
-			<div>
+			<div class="olea-element">
 				{% if request.GET.myissues == 'true' %}
 					<a class="btn btn-default active" href="{{ request.path }}{% query_string request.META.QUERY_STRING myissues-'true'%}">{% trans "My issues" %}</a>
 				{% else %}

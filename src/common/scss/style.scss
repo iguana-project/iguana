@@ -400,17 +400,18 @@ textarea { resize:vertical; }
 .olea-container {
 	display: flex;
 	flex-wrap:wrap;
-
 }
 
 #olea {
 	flex-grow: 1;
-	margin-right: 4px;
+	margin-left: -.25em;
 }
-
+.olea-element {
+    margin-left: .25em;
+}
 .olea-flex-element {
-	margin-right: 4px;
-	margin-bottom: 4px;
+    flex-grow: 1;
+	margin-left: .25em;
 }
 #text-filter {
 	width: 130px;

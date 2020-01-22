@@ -18,25 +18,30 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 {% block content %}
 {% trans "backlog" as viewpoint %}
 {% include "project/project_navigation_bar.html" %}
-	<div class="olea-container">
-		<div class="olea-flex-element">
+<div class="row">
+    <div class="col-md-12 olea-container">
+        <div class="olea-flex-element">
 		    {% include "olea/olea-bar.html" %}
 		</div>
-		<a class="btn btn-default olea-flex-element" href="{% url 'sprint:newsprint' project=project.name_short %}"><span class="glyphicon glyphicon-plus"></span> {% trans "New sprint" %}</a>
-		<form class="olea-flex-element">
-			<input type="text" id="text-filter" onkeyup="filter_issues('backlog-issue')" placeholder="Filter issues" class="form-control">
+		<a class="btn btn-default olea-element" href="{% url 'sprint:newsprint' project=project.name_short %}"><span class="glyphicon glyphicon-plus"></span> {% trans "New sprint" %}</a>
+		<form>
+			<input type="text" id="text-filter" onkeyup="filter_issues('backlog-issue')" placeholder="Filter issues" class="form-control olea-element">
 		</form>
+		
 		{% if request.GET.myissues == 'true' %}
-			<a class="btn btn-default active olea-flex-element" href="{{ request.path }}{% query_string request.META.QUERY_STRING myissues-'true'%}">{% trans "My issues" %}</a>
+			<a class="btn btn-default active olea-element" href="{{ request.path }}{% query_string request.META.QUERY_STRING myissues-'true'%}">{% trans "My issues" %}</a>
 		{% else %}
-			<a class="btn btn-default olea-flex-element" href="{{ request.path }}{% query_string request.META.QUERY_STRING myissues+'true'%}">{% trans "My issues" %}</a>
+			<a class="btn btn-default olea-element" href="{{ request.path }}{% query_string request.META.QUERY_STRING myissues+'true'%}">{% trans "My issues" %}</a>
 		{% endif %}
-		{% include "orderby.html" %}
+		<div class="olea-element">
+		    {% include "orderby.html" %}
+		</div>
 	</div>
-
+</div>
+<p></p>
 <div class="row">
 	<div class="col-md-{% if view.get_sqn_s != -1 %}6{% else %}12{% endif %}">
-		<div class="panel panel-default" id="backlog_backlog" style="margin-top:10px">
+		<div class="panel panel-default" id="backlog_backlog">
 			<div class="panel-heading">
 				<span class="backlog-nondropdown">{% trans "Backlog" %} <span title="{% trans "Remaining issues" %}">({{ view.get_backlog_issues|length }})</span></span>
 				<div class="btn-group pull-right">
