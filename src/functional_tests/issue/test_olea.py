@@ -49,20 +49,9 @@ class OleaTest(SeleniumTestCase):
         driver.find_element_by_id("expression").clear()
         driver.find_element_by_id("expression").send_keys(">BRP-2 :Task" + Keys.RETURN)
         self.assertEqual("Task", driver.find_element_by_css_selector("#issue_type_2").text)
-        driver.find_element_by_id("expression").send_keys("And another one with trailing whitespace " + Keys.RETURN)
-        self.assertIn("An error occurred when processing your request: Please note that the usage of control " +
-                      "characters is not possible until escaping is implemented. " +
-                      "Also the error might be caused by a neighbouring character. - Not able to parse char: ' '",
-                      driver.find_element_by_css_selector("div.alert.alert-danger").text)
 
-        # go to backlog and try the same
+        # go to backlog and try olea there too
         driver.find_element_by_link_text("Backlog").click()
-        driver.find_element_by_id("expression").send_keys("And another one with trailing whitespace " + Keys.RETURN)
-        self.assertIn("An error occurred when processing your request: Please note that the usage of control " +
-                      "characters is not possible until escaping is implemented. " +
-                      "Also the error might be caused by a neighbouring character. - Not able to parse char: ' '",
-                      driver.find_element_by_css_selector("div.alert.alert-danger").text)
-        driver.find_element_by_id("expression").clear()
         driver.find_element_by_id("expression").send_keys("And another one :Bug" + Keys.RETURN)
         self.assertIn("BRP-3\nAnd another one", driver.find_element_by_id("backlog_issue_3").text)
 

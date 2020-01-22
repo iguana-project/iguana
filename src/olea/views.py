@@ -28,7 +28,8 @@ class ProcessOleaView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         project = get_r_object_or_404(self.request.user, Project, name_short=self.kwargs.get('project'))
         try:
-            parser.compile(self.request.POST.get('expression'), project, self.request.user)
+            expression = self.request.POST.get('expression').strip()
+            parser.compile(expression, project, self.request.user)
 
             # add to sprint if currentsprint is set and issue was newly created
             if self.request.POST.get('currentsprint') != "" and parser.issue_created:
