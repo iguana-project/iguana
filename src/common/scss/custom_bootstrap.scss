@@ -22,6 +22,9 @@ $font-family-sans-serif:  Roboto, robotoregular, "Helvetica Neue", Helvetica, Ar
 $font-family-serif:       $font-family-sans-serif !default;
 $headings-font-family:    "Roboto Light", robotolight, $font-family-sans-serif !default;
 
+//== Iconography
+$icon-font-path: "../fonts/" !default;
+
 //== Buttons
 $btn-success-color:              rgb(51, 51, 51) !default;
 $btn-info-color:                 $btn-success-color !default;
