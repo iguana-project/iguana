@@ -32,6 +32,7 @@ ansible/*.retry
 src/htmlcov
 src/celerybeat-schedule
 /src/common/static/css/style.css
+/src/common/static/css/custom_bootstrap.css
 /src/common/settings/__init__.py
 /src/common/settings/webdriver.py
 /tools/scripts/tools/bin/vnu.jar
