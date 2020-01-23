@@ -1,0 +1,78 @@
+// define own variables for Bootstrap
+
+//== Colors
+$gray-base:              #000 !default;
+$gray-darker:            lighten($gray-base, 13.5%) !default; // #222
+$gray-dark:              rgb(54, 77, 84) !default;
+$gray:                   rgb(97, 116, 122) !default;
+$gray-light:             lighten($gray, 20%) !default;
+$gray-lighter:           lighten($gray, 50%) !default;
+$brand-primary:         rgb(0, 184, 212) !default;
+$brand-success:         rgb(179, 255, 1) !default;
+$brand-info:            rgb(0, 229, 255) !default;
+$brand-warning:         rgb(249, 255, 96) !default;
+$brand-danger:          rgb(255, 204, 96) !default;
+
+//== Scaffolding
+$text-color:            $gray-darker !default;
+$link-color:            darken($brand-primary, 5%) !default;
+
+//== Typography
+$font-family-sans-serif:  Roboto, robotoregular, "Helvetica Neue", Helvetica, Arial, sans-serif !default;
+$font-family-serif:       $font-family-sans-serif !default;
+$headings-font-family:    "Roboto Light", robotolight, $font-family-sans-serif !default;
+
+//== Iconography
+$icon-font-path: "../fonts/" !default;
+
+//== Buttons
+$btn-success-color:              rgb(51, 51, 51) !default;
+$btn-info-color:                 $btn-success-color !default;
+$btn-warning-color:              $btn-success-color !default;
+$btn-warning-border:             darken($brand-warning, 20%) !default;
+$btn-danger-color:               $btn-success-color !default;
+$btn-danger-border:              darken($brand-danger, 10%) !default;
+
+//== Forms
+$input-border-focus:             $brand-info !default;
+
+//== Navbar
+$navbar-inverse-bg:                         #28393e !default;
+$navbar-inverse-link-active-bg:             darken($navbar-inverse-bg, 5%) !default;
+
+//== Form states and alerts
+$state-success-bg:               lighten($brand-success, 45%) !default;
+$state-info-bg:                  lighten($brand-info, 45%) !default;
+$state-info-border:              lighten($brand-info, 35%) !default;
+$state-warning-bg:               lighten($brand-warning, 25%) !default;
+$state-danger-bg:                lighten($brand-danger, 20%) !default;
+
+//== Tooltips
+$tooltip-bg:                  $navbar-inverse-bg !default;
+
+//== Labels
+$label-success-bg:            darken($brand-success, 20%) !default;
+$label-warning-bg:            darken($brand-warning, 30%) !default;
+$label-danger-bg:             darken($brand-danger, 20%) !default;
+$label-color:                 darken($brand-primary, 30%) !default;
+
+//== Alerts
+$alert-danger-border:         lighten(darken(adjust-hue($state-danger-bg, -10), 5%), 10%) !default;
+
+//== Panels
+$panel-footer-bg:             $gray-lighter !default;
+$panel-default-heading-bg:    $gray-lighter !default;
+
+//== Wells
+$well-bg:                     $gray-lighter !default;
+
+//== Breadcrumbs
+$breadcrumb-bg:                 $gray-lighter !default;
+
+//== Code
+$code-color:                  darken($brand-danger, 40%) !default;
+$code-bg:                     darken($brand-danger, 40%) !default;
+
+
+// import the rest of Bootstrap variables
+@import "bootstrap/bootstrap/variables";
