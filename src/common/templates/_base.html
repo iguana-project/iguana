@@ -25,7 +25,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 	<meta name="keywords" content="{% block keywords %}{% trans "Kanban, board, issue, ticket, software, development, open" %}{% endblock %}">
 
 	{% block css %}
-		<link rel="stylesheet" href="{% static "css/custom_bootstrap.css" %}" />
+		{% bootstrap_css %}
 		<link rel="stylesheet" href="{% static "css/style.css" %}" />
 	{% endblock css %}
 	{% block extra_css %}
