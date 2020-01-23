@@ -27,14 +27,6 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
     <input type="hidden" name="next" value="{{request.get_full_path}}">
 </form>
 
-{% block extra_css %}
-    <link rel="stylesheet" href="{% static "css/tribute.css" %}" />
-    <style>
-        .tribute-container ul {
-            background: inherit;
-        }
-    </style>
-{% endblock %}
 {% block extra_script %}
     <script src="{% static "js/tribute.min.js" %}"></script>
     <script src="{% static "js/tribute_wrapper.js" %}"></script>

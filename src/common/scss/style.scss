@@ -298,6 +298,35 @@ input.tags[type="checkbox"] {
 	background-color: #f5f5f5;
 }
 
+// extend dropdown-menu to work with tribute.js mentions
+@import "custom_bootstrap_variables";
+@import "bootstrap/bootstrap/mixins";
+@import "bootstrap/bootstrap/dropdowns";
+.dropdown-menu-autocomplete > ul {
+    @extend .dropdown-menu;
+    
+    display: inherit;
+    
+    > li.highlight {
+        color: $dropdown-link-hover-color;
+        text-decoration: none;
+        background-color: $dropdown-link-hover-bg;
+    }
+    
+    > li > a.disabled {
+        &,
+        &:hover,
+        &:focus {
+          color: $dropdown-link-disabled-color;
+          text-decoration: none;
+          cursor: $cursor-disabled;
+          background-color: $dropdown-bg;
+          background-image: none; // Remove CSS gradient
+          @include reset-filter;
+        }
+    }
+}
+
 textarea { resize:vertical; }
 
 .breadcrumb {
