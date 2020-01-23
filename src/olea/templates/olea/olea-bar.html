@@ -10,7 +10,6 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 -->
 {% load i18n %}
 {% load static %}
-{% load markdown_data %}
 
 <form id="olea" method="post" action="{% url 'olea:processOlea' project=project.name_short %}">{% csrf_token %}
     <div class="input-group">
@@ -37,110 +36,16 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
     </style>
 {% endblock %}
 {% block extra_script %}
-<script src="{% static "js/tribute.min.js" %}"></script>
-    {{ project|get_issue_markdown_data|json_script:"issue_markdown_data" }}
-    {{ project|get_user_markdown_data|json_script:"user_markdown_data" }}
+    <script src="{% static "js/tribute.min.js" %}"></script>
+    <script src="{% static "js/tribute_wrapper.js" %}"></script>
     <script>
     $(document).ready(function(){
-        function remoteSearch(text, queryURL, cb) {
-            xhr = new XMLHttpRequest();
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState === 4) {
-                    if (xhr.status === 200) {
-                        var data = JSON.parse(xhr.responseText);
-                        cb(data.results);
-                    } else {
-                        cb([]);
-                    }
-                }
-            };
-            xhr.open("GET", queryURL + "?q=" + text, true);
-            xhr.send();
-        }
-
-        var tribute = new Tribute({
-            collection: [
-                {
-                    containerClass: 'tribute-container dropdown-menu',
-                    trigger: '@',
-                    values: function (text, cb) {
-                        var URL = "/project/userac/" + "{{ project.name_short }}" + "/";
-                        remoteSearch(text, URL, users => cb(users));
-                    },
-                    selectTemplate: function (item) {
-                        // extract user name via regex
-                        var userData = JSON.parse(document.getElementById("user_markdown_data").textContent);
-                        // the markdown pattern assumes a '@' character before the username, but autocomplete serves the username without '@'
-                        // -> remove all '@'s from the pattern
-                        var regexPattern = userData.re_pattern.replace(/@/g, '');
-                        var re = new RegExp(regexPattern);
-                        return '@' + re.exec(item.original.text)[0];
-                    },
-                    menuItemTemplate: function (item) {
-                        return item.original.text;
-                    },
-                    lookup: "text",
-                    fillAttr: "text",
-                },
-                {
-                    containerClass: 'tribute-container dropdown-menu',
-                    trigger: ">",
-                    values: function (text, cb) {
-                        var URL = "/project/issueac/" + "{{ project.name_short }}" + "/";
-                        remoteSearch(text, URL, issues => cb(issues));
-                    },
-                    selectTemplate: function (item) {
-                        // extract issue name via regex
-                        var issueData = JSON.parse(document.getElementById("issue_markdown_data").textContent);
-                        var re = new RegExp(issueData.re_pattern);
-                        return '>' + re.exec(item.original.text)[0];
-                    },
-                    menuItemTemplate: function (item) {
-                        return item.original.text;
-                    },
-                    lookup: "text",
-                    fillAttr: "text",
-                },
-                {
-                    containerClass: 'tribute-container dropdown-menu',
-                    trigger: "~",
-                    values: function (text, cb) {
-                        var URL = "/project/issueac/" + "{{ project.name_short }}" + "/";
-                        remoteSearch(text, URL, issues => cb(issues));
-                    },
-                    selectTemplate: function (item) {
-                        // extract issue name via regex
-                        var issueData = JSON.parse(document.getElementById("issue_markdown_data").textContent);
-                        var re = new RegExp(issueData.re_pattern);
-                        return '~' + re.exec(item.original.text)[0];
-                    },
-                    menuItemTemplate: function (item) {
-                        return item.original.text;
-                    },
-                    lookup: "text",
-                    fillAttr: "text",
-                },
-                {
-                    containerClass: 'tribute-container dropdown-menu',
-                    trigger: "#",
-                    values: function (text, cb) {
-                        var URL = "/project/tagac/" + "{{ project.name_short }}" + "/";
-                        remoteSearch(text, URL, tags => cb(tags));
-                    },
-                    selectTemplate: function (item) {
-                        // extract tag name via regex
-                        var re = new RegExp(/title="(.*?)"/);
-                        return '#' + re.exec(item.original.text)[1];
-                    },
-                    menuItemTemplate: function (item) {
-                        return item.original.text;
-                    },
-                    lookup: "text",
-                    fillAttr: "text",
-                },
-            ]
-        });
-        tribute.attach(document.querySelectorAll("#expression"));
+        var tr = new TributeWrapper();
+        tr.addCollection('@', "/project/userac/{{ project.name_short }}/");
+        tr.addCollection('>', "/project/issueac/{{ project.name_short }}/");
+        tr.addCollection('~', "/project/issueac/{{ project.name_short }}/");
+        tr.addCollection('#', "/project/tagac/{{ project.name_short }}/");
+        tr.attach(document.querySelectorAll("#expression"));
     });
     </script>
 {% endblock %}

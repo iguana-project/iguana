@@ -20,9 +20,22 @@ from project.models import Project
 import bleach
 
 
-class UserAutocompleteView(autocomplete.Select2QuerySetView):
-    def get_queryset(self):
+class AutoCompleteView(autocomplete.Select2QuerySetView):
+    def get_results(self, context):
+        return [
+            {
+                'id': self.get_result_value(result),
+                'text': self.get_result_label_html(result),
+                'selected_text': self.get_result_label(result),
+            } for result in context['object_list']
+        ]
 
+    def get_result_label_html(self, result):
+        return self.get_result_label(result)
+
+
+class UserAutocompleteView(AutoCompleteView):
+    def get_queryset(self):
         if not self.request.user.is_authenticated:
             return get_user_model().objects.none()
 
@@ -41,11 +54,14 @@ class UserAutocompleteView(autocomplete.Select2QuerySetView):
             qs = qs.filter(username__startswith=self.q)
         return qs
 
-    def get_result_label(self, item):
-        return '<img src="{}" width="25"/> {}'.format(item.avatar.url, item.username)
+    def get_result_label(self, result):
+        return result.username
+
+    def get_result_label_html(self, result):
+        return '<img src="{}" width="25"/> {}'.format(result.avatar.url, result.username)
 
 
-class IssueAutocompleteView(autocomplete.Select2QuerySetView):
+class IssueAutocompleteView(AutoCompleteView):
     def get_queryset(self):
         if not self.request.user.is_authenticated or not self.kwargs or not self.kwargs.get('project'):
             return Issue.objects.none()
@@ -66,12 +82,15 @@ class IssueAutocompleteView(autocomplete.Select2QuerySetView):
             qs = qs.filter(Q(title__icontains=self.q) | Q(number__icontains=self.q))
         return qs
 
-    def get_result_label(self, item):
+    def get_result_label(self, result):
+        return "{} {}".format(bleach.clean(result.get_ticket_identifier()), bleach.clean(result.title))
+
+    def get_result_label_html(self, result):
         return """<span class "text-muted">{}  </span>
-               {}""".format(bleach.clean(item.get_ticket_identifier()), bleach.clean(item.title))
+               {}""".format(bleach.clean(result.get_ticket_identifier()), bleach.clean(result.title))
 
 
-class TagAutocompleteView(autocomplete.Select2QuerySetView):
+class TagAutocompleteView(AutoCompleteView):
     def get_queryset(self):
         if not self.request.user.is_authenticated or not self.kwargs or not self.kwargs.get('project'):
             return Tag.objects.none()
@@ -88,9 +107,12 @@ class TagAutocompleteView(autocomplete.Select2QuerySetView):
             qs = qs.filter(tag_text__icontains=self.q)
         return qs
 
-    def get_result_label(self, item):
+    def get_result_label(self, result):
+        return bleach.clean(result.tag_text)
+
+    def get_result_label_html(self, result):
         return """<div class="issue-tag" style="background: #{}; color: #{};" title="{}">
-                  {}</div>""".format(bleach.clean(item.color),
-                                     item.font_color,
-                                     bleach.clean(item.tag_text),
-                                     bleach.clean(item.tag_text))
+                  {}</div>""".format(bleach.clean(result.color),
+                                     result.font_color,
+                                     bleach.clean(result.tag_text),
+                                     bleach.clean(result.tag_text))
