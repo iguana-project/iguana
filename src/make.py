@@ -1057,7 +1057,8 @@ class _CSSTarget(_Target):
 
         # use python libsass for compiling the sccs files
         # output them to the iguana static files css directory
-        sass.compile(dirname=(IGUANA_SCSS_DIR, out_css_dir))
+        sass.compile(dirname=(IGUANA_SCSS_DIR, out_css_dir),
+                     output_style="compressed")
 
 
 @cmd("list")
