@@ -63,20 +63,39 @@
             };
         }
         
-        getSelectTemplateFunction(trigger) {
+        getSelectTemplateFunction(trigger, regex = undefined) {
             return function (item) {
-                // the selected text should not contain any spaces
-                return trigger + item.original.selected_text.split(/\s/, 1)[0];
+                var resultText = trigger + item.original.selected_text;
+                
+                if(typeof regex == undefined ||
+                        !(regex instanceof RegExp))
+                    return resultText;
+                else {
+                    var extract;
+                    // check for global flag; otherwise the while loop will run forever (if there's a match)
+                    if(!regex.global) {
+                        if((extract = regex.exec(resultText)) !== null)
+                            return extract[0];
+                        else
+                            return "";
+                    } else {
+                        var extractedText = "";
+                        while((extract = regex.exec(resultText)) !== null) {
+                            extractedText += extract[0];
+                        } 
+                        return extractedText;
+                    }
+                }
             };
         }
         
-        addCollection(trigger, acURL) {
+        addCollection(trigger, acURL, selectTemplateregex = undefined) {
             var collection = {};
             Object.assign(collection, this.defaultCollection);
             
             collection.trigger = trigger;
             collection.values = this.getValuesFunction(acURL);
-            collection.selectTemplate = this.getSelectTemplateFunction(trigger);
+            collection.selectTemplate = this.getSelectTemplateFunction(trigger, selectTemplateregex);
             
             this.collections.push(collection);
         }

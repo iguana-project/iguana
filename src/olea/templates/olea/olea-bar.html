@@ -34,8 +34,8 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
     $(document).ready(function(){
         var tr = new TributeWrapper();
         tr.addCollection('@', "/project/userac/{{ project.name_short }}/");
-        tr.addCollection('>', "/project/issueac/{{ project.name_short }}/");
-        tr.addCollection('~', "/project/issueac/{{ project.name_short }}/");
+        tr.addCollection('>', "/project/issueac/{{ project.name_short }}/", />{{ project.name_short }}-(\d+)/);
+        tr.addCollection('~', "/project/issueac/{{ project.name_short }}/", /~{{ project.name_short }}-(\d+)/);
         tr.addCollection('#', "/project/tagac/{{ project.name_short }}/");
         tr.attach(document.querySelectorAll("#expression"));
     });
