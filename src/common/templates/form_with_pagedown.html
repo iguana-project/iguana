@@ -25,6 +25,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 {% block extra_script %}
     {{ form.media }}
     <script src="{% static "js/tribute.min.js" %}"></script>
+    <script src="{% static "js/tribute_wrapper.js" %}"></script>
     {{ project|get_issue_markdown_data|json_script:"issue_markdown_data" }}
     {{ project|get_user_markdown_data|json_script:"user_markdown_data" }}
     <script>
