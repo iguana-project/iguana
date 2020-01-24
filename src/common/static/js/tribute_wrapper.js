@@ -21,8 +21,8 @@
                     enabled = 'class="disabled"';
                 return '<a href="#" ' + enabled + '>' + item.original.text +"</a>";
             },
-            lookup: "selected_text",
-            fillAttr: "selected_text",
+            lookup: "cleaned_text",
+            fillAttr: "cleaned_text",
             searchOpts: {
                 pre: '',
                 post: '',
@@ -47,7 +47,7 @@
                 } else {
                     cb([{
                         "text": "Searching...",
-                        "selected_text": text,
+                        "cleaned_text": text,
                         "selectable": false,
                     }]);
                 }
@@ -65,7 +65,7 @@
         
         getSelectTemplateFunction(trigger, regex = undefined) {
             return function (item) {
-                var resultText = trigger + item.original.selected_text;
+                var resultText = trigger + item.original.cleaned_text;
                 
                 if(typeof regex == undefined ||
                         !(regex instanceof RegExp))

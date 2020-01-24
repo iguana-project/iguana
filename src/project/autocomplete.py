@@ -26,11 +26,15 @@ class AutoCompleteView(autocomplete.Select2QuerySetView):
             {
                 'id': self.get_result_value(result),
                 'text': self.get_result_label_html(result),
-                'selected_text': self.get_result_label(result),
+                'cleaned_text': self.get_result_label_clean(result),
+                'selected_text': self.get_result_label_html(result),
             } for result in context['object_list']
         ]
 
     def get_result_label_html(self, result):
+        return self.get_result_label(result)
+
+    def get_result_label_clean(self, result):
         return self.get_result_label(result)
 
 
@@ -54,11 +58,12 @@ class UserAutocompleteView(AutoCompleteView):
             qs = qs.filter(username__startswith=self.q)
         return qs
 
-    def get_result_label(self, result):
+    def get_result_label_clean(self, result):
         return result.username
 
     def get_result_label_html(self, result):
-        return '<img src="{}" width="25"/> {}'.format(result.avatar.url, result.username)
+        return '<img src="{}" width="25"><span style="padding-left: .5em">{}</span></img>'.format(result.avatar.url,
+                                                                                                  result.username)
 
 
 class IssueAutocompleteView(AutoCompleteView):
@@ -82,7 +87,7 @@ class IssueAutocompleteView(AutoCompleteView):
             qs = qs.filter(Q(title__icontains=self.q) | Q(number__icontains=self.q))
         return qs
 
-    def get_result_label(self, result):
+    def get_result_label_clean(self, result):
         return "{} {}".format(bleach.clean(result.get_ticket_identifier()), bleach.clean(result.title))
 
     def get_result_label_html(self, result):
@@ -107,7 +112,7 @@ class TagAutocompleteView(AutoCompleteView):
             qs = qs.filter(tag_text__icontains=self.q)
         return qs
 
-    def get_result_label(self, result):
+    def get_result_label_clean(self, result):
         return bleach.clean(result.tag_text)
 
     def get_result_label_html(self, result):
