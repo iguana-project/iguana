@@ -71,7 +71,7 @@ $breadcrumb-bg:                 $gray-lighter !default;
 
 //== Code
 $code-color:                  darken($brand-danger, 40%) !default;
-$code-bg:                     darken($brand-danger, 40%) !default;
+$code-bg:                     lighten($brand-danger, 20%) !default;
 
 
 // import the rest of Bootstrap variables
