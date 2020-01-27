@@ -8,7 +8,6 @@ Creative Commons Attribution-ShareAlike 4.0 International License.
 You should have received a copy of the license along with this
 work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 """
-from dal import autocomplete
 from django.contrib.auth import get_user_model
 from django.db.models import Q
 from django.http import Http404
@@ -18,24 +17,7 @@ from lib.custom_model import get_r_object_or_404
 from tag.models import Tag
 from project.models import Project
 import bleach
-
-
-class AutoCompleteView(autocomplete.Select2QuerySetView):
-    def get_results(self, context):
-        return [
-            {
-                'id': self.get_result_value(result),
-                'text': self.get_result_label_html(result),
-                'cleaned_text': self.get_result_label_clean(result),
-                'selected_text': self.get_result_label_html(result),
-            } for result in context['object_list']
-        ]
-
-    def get_result_label_html(self, result):
-        return self.get_result_label(result)
-
-    def get_result_label_clean(self, result):
-        return self.get_result_label(result)
+from common.views import AutoCompleteView
 
 
 class UserAutocompleteView(AutoCompleteView):

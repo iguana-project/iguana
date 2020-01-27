@@ -22,6 +22,7 @@ from django.views.static import serve
 from common import settings
 
 from .models import Filter
+from dal.autocomplete import Select2QuerySetView
 
 
 USE_X_ACCEL_REDIRECT = getattr(settings, 'USE_X_ACCEL_REDIRECT', False)
@@ -99,3 +100,21 @@ class CreateFilterView(LoginRequiredMixin, View):
 
             Filter(user=user, queryset=filter_string, typ=typ, name=name).save()
         return HttpResponseRedirect(self.get_success_url())
+
+
+class AutoCompleteView(Select2QuerySetView):
+    def get_results(self, context):
+        return [
+            {
+                'id': self.get_result_value(result),
+                'text': self.get_result_label_html(result),
+                'cleaned_text': self.get_result_label_clean(result),
+                'selected_text': self.get_result_label_html(result),
+            } for result in context['object_list']
+        ]
+
+    def get_result_label_html(self, result):
+        return self.get_result_label(result)
+
+    def get_result_label_clean(self, result):
+        return self.get_result_label(result)
