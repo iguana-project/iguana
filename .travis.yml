@@ -1,8 +1,10 @@
+os: linux
+language: shell
+
 branches:
   only:
     - master
     - /^production-[0-9]+/
-sudo: required
 
 env:
   global:
@@ -15,9 +17,9 @@ stages:
   - build
 
 # workaround template for the build stage to support multiple parallel builds
-build_template: &build_tmp
+_build_template: &_build_template
   stage: build
-  language: bash
+  language: shell
   services:
     - docker
   before_script:
@@ -33,8 +35,7 @@ jobs:
     # first test the code
     - stage: test
       language: python
-      python:
-        - "3.6"
+      python: "3.6"
       cache: pip
       addons:
         apt:
@@ -62,31 +63,31 @@ jobs:
         - popd
 
     # after that build the docker images
-    - <<: *build_tmp
+    - <<: *_build_template
       if: tag IS blank
       env:
         - VARIANT=development
         - USE_NGINX=false
         - DOCKER_TAG=develop
-    - <<: *build_tmp
+    - <<: *_build_template
       if: tag IS blank
       env:
         - VARIANT=staging
         - USE_NGINX=false
         - DOCKER_TAG=stage
-    - <<: *build_tmp
+    - <<: *_build_template
       if: tag IS blank
       env:
         - VARIANT=staging
         - USE_NGINX=true
         - DOCKER_TAG=stage_nginx
-    - <<: *build_tmp
+    - <<: *_build_template
       if: tag =~ ^production-[0-9]+
       env:
         - VARIANT=production
         - USE_NGINX=false
         - DOCKER_TAG=prod
-    - <<: *build_tmp
+    - <<: *_build_template
       if: tag =~ ^production-[0-9]+
       env:
         - VARIANT=production
