@@ -1,13 +1,12 @@
 # .coveragerc to control coverage.py
 [run]
 branch = True
-include = ./*
 omit =
-	*/testcases/*
-	functional_tests/*/*
-	*/__init__.py
-	*/urls.py
-	*/admin.py
+	./*/migrations/*
+	./*/testcases/*
+	./functional_tests/*/*
+	./make.py
+	./manage.py
 
 [report]
 # Regexes for lines to exclude from consideration

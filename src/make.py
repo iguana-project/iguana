@@ -1016,7 +1016,7 @@ class _CoverageTarget(_Target):
         _CommonTargets.activate_virtual_environment()
         from coverage import Coverage
         return Coverage(data_file=COVERAGE_DATA_FILE, config_file=COVERAGE_SETTINGS_FILE,
-                        include=[os.path.join(IGUANA_BASE_DIR, '*')])
+                        source=[IGUANA_BASE_DIR])
 
     @classmethod
     def load_coverage(cls):
