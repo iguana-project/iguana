@@ -34,8 +34,9 @@
         
         
         remoteSearch(text, queryURL, cb) {
-            var that = this;
             var xhr = new XMLHttpRequest();
+            var searching = false;
+            
             xhr.onreadystatechange = function() {
                 if (xhr.readyState === 4) {
                     if (xhr.status === 200) {
@@ -44,7 +45,11 @@
                     } else {
                         cb([]);
                     }
-                } else {
+                    
+                    searching = false;
+                } else if (!searching) {
+                    searching = true;
+                    
                     cb([{
                         "text": "Searching...",
                         "cleaned_text": text,
