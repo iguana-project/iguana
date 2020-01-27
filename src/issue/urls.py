@@ -14,6 +14,7 @@ from issue import views
 from timelog import views as tl_views
 from gitintegration import views as repo_views
 from common.urls import project_pattern
+from issue.autocomplete import IssuePrioAutocompleteView
 
 app_name = 'issue'
 
@@ -23,6 +24,7 @@ issue_sqn_s_pattern = r'(?P<sqn_s>[0-9]+)'
 urlpatterns = [
     url(r'^issue/', include([
         url(r'^$', views.IssueGlobalView.as_view(), name='issue_global_view'),
+        url(r'^prioac/?$', IssuePrioAutocompleteView.as_view(), name='prioac'),
     ])),
     url(r'^project/'+project_pattern+r'issue/', include([
         url(r'^create/?$', views.IssueCreateView.as_view(), name='create'),
