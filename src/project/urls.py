@@ -23,6 +23,7 @@ urlpatterns = [
     url(r'^userac/?'+project_pattern_optional+r'/?$', UserAutocompleteView.as_view(), name='userac'),
     url(r'^issueac/'+project_pattern+r'(?P<issue>[0-9]+)?/?$', IssueAutocompleteView.as_view(), name='issueac'),
     url(r'^tagac/'+project_pattern_optional+r'/?$', TagAutocompleteView.as_view(), name='tagac'),
+    url(r'^kanbanac/'+project_pattern_optional+r'/?$', KanbanAutocompleteView.as_view(), name='kanbanac'),
     url(project_pattern, include([
         url(r'^detail/?$', views.ProjectDetailView.as_view(), name='detail'),
         url(r'^timelog/?$', views.ProjectDetailTimelogView.as_view(), name='timelog'),

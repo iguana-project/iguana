@@ -39,6 +39,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
         tr.addCollection('#', "/project/tagac/{{ project.name_short }}/");
         tr.addCollection('!', "/issue/prioac/");
         tr.addCollection(':', "/issue/typeac/");
+        tr.addCollection('&', "/project/kanbanac/{{ project.name_short }}/");
         tr.attach(document.querySelectorAll("#expression"));
     });
     </script>

@@ -18,6 +18,7 @@ from tag.models import Tag
 from project.models import Project
 import bleach
 from common.views import AutoCompleteView
+from kanbancol.models import KanbanColumn
 
 
 class UserAutocompleteView(AutoCompleteView):
@@ -103,3 +104,24 @@ class TagAutocompleteView(AutoCompleteView):
                                      result.font_color,
                                      bleach.clean(result.tag_text),
                                      bleach.clean(result.tag_text))
+
+
+class KanbanAutocompleteView(AutoCompleteView):
+    def get_queryset(self):
+        if not self.request.user.is_authenticated or not self.kwargs or not self.kwargs.get('project'):
+            return KanbanColumn.objects.none()
+
+        project = self.kwargs.get('project')
+        try:
+            proj = get_r_object_or_404(self.request.user, Project, name_short=project)
+        except Http404:
+            return KanbanColumn.objects.none()
+
+        qs = KanbanColumn.objects.filter(project=proj)
+
+        if self.q:
+            qs = qs.filter(name__icontains=self.q)
+        return qs
+
+    def get_result_label(self, result):
+        return result.name
