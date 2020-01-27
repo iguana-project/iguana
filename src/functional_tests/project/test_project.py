@@ -14,6 +14,7 @@ from django.urls import reverse
 
 from django.contrib.auth import get_user_model
 from project.models import Project
+from selenium.webdriver.common.keys import Keys
 
 
 # TODO we might wanna test the href-links on those pages
@@ -71,6 +72,7 @@ class ProjectTest(SeleniumTestCase):
         self.selenium.find_element_by_css_selector(
                 'li.select2-results__option.select2-results__option--highlighted'
                 ).click()
+        create_form.find_element_by_css_selector("input.select2-search__field").send_keys(Keys.ESCAPE)
         create_form.find_element_by_id('id_submit_create').click()
         self.assertEqual(self.selenium.title, name)
 

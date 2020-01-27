@@ -11,7 +11,6 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 from django.test import Client
 from lib.selenium_test_case import SeleniumTestCase
 from django.urls import reverse
-from selenium.webdriver.common.keys import Keys
 
 from project.models import Project
 from issue.models import Issue
@@ -40,19 +39,23 @@ class OleaTest(SeleniumTestCase):
         driver.get('{}{}'.format(self.live_server_url,
                                  reverse('sprint:sprintboard', kwargs={'project': self.project.name_short})))
 
-        driver.find_element_by_id("expression").send_keys("Test-Issue :Task" + Keys.RETURN)
+        driver.find_element_by_id("expression").send_keys("Test-Issue :Task")
+        driver.find_element_by_id("expression").submit()
         self.assertEqual("Test-Issue", driver.find_element_by_css_selector("#issue_title_1").text)
         driver.find_element_by_id("expression").clear()
-        driver.find_element_by_id("expression").send_keys("Another issue :Bug" + Keys.RETURN)
+        driver.find_element_by_id("expression").send_keys("Another issue :Bug")
+        driver.find_element_by_id("expression").submit()
         self.assertEqual("Another issue", driver.find_element_by_css_selector("#issue_title_2").text)
         self.assertEqual("Bug", driver.find_element_by_css_selector("#issue_type_2").text)
         driver.find_element_by_id("expression").clear()
-        driver.find_element_by_id("expression").send_keys(">BRP-2 :Task" + Keys.RETURN)
+        driver.find_element_by_id("expression").send_keys(">BRP-2 :Task")
+        driver.find_element_by_id("expression").submit()
         self.assertEqual("Task", driver.find_element_by_css_selector("#issue_type_2").text)
 
         # go to backlog and try olea there too
         driver.find_element_by_link_text("Backlog").click()
-        driver.find_element_by_id("expression").send_keys("And another one :Bug" + Keys.RETURN)
+        driver.find_element_by_id("expression").send_keys("And another one :Bug")
+        driver.find_element_by_id("expression").submit()
         self.assertIn("BRP-3\nAnd another one", driver.find_element_by_id("backlog_issue_3").text)
 
         # verify that all issues are assigned to given project and no more issues were created

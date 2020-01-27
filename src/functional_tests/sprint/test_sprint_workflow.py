@@ -55,6 +55,7 @@ class SprintWorkFlowTest(SeleniumTestCase):
             if i.text == "abc":
                 i.click()
                 break
+        driver.find_element_by_css_selector("input.select2-search__field").send_keys(Keys.ESCAPE)
 
         driver.find_element_by_css_selector(".save").click()
         driver.find_element_by_link_text("Backlog").click()

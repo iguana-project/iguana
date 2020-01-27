@@ -80,6 +80,7 @@ class CreateAndEditTest(SeleniumTestCase):
         # assert that we have one assignee in selection field
         driver.find_element_by_css_selector("input.select2-search__field").click()
         self.assertEqual(len(driver.find_elements_by_css_selector('#select2-id_assignee-results li')), 1)
+        driver.find_element_by_css_selector("input.select2-search__field").send_keys(Keys.ESCAPE)
         Select(driver.find_element_by_id("id_priority")).select_by_visible_text("High")
         driver.find_element_by_id("id_storypoints").clear()
         driver.find_element_by_id("id_storypoints").send_keys("2")
