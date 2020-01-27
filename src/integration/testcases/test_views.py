@@ -111,12 +111,11 @@ class ViewTest(TestCase):
 
     @patch('integration.views.WebClient')
     def test_oauth_view_not_ok(self, slackmock):
-        slackmock().api_call.return_value = {'ok': False}
+        slackmock().oauth_access.return_value = {'ok': False}
         response = self.client.post(reverse('integration:slack:auth', kwargs={'project': self.short}) + "?code=foo")
         self.assertRedirects(response, reverse('project:edit', kwargs={'project': self.short}))
         slackmock.assert_called_with('')
-        slackmock().api_call.assert_called_with(
-            "oauth.access",
+        slackmock().oauth_access.assert_called_with(
             code="foo",
             client_id=SLACK_ID,
             client_secret=SLACK_SECRET,
@@ -125,12 +124,11 @@ class ViewTest(TestCase):
 
     @patch('integration.views.WebClient')
     def test_oauth_view_ok(self, slackmock):
-        slackmock().api_call.return_value = {'ok': True, 'access_token': "foo"}
+        slackmock().oauth_access.return_value = {'ok': True, 'access_token': "foo"}
         response = self.client.post(reverse('integration:slack:auth', kwargs={'project': self.short}) + "?code=foo")
         self.assertRedirects(response, reverse('integration:slack:update', kwargs={'pk': 2, 'project': self.short}))
         slackmock.assert_called_with('')
-        slackmock().api_call.assert_called_with(
-            "oauth.access",
+        slackmock().oauth_access.assert_called_with(
             code="foo",
             client_id=SLACK_ID,
             client_secret=SLACK_SECRET,

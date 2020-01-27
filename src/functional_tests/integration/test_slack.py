@@ -62,8 +62,7 @@ class SlackTest(SeleniumTestCase):
         f = self.selenium.find_element_by_id('id_title')
         f.send_keys(self.title_name)
         self.selenium.find_element_by_id('id_submit_create').click()
-        slackmock.api_call.assert_called_with(
-            "chat.postMessage",
+        slackmock.chat_postMessage.assert_called_with(
             channel="channel",
             attachments=[{
                 'fallback': str(self.user) + " created issue "+self.short+"-1 "+self.title_name+".",
@@ -100,8 +99,7 @@ class SlackTest(SeleniumTestCase):
         self.selenium.find_element_by_css_selector("input.select2-search__field").send_keys(Keys.ESCAPE)
 
         self.selenium.find_element_by_id('id_submit_edit').click()
-        slackmock.api_call.assert_called_with(
-            "chat.postMessage",
+        slackmock.chat_postMessage.assert_called_with(
             channel="channel",
             attachments=[{
                 'fallback': str(self.user) + " changed issue "+self.short+"-1 "+self.title_name+".",
@@ -136,8 +134,7 @@ class SlackTest(SeleniumTestCase):
         f = self.selenium.find_element_by_id("wmd-input-id_text")
         f.send_keys(self.comment)
         self.selenium.find_element_by_name("action").click()
-        slackmock.api_call.assert_called_with(
-            "chat.postMessage",
+        slackmock.chat_postMessage.assert_called_with(
             channel="channel",
             attachments=[{
                 'fallback': str(self.user) + ' commented on \"'+self.short+'-1 '+self.title_name+'\".',

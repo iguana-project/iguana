@@ -80,8 +80,7 @@ class SlackIntegrationOAuthView(RedirectView):
             return reverse("project:edit", kwargs={'project': self.kwargs['project']})
         slack = WebClient("")
         code = self.request.GET['code']
-        resp = slack.api_call(
-            "oauth.access",
+        resp = slack.oauth_access(
             code=code,
             client_id=SLACK_ID,
             client_secret=SLACK_SECRET,

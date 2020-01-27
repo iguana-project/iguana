@@ -133,7 +133,7 @@ class OnSignalTest(CallbackTestBase):
         super().setUpTestData()
 
         class SlackMock:
-            def api_call(innerself, *args, **kwargs):
+            def chat_postMessage(self, *args, **kwargs):
                 cls.called = (cls.called[0] + 1, args, kwargs)
 
         def slack_on(innerself, *args, **kwargs):
@@ -159,7 +159,6 @@ class OnSignalTest(CallbackTestBase):
         self.sprint.startdate = datetime.time()
         self.si.on_sprint_signal(None, signals.start, instance=self.sprint, user=self.user)
         self.assertCalled(
-            "chat.postMessage",
             channel="channel",
             attachments=[{
                 'fallback': "username started sprint 1.",
@@ -181,7 +180,6 @@ class OnSignalTest(CallbackTestBase):
     def test_create(self):
         self.si.on_issue_signal(None, signals.create, instance=self.issue, user=self.user)
         self.assertCalled(
-            "chat.postMessage",
             channel="channel",
             attachments=[{
                 'fallback': "username created issue proj-1 sometitle.",
@@ -203,7 +201,6 @@ class OnSignalTest(CallbackTestBase):
 
         self.si.on_issue_signal(None, signals.create, instance=self.issue, user=self.user)
         self.assertCalled(
-            "chat.postMessage",
             channel="channel",
             attachments=[{
                 'fallback': "First Last created issue proj-1 sometitle.",
@@ -228,7 +225,6 @@ class OnSignalTest(CallbackTestBase):
         changed_data["description"] = ""
         self.si.on_issue_signal(None, signals.modify, instance=self.issue2, user=self.user, changed_data=changed_data)
         self.assertCalled(
-            "chat.postMessage",
             channel="channel",
             attachments=[{
                 'fallback': "username changed issue proj-2 othertitle.",
@@ -251,7 +247,6 @@ class OnSignalTest(CallbackTestBase):
         changed_data["assignee"] = "username"
         self.si.on_issue_signal(None, signals.modify, instance=self.issue2, user=self.user, changed_data=changed_data)
         self.assertCalled(
-            "chat.postMessage",
             channel="channel",
             attachments=[{
                 'fallback': "username changed issue proj-2 othertitle.",
@@ -302,7 +297,6 @@ class OnSignalTest(CallbackTestBase):
     def test_create_issue_backlog_bar(self):
         parser.compile('sometitle :Task', self.issue.project, self.user)
         self.assertCalled(
-            "chat.postMessage",
             channel="channel",
             attachments=[{
                 'fallback': "username created issue proj-3 sometitle.",
@@ -320,7 +314,6 @@ class OnSignalTest(CallbackTestBase):
     def test_create_issue_without_params_backlog_bar(self):
         parser.compile('sometitle', self.issue.project, self.user)
         self.assertCalled(
-            "chat.postMessage",
             channel="channel",
             attachments=[{
                 'fallback': "username created issue proj-4 sometitle.",
@@ -338,7 +331,6 @@ class OnSignalTest(CallbackTestBase):
     def test_modify_issue_backlog_bar(self):
         parser.compile('>1 @user2', self.issue.project, self.user)
         self.assertCalled(
-            "chat.postMessage",
             channel="channel",
             attachments=[{
                 'fallback': "username changed issue proj-1 sometitle.",

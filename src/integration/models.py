@@ -119,8 +119,7 @@ class SlackIntegration(Integration):
                 })
                 if field == 'description':
                     fields[-1]['short'] = False
-            resp = self.slack.api_call(
-                "chat.postMessage",
+            resp = self.slack.chat_postMessage(
                 channel=self.channel,
                 attachments=[{
                     'fallback': text,
@@ -136,8 +135,7 @@ class SlackIntegration(Integration):
             )
         elif signal == signals.create:
             text = '{} created issue {}.'.format(user_name, issue_title)
-            resp = self.slack.api_call(
-                "chat.postMessage",
+            resp = self.slack.chat_postMessage(
                 channel=self.channel,
                 attachments=[{
                     'fallback': text,
@@ -169,8 +167,7 @@ class SlackIntegration(Integration):
 
         if signal == signals.create:
             text = '{} commented on "{}".'.format(str(user), issue_title)
-            resp = self.slack.api_call(
-                "chat.postMessage",
+            resp = self.slack.chat_postMessage(
                 channel=self.channel,
                 attachments=[{
                     'fallback': text,
@@ -230,8 +227,7 @@ class SlackIntegration(Integration):
                 'short': True,
             })
 
-        resp = self.slack.api_call(
-            "chat.postMessage",
+        resp = self.slack.chat_postMessage(
             channel=self.channel,
             attachments=[{
                 'fallback': text,
