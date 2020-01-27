@@ -19,6 +19,7 @@ from django.contrib.auth import get_user_model
 from project.models import Project
 from integration.models import SlackIntegration
 from issue.models import Issue
+from selenium.webdriver.common.keys import Keys
 
 try:
     from common.settings import SLACK_SECRET, SLACK_VERIFICATION, SLACK_ID, HOST
@@ -90,9 +91,14 @@ class SlackTest(SeleniumTestCase):
                     reverse('issue:edit', kwargs={'project': self.short, 'sqn_i': issue.number})
                     )
                 )
-        f = self.selenium.find_element_by_css_selector("input.select2-search__field").click()
-        time.sleep(1)
+
+        # open assignee autocomplete field
+        self.selenium.find_element_by_css_selector("input.select2-search__field").click()
+        # select first result
         self.selenium.find_elements_by_css_selector('#select2-id_assignee-results li')[0].click()
+        # close autocomplete
+        self.selenium.find_element_by_css_selector("input.select2-search__field").send_keys(Keys.ESCAPE)
+
         self.selenium.find_element_by_id('id_submit_edit').click()
         slackmock.api_call.assert_called_with(
             "chat.postMessage",
