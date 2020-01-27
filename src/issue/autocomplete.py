@@ -20,7 +20,7 @@ class IssuePrioAutocompleteView(AutoCompleteView):
         qs = Issue.PRIORITY_TYPES
 
         if self.q:
-            qs = [prio_type for prio_type in qs if self.q in prio_type[1].lower()]
+            qs = [prio_type for prio_type in qs if self.q.lower() in prio_type[1].lower()]
 
         return qs
 
@@ -56,7 +56,7 @@ class IssueTypeAutocompleteView(AutoCompleteView):
         qs = Issue.TICKET_TYPES
 
         if self.q:
-            qs = [prio_type for prio_type in qs if self.q in prio_type[1].lower()]
+            qs = [prio_type for prio_type in qs if self.q.lower() in prio_type[1].lower()]
 
         return qs
 
