@@ -46,3 +46,25 @@ class IssuePrioAutocompleteView(AutoCompleteView):
 
     def get_result_value(self, result):
         return result[0]
+
+
+class IssueTypeAutocompleteView(AutoCompleteView):
+    def get_queryset(self):
+        if not self.request.user.is_authenticated:
+            return []
+
+        qs = Issue.TICKET_TYPES
+
+        if self.q:
+            qs = [prio_type for prio_type in qs if self.q in prio_type[1].lower()]
+
+        return qs
+
+    def get_result_label_html(self, result):
+        return result[1]
+
+    def get_result_label_clean(self, result):
+        return result[0]
+
+    def get_result_value(self, result):
+        return result[0]
