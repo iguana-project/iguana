@@ -2,11 +2,11 @@
 [run]
 branch = True
 omit =
-	./*/migrations/*
-	./*/testcases/*
-	./functional_tests/*/*
-	./make.py
-	./manage.py
+	./src/*/migrations/*
+	./src/*/testcases/*
+	./src/functional_tests/*/*
+	./src/make.py
+	./src/manage.py
 
 [report]
 # Regexes for lines to exclude from consideration
