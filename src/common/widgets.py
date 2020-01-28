@@ -35,8 +35,7 @@ class CustomPagedownWidget(PagedownWidget):
         new_js.append("js/pagedown_iguana_markdown.js")
 
         # add custom css
-        new_css = media._css
-        new_css["all"].append("css/pagedown.css")
+        new_css = {"all": ("css/pagedown.css",)}
 
         return Media(js=tuple(new_js), css=new_css)
 
