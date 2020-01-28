@@ -61,7 +61,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 
 	{% if view.get_sqn_s != -1 %}
 	<div class="col-md-6">
-		<div class="panel panel-default" id="backlog_sprint" style="margin-top:10px">
+		<div class="panel panel-default" id="backlog_sprint">
 			<div class="panel-heading clearfix" style="{% if view.is_old_sprint %} color: red{% endif %}">
 				<div class="dropdown dropdown-sprints">
 					{% if project.sprint.unstopped.all|length > 1 %}
