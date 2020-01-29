@@ -61,13 +61,15 @@ class IssueAutocompleteView(AutoCompleteView):
         except Http404:
             return Issue.objects.none()
 
+        # get all issues of the project
+        # first list the not-archived ones
+        qs = proj.issue.all().order_by("archived")
+
         if self.kwargs.get('issue') is not None:
             # this happens in the issue edit view
             # the issue should not refer to itself, so exclude it
             issue = self.kwargs.get('issue')
-            qs = proj.issue.exclude(project__name_short=project, number=issue)
-        else:
-            qs = proj.issue.all()
+            qs = qs.exclude(project__name_short=project, number=issue)
 
         if self.q:
             qs = qs.filter(Q(title__icontains=self.q) | Q(number__icontains=self.q))
