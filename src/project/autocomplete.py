@@ -61,10 +61,12 @@ class IssueAutocompleteView(AutoCompleteView):
             return Issue.objects.none()
 
         if self.kwargs.get('issue') is not None:
+            # this happens in the issue edit view
+            # the issue should not refer to itself, so exclude it
             issue = self.kwargs.get('issue')
-            qs = proj.issue.not_archived().exclude(project__name_short=project, number=issue)
+            qs = proj.issue.exclude(project__name_short=project, number=issue)
         else:
-            qs = proj.issue.not_archived()
+            qs = proj.issue.all()
 
         if self.q:
             qs = qs.filter(Q(title__icontains=self.q) | Q(number__icontains=self.q))
