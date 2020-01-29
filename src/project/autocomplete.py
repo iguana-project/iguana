@@ -19,6 +19,7 @@ from project.models import Project
 import bleach
 from common.views import AutoCompleteView
 from kanbancol.models import KanbanColumn
+from django.utils.translation import ugettext_lazy as _
 
 
 class UserAutocompleteView(AutoCompleteView):
@@ -76,8 +77,25 @@ class IssueAutocompleteView(AutoCompleteView):
         return "{} {}".format(bleach.clean(result.get_ticket_identifier()), bleach.clean(result.title))
 
     def get_result_label_html(self, result):
-        return """<span class "text-muted">{}  </span>
-               {}""".format(bleach.clean(result.get_ticket_identifier()), bleach.clean(result.title))
+        standard_html = '<strong>%s </strong>%s' % (
+            bleach.clean(result.get_ticket_identifier()),
+            bleach.clean(result.title)
+        )
+
+        # mark 'Done' issues
+        if result.kanbancol.type == "Done":
+            standard_html = '<del>%s</del><small style="padding-left: 1em">[%s]</small>' % (
+                standard_html,
+                result.kanbancol.get_type_display()
+            )
+        # mark archived issues
+        if result.archived:
+            standard_html = '<em class="text-muted">%s</em><small style="padding-left: 1em">[%s]</small>' % (
+                standard_html,
+                _("Archived")
+            )
+
+        return standard_html
 
 
 class TagAutocompleteView(AutoCompleteView):
