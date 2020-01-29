@@ -104,6 +104,7 @@
     }
 }
 
+@import "custom_bootstrap_variables";
 .wmd-preview{
     width: 100%;
 
@@ -111,7 +112,7 @@
     overflow-y: auto;
 
     box-sizing: border-box;
-    padding: 12px 14px;
+    padding: 12px 14px (12px - ($line-height-computed / 2));
     margin: 10px 0 0 0;
     border: 1px solid #eee;
     border-radius: 4px;
