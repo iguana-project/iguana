@@ -47,6 +47,7 @@ def markdownify(text, project=None):
                                                       'markdown.extensions.nl2br',
                                                       'markdown.extensions.extra',
                                                       'mdx_urlize',
+                                                      'markdown_del_ins',
                                                       ] + extra_extensions
                                           ),
                         attributes={u'img': [u'src', u'title', u'height', u'width'],
@@ -56,6 +57,7 @@ def markdownify(text, project=None):
                         tags=["p", "b", "a", "i", "img", "ul", "li", "ol", "br", "em",
                               "hr", "h1", "h2", "h3", "h4", "h5", "h6", "pre", "code",
                               "strong", "blockquote", "table", "tr", "td", "th", "thead", "tbody",
+                              "del", "ins",
                               ]
                         )
 

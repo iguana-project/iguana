@@ -13,6 +13,7 @@
         var converter = original_getSanitizingConverter();
         converter.hooks.chain("preConversion", includeUser);
         converter.hooks.chain("preConversion", includeIssue);
+        converter.hooks.chain("postConversion", includeIns); // postSpanGamut does not work here since the <ins> tag is not in 'basic_tag_whitelist' variable of Markdown.Sanitizer.js
         return converter;
     }
 
@@ -60,5 +61,12 @@
             issueUrl = issueUrl.replace("<issue_number>", curTicketNumber.toString(10));
             return "[" + issueName + "](" + issueUrl + ")";
         });
+    }
+
+    // add the <ins> tag for '++'
+    function includeIns(text) {
+        // pattern nearly the same as _DoItalicsAndBold
+        return text.replace(/([\W_]|^)(\+\+)(?=\S)([^\r]*?\S[\+]*)\2([\W_]|$)/g,
+            "$1<ins>$3</ins>$4");
     }
 })();
