@@ -13,6 +13,7 @@
         var converter = original_getSanitizingConverter();
         converter.hooks.chain("preConversion", includeUser);
         converter.hooks.chain("preConversion", includeIssue);
+        converter.hooks.chain("preSpanGamut", escapePseudoTags);
         converter.hooks.chain("postConversion", includeIns); // postSpanGamut does not work here since the <ins> tag is not in 'basic_tag_whitelist' variable of Markdown.Sanitizer.js
         return converter;
     }
@@ -68,5 +69,22 @@
         // pattern nearly the same as _DoItalicsAndBold
         return text.replace(/([\W_]|^)(\+\+)(?=\S)([^\r]*?\S[\+]*)\2([\W_]|$)/g,
             "$1<ins>$3</ins>$4");
+    }
+
+    function escapePseudoTags(text) {
+        // copied from Markdown.Sanitizer (added 'a', 'img' and 'ins' tag)
+        var basic_tag_whitelist = /^(<\/?(a|b|blockquote|code|del|dd|dl|dt|em|h1|h2|h3|i|img|ins|kbd|li|ol(?: start="\d+")?|p|pre|s|sup|sub|strong|strike|ul)>|<(br|hr)\s?\/?>)$/i;
+
+        return text.replace(/<[^>]*>?/gi, function(tag) {
+            // check if tag is in white list
+            if (tag.match(basic_tag_whitelist))
+                // if so, just return it
+                return tag;
+            else {
+                // escape the angle brackets
+                tag = tag.replace(/</g, "&lt;");
+                return tag.replace(/>/g, "&gt;");
+            }
+        });
     }
 })();
