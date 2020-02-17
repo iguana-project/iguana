@@ -1,9 +1,9 @@
-wheel==0.33.6
+wheel==0.34.2
 bleach==3.1.0
 Django==2.2.8
 django-activity-stream==0.8.0
 celery==4.4.0
-django-autocomplete-light==3.5.0
+django-autocomplete-light==3.5.1
 django-bootstrap3==12.0.3
 django-cuser==2017.3.16
 django-bootstrap-datepicker-plus==3.0.5
@@ -13,8 +13,8 @@ djangorestframework==3.11.0
 djangorestframework-simplejwt==4.4.0
 django-sendfile==0.3.11
 django-simple-captcha==0.5.12
-GitPython==3.0.5
-markdown==3.1.1
+GitPython==3.0.8
+markdown==3.2.1
 markdown-urlize==0.2.0
 markdown-del-ins==1.0.0
 Pillow==7.0.0
@@ -22,7 +22,7 @@ ply==3.11
 python-dateutil==2.8.1
 python-magic==0.4.15
 pytz==2019.3
-redis==3.3.11
+redis==3.4.1
 slackclient==2.5.0
 piprot==0.9.11
 libsass==0.19.4
