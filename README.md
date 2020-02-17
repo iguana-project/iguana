@@ -74,7 +74,7 @@ Three images can be built with the Dockerfile:
 
 #### Start a container
 Each Iguana docker image can be started with the following command:
-```
+```bash
 docker exec -d \
 	-p 80:8000 \
 	-v <data_directory>:/files \
@@ -101,7 +101,9 @@ All files uploaded to Iguana are placed in the `media` directory on the Docker v
 ### Production
 To setup Iguana in a production environment you simply have to call:
 
-    make production
+```bash
+make production
+```
 
 This command runs the following Makefile targets:
 
@@ -113,14 +115,18 @@ This command runs the following Makefile targets:
 ### Staging
 To setup Iguana in a staging environment you simply have to call:
 
-    make staging
+```bash
+make staging
+```
 
 This does the same as the production target but it creates the staging virtual environment.
 
 ### Development
 To setup Iguana in a development you simply have to call:
 
-    make development ++webdriver [<webdriver>]
+```bash
+make development ++webdriver [<webdriver>]
+```
 
 The `<webdriver>` option the driver for the `setup-webriver` target can be specified ("chrome" is used as default). Beside that the following targets are executed:
 
@@ -133,7 +139,9 @@ Currently Iguana supports only [Nginx](https://nginx.org/en/) as web server back
 ### Starting the local Iguana instance
 To start the local Django web server simply run:
 
-    make run
+```bash
+make run
+```
 
 ### Using Ansible for deployment
 **TODO:** write Ansible instructions
@@ -145,7 +153,9 @@ To start the local Django web server simply run:
 ## Makefile targets
 These targets can be run with:
 
-    make <target> [++option]
+```bash
+make <target> [++option]
+```
 
 **Note** that options have to begin with `+` or `++` instead of `-` or `--`. This is due to a bug that prevents passing options to make targets.
 
@@ -250,7 +260,7 @@ in the url. For example `/de/login` instead of `/en/login`.
 ## Configuration
 Iguana has a lot of settings that can be changed by the user. The settins files are stored in the [src/common/settings](src/common/settings) package. The package structure is:
 
-```
+```bash
 common/settings
           |- __init__.py
           |- common.py
