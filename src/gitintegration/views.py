@@ -175,6 +175,7 @@ class RepositoryDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         return reverse('project:edit', kwargs={'project': self.kwargs.get('project')})
 
 
+# TODO this view is included in issue.url which is not consistent
 class FileDiffView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
     template_name = 'commit/file_diff.html'
     breadcrumb = _l('File diff')
