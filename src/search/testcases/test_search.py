@@ -15,6 +15,8 @@ from django.urls import reverse
 
 import ply.lex as lex
 
+from search.views import SearchView, ResultView, AdvancedSearchView, SearchEditView,\
+                         MakeSearchPersistentView, DelSearchPersistentView
 from project.models import Project
 import search.lexer
 from search import parser
@@ -23,6 +25,7 @@ from search.models import Search
 from tag.models import Tag
 from issue.models import Issue, Comment
 from django.contrib.auth import get_user_model
+from common.testcases.generic_testcase_helper import view_and_template, redirect_to_login_and_login_required
 
 
 class SearchTest(TestCase):
@@ -69,35 +72,41 @@ class SearchTest(TestCase):
                             type="Task")
         cls.issuep2.due_date = datetime.date(2000, 1, 1)
         cls.issuep2.save()
+        cls.search = Search("description", "*", cls.user)
 
     def test_view_and_template(self):
-        # TODO TESTCASE see invite_users
-        #      use view_and_template()
-        # TODO which views?
-        #      - SearchView - search
-        #      - ResultView - resultpage
-        #      - AdvancedSearchView - advanced
-        #      - SearchEditView - edit
-        #      - MakeSearchPersistentView - makepersistent
-        #      - DelSearchPersistentView - delpersistent
-        #      - RecentQueriesView - TODO this doesn't exist anymore - which one represents this now?
-        #      - ...
+        # TODO post requests required
+        # SearchView
+        # view_and_template(self, SearchView, 'search/search.html', 'search:search')
+        # ResultView
+        # view_and_template(self, ResultView, 'search/result_view.html', 'search:resultpage')
+        # AdvancedSearchView
+        # view_and_template(self, AdvancedSearchView, 'search/advanced_search_list.html', 'search:advanced')
+        # SearchEditView
+        # view_and_template(self, SearchEditView, 'search/search_edit.html', 'search:edit',
+        #                   address_kwargs={'sqn_sh': 1})
+        # MakeSearchPersistentView
+        # view_and_template(self, MakeSearchPersistentView, 'search/advanced_search_list.html', 'search:makepersistent')
+        # DelSearchPersistentView
+        # view_and_template(self, DelSearchPersistentView, 'search/advanced_search_list.html', 'search:delpersistent')
+        # RecentQueriesView - TODO this doesn't exist anymore - which one represents this now?
         pass
 
     def test_redirect_to_login_and_login_required(self):
         self.client.logout()
-        # TODO TESTCASE see invite_users
-        #      redirect_to_login_and_login_required()
-        # TODO which views?
-        #      - SearchView - search
-        #      - ResultView - resultpage
-        #      - AdvancedSearchView - advanced
-        #      - SearchEditView - edit
-        #      - MakeSearchPersistentView - makepersistent
-        #      - DelSearchPersistentView - delpersistent
-        #      - RecentQueriesView - TODO this doesn't exist anymore - which one represents this now?
-        #      - ...
-        pass
+        # SearchView
+        redirect_to_login_and_login_required(self, 'search:search')
+        # ResultView
+        redirect_to_login_and_login_required(self, 'search:resultpage')
+        # AdvancedSearchView
+        redirect_to_login_and_login_required(self, 'search:advanced')
+        # SearchEditView
+        redirect_to_login_and_login_required(self, 'search:edit', address_kwargs={'sqn_sh': 1})
+        # MakeSearchPersistentView
+        redirect_to_login_and_login_required(self, 'search:makepersistent')
+        # DelSearchPersistentView
+        redirect_to_login_and_login_required(self, 'search:delpersistent')
+        # RecentQueriesView - TODO this doesn't exist anymore - which one represents this now?
 
     def forms(self):
         # TODO TESTCASE

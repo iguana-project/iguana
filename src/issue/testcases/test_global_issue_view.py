@@ -28,13 +28,13 @@ from common.testcases import generic_testcase_helper
 class CreateGlobalTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        # NOTE: if you modify those elements they need to be created in setUp, instead of here
+        # NOTE: if you modify those elements they need to be created in setUp(), instead of here
         cls.user = get_user_model().objects.create_user('a', 'b', 'c')
         cls.user2 = get_user_model().objects.create_user('d', 'e', 'f')
 
     def setUp(self):
         self.client.force_login(self.user)
-        # NOTE: this element gets modified by some of those tests, so this shall NOT be created in setUpTestData()
+        # NOTE: these elements get modified by some of those tests, so they should NOT be created in setUpTestData()
         self.project = Project(creator=self.user, name_short='PRJ')
         self.project.save()
         self.project.manager.add(self.user)

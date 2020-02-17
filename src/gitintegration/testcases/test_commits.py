@@ -17,7 +17,7 @@ import json
 
 from git import Repo, Git
 
-from gitintegration.views import RepositoryDetailView
+from gitintegration.views import RepositoryDetailView, FileDiffView
 from gitintegration.models import Repository, Commit
 from gitintegration.frontend import Frontend
 from search.frontend import SearchFrontend
@@ -25,6 +25,7 @@ from project.models import Project
 from issue.models import Issue
 from django.contrib.auth import get_user_model
 from common.celery import import_commits
+from common.testcases.generic_testcase_helper import view_and_template, redirect_to_login_and_login_required
 
 
 class GitFrontendTest(TestCase):
@@ -49,16 +50,17 @@ class GitFrontendTest(TestCase):
     def test_view_and_template(self):
         # TODO TESTCASE invite_users
         #      use view_and_template()
-        # TODO which views?
-        #      - issue:commit_diff
+        #      - FileDiffView - issue:commit_diff
+        # TODO need to create a repository first
+        # view_and_template(self, FileDiffView, 'commit/file_diff.html', 'issue:commit_diff',
+        #                   address_kwargs={'project': self.project.name_short, 'sqn_i': self.issue.number})
         pass
 
     def test_redirect_to_login_and_login_required(self):
         self.client.logout()
         # TODO TESTCASE invite_users
-        #      redirect_to_login_and_login_required()
-        # TODO which views?
-        #      - issue:commit_diff
+        #      use redirect_to_login_and_login_required()
+        #      - FileDiffView - issue:commit_diff
 
     def test_clone_and_import(self):
         repo_path = '/tmp/gitpythonrepo'

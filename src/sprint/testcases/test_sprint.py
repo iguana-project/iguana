@@ -13,17 +13,20 @@ from django.urls import reverse
 import datetime
 import os
 
+from sprint.views import SprintboardView, StartSprintView, StopSprintView, SprintEditView, ToggleIssueToFromSprintView
+from backlog.views import BacklogListView
 from project.models import Project
 from kanbancol.models import KanbanColumn
 from issue.models import Issue
 from sprint.models import Sprint
 from django.contrib.auth import get_user_model
+from common.testcases.generic_testcase_helper import view_and_template, redirect_to_login_and_login_required
 
 
 class SprintTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        # NOTE: if you modify this element it needs to be created in setUp, instead of here
+        # NOTE: if you modify this element it needs to be created in setUp(), instead of here
         cls.user = get_user_model().objects.create_user('a', 'b', 'c')
 
     def setUp(self):
@@ -38,31 +41,51 @@ class SprintTest(TestCase):
         self.sprint.save()
 
     def test_view_and_template(self):
-        # TODO TESTCASE see invite_users
-        #      use view_and_template()
-        # TODO which views?
-        #      - Sprintboard - sprintboard
-        #      - NewSprint - newsprint
-        #      - StartSprint - startsprint
-        #      - StopSprint - stopsprint
-        #      - SprintEditView - editsprint
-        #      - ToggleIssueToFromSprintView - assigntosprint
-        #      - ...
-        pass
+        # SprintboardView
+        view_and_template(self, SprintboardView, 'sprint/sprintboard.html', 'sprint:sprintboard',
+                          address_kwargs={'project': self.project.name_short})
+        # NewSprint doesn't render a template but redirects to BacklogListView
+        view_and_template(self, BacklogListView, 'backlog/backlog_list.html', 'sprint:newsprint',
+                          address_kwargs={'project': self.project.name_short})
+        # StartSprint doesn't render a template but redirects to BacklogListView
+        # TODO this requires a post request
+        # view_and_template(self, StartSprintView, 'backlog/backlog_list.html', 'sprint:startsprint',
+        #                   address_kwargs={'project': self.project.name_short, 'sqn_s': self.sprint.seqnum})
+        # StopSprintView
+        view_and_template(self, StopSprintView, 'sprint/sprint_finish.html', 'sprint:stopsprint',
+                          address_kwargs={'project': self.project.name_short, 'sqn_s': self.sprint.seqnum})
+
+        # SprintEditView
+        view_and_template(self, SprintEditView, 'sprint/sprint_edit.html', 'sprint:editsprint',
+                          address_kwargs={'project': self.project.name_short, 'sqn_s': self.sprint.seqnum})
+        # ToggleIssueToFromSprintView doesn't render a template but redirects to BacklogListView
+        # TODO this requires a post request
+        # view_and_template(self, ToggleIssueToFromSprintView, 'backlog/backlog_list.html', 'sprint:assigntosprint',
+        #                   address_kwargs={'project': self.project.name_short})
 
     def test_redirect_to_login_and_login_required(self):
         self.client.logout()
-        # TODO TESTCASE see invite_users
-        #      redirect_to_login_and_login_required()
-        # TODO which views?
-        #      - Sprintboard - sprintboard
-        #      - NewSprint - newsprint
-        #      - StartSprint - startsprint
-        #      - StopSprint - stopsprint
-        #      - SprintEditView - editsprint
-        #      - ToggleIssueToFromSprintView - assigntosprint
-        #      - ...
-        pass
+        # Sprintboard
+        redirect_to_login_and_login_required(self, 'sprint:sprintboard',
+                                             address_kwargs={'project': self.project.name_short})
+        # NewSprint
+        redirect_to_login_and_login_required(self, 'sprint:newsprint',
+                                             address_kwargs={'project': self.project.name_short})
+        # StartSprint
+        redirect_to_login_and_login_required(self, 'sprint:startsprint',
+                                             address_kwargs={'project': self.project.name_short,
+                                                             'sqn_s': self.sprint.seqnum})
+        # StopSprint
+        redirect_to_login_and_login_required(self, 'sprint:stopsprint',
+                                             address_kwargs={'project': self.project.name_short,
+                                                             'sqn_s': self.sprint.seqnum})
+        # SprintEditView
+        redirect_to_login_and_login_required(self, 'sprint:editsprint',
+                                             address_kwargs={'project': self.project.name_short,
+                                                             'sqn_s': self.sprint.seqnum})
+        # ToggleIssueToFromSprintView
+        redirect_to_login_and_login_required(self, 'sprint:assigntosprint',
+                                             address_kwargs={'project': self.project.name_short})
 
     def test_user_passes_test_mixin(self):
         # TODO TESTCASE

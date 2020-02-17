@@ -141,8 +141,17 @@ class TagTest(TestCase):
         pass
 
     def test_create_tags_with_get_request_not_possible(self):
-        # TODO TESTCASE
-        pass
+        new_tag = "new_tag"
+        form_data = {
+            'tag_text': new_tag,
+            'create_tag': 'True',
+            'color': "",
+        }
+        response = self.client.get(reverse('tag:tag', kwargs={'project': p0_short}), form_data, follow=True)
+        self.assertEqual(response.status_code, 200)
+
+        # didn't add a tag
+        self.assertNotContains(response, new_tag)
 
     # helper function: creates a tag and verify it appears afterwards
     def create_and_verify(self, new_tag, previous_tags):

@@ -36,21 +36,25 @@ class ProtectedMediaDirTest(TestCase):
         self.client.force_login(self.user)
 
     def test_view_and_template(self):
-        # TODO TESTCASE invite_users
+        # TODO TESTCASE common view and template
         #      use view_and_template()
         # TODO which views?
         #      - ShowProtectedFilesView - media/avatars
         #      - ShowProtectedFilesView - media/attachments
+        #      - CreateFilterView - ?
+        #      - AutoCompleteView - ?
         #      - ...
         pass
 
     def test_redirect_to_login_and_login_required(self):
         self.client.logout()
-        # TODO TESTCASE invite_users
+        # TODO TESTCASE common redirect to login and login required
         #      redirect_to_login_and_login_required()
         # TODO which views?
         #      - ShowProtectedFilesView - media/avatars
         #      - ShowProtectedFilesView - media/attachments
+        #      - CreateFilterView - ?
+        #      - AutoCompleteView - ?
         #      - ...
         pass
 

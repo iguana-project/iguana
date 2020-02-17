@@ -32,20 +32,13 @@ class ShowDashboardTest(TestCase):
 
     def test_view_and_template(self):
         view_and_template(self, HomeView, 'landing_page/dashboard.html', 'landing_page:home')
-        # TODO TESTCASE see invite_users
-        #      use view_and_template()
-        # TODO which views?
-        #      - ...
-        pass
 
     def test_redirect_to_login_and_login_required(self):
         self.client.logout()
-        # TODO TESTCASE see invite_users
-        #      redirect_to_login_and_login_required()
-        # TODO which views?
-        #      - HomeView - landing_page:home
-        #      - ...
-        pass
+        # when logged out there is no redirect but the template landingpage/home is used
+        # since redirect_to_login_and_login_required() expects 302 we also use view_and_template here
+        # this doesn't exactly represent the name of the testcase but the essential behaviour is similar
+        view_and_template(self, HomeView, 'landing_page/home.html', 'landing_page:home')
 
     def test_show_dashboard_when_logged_in(self):
         response = self.client.get(reverse('landing_page:home'))

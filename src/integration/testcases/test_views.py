@@ -47,13 +47,19 @@ class ViewTest(TestCase):
         self.si.save()
 
     def test_view_and_template(self):
-        # TODO TESTCASE invite_users
-        #      use view_and_template()
-        # TODO which views?
-        #      - integration:slack:update
-        #      - integration:slack:delete
+        # TODO TESTCASE integration view and template
         #      - integration:slack:auth
-        #      - ...
+        # TODO does auth even need a project?
+        # view_and_template(self, SlackIntegrationOAuthView, '', 'integration:slack:auth',
+        #                   address_kwargs={'project': self.project.name_short})
+        #      - integration:slack:update
+        # view_and_template(self, SlackIntegrationOAuthView, '', 'integration:slack:update',
+        #                   address_kwargs={'pk': 1, 'project': self.project.name_short})
+        # TODO needs probably more get-kwargs
+        #      - integration:slack:delete
+        # TODO needs probably more get-kwargs
+        # view_and_template(self, SlackIntegrationOAuthView, '', 'integration:slack:delete',
+        #                   address_kwargs={'pk': 1, 'project': self.project.name_short})
         pass
 
     def test_redirect_to_login_and_login_required(self):
