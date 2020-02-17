@@ -5,6 +5,12 @@ from django.urls import reverse
 from user_management.views import LoginView
 
 
+# \param view the view that should be used
+# \param template the template that should be used
+# \param address_pattern the pattern for the reverse lookup that is used to resolve the target address
+# \param address_kwargs optional additional kwargs arguments that might be needed for the resolving of the address
+# \param get_kwargs optional additional kwargs for a get request that might be needed to specify
+#        which content is desired
 def view_and_template(self, view, template, address_pattern, address_kwargs=None, get_kwargs=None):
     if get_kwargs:
         response = self.client.get(reverse(address_pattern, kwargs=address_kwargs),  get_kwargs, follow=True)
@@ -15,6 +21,11 @@ def view_and_template(self, view, template, address_pattern, address_kwargs=None
     return response
 
 
+# \param address_pattern the pattern for the reverse lookup that is used to resolve the target address
+# \param address_kwargs optional additional kwargs arguments that might be needed for the resolving of the address
+# \param get_kwargs optional additional kwargs for a get request that might be needed
+#        to specify which content is desired
+# \param alternate_error_message optional error message that is shown instead of the default error message
 def redirect_to_login_and_login_required(self, address_pattern, address_kwargs=None, get_kwargs=None,
                                          alternate_error_message=None):
     resolved_address = reverse(address_pattern, kwargs=address_kwargs)
