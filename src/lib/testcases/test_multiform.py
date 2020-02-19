@@ -77,6 +77,7 @@ class TempMultiform(MultiFormsView):
 
 class MultiformTest(TestCase):
     def setUp(self):
+        # NOTE: these elements get modified by some testcases, so they should NOT be created in setUpTestData()
         self.tempForm = TempMultiform()
         # save the is_valid method of the form class
         self.formIsValidMethod = getattr(forms.Form, 'is_valid')

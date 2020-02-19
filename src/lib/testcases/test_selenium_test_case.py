@@ -21,6 +21,7 @@ class TestDecoratorClass:
 
 class SeleniumTest(TestCase):
     def setUp(self):
+        # NOTE: these elements get modified by some testcases, so they should NOT be created in setUpTestData()
         self.orig_test_method = TestDecoratorClass.test_method
 
     def tearDown(self):

@@ -43,7 +43,7 @@ class CallbackTestBase(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        # NOTE: if you modify those elements they need to be created in setUp, instead of here
+        # NOTE: if you modify these elements they need to be created in setUp(), instead of here
         cls.user = get_user_model().objects.create_user('username', 'b', 'c')
         cls.user2 = get_user_model().objects.create_user('user2', 'x', 'y')
         cls.project = Project(creator=cls.user, name_short=cls.short)
@@ -88,6 +88,7 @@ class CallbackTestBase(TestCase):
 class ConnectTest(CallbackTestBase):
     @classmethod
     def setUpTestData(self):
+        # NOTE: if you modify these elements they need to be created in setUp(), instead of here
         super().setUpTestData()
         # Send an early signal to avoid event.signals.connector being called
         # later.
@@ -129,6 +130,7 @@ class ConnectTest(CallbackTestBase):
 class OnSignalTest(CallbackTestBase):
     @classmethod
     def setUpTestData(cls):
+        # NOTE: if you modify these elements they need to be created in setUp(), instead of here
         signals.modify.send(sender=Issue)
         super().setUpTestData()
 

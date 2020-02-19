@@ -35,7 +35,7 @@ forbidden_img = 'forbidden_img.tiff'
 class StripImgMetadataTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        # NOTE: if you modify those elements they need to be created in setUp, instead of here
+        # NOTE: if you modify these elements they need to be created in setUp(), instead of here
         cls.user = get_user_model().objects.create_user(user_name, user_email, 'c')
         cls.project = Project(creator=cls.user, name_short='PRJ')
         cls.project.save()
@@ -54,6 +54,7 @@ class StripImgMetadataTest(TestCase):
 
     def setUp(self):
         self.client.force_login(self.user)
+        # NOTE: these elements get modified by some testcases, so they should NOT be created in setUpTestData()
         self.issue = Issue(title="Test-Issue", project=self.project)
         self.issue.save()
 

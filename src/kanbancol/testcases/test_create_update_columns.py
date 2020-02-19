@@ -24,10 +24,11 @@ from common.testcases.generic_testcase_helper import view_and_template, redirect
 class ColumnTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        # NOTE: if you modify this element it needs to be created in setUp, instead of here
+        # NOTE: if you modify these elements they need to be created in setUp(), instead of here
         cls.user = get_user_model().objects.create_user('test', 'test@testing.com', 'test1234')
 
     def setUp(self):
+        # NOTE: these elements get modified by some testcases, so they should NOT be created in setUpTestData()
         translation.activate('en')
         self.client.force_login(self.user)
         self.project = Project(creator=self.user, name_short='test', name='Testproject', description='asdf')

@@ -28,13 +28,14 @@ project_settings = {
 class TestActivityStream(TestCase):
     @classmethod
     def setUpTestData(cls):
-        # NOTE: if you modify those elements they need to be created in setUp, instead of here
+        # NOTE: if you modify these elements they need to be created in setUp(), instead of here
         cls.user = get_user_model().objects.create_user('test', 'test@testing.com', 'test1234')
         cls.user2 = get_user_model().objects.create_user('foo', 'foo@testing.com', 'foo1234')
         cls.user3 = get_user_model().objects.create_user('bar', 'bar@testing.com', 'bar1234')
 
     def setUp(self):
         self.client.force_login(self.user)
+        # NOTE: these elements get modified by some testcases, so they should NOT be created in setUpTestData()
         # create a default project
         project_settings["manager"] = (self.user.pk)
         self.client.post(reverse('project:create'), project_settings)

@@ -24,7 +24,7 @@ from timelog.models import Timelog
 class TimelogTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        # NOTE: if you modify those element they need to be created in setUp, instead of here
+        # NOTE: if you modify these elements they need to be created in setUp(), instead of here
         cls.user = get_user_model().objects.create_user('test', 'test@testing.com', 'test1234')
         cls.user2 = get_user_model().objects.create_user('test2', 'test@testing2.com', 'test1234')
         cls.user.save()
@@ -32,7 +32,7 @@ class TimelogTest(TestCase):
 
     def setUp(self):
         self.client.force_login(self.user)
-        # NOTE: this element gets modified by some of those tests, so this shall NOT be created in setUpTestData()
+        # NOTE: these elements get modified by some testcases, so they should NOT be created in setUpTestData()
         self.project = Project(creator=self.user, name_short='PRJ', activity_only_for_managers=False)
         self.project.save()
         self.project.developer.add(self.user)
@@ -42,10 +42,8 @@ class TimelogTest(TestCase):
         self.project2.manager.add(self.user)
         self.project2.developer.add(self.user, self.user2)
 
-        # NOTE: this element gets modified by some of those tests, so this shall NOT be created in setUpTestData()
         self.kanbancol = KanbanColumn(project=self.project, position=4, name='test')
         self.kanbancol.save()
-        # NOTE: this element gets modified by some of those tests, so this shall NOT be created in setUpTestData()
         self.issue = Issue(title='a very very very very very very very long issue title',
                            project=self.project,
                            due_date='2016-12-16',

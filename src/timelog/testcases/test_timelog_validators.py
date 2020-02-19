@@ -24,7 +24,7 @@ from django.contrib.auth import get_user_model
 class ValidatorTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        # NOTE: if you modify those element they need to be created in setUp, instead of here
+        # NOTE: if you modify these elements they need to be created in setUp(), instead of here
         cls.user = get_user_model().objects.create_user('test', 'test@testing.com', 'test1234')
         cls.project = Project(creator=cls.user, name_short='PRJ')
         cls.project.save()
@@ -34,7 +34,7 @@ class ValidatorTest(TestCase):
 
     def setUp(self):
         self.client.force_login(self.user)
-        # NOTE: this element gets modified by some of those tests, so this shall NOT be created in setUpTestData()
+        # NOTE: these elements get modified by some testcases, so they should NOT be created in setUpTestData()
         self.issue = Issue(project=self.project, due_date='2016-12-16', kanbancol=self.kanbancol, storypoints='3')
         self.issue.save()
         self.time = timezone.now().strftime("%Y-%m-%d %H:%M:%S")

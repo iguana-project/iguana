@@ -24,7 +24,7 @@ testMediaFileContent = "TestFile"
 class ProtectedMediaDirTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        # NOTE: if you modify this element it needs to be created in setUp, instead of here
+        # NOTE: if you modify these elements they need to be created in setUp(), instead of here
         cls.user = get_user_model().objects.create_user("test", "test@test.de", "test1234")
 
         # create the media file for testing
@@ -34,6 +34,7 @@ class ProtectedMediaDirTest(TestCase):
 
     def setUp(self):
         self.client.force_login(self.user)
+        # NOTE: these elements get modified by some testcases, so they should NOT be created in setUpTestData()
 
     def test_view_and_template(self):
         # TODO TESTCASE common view and template

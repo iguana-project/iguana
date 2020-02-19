@@ -27,11 +27,12 @@ class MailNotificationTest(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        # NOTE: if you modify those elements they need to be created in setUp, instead of here
+        # NOTE: if you modify these elements they need to be created in setUp(), instead of here
         cls.user1 = get_user_model().objects.create_user('user1', '', 'c')
         cls.user2 = get_user_model().objects.create_user('user2', 'othermail', 'c')
 
     def setUp(self):
+        # NOTE: these elements get modified by some testcases, so they should NOT be created in setUpTestData()
         # notify user2 on new issues
         self.user2.set_preference("notify_mail", json.dumps({'PRJ': ['NewIssue']}))
         self.project = Project(creator=self.user1, name_short='PRJ', name='Project')

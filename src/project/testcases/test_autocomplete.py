@@ -24,7 +24,7 @@ proj_short = 'PRJ'
 class AutocompletetTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        # NOTE: if you modify those elements they need to be created in setUp, instead of here
+        # NOTE: if you modify these elements they need to be created in setUp(), instead of here
         cls.user = get_user_model().objects.create_user('test', 'test@testing.com', 'test1234')
         cls.user2 = get_user_model().objects.create_user('tast', 'test@testing2.com', 'test1234')
         cls.user3 = get_user_model().objects.create_user('tust', 'test@testing3.com', 'test1234')
@@ -42,13 +42,12 @@ class AutocompletetTest(TestCase):
 
     def setUp(self):
         self.client.force_login(self.user)
+        # NOTE: these elements get modified by some testcases, so they should NOT be created in setUpTestData()
         self.title1 = 'asdf'
         self.title2 = 'ghjk'
-        # NOTE: this element gets modified by some of those tests, so this shall NOT be created in setUpTestData()
         self.issue = Issue(project=self.project, title=self.title1,
                            due_date='2016-12-16', kanbancol=self.kanbancol, storypoints='3')
         self.issue.save()
-        # NOTE: this element gets modified by some of those tests, so this shall NOT be created in setUpTestData()
         self.issue2 = Issue(project=self.project, title=self.title2,
                             due_date='2016-12-16', kanbancol=self.kanbancol, storypoints='3')
         self.issue2.save()

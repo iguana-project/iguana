@@ -71,7 +71,7 @@ user_template = 'user_profile/user_profile_page.html'
 class EditUserProfileTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        # NOTE: if you modify this element it needs to be created in setUp, instead of here
+        # NOTE: if you modify these elements they need to be created in setUp(), instead of here
         cls.user2 = get_user_model().objects.create_user(second_user_name, second_user_email,
                                                          second_user_password)
         cls.removeTestImagePath()
@@ -88,7 +88,7 @@ class EditUserProfileTest(TestCase):
         shutil.rmtree(testAvatarDir, ignore_errors=True)
 
     def setUp(self):
-        # NOTE: this element gets modified by some of those tests, so this shall NOT be created in setUpTestData()
+        # NOTE: these elements get modified by some testcases, so they should NOT be created in setUpTestData()
         self.user = get_user_model().objects.create_user(user_name, test_email, test_password)
         self.client.force_login(self.user)
 

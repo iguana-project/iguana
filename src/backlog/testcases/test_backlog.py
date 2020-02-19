@@ -23,10 +23,11 @@ from common.testcases.generic_testcase_helper import view_and_template, redirect
 class BacklogTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        # NOTE: if you modify this element it needs to be created in setUp, instead of here
+        # NOTE: if you modify these elements they need to be created in setUp(), instead of here
         cls.user = get_user_model().objects.create_user('django', 'django@example.com', 'unchained')
 
     def setUp(self):
+        # NOTE: these elements get modified by some testcases, so they should NOT be created in setUpTestData()
         self.project = Project(creator=self.user, name_short='PRJ')
         self.project.save()
         self.project.developer.add(self.user)

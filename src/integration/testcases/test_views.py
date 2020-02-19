@@ -31,7 +31,7 @@ class ViewTest(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        # NOTE: if you modify those elements they need to be created in setUp, instead of here
+        # NOTE: if you modify these elements they need to be created in setUp(), instead of here
         cls.user = get_user_model().objects.create_user('a', 'b', 'c')
         cls.user2 = get_user_model().objects.create_user('d', 'e', 'f')
         cls.project = Project(creator=cls.user, name_short=cls.short)
@@ -42,6 +42,7 @@ class ViewTest(TestCase):
 
     def setUp(self):
         self.client.force_login(self.user)
+        # NOTE: these elements get modified by some testcases, so they should NOT be created in setUpTestData()
         self.si = SlackIntegration(api_token="token", channel="channel")
         self.si.project = self.project
         self.si.save()

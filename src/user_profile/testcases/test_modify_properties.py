@@ -19,7 +19,7 @@ from project.models import Project
 class MotifyNotificationPropsTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        # NOTE: if you modify this element it needs to be created in setUp, instead of here
+        # NOTE: if you modify these elements they need to be created in setUp(), instead of here
         cls.user = get_user_model().objects.create_user('a', 'b', 'c')
         cls.project = Project(creator=cls.user, name_short='PRJ')
         cls.project.save()
@@ -29,8 +29,8 @@ class MotifyNotificationPropsTest(TestCase):
         cls.project2.save()
 
     def setUp(self):
-        # NOTE: this element gets modified by some of those tests, so this shall NOT be created in setUpTestData()
         self.client.force_login(self.user)
+        # NOTE: these elements get modified by some testcases, so they should NOT be created in setUpTestData()
 
     # TODO TESTCASE split this into smaller testcases
     # TODO especially as soon as there is also an existing support for activity-stream and discussion-app

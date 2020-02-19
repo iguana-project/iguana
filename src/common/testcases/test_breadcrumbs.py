@@ -52,11 +52,12 @@ class DummyRequest():
 class BreadcrumbsTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        # NOTE: if you modify this element it needs to be created in setUp, instead of here
+        # NOTE: if you modify these elements they need to be created in setUp(), instead of here
         cls.user = get_user_model().objects.create_user('django', 'django@example.com', 'unchained')
 
     def setUp(self):
         self.client.force_login(self.user)
+        # NOTE: these elements get modified by some testcases, so they should NOT be created in setUpTestData()
 
     def test_normal(self):
         """Check if breadcrumbs work and have proper urls."""

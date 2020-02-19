@@ -45,7 +45,7 @@ class SearchTest(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        # NOTE: if you modify those elements they need to be created in setUp, instead of here
+        # NOTE: if you modify these elements they need to be created in setUp(), instead of here
         cls.user = get_user_model().objects.create_user('a', 'b', 'c')
         cls.user2 = get_user_model().objects.create_user('d', 'e', 'f')
         cls.project = Project(creator=cls.user, name_short='PRJ')

@@ -25,11 +25,12 @@ import datetime
 class ApiPermissionTest(APITestCase):
     @classmethod
     def setUpTestData(cls):
-        # NOTE: if you modify those elements they need to be created in setUp, instead of here
+        # NOTE: if you modify those elements they need to be created in setUp(), instead of here
         cls.user1 = get_user_model().objects.create_user('user1', 'mail', 'c')
         cls.user2 = get_user_model().objects.create_user('user2', 'othermail', 'c')
 
     def setUp(self):
+        # NOTE: these elements get modified by some testcases, so they should NOT be created in setUpTestData()
         self.project = Project(creator=self.user1, name_short='asdf')
         self.project.save()
         self.project.developer.add(self.user1)

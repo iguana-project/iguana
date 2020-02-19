@@ -27,6 +27,7 @@ from django.db.models import Q
 
 class FormTest(TestCase):
     def setUp(self):
+        # NOTE: these elements get modified by some testcases, so they should NOT be created in setUpTestData()
         self.user = get_user_model().objects.create_user('a', 'b', 'c')
         self.user.first_name = 'Alice'
         self.user.last_name = 'Bla'

@@ -25,13 +25,14 @@ project_settings = {
 class ProjectGeneralAkaEditTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        # NOTE: if you modify those elements they need to be created in setUp, instead of here
+        # NOTE: if you modify these elements they need to be created in setUp(), instead of here
         cls.user = get_user_model().objects.create_user('test', 'test@testing.com', 'test1234')
         cls.user2 = get_user_model().objects.create_user('a', 'b', 'c')
         project_settings['developer'] = (cls.user.pk)
 
     def setUp(self):
         self.client.force_login(self.user)
+        # NOTE: these elements get modified by some testcases, so they should NOT be created in setUpTestData()
 
     def test_view_and_template(self):
         # TODO TESTCASE

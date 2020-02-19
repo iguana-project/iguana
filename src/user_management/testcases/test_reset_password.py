@@ -29,7 +29,7 @@ dashboard_template = 'landing_page/dashboard.html'
 
 class PasswordResetTest(TestCase):
     def setUp(self):
-        # NOTE: this element gets modified by some of those tests, so this shall NOT be created in setUpTestData()
+        # NOTE: these elements get modified by some testcases, so they should NOT be created in setUpTestData()
         self.user = get_user_model().objects.create_user(username, email, password)
 
     def test_view_and_template(self):

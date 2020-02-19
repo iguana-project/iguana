@@ -33,18 +33,17 @@ p1_short = 'bbbb'
 class TagTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        # NOTE: if you modify this element it needs to be created in setUp, instead of here
+        # NOTE: if you modify these elements they need to be created in setUp(), instead of here
         cls.user = get_user_model().objects.create_user('a', 'a@a.com', 'a1234568')
 
     def setUp(self):
+        # NOTE: these elements get modified by some testcases, so they should NOT be created in setUpTestData()
         # create some projects
-        # NOTE: this element gets modified by some of those tests, so this shall NOT be created in setUpTestData()
         p0 = Project(name=p0_name, name_short=p0_short, creator=self.user)
         p0.save()
         p0.manager.add(self.user)
         p0.save()
 
-        # NOTE: this element gets modified by some of those tests, so this shall NOT be created in setUpTestData()
         p1 = Project(name=p1_name, name_short=p1_short, creator=self.user)
         p1.save()
         p1.manager.add(self.user)

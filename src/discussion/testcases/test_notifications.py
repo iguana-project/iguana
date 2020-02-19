@@ -28,7 +28,7 @@ class SignalTest(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        # NOTE: if you modify those elements they need to be created in setUp, instead of here
+        # NOTE: if you modify these elements they need to be created in setUp(), instead of here
         cls.user1 = get_user_model().objects.create_user('user1', 'mail', 'c')
         cls.user2 = get_user_model().objects.create_user('user2', 'othermail', 'c')
         cls.project = Project(creator=cls.user1, name_short=cls.short)

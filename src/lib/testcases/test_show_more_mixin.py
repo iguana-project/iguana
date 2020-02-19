@@ -32,6 +32,7 @@ class TempView(ShowMoreMixin, TemplateView):
 
 class ShowMoreMixinTest(TestCase):
     def setUp(self):
+        # NOTE: these elements get modified by some testcases, so they should NOT be created in setUpTestData()
         self.tempView = TempView()
 
     def initialize_temp_view(self, page_string):

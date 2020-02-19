@@ -15,10 +15,12 @@ from django.contrib.auth import get_user_model
 class PermissionsTest(TestCase):
     @classmethod
     def setUpTestData(cls):
+        # NOTE: if you modify these elements they need to be created in setUp(), instead of here
         cls.user = get_user_model().objects.create_user('a', 'b', 'c')
         cls.user2 = get_user_model().objects.create_user('d', 'e', 'f')
 
     def setUp(self):
+        # NOTE: these elements get modified by some testcases, so they should NOT be created in setUpTestData()
         pass
 
     def test_permissions(self):

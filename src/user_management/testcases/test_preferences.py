@@ -17,6 +17,7 @@ from django.db import IntegrityError
 class LoginTest(TestCase):
     @classmethod
     def setUpTestData(cls):
+        # NOTE: if you modify these elements they need to be created in setUp(), instead of here
         cls.user = get_user_model().objects.create_user('a', 'b', 'c')
 
     def test_preferences(self):
