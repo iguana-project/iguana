@@ -46,8 +46,9 @@ For more detailed documentation including a list of features see our github docu
 
 
 ## Installation
+### Manual
 
-### Dependencies
+#### Dependencies
 **TODO**: more dependencies required
 
 We generally try to avoid any non-python dependencies but this doesn't always work well. The test cases need the Exempi library so for the [development environment](README.md#Development) this is required and can be installed like [this](https://python-xmp-toolkit.readthedocs.io/en/latest/installation.html#exempi):
@@ -60,7 +61,7 @@ brew install exempi        # OS X
 It seems like there is also a package for arch but I didn't test it yet.
 
 
-### Production
+#### Production
 To setup Iguana in a production environment you simply have to call:
 
 ```bash
@@ -74,8 +75,7 @@ This command runs the following Makefile targets:
 * `migrations create`
 * `migrations apply`
 
-
-### Staging
+#### Staging
 To setup Iguana in a staging environment you simply have to call:
 
 ```bash
@@ -84,8 +84,7 @@ make staging
 
 This does the same as the production target but it creates the staging virtual environment.
 
-
-### Development
+#### Development
 To setup Iguana in a development you simply have to call:
 
 ```bash
@@ -97,12 +96,10 @@ The `<webdriver>` option the driver for the `setup-webriver` target can be speci
 * `production`
 * `setup-webdriver <webdriver>`
 
-
-### Starting Iguana
+#### Starting Iguana
 Currently Iguana supports only [Nginx](https://nginx.org/en/) as web server backend. For configuring Nginx and using [Gunicorn](http://gunicorn.org/) together with Django please stick to the official documentation: https://docs.djangoproject.com/en/dev/howto/deployment/wsgi/gunicorn/
 
-
-### Starting the local Iguana instance
+#### Starting the local Iguana instance
 To start the local Django web server simply run:
 
 ```bash
