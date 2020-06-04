@@ -78,7 +78,7 @@ pyenv install -v $(cat .python-version)
 
 If everything is correctly setup and if you simply run `python` in your command shell, the python interpreter with the version specified in the `.python-version` file should be started.
 
-**Common propblems using *pyenv*:** Since *pyenv* is compiling every python version other than your system one direct on your PC, it can happen that after some time this version won't work any more. Often there are errors of missing shared libraries or something like that, when you try to start Iguana or the Python interpreter installed by *pyenv*. This can happen e.g. after a system update/upgrade. To solve this issue simply reinstall the Python version with the abovev *pyenv* command.
+**Common problems using *pyenv*:** Since *pyenv* is compiling every python version other than your system one direct on your PC, it can happen that after some time this version won't work any more. Often there are errors of missing shared libraries or something like that, when you try to start Iguana or the Python interpreter installed by *pyenv*. This can happen e.g. after a system update/upgrade. To solve this issue simply reinstall the Python version with the abovev *pyenv* command.
 
 #### Production
 To setup Iguana in a production environment you simply have to call:
