@@ -43,6 +43,8 @@ For more detailed documentation including a list of features see our github docu
 * [Docker](#docker)<br />
 	Alternatively an even easier and faster start with Docker
 
+
+
 ## Installation
 
 ### Dependencies
@@ -57,6 +59,55 @@ brew install exempi        # OS X
 
 It seems like there is also a package for arch but I didn't test it yet.
 
+
+### Production
+To setup Iguana in a production environment you simply have to call:
+
+```bash
+make production
+```
+
+This command runs the following Makefile targets:
+
+* `setup-virtualenv`
+* `css`
+* `migrations create`
+* `migrations apply`
+
+
+### Staging
+To setup Iguana in a staging environment you simply have to call:
+
+```bash
+make staging
+```
+
+This does the same as the production target but it creates the staging virtual environment.
+
+
+### Development
+To setup Iguana in a development you simply have to call:
+
+```bash
+make development ++webdriver [<webdriver>]
+```
+
+The `<webdriver>` option the driver for the `setup-webriver` target can be specified ("chrome" is used as default). Beside that the following targets are executed:
+
+* `production`
+* `setup-webdriver <webdriver>`
+
+
+### Starting Iguana
+Currently Iguana supports only [Nginx](https://nginx.org/en/) as web server backend. For configuring Nginx and using [Gunicorn](http://gunicorn.org/) together with Django please stick to the official documentation: https://docs.djangoproject.com/en/dev/howto/deployment/wsgi/gunicorn/
+
+
+### Starting the local Iguana instance
+To start the local Django web server simply run:
+
+```bash
+make run
+```
 
 
 ### Docker
@@ -98,57 +149,16 @@ All files uploaded to Iguana are placed in the `media` directory on the Docker v
 
 **TODO**: add DockerHub badges and links
 
-### Production
-To setup Iguana in a production environment you simply have to call:
-
-```bash
-make production
-```
-
-This command runs the following Makefile targets:
-
-* `setup-virtualenv`
-* `css`
-* `migrations create`
-* `migrations apply`
-
-### Staging
-To setup Iguana in a staging environment you simply have to call:
-
-```bash
-make staging
-```
-
-This does the same as the production target but it creates the staging virtual environment.
-
-### Development
-To setup Iguana in a development you simply have to call:
-
-```bash
-make development ++webdriver [<webdriver>]
-```
-
-The `<webdriver>` option the driver for the `setup-webriver` target can be specified ("chrome" is used as default). Beside that the following targets are executed:
-
-* `production`
-* `setup-webdriver <webdriver>`
-
-### Starting Iguana
-Currently Iguana supports only [Nginx](https://nginx.org/en/) as web server backend. For configuring Nginx and using [Gunicorn](http://gunicorn.org/) together with Django please stick to the official documentation: https://docs.djangoproject.com/en/dev/howto/deployment/wsgi/gunicorn/
-
-### Starting the local Iguana instance
-To start the local Django web server simply run:
-
-```bash
-make run
-```
 
 ### Using Ansible for deployment
 **TODO:** write Ansible instructions
 
+
 ### Integrations
 * **TODO:** write instructions for git integration
 * **TODO:** write instructions for slack integration
+
+
 
 ## Makefile targets
 These targets can be run with:
