@@ -48,18 +48,37 @@ For more detailed documentation including a list of features see our github docu
 ## Installation
 ### Manual
 
-#### Dependencies
+#### Preperation
+
+If you want to manually install Iguana, there are some dependencies and actions that must be installed and done before:
+
+##### Dependencies
 **TODO**: more dependencies required
 
 We generally try to avoid any non-python dependencies but this doesn't always work well. The test cases need the Exempi library so for the [development environment](README.md#Development) this is required and can be installed like [this](https://python-xmp-toolkit.readthedocs.io/en/latest/installation.html#exempi):
 
 ```bash
-apt-get install libexempi3 # Ubuntu/Debian
-brew install exempi        # OS X
+apt-get install libexempi3  # Ubuntu/Debian
+pacman -S exempi		    # Arch Linux
+brew install exempi         # OS X
 ```
 
-It seems like there is also a package for arch but I didn't test it yet.
+##### Setup Python Version
 
+Iguana is currently tested against **Python 3.6**.</br>
+It may be also run on higher versions. But if you run into any problems, please test first if they also occour with Python 3.6.
+
+To install Python 3.6 locally (independent from your current system version), you can use [pyenv](https://github.com/pyenv/pyenv). For installation and setting up *pyenv* please stick to their documentation: https://github.com/pyenv/pyenv/wiki
+
+Once you've got *pyenv* running execute the following command in the main iguana directory:
+
+```bash
+pyenv install -v $(cat .python-version)
+```
+
+If everything is correctly setup and if you simply run `python` in your command shell, the python interpreter with the version specified in the `.python-version` file should be started.
+
+**Common propblems using *pyenv*:** Since *pyenv* is compiling every python version other than your system one direct on your PC, it can happen that after some time this version won't work any more. Often there are errors of missing shared libraries or something like that, when you try to start Iguana or the Python interpreter installed by *pyenv*. This can happen e.g. after a system update/upgrade. To solve this issue simply reinstall the Python version with the abovev *pyenv* command.
 
 #### Production
 To setup Iguana in a production environment you simply have to call:
