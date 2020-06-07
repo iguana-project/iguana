@@ -3,6 +3,7 @@
 
 from django.urls import reverse
 from user_management.views import LoginView
+from rest_framework import viewsets
 
 
 # \param view the view that should be used
@@ -16,8 +17,14 @@ def view_and_template(self, view, template, address_pattern, address_kwargs=None
         response = self.client.get(reverse(address_pattern, kwargs=address_kwargs),  get_kwargs, follow=True)
     else:
         response = self.client.get(reverse(address_pattern, kwargs=address_kwargs), follow=True)
-    self.assertTemplateUsed(response, template)
-    self.assertEqual(response.resolver_match.func.__name__, view.as_view().__name__)
+    if template:
+        self.assertTemplateUsed(response, template)
+
+    # catch the APIViewsTest for ProjectViewSet that need additional address_kwargs
+    if issubclass(view, viewsets.ModelViewSet):
+        self.assertEqual(response.resolver_match.func.__name__, view.as_view(address_kwargs).__name__)
+    else:
+        self.assertEqual(response.resolver_match.func.__name__, view.as_view().__name__)
     return response
 
 
