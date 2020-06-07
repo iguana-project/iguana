@@ -327,6 +327,9 @@ Normally there's no need to change these settings.
 ## Plan of the future
 For short and long term plans see the [official documentation](https://iguana-project.github.io/#plans).
 
+## Question and answers
+For questions and answers please also stick to the [official documentation](https://iguana-project.github.io/#q_and_a). In case you have any other questions don't hesitate to hit us up.
+
 ## License
 Iguana was mainly developed with the Django framework (https://www.djangoproject.com).
 
