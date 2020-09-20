@@ -1,5 +1,5 @@
 #!/usr/local/bin/python
-from os import path, symlink, system, chown, setgid, setuid, environ, stat, walk, makedirs, remove
+from os import path, symlink, system, setgid, setuid, environ, stat, walk, makedirs, remove
 from distutils.file_util import copy_file
 from pwd import getpwnam
 from subprocess import Popen, STDOUT
@@ -23,7 +23,6 @@ SETTING_TIME_ZONE = environ.get("TZ")
 SETTING_LANGUAGE = environ.get("LANG")
 
 FIRST_RUN_FILE = path.join(FILES_DIR, ".initialized")
-FORCE_CHOWN = False
 
 
 # prepare the /files directory
@@ -57,9 +56,6 @@ for df in _necessary_files:
             makedirs(path.dirname(path.join(FILES_DIR, df)), exist_ok=True)
             copy_file(src_path, path.join(FILES_DIR, df))
 
-        # force a chown after a file was copied
-        FORCE_CHOWN = True
-
         # force reinitialization of the settings later if the settings.json file was recovered
         if df == "settings.json" and path.isfile(FIRST_RUN_FILE):
             remove(FIRST_RUN_FILE)
@@ -86,18 +82,8 @@ except KeyError:
 # chown the application path to the Iguana user
 print('Setting file permissions.')
 for dir in [BASE_DIR, FILES_DIR]:
-    if stat(dir).st_uid != IGUANA_PUID or \
-            stat(dir).st_gid != IGUANA_PGID or \
-            FORCE_CHOWN:
-        # recursive chown
-        for root, dirs, files in walk(dir):
-            for d in dirs:
-                chown(path.join(root, d), IGUANA_PUID, IGUANA_PGID, follow_symlinks=False)
-            for f in files:
-                chown(path.join(root, f), IGUANA_PUID, IGUANA_PGID, follow_symlinks=False)
+    system("chown -R %s:%s %s" % (str(IGUANA_PUID), str(IGUANA_PGID), dir))
 
-        # don't forget the root directory
-        chown(dir, IGUANA_PUID, IGUANA_PGID, follow_symlinks=False)
 
 # start helper processes as root
 if VARIANT != "development":
