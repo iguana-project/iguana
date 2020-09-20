@@ -17,7 +17,14 @@ ARG APP_DIR
 ARG VARIANT
 
 # install dependencies
-RUN apk add --no-cache git jpeg-dev zlib-dev freetype-dev build-base postgresql-dev mariadb-connector-c-dev
+RUN apk add --no-cache \
+    git \
+    jpeg-dev \
+    zlib-dev \
+    freetype-dev \
+    build-base \
+    postgresql-dev \
+    mariadb-connector-c-dev
 
 # build the application
 RUN mkdir $APP_DIR
@@ -52,7 +59,15 @@ ENV LANG=en
 ENV PYTHONUNBUFFERED 1
 
 # install dependencies
-RUN apk add --no-cache git libjpeg zlib libmagic freetype libpq logrotate mariadb-connector-c
+RUN apk add --no-cache \
+    git \
+    libjpeg \
+    zlib \
+    libmagic \
+    freetype \
+    libpq \
+    logrotate \
+    mariadb-connector-c
 
 # install nginx if wanted for non development builds
 RUN if [ "$USE_NGINX" == "true" ] && [ "$VARIANT" != "development" ]; then \
