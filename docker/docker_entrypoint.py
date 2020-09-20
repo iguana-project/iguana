@@ -1,16 +1,18 @@
 #!/usr/local/bin/python
 from os import path, symlink, system, chown, setgid, setuid, environ, stat, walk, makedirs, remove
 from distutils.file_util import copy_file
-from pwd import getpwuid
+from pwd import getpwnam
 from subprocess import Popen, STDOUT
 from importlib import util as import_util
 from shutil import move
+from grp import getgrnam
 
 
 BASE_DIR = path.abspath(environ.get("APP_DIR"))
 FILES_DIR = path.abspath(environ.get("FILES_DIR"))
 IGUANA_DIR = path.join(BASE_DIR, "src")
 
+IGUANA_USER = IGUANA_GROUP = "iguana"
 IGUANA_PUID = int(environ.get("PUID"))
 IGUANA_PGID = int(environ.get("PGID"))
 
@@ -63,15 +65,22 @@ for df in _necessary_files:
             remove(FIRST_RUN_FILE)
 
 
+# create Iguana group
+try:
+    getgrnam(IGUANA_GROUP)
+    print("Group '%s' already exists." % IGUANA_GROUP)
+except KeyError:
+    print("Creating group '%s'." % IGUANA_GROUP)
+    system("groupadd --non-unique --gid %s %s" % (str(IGUANA_PGID), IGUANA_GROUP))
+
 # create Iguana user
 try:
-    # check if it exists
-    getpwuid(IGUANA_PUID)
-    print("User 'iguana' already exists.")
-except Exception:
-    print("Creating user 'iguana'.")
-    system("addgroup --gid " + str(IGUANA_PGID) + " iguana")
-    system("adduser --disabled-password --no-create-home --gecos '' --uid " + str(IGUANA_PUID) + " -G iguana iguana")
+    getpwnam(IGUANA_USER)
+    print("User '%s' already exists." % IGUANA_USER)
+except KeyError:
+    print("Creating user '%s'." % IGUANA_USER)
+    system("useradd --no-create-home --shell /sbin/nologin --non-unique --uid %s --gid %s %s" %
+           (str(IGUANA_PUID), str(IGUANA_PGID), IGUANA_USER))
 
 
 # chown the application path to the Iguana user

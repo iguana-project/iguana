@@ -60,6 +60,8 @@ ENV PYTHONUNBUFFERED 1
 
 # install dependencies
 RUN apk add --no-cache \
+    # for user management in docker_entrypoint.py
+    shadow \
     git \
     libjpeg \
     zlib \
