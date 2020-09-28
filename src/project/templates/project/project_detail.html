@@ -14,6 +14,9 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 {% load markdownify %}
 {% load activity_tags %}
 {% block title %}{{ project.name }}{% endblock title %}
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static "css/pysegments.css" %}" />
+{% endblock extra_css %}
 {% block content %}
 {% trans "overview" as viewpoint %}
 {% include "project/project_navigation_bar.html" %}

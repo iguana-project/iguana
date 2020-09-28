@@ -46,6 +46,7 @@ def markdownify(text, project=None):
                                           extensions=['fenced_code',
                                                       'footnotes',
                                                       'tables',
+                                                      'codehilite',
                                                       'nl2br',
                                                       'mdx_urlize',
                                                       'markdown_del_ins',
@@ -61,11 +62,13 @@ def markdownify(text, project=None):
                         attributes={u'img': [u'src', u'title', u'height', u'width'],
                                     u'a': [u'href', u'title'],
                                     u'td': [u'align'],
+                                    u'div': [u'class'],
+                                    u'span': [u'class'],
                                     },
                         tags=["p", "b", "a", "i", "img", "ul", "li", "ol", "br", "em",
                               "hr", "h1", "h2", "h3", "h4", "h5", "h6", "pre", "code",
                               "strong", "blockquote", "table", "tr", "td", "th", "thead", "tbody",
-                              "del", "ins", "div", "sup",
+                              "del", "ins", "div", "sup", "span",
                               ]
                         )
 

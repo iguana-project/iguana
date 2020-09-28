@@ -18,6 +18,10 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 	{{ issue.title }}
 {% endblock title %}
 
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static "css/pysegments.css" %}" />
+{% endblock extra_css %}
+
 {% block content %}
 	{% include "project/project_navigation_bar.html" %}
 	<h1 class="page-header">
