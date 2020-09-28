@@ -43,9 +43,10 @@ def markdownify(text, project=None):
         extra_extensions = []
 
     return bleach.clean(markdown.markdown(text,
-                                          extensions=['markdown.extensions.tables',
-                                                      'markdown.extensions.nl2br',
-                                                      'markdown.extensions.extra',
+                                          extensions=['fenced_code',
+                                                      'footnotes',
+                                                      'tables',
+                                                      'nl2br',
                                                       'mdx_urlize',
                                                       'markdown_del_ins',
                                                       ] + extra_extensions
@@ -57,7 +58,7 @@ def markdownify(text, project=None):
                         tags=["p", "b", "a", "i", "img", "ul", "li", "ol", "br", "em",
                               "hr", "h1", "h2", "h3", "h4", "h5", "h6", "pre", "code",
                               "strong", "blockquote", "table", "tr", "td", "th", "thead", "tbody",
-                              "del", "ins",
+                              "del", "ins", "div", "sup",
                               ]
                         )
 
