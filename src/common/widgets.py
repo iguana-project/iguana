@@ -32,7 +32,8 @@ class CustomPagedownWidget(PagedownWidget):
 
         # add custom js
         new_js = media._js
-        new_js.append("js/pagedown_iguana_markdown.js")
+        # the js must be added before 'pagedown_init.js'; this is usually the last js file loaded
+        new_js.insert(len(new_js) - 1, "js/pagedown_iguana_markdown.js")
 
         # add custom css
         new_css = {"all": ("css/pagedown.css",)}
