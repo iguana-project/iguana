@@ -49,7 +49,14 @@ def markdownify(text, project=None):
                                                       'nl2br',
                                                       'mdx_urlize',
                                                       'markdown_del_ins',
-                                                      ] + extra_extensions
+                                                      'mdx_truly_sane_lists',
+                                                      ] + extra_extensions,
+                                          extension_configs={
+                                              'mdx_truly_sane_lists': {
+                                                  'nested_indent': 4,
+                                                  'truly_sane': True,
+                                                  }
+                                              },
                                           ),
                         attributes={u'img': [u'src', u'title', u'height', u'width'],
                                     u'a': [u'href', u'title'],

@@ -17,6 +17,7 @@ GitPython==3.1.7
 markdown==3.2.2
 markdown-urlize==0.2.0
 markdown-del-ins==1.0.0
+mdx-truly-sane-lists==1.2
 Pillow==7.2.0
 ply==3.11
 python-dateutil==2.8.1
