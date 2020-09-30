@@ -103,7 +103,7 @@ class LocalizedBasePickerInput(BasePickerInput):
 
         # add custom css
         filtered_css = [item for item in media._css["all"] if not regex.search(item)]
-        filtered_css.append("css/bootstrap-datetimepicker.min.css")
+        filtered_css.append("css/bootstrap_custom/bootstrap-datetimepicker.min.css")
 
         return Media(js=tuple(filtered_js), css={"all": filtered_css})
 

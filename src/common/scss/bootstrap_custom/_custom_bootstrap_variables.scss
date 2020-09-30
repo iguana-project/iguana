@@ -23,7 +23,7 @@ $font-family-serif:       $font-family-sans-serif !default;
 $headings-font-family:    "Roboto Light", robotolight, $font-family-sans-serif !default;
 
 //== Iconography
-$icon-font-path: "../fonts/" !default;
+$icon-font-path: "../../fonts/" !default;
 
 //== Buttons
 $btn-success-color:              rgb(51, 51, 51) !default;
@@ -75,4 +75,4 @@ $code-bg:                     lighten($brand-danger, 20%) !default;
 
 
 // import the rest of Bootstrap variables
-@import "bootstrap/bootstrap/variables";
+@import "../bootstrap/bootstrap/variables";

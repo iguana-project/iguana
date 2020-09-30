@@ -28,7 +28,7 @@ linkgraph.*
 ansible/*.retry
 src/htmlcov
 src/celerybeat-schedule
-/src/common/static/css/*.css
+/src/common/static/css/*
 /src/common/settings/__init__.py
 /src/common/settings/webdriver.py
 /tools/scripts/tools/bin/vnu.jar
