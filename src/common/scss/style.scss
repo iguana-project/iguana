@@ -8,7 +8,7 @@ Creative Commons Attribution-ShareAlike 4.0 International License.
 You should have received a copy of the license along with this
 work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 */
-$iguana-color: "#b3ff01";
+$iguana-color: #b3ff01;
 $text-color: rgb(50,50,50);
 $text-grey: rgb(119, 119, 119);
 $dark-background: rgb(50, 50, 50);
@@ -299,7 +299,7 @@ input.tags[type="checkbox"] {
 }
 
 // extend dropdown-menu to work with tribute.js mentions
-@import "custom_bootstrap_variables";
+@import "bootstrap_custom/custom_bootstrap_variables";
 @import "bootstrap/bootstrap/mixins";
 @import "bootstrap/bootstrap/dropdowns";
 .dropdown-menu-autocomplete > ul {
