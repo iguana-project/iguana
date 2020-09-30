@@ -88,3 +88,44 @@
         });
     }
 })();
+
+
+(function () {
+    // get the current line break character
+    if (navigator.appVersion.indexOf("Win")!=-1){
+        var os_linebreak = "\r\n";
+    } else {
+        var os_linebreak = "\n";   
+    }
+
+    document.getElementById("wmd-input-id_text").addEventListener('keydown', function(e) {
+        var keyCode = e.keyCode || e.which;
+
+        // the tab key is '9'
+        if (keyCode == 9) {
+            e.preventDefault();
+
+            var start = this.selectionStart;
+            var end = this.selectionEnd;
+
+            var string_before = $(this).val().substring(0, start);
+            // the default amount of spaces is '4'
+            var default_space_amount = 4
+            // calculate the amount of spaces that should be added
+            var space_amount = default_space_amount - (
+                                                       // only consider the current line
+                                                       // so get the index of the current line
+                                                       (start - (string_before.lastIndexOf(os_linebreak) + 1))
+                                                       // get the modulo to the default space amount
+                                                       % default_space_amount);
+
+            // set textarea value to: text before caret + spaces + text after caret
+            $(this).val(string_before
+                        + " ".repeat(space_amount)
+                        + $(this).val().substring(end));
+
+            // put caret at right position again
+            this.selectionStart = this.selectionEnd = start + default_space_amount;
+        }
+    });
+})();
