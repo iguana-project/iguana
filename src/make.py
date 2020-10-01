@@ -944,6 +944,7 @@ class _SetWebdriverTarget(_Target):
 
 @cmd("coverage")
 @group("Source code management")
+@call_after(_TestTarget)
 @help("Execute coverage on the source code.")
 class _CoverageTarget(_Target):
     @arg("app")
@@ -1018,14 +1019,13 @@ class _CoverageTarget(_Target):
         return cov
 
     @classmethod
-    def execute_target(cls, parser, argument_values, argv_rest):
+    def execute_target(cls, unused1, argument_values, unused2):
         cov = cls.__initialize_coverage()
         # start the coverage process
         cov._auto_save = True
         cov.start()
         # perform the tests
         argument_values["ign-imp-errs"] = False
-        _TestTarget.execute_target(parser, argument_values, argv_rest)
 
 
 @cmd("css")
