@@ -202,10 +202,10 @@ class _Target(argparse.Action, metaclass=_MetaTarget):
     _argument_values = None
 
     @classmethod
-    def execute_target(cls, parser, argument_values, argv_rest):
+    def run(cls, parser, argument_values, argv_rest):
         # override this method!
         # by default it shows the help message
-        _HelpTarget.execute_target(parser, argument_values, argv_rest)
+        _HelpTarget.run(parser, argument_values, argv_rest)
 
     @classmethod
     def _get_callable_targets(cls, target_list=[]):
@@ -220,7 +220,7 @@ class _Target(argparse.Action, metaclass=_MetaTarget):
             target._call_targets(parser, argument_values, argv_rest)
 
         # call the target
-        cls.execute_target(parser, argument_values, argv_rest or "")
+        cls.run(parser, argument_values, argv_rest or "")
 
         # call dependent targets
         for target in cls._get_callable_targets(cls.call_after):
@@ -532,7 +532,7 @@ class _HelpTarget(_Target):
             cls._root_parser = value
 
     @classmethod
-    def execute_target(cls, parser, *unused):
+    def run(cls, parser, *unused):
         # print help if no choice is made at all
         if parser.prog.endswith(sys.argv[-1]) and sys.argv[-1] != "help":
             parser.print_help()
@@ -572,7 +572,7 @@ class _HelpTarget(_Target):
 @help("Run the Django server locally.")
 class _RunTarget(_Target):
     @classmethod
-    def execute_target(cls, unused1, unused2, argv_rest):
+    def run(cls, unused1, unused2, argv_rest):
         if _CommonTargets.is_development:
             # start the development server
             _CommonTargets.exec_django_cmd("runserver", argv_rest, settings=DJANGO_SETTINGS_MODULE)
@@ -605,7 +605,7 @@ class _CreateAppTarget(_Target):
         pass
 
     @classmethod
-    def execute_target(cls, unused1, argument_values, unused2):
+    def run(cls, unused1, argument_values, unused2):
         # create the new django application
         # a change to the Django directory is necessary because of a bug in the current 'startapp [destination]'
         #   implementation
@@ -622,14 +622,14 @@ class _MigrationsTarget(_Target):
     @help("Create the Django migrations.")
     class Create(_Target):
         @classmethod
-        def execute_target(cls, *unused):
+        def run(cls, *unused):
             _CommonTargets.exec_django_cmd("makemigrations", settings=DJANGO_SETTINGS_MODULE)
 
     @cmd("apply")
     @help("Apply the Django migrations.")
     class Apply(_Target):
         @classmethod
-        def execute_target(cls, *unused):
+        def run(cls, *unused):
             _CommonTargets.exec_django_cmd("migrate", settings=DJANGO_SETTINGS_MODULE)
 
 
@@ -685,7 +685,7 @@ class _TestTarget(_Target):
             self.__stdout.write(StringIO.read(self, *args, **kwargs))
 
     @classmethod
-    def execute_target(cls, unused1, argument_values, unused2):
+    def run(cls, unused1, argument_values, unused2):
         if _CommonTargets.is_development:
             nomigrations = True
         else:
@@ -742,7 +742,7 @@ class _MessagesTarget(_Target):
             pass
 
         @classmethod
-        def execute_target(cls, unused1, argument_values, unused2):
+        def run(cls, unused1, argument_values, unused2):
             _CommonTargets.exec_django_cmd("makemessages", "-l", argument_values["lang-code"],
                                            settings=DJANGO_SETTINGS_MODULE)
 
@@ -750,7 +750,7 @@ class _MessagesTarget(_Target):
     @help("Compile the Django messages.")
     class Compile(_Target):
         @classmethod
-        def execute_target(cls, *unused):
+        def run(cls, *unused):
             _CommonTargets.exec_django_cmd("compilemessages", settings=DJANGO_SETTINGS_MODULE)
 
 
@@ -759,7 +759,7 @@ class _MessagesTarget(_Target):
 @help("Collect static files and copy them into /static_files.")
 class _CollectionTarget(_Target):
     @classmethod
-    def execute_target(cls, *unused):
+    def run(cls, *unused):
         # create the output directory if it doesn't exist
         os.makedirs(STATIC_FILES, exist_ok=True)
 
@@ -775,7 +775,7 @@ class _RequirementsTarget(_Target):
     @help("Check if there are any updates of the requirements.")
     class Check(_Target):
         @classmethod
-        def execute_target(cls, *unused):
+        def run(cls, *unused):
             _CommonTargets.activate_virtual_environment()
 
             # import piprot
@@ -789,7 +789,7 @@ class _RequirementsTarget(_Target):
     @help("(Re-)Install the requirements.")
     class Install(_Target):
         @classmethod
-        def execute_target(cls, *unused):
+        def run(cls, *unused):
             # check which requirements should be installed
             requirements_file = _CommonTargets.get_requirements_file()
 
@@ -816,7 +816,7 @@ class _RequirementsTarget(_Target):
 @help("Create the virtual environment for Django.")
 class _SetupVirtualenvTarget(_Target):
     @classmethod
-    def execute_target(cls, *unused):
+    def run(cls, *unused):
         # check if already a virtual environment is present
         virt_python = os.path.join(VIRTUALENV_BASE_DIR, "bin", "python")
         if not os.path.isfile(virt_python):
@@ -832,21 +832,21 @@ class _SetWebdriverTarget(_Target):
     @help("Use Chrome browser for the webdriver.")
     class Chrome(_Target):
         @classmethod
-        def execute_target(cls, *unused):
+        def run(cls, *unused):
             cls.parent_target.use_browser(cls.cmd)
 
     @cmd("firefox")
     @help("Use Firefox browser for the webdriver.")
     class Firefox(_Target):
         @classmethod
-        def execute_target(cls, *unused):
+        def run(cls, *unused):
             cls.parent_target.use_browser(cls.cmd)
 
     @cmd("safari")
     @help("Use Safari browser for the webdriver.")
     class Safari(_Target):
         @classmethod
-        def execute_target(cls, *unused):
+        def run(cls, *unused):
             cls.parent_target.use_browser(cls.cmd)
 
     @classmethod
@@ -935,11 +935,11 @@ class _SetWebdriverTarget(_Target):
             cls.__install_geckodriver()
 
     @classmethod
-    def execute_target(cls, parser, argument_values, argv_rest):
+    def run(cls, parser, argument_values, argv_rest):
         if "webdriver" in argument_values:
             cls.use_browser(argument_values["webdriver"])
         else:
-            _HelpTarget.execute_target(parser, argument_values, argv_rest)
+            _HelpTarget.run(parser, argument_values, argv_rest)
 
 
 @cmd("coverage")
@@ -969,7 +969,7 @@ class _CoverageTarget(_Target):
     @help("Create the coverage report.")
     class Report(_Target):
         @classmethod
-        def execute_target(cls, *unused):
+        def run(cls, *unused):
             cov = cls.parent_target.load_coverage()
             cov.report()
 
@@ -977,7 +977,7 @@ class _CoverageTarget(_Target):
     @help("Create the coverage report as HTML.")
     class Html(_Target):
         @classmethod
-        def execute_target(cls, *unused):
+        def run(cls, *unused):
             cov = cls.parent_target.load_coverage()
             cov.html_report()
 
@@ -985,7 +985,7 @@ class _CoverageTarget(_Target):
     @help("Create the coverage report as XML.")
     class Xml(_Target):
         @classmethod
-        def execute_target(cls, *unused):
+        def run(cls, *unused):
             cov = cls.parent_target.load_coverage()
             cov.xml_report()
 
@@ -993,7 +993,7 @@ class _CoverageTarget(_Target):
     @help("Erase a previously created coverage report.")
     class Erase(_Target):
         @classmethod
-        def execute_target(cls, *unused):
+        def run(cls, *unused):
             cov = cls.parent_target.load_coverage()
             cov.erase()
 
@@ -1019,7 +1019,7 @@ class _CoverageTarget(_Target):
         return cov
 
     @classmethod
-    def execute_target(cls, unused1, argument_values, unused2):
+    def run(cls, unused1, argument_values, unused2):
         cov = cls.__initialize_coverage()
         # start the coverage process
         cov._auto_save = True
@@ -1034,7 +1034,7 @@ class _CoverageTarget(_Target):
 @help("Compile the CSS-files with SASSC.")
 class _CSSTarget(_Target):
     @classmethod
-    def execute_target(cls, *unused):
+    def run(cls, *unused):
         _CommonTargets.activate_virtual_environment()
         import sass
 
@@ -1054,7 +1054,7 @@ class _ListTarget(_Target):
     @help("List bugs.")
     class _ListBugsTarget(_Target):
         @classmethod
-        def execute_target(cls, *unused):
+        def run(cls, *unused):
             subprocess.run('grep --color -n -i -R -H "TODO BUG" --exclude=' + os.path.basename(__file__) + ' *',
                            shell=True, cwd=IGUANA_BASE_DIR)
 
@@ -1062,7 +1062,7 @@ class _ListTarget(_Target):
     @help("List missing testcases.")
     class _ListMissingTestcasesTarget(_Target):
         @classmethod
-        def execute_target(cls, *unused):
+        def run(cls, *unused):
             subprocess.run('grep --color -n -i -R -H "TODO TESTCASE" --exclude=' + os.path.basename(__file__) + ' *',
                            shell=True, cwd=IGUANA_BASE_DIR)
 
@@ -1072,7 +1072,7 @@ class _ListTarget(_Target):
 @help("Add the license header to the source files.")
 class _AddLicenseTarget(_Target):
     @classmethod
-    def execute_target(cls, *unused):
+    def run(cls, *unused):
         subprocess.run([os.path.join(IGUANA_BASE_DIR, "add_header.sh")], cwd=IGUANA_BASE_DIR)
 
 
@@ -1081,7 +1081,7 @@ class _AddLicenseTarget(_Target):
 @help("Tag the current commit as a production release.")
 class _NewReleaseTarget(_Target):
     @classmethod
-    def execute_target(cls, *unused):
+    def run(cls, *unused):
         _CommonTargets.activate_virtual_environment()
 
         # get the git repository
@@ -1107,7 +1107,7 @@ class _NewReleaseTarget(_Target):
 @help("Configure everything to be ready for production.")
 class _ProductionTarget(_Target):
     @classmethod
-    def execute_target(cls, unused1, argument_values, unused2):
+    def run(cls, unused1, argument_values, unused2):
         # write the production settings
         _CommonTargets.save_make_settings(development=argument_values.get("development", False))
 
@@ -1122,7 +1122,7 @@ class _ProductionTarget(_Target):
 class _StagingTarget(_Target):
     # this target is basically the same as production
     @classmethod
-    def execute_target(cls, parser, argument_values, argv_rest):
+    def run(cls, parser, argument_values, argv_rest):
         # this method must be overridden, because otherwise it prints the help message when it's called
         pass
 
@@ -1139,7 +1139,7 @@ class _DevelopmentTarget(_Target):
         pass
 
     @classmethod
-    def execute_target(cls, unused1, argument_values, unused2):
+    def run(cls, unused1, argument_values, unused2):
         argument_values["development"] = True
 
         # link the git hooks
