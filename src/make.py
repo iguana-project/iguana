@@ -192,6 +192,9 @@ class _MetaTarget(type):
                 if inspect.isclass(inner_cls) and issubclass(inner_cls, _Argument)]
 
 
+TARGETS_TO_EXECUTE = {}
+
+
 class _Target(argparse.Action, metaclass=_MetaTarget):
     # default values (Do not change these in subclasses! Instead use the decorators above!)
     cmd = ""
@@ -226,19 +229,9 @@ class _Target(argparse.Action, metaclass=_MetaTarget):
         for target in cls._get_callable_targets(cls.call_after):
             target._call_targets(parser, argument_values, argv_rest)
 
-    def __call__(self, parser, _, argv_rest, *unused):
-        # do not execute the target if it has child targets and one of them is used
-        choice_made_and_possible = False
-        for action in parser._actions:
-            if action.choices is not None:
-                for choice in action.choices:
-                    if str(choice) == sys.argv[-1]:
-                        choice_made_and_possible = True
-        if choice_made_and_possible:
-            return
+    def __call__(self, parser, *unused):
+        TARGETS_TO_EXECUTE[self] = parser
 
-        # call the target with its dependecies
-        self._call_targets(parser, type(self).argument_values, argv_rest)
 
 
 class _MetaArgument(type):
@@ -1204,12 +1197,12 @@ MAIN_TARGET_GROUPS = {}
 
 # run this script
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Makefile for the Iguana project", add_help=False)
-    subparser = parser.add_subparsers(action=_SubParsersCustom)
+    main_parser = argparse.ArgumentParser(description="Makefile for the Iguana project", add_help=False)
+    subparser = main_parser.add_subparsers(action=_SubParsersCustom)
 
     # special case help target
     __add_target_to_parser(subparser, _HelpTarget)
-    _HelpTarget.root_parser = parser
+    _HelpTarget.root_parser = main_parser
 
     # get all target classes
     for _, cls in inspect.getmembers(sys.modules[__name__]):
@@ -1218,4 +1211,20 @@ if __name__ == "__main__":
                 cls not in [_Target, _HelpTarget]:
             __add_target_to_parser(subparser, cls)
 
-    parser.parse_args(args=None if sys.argv[1:] else ["help"])
+    # parse the command line
+    main_parser.parse_args(args=None if sys.argv[1:] else ["help"])
+
+    # execute the requested targets
+    for target, parser in TARGETS_TO_EXECUTE.items():
+        # do not execute the target if it has child targets and one of them is used
+        choice_made_and_possible = False
+        for action in parser._actions:
+            if action.choices is not None:
+                for choice in action.choices:
+                    if str(choice) == sys.argv[-1]:
+                        choice_made_and_possible = True
+        if choice_made_and_possible:
+            continue
+
+        # call the target with its dependecies
+        target._call_targets(parser, target.__class__.argument_values, "")
