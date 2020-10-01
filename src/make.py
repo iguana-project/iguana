@@ -155,10 +155,8 @@ class _MetaTarget(type):
 
     @property
     def argument_values(self):
-        cmd = self.super_parent_target.cmd
-        if cmd not in self._argument_values:
-            # the argument values are captured in a dictionary of their absolute parent target
-            self._argument_values[cmd] = {}
+        if self._argument_values is None:
+            self._argument_values = {}
 
         return self._argument_values
 
@@ -169,19 +167,6 @@ class _MetaTarget(type):
             return True
         else:
             return False
-
-    @property
-    def super_parent_target(self):
-        parent = self.parent_target
-        # recursively get the absolute parent
-        while parent and parent.parent_target:
-            parent = parent.parent_target
-
-        # return self class if it's already the parent
-        if parent:
-            return parent
-        else:
-            return self
 
     @property
     def parent_target(self):
@@ -214,7 +199,7 @@ class _Target(argparse.Action, metaclass=_MetaTarget):
     help = ""
     call_before = []
     call_after = []
-    _argument_values = {}
+    _argument_values = None
 
     @classmethod
     def execute_target(cls, parser, argument_values, argv_rest):
@@ -253,7 +238,7 @@ class _Target(argparse.Action, metaclass=_MetaTarget):
             return
 
         # call the target with its dependecies
-        self._call_targets(parser, type(self).argument_values[type(self).super_parent_target.cmd], argv_rest)
+        self._call_targets(parser, type(self).argument_values, argv_rest)
 
 
 class _MetaArgument(type):
@@ -294,11 +279,11 @@ class _MetaArgument(type):
 
     @property
     def parent_target_value(self):
-        return self.parent_target.argument_values[self.parent_target.super_parent_target.cmd][self.arg]
+        return self.parent_target.argument_values[self.arg]
 
     @parent_target_value.setter
     def parent_target_value(self, value):
-        self.parent_target.argument_values[self.parent_target.super_parent_target.cmd][self.arg] = value
+        self.parent_target.argument_values[self.arg] = value
 
 
 class _Argument(argparse.Action, metaclass=_MetaArgument):
