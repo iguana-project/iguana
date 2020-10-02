@@ -119,6 +119,10 @@ def multiple(cls):
     return _add_variable_decorator(cls, "is_multiple", True)
 
 
+def remainder(cls):
+    return _add_variable_decorator(cls, "is_remainder", True)
+
+
 def group(group=""):
     def wrap(cls):
         return _add_variable_decorator(cls, "group", group)
@@ -287,6 +291,7 @@ class _Argument(argparse.Action, metaclass=_MetaArgument):
     is_required = False
     is_boolean = False
     is_multiple = False
+    is_remainder = False
     help = ""
 
     def __init__(self,
@@ -306,6 +311,9 @@ class _Argument(argparse.Action, metaclass=_MetaArgument):
                 default = False
             nargs = 0
             const = True
+
+        if self.is_remainder:
+            nargs = argparse.REMAINDER
 
         # call the parent constructor
         argparse.Action.__init__(self, option_strings, dest, nargs=nargs, const=const, default=default, type=type,
@@ -1161,7 +1169,7 @@ def __add_target_to_parser(subparser, target):
     target_parser = group.add_parser(target.cmd, action=target, help=target.help, add_help=target.is_help_needed)
 
     for argument_cls in target.argument_classes:
-        if argument_cls.is_required:
+        if argument_cls.is_required or argument_cls.is_remainder:
             target_parser.add_argument(argument_cls.arg, action=argument_cls, help=argument_cls.help)
         else:
             target_parser.add_argument(argument_cls.arg_short, argument_cls.arg_long, action=argument_cls,
