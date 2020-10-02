@@ -940,7 +940,7 @@ class _SetWebdriverTarget(_Target):
 
 @cmd("coverage")
 @group("Source code management")
-@call_after(_TestTarget)
+@call_after(_TestTarget.with_args({"ign-imp-errs": False}))
 @help("Execute coverage on the source code.")
 class _CoverageTarget(_Target):
     @arg("app")
@@ -1015,13 +1015,11 @@ class _CoverageTarget(_Target):
         return cov
 
     @classmethod
-    def run(cls, _, argument_values):
+    def run(cls, *_):
         cov = cls.__initialize_coverage()
         # start the coverage process
         cov._auto_save = True
         cov.start()
-        # perform the tests
-        argument_values["ign-imp-errs"] = False
 
 
 @cmd("css")
@@ -1128,7 +1126,7 @@ class _StagingTarget(_Target):
 
 @cmd("development")
 @group("Main")
-@call_after(_ProductionTarget, _SetWebdriverTarget)
+@call_after(_ProductionTarget.with_args({"development": True}), _SetWebdriverTarget)
 @help("Configure everything to be ready for development.")
 class _DevelopmentTarget(_Target):
     @arg("webdriver")
@@ -1138,9 +1136,7 @@ class _DevelopmentTarget(_Target):
         pass
 
     @classmethod
-    def run(cls, _, argument_values):
-        argument_values["development"] = True
-
+    def run(cls, *_):
         # link the git hooks
         _CommonTargets.link_git_hooks()
 
