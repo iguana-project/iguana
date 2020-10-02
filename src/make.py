@@ -1098,9 +1098,8 @@ class _NewReleaseTarget(_Target):
 @cmd("production")
 @group("Main")
 @call_after(_SetupVirtualenvTarget,
-            _CSSTarget,
             _DjangoTarget.with_args("makemigrations"), _DjangoTarget.with_args("migrate"),
-            _CollectionTarget)
+            _CSSTarget)
 @help("Configure everything to be ready for production.")
 class _ProductionTarget(_Target):
     @classmethod
