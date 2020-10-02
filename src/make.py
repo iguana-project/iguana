@@ -507,8 +507,19 @@ class _CommonTargets(metaclass=_MetaCommonTargets):
         # this is needed for several Django actions
         from common import wsgi  # noqa
 
-        # execute the command
-        call_command(cmd, *args, **kwargs)
+        # change the working directory to the Iguana base directory
+        previous_working_dir = os.getcwd()
+        os.chdir(IGUANA_BASE_DIR)
+
+        try:
+            # execute the command
+            call_command(cmd, *args, **kwargs)
+        except Exception as e:
+            # re-raise any occured exception
+            raise e
+        finally:
+            # change back working directory
+            os.chdir(previous_working_dir)
 
     @classmethod
     def exit(cls, error_msg=None, error_code=0):
