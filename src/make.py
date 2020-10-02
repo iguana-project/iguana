@@ -217,17 +217,17 @@ class _Target(argparse.Action, metaclass=_MetaTarget):
                 yield target
 
     @classmethod
-    def _call_targets(cls, parser, argument_values, argv_rest):
+    def call_targets(cls, parser, argument_values, argv_rest):
         # call dependency targets
         for target in cls._get_callable_targets(cls.call_before):
-            target._call_targets(parser, argument_values, argv_rest)
+            target.call_targets(parser, argument_values, argv_rest)
 
         # call the target
         cls.run(parser, argument_values, argv_rest or "")
 
         # call dependent targets
         for target in cls._get_callable_targets(cls.call_after):
-            target._call_targets(parser, argument_values, argv_rest)
+            target.call_targets(parser, argument_values, argv_rest)
 
     def __call__(self, parser, *unused):
         TARGETS_TO_EXECUTE[self] = parser
@@ -1215,7 +1215,7 @@ if __name__ == "__main__":
     main_parser.parse_args(args=None if sys.argv[1:] else ["help"])
 
     # execute the requested targets
-    for target, parser in TARGETS_TO_EXECUTE.items():
+    for target_cls, parser in TARGETS_TO_EXECUTE.items():
         # do not execute the target if it has child targets and one of them is used
         choice_made_and_possible = False
         for action in parser._actions:
@@ -1227,4 +1227,4 @@ if __name__ == "__main__":
             continue
 
         # call the target with its dependecies
-        target._call_targets(parser, target.__class__.argument_values, "")
+        target_cls.call_targets(parser, target_cls.argument_values, "")
