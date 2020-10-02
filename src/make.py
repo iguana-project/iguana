@@ -720,32 +720,6 @@ class _TestTarget(_Target):
             sys.stderr = sys_stderr
 
 
-@cmd("messages")
-@group("Django management")
-@help("Manage the Django messages.")
-class _MessagesTarget(_Target):
-    @cmd("create")
-    @help("Create the Django messages.")
-    class Create(_Target):
-        @arg("lang-code")
-        @default("en")
-        @help("The language code for the messages.")
-        class LangCode(_Argument):
-            pass
-
-        @classmethod
-        def run(cls, _, argument_values):
-            _CommonTargets.exec_django_cmd("makemessages", "-l", argument_values["lang-code"],
-                                           settings=DJANGO_SETTINGS_MODULE)
-
-    @cmd("compile")
-    @help("Compile the Django messages.")
-    class Compile(_Target):
-        @classmethod
-        def run(cls, *_):
-            _CommonTargets.exec_django_cmd("compilemessages", settings=DJANGO_SETTINGS_MODULE)
-
-
 @cmd("collectstatic")
 @group("Django management")
 @help("Collect static files and copy them into /static_files.")
