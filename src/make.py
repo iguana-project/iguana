@@ -234,7 +234,7 @@ class _Target(argparse.Action, metaclass=_MetaTarget):
             target.call_targets(parser, argument_values, argv_rest)
 
     def __call__(self, parser, *unused):
-        TARGETS_TO_EXECUTE[self] = parser
+        TARGETS_TO_EXECUTE[self.__class__] = parser
 
 
 
