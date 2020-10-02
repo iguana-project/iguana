@@ -768,6 +768,28 @@ class _CollectionTarget(_Target):
         _CommonTargets.exec_django_cmd("collectstatic", "--noinput", settings=DJANGO_SETTINGS_MODULE)
 
 
+@cmd("django")
+@group("Django management")
+@help("The parameters passed to this target are directly transfered to Django's 'manage.py' script.")
+class _DjangoTarget(_Target):
+    @arg("COMMAND")
+    @required
+    @help("The django 'manage.py' command.")
+    class Command(_Argument):
+        pass
+
+    @arg("args")
+    @remainder
+    @help("The django 'manage.py' arguments.")
+    class Args(_Argument):
+        pass
+
+    @classmethod
+    def run(cls, unused1, argument_values, unused2):
+        _CommonTargets.exec_django_cmd(argument_values["COMMAND"], *argument_values["args"],
+                                       settings=DJANGO_SETTINGS_MODULE)
+
+
 @cmd("requirements")
 @group("Source code management")
 @help("Manage the requirements for this project.")
