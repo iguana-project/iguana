@@ -606,26 +606,6 @@ class _RunTarget(_Target):
                             "--error-logfile", os.path.join(LOG_DIR, "gunicorn-errorlog.log")], cwd=IGUANA_BASE_DIR)
 
 
-@cmd("create-app")
-@group("Django management")
-@help("Create a new Django application.")
-class _CreateAppTarget(_Target):
-    @arg("APP_NAME")
-    @required
-    @help("The name of the new application.")
-    class AppName(_Argument):
-        pass
-
-    @classmethod
-    def run(cls, _, argument_values):
-        # create the new django application
-        # a change to the Django directory is necessary because of a bug in the current 'startapp [destination]'
-        #   implementation
-        os.chdir(IGUANA_BASE_DIR)
-        _CommonTargets.exec_django_cmd("startapp", argument_values["APP_NAME"], settings=DJANGO_SETTINGS_MODULE)
-        os.chdir(BASE_DIR)
-
-
 @cmd("migrations")
 @group("Django management")
 @help("Manage the Django migrations.")
