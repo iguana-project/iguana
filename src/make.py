@@ -162,6 +162,10 @@ class _MetaTarget(type):
         if self._argument_values is None:
             self._argument_values = {}
 
+        # when requesting the values, always use the predefined values (if they exist)
+        if self._predefined_argument_values is not None:
+            self._argument_values.update(self._predefined_argument_values)
+
         return self._argument_values
 
     @property
@@ -207,12 +211,24 @@ class _Target(argparse.Action, metaclass=_MetaTarget):
     call_before = []
     call_after = []
     _argument_values = None
+    _predefined_argument_values = None
 
     @classmethod
     def run(cls, parser, argument_values):
         # override this method!
         # by default it shows the help message
         _HelpTarget.run(parser, argument_values)
+
+    @classmethod
+    def with_args(cls, arguments={}):
+        # create a copy of the class
+        # this is needed, because otherwise multiple predefined versions of the same target class are not possible
+        copy = type(cls.__name__, cls.__bases__, dict(cls.__dict__))
+
+        # set the predefined argument values
+        copy._predefined_argument_values = arguments
+
+        return copy
 
     @classmethod
     def _get_callable_targets(cls, target_list=[]):
@@ -224,18 +240,21 @@ class _Target(argparse.Action, metaclass=_MetaTarget):
     def call_targets(cls, parser, argument_values):
         # call dependency targets
         for target in cls._get_callable_targets(cls.call_before):
-            target.call_targets(parser, argument_values)
+            target_arguments = target.argument_values.copy()
+            target_arguments.update(argument_values)
+            target.call_targets(parser, target_arguments)
 
         # call the target
         cls.run(parser, argument_values)
 
         # call dependent targets
         for target in cls._get_callable_targets(cls.call_after):
-            target.call_targets(parser, argument_values)
+            target_arguments = target.argument_values.copy()
+            target_arguments.update(argument_values)
+            target.call_targets(parser, target_arguments)
 
     def __call__(self, parser, *unused):
         TARGETS_TO_EXECUTE[self.__class__] = parser
-
 
 
 class _MetaArgument(type):
