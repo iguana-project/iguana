@@ -625,25 +625,6 @@ class _RunTarget(_Target):
                             "--error-logfile", os.path.join(LOG_DIR, "gunicorn-errorlog.log")], cwd=IGUANA_BASE_DIR)
 
 
-@cmd("migrations")
-@group("Django management")
-@help("Manage the Django migrations.")
-class _MigrationsTarget(_Target):
-    @cmd("create")
-    @help("Create the Django migrations.")
-    class Create(_Target):
-        @classmethod
-        def run(cls, *_):
-            _CommonTargets.exec_django_cmd("makemigrations", settings=DJANGO_SETTINGS_MODULE)
-
-    @cmd("apply")
-    @help("Apply the Django migrations.")
-    class Apply(_Target):
-        @classmethod
-        def run(cls, *_):
-            _CommonTargets.exec_django_cmd("migrate", settings=DJANGO_SETTINGS_MODULE)
-
-
 @cmd("test")
 @group("Django management")
 @help("Execute the Django tests.")
@@ -793,6 +774,14 @@ class _DjangoTarget(_Target):
     @help("The django 'manage.py' arguments.")
     class Args(_Argument):
         pass
+
+    @classmethod
+    def with_args(cls, cmd, *args):
+        arguments = {
+                "COMMAND": cmd,
+                "args": list(args)
+            }
+        return super(_DjangoTarget, cls).with_args(arguments=arguments)
 
     @classmethod
     def run(cls, _, argument_values):
@@ -1136,7 +1125,10 @@ class _NewReleaseTarget(_Target):
 
 @cmd("production")
 @group("Main")
-@call_after(_SetupVirtualenvTarget, _CSSTarget, _MigrationsTarget.Create, _MigrationsTarget.Apply, _CollectionTarget)
+@call_after(_SetupVirtualenvTarget,
+            _CSSTarget,
+            _DjangoTarget.with_args("makemigrations"), _DjangoTarget.with_args("migrate"),
+            _CollectionTarget)
 @help("Configure everything to be ready for production.")
 class _ProductionTarget(_Target):
     @classmethod

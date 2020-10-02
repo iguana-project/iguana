@@ -36,7 +36,7 @@ MAKEFLAGS += -s
 
 # XXX Don't forget to update the targets as soon as the makefile or make.py is extended
 # because then bash completion is supported
-TARGETS = help production staging development run django migrations test messages collectstatic requirements setup-virtualenv set-webdriver coverage css list add-license new-release
+TARGETS = help production staging development run django test messages collectstatic requirements setup-virtualenv set-webdriver coverage css list add-license new-release
 
 # phony targets
 .PHONY: $(TARGETS)
