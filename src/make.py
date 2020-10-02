@@ -606,7 +606,7 @@ class _RunTarget(_Target):
     def run(cls, *_):
         if _CommonTargets.is_development:
             # start the development server
-            _CommonTargets.exec_django_cmd("runserver", settings=DJANGO_SETTINGS_MODULE)
+            _CommonTargets.exec_django_cmd("runserver", "--nostatic", settings=DJANGO_SETTINGS_MODULE)
         else:
             _CommonTargets.activate_virtual_environment()
 

@@ -56,3 +56,4 @@ if settings.ADMIN_ENABLED:
 # this is needed to load the media files in the built-in django server
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
