@@ -202,7 +202,7 @@ MESSAGE_TAGS = {
 BOOTSTRAP3 = {
     "css_url": os.path.join(STATIC_URL, "css", "bootstrap_custom", "custom_bootstrap.css"),
     "javascript_url": os.path.join(STATIC_URL, "js", "bootstrap", "bootstrap.min.js"),
-    "jquery_url": os.path.join(STATIC_URL, "js", "jquery.min.js"),
+    "jquery_url": os.path.join(STATIC_URL, "js", "jquery", "jquery.min.js"),
 }
 
 
