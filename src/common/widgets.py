@@ -98,8 +98,8 @@ class LocalizedBasePickerInput(BasePickerInput):
         # add custom js
         regex = re.compile(r"^https://cdnjs\.cloudflare\.com/.*$")
         filtered_js = [item for item in media._js if not regex.search(item)]
-        filtered_js.append("js/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js")
-        filtered_js.append("js/bootstrap-datetimepicker/moment-with-locales.min.js")
+        filtered_js.append("js/bootstrap/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js")
+        filtered_js.append("js/bootstrap/bootstrap-datetimepicker/moment-with-locales.min.js")
 
         # add custom css
         filtered_css = [item for item in media._css["all"] if not regex.search(item)]
