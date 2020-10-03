@@ -129,7 +129,7 @@ class CustomSelect2WidgetMixin(Select2WidgetMixin):
         # because of https://github.com/yourlabs/django-autocomplete-light/commit/e46300d
         regex = re.compile(r"^admin/.*jquery(\.min)?\.js$")
         filtered_js = [item for item in media._js if not regex.search(item)]
-        filtered_js.append("js/dal_fixes.js")
+        filtered_js.append("js/autocomplete-light_fixes.js")
 
         # add custom css
         new_css = media._css
