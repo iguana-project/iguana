@@ -88,9 +88,9 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 <script>draw_activity_heatmap("{{user.username}}", false, "{{chart_type}}")</script>
 {% endif %}
 {% block extra_script %}
-<script src="{% static "js/d3.v3.min.js" %}"></script>
+<script src="{% static "js/graphs/d3.v3.min.js" %}"></script>
 <script src="{% static "js/cal-heatmap.min.js" %}"></script>
-<script src="{% static "js/draw_activity_heatmap.js" %}"></script>
+<script src="{% static "js/graphs/draw_activity_heatmap.js" %}"></script>
 <link rel="stylesheet" href="{% static "css/cal-heatmap.css" %}"/>
 {% endblock extra_script %}
 	{% if request.user.username != user.username %}
