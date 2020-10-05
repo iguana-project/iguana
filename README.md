@@ -89,10 +89,10 @@ make production
 
 This command runs the following Makefile targets:
 
-* `setup-virtualenv`
-* `css`
-* `migrations create`
-* `migrations apply`
+  * `setup-virtualenv`
+  * `django makemigrations`
+  * `django migrate`
+  * `css`
 
 #### Staging
 To setup Iguana in a staging environment you simply have to call:
@@ -199,26 +199,14 @@ See subsection [Staging](README.md#Staging).
 See subsection [Development](README.md#Development).
 
 ### Django management:
-* **migrations**
-    * **create**<br />
-    Create the Django migrations.
-    * **apply**<br />
-    Apply the Django migrations to the database or create the database if no exists.
-
-* **create-app** `<appname>`<br />
-Create a new Django application with the specified name.
+* **django** `<command> [<args>]`<br />
+Any command and its arguments gets directly passed to Django's `manage.py` script. Please have a look at the official Django documentation for a list of supported commands: https://docs.djangoproject.com/en/dev/ref/django-admin/
 
 * **test** `[+a <appname>|+f|+c] [+i]`<br />
 Run the Django unit tests. If an application name is provided with `+a`, only that app is tested. To run the functional tests use the `+f` option. If all tests should be run, use option `+c`. With the option `+i` the warnings and errors from imported packages get suppressed.
 
 * **run**<br />
 Run the default django server.
-
-* **messages**<br />
-    * **create** `[+l <lang-code>]`<br />
-    See section [Translation](README.md#Translation).
-    * **compile**<br />
-    Compile the Django messages.
 
 ### Source code management:
 * **setup-virtualenv**<br />
@@ -274,10 +262,10 @@ If we change our mind, there are tools to convert between the two syntaxes.
 Please use translation hooks in templates (see [\_base.html](src/common/templates/_base.html) for an example)
 and code (`ugettext` as `_`).
 
-You can create/update the `*.po` in the locale directory by running `make-messages <lang-code>`. The default language is English (code: en). This file is where the actual translations go. It should be checked
+You can create/update the `*.po` in the locale directory by running `make django makemessages +l <lang-code>`. The default language is English (code: en). This file is where the actual translations go. It should be checked
 in after updating. This uses the GNU gettext toolset.
 
-For new translations to be usable by django, run `make compilemessages`.
+For new translations to be usable by django, run `make django compilemessages`.
 
 To see a page in a different language, open it with a different language prefix
 in the url. For example `/de/login` instead of `/en/login`.
