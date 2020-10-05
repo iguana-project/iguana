@@ -141,7 +141,7 @@
                             + $(this).val().substring(end));
 
                 // put caret at right position again
-                this.selectionStart = this.selectionEnd = start + default_space_amount;
+                this.selectionStart = this.selectionEnd = start + space_amount;
             }
         });
     }
