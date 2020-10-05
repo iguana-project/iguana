@@ -1,21 +1,35 @@
 (function () {
-    var output, original_getSanitizingConverter;
+    var markdown, original_getSanitizingConverter,
+        extra_markdown, original_extraInit;
     if (typeof exports === "object" && typeof require === "function") { // we're in a CommonJS (e.g. Node.js) module
-        output = exports;
+        markdown = exports;
         original_getSanitizingConverter = require("./Markdown.Sanitizer").getSanitizingConverter;
+
+        extra_markdown = require("./Markdown.Extra");
+        original_extraInit = extra_markdown.init;
     } else {
-        output = window.Markdown;
-        original_getSanitizingConverter = output.getSanitizingConverter;
+        markdown = window.Markdown;
+        original_getSanitizingConverter = markdown.getSanitizingConverter;
+
+        extra_markdown = markdown.Extra;
+        original_extraInit = extra_markdown.init;
     }
 
     // override getSanitizingConverter function from Markdown.Sanitizer to add more hooks to Markdown.Converter
-    output.getSanitizingConverter = function () {
+    markdown.getSanitizingConverter = function () {
         var converter = original_getSanitizingConverter();
         converter.hooks.chain("preConversion", includeUser);
         converter.hooks.chain("preConversion", includeIssue);
         converter.hooks.chain("preSpanGamut", escapePseudoTags);
         converter.hooks.chain("postConversion", includeIns); // postSpanGamut does not work here since the <ins> tag is not in 'basic_tag_whitelist' variable of Markdown.Sanitizer.js
         return converter;
+    }
+
+    // override init function from Markdown.Extra to specify the extra options
+    extra_markdown.init = function(converter, _options) {
+        return original_extraInit(converter, {
+            extensions: ["tables", "fenced_code_gfm", "footnotes", "newlines", "strikethrough"]
+        });
     }
 
     // helper function for getting JSON variables from the Django json_script filter
