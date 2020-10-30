@@ -1,8 +1,8 @@
 wheel==0.34.2
 bleach==3.1.5
+celery==4.4.7
 Django==2.2.15
 django-activity-stream==0.9.0
-celery==4.4.7
 django-autocomplete-light==3.5.1
 django-bootstrap3==14.1.0
 django-cuser==2017.3.16
@@ -24,7 +24,6 @@ ply==3.11
 python-dateutil==2.8.1
 python-magic==0.4.18
 pytz==2020.1
-redis==3.5.3
 slackclient==2.7.3
 piprot==0.9.11
 libsass==0.20.0
