@@ -157,7 +157,7 @@ docker exec -d \
 | PUID | 1000 | The ID of the user running Iguana in the container |
 | PGID | 1000 | The group ID of the above user |
 
-But in staging/production environment more configuration should be done by the user! Therefore a [settings.json](files/settings.json) file is placed in the Docker volume after the first run. You can edit this file to your needs (see [Configuration section -> settings.json](README.md#settings.json)). To apply the canges simply restart the container. Please look especially at the `SECRET_KEY` and `HOST/ALLOWED_HOSTS` settings!
+But in staging/production environment more configuration should be done by the user! Therefore a [settings.json](files/settings.json) file is placed in the Docker volume after the first run. You can edit this file to your needs (see [Configuration section -> settings.json](README.md#settingsjson)). To apply the canges simply restart the container. Please look especially at the `SECRET_KEY` and `HOST/ALLOWED_HOSTS` settings!
 
 If a Nginx server was included in the image (with `USE_NGINX=true`), the `nginx.conf` file can also be found on the Docker volume. But for real production environments, a separate Nginx container is recommended!
 
@@ -302,7 +302,7 @@ This file contains the basic settings that are the same for the other two config
 
 #### global_conf.py
 Basically this file contains all settings that are required to run Iguana in an staging or production environment.<br />
-But the settings that should be changed by the user are loaded from the file [settings.json](files/settings.json). See section [settings.json](README.md#settings.json).
+But the settings that should be changed by the user are loaded from the file [settings.json](files/settings.json). See section [settings.json](README.md#settingsjson).
 
 #### local_conf.py
 This file contains all settings that are required to run Iguana in a development environment.<br />
