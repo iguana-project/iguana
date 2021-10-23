@@ -10,6 +10,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 """
 from django.test import Client
 from lib.selenium_test_case import SeleniumTestCase
+from selenium.webdriver.common.by import By
 from django.urls import reverse
 
 import os
@@ -66,16 +67,18 @@ class AttachmentTest(SeleniumTestCase):
         driver.get("{}{}".format(self.live_server_url, reverse('issue:detail',
                                  kwargs={'project': self.project.name_short, 'sqn_i': issue.number})))
 
-        driver.find_element_by_css_selector(
-            "#attachment-form > div.form-group > div.row.bootstrap3-multi-input > div.col-xs-12 > #id_file"
-            ).clear()
-        driver.find_element_by_css_selector(
-            "#attachment-form > div.form-group > div.row.bootstrap3-multi-input > div.col-xs-12 > #id_file"
-            ).send_keys(temp1.name)
-        driver.find_element_by_id("attachment-btn").click()
+        driver.find_element(By.CSS_SELECTOR,
+                            "#attachment-form > div.form-group > div.row.bootstrap3-multi-input > \
+                            div.col-xs-12 > #id_file"
+                            ).clear()
+        driver.find_element(By.CSS_SELECTOR,
+                            "#attachment-form > div.form-group > div.row.bootstrap3-multi-input > \
+                            div.col-xs-12 > #id_file"
+                            ).send_keys(temp1.name)
+        driver.find_element(By.ID, "attachment-btn").click()
 
         # assert that attached file exists
-        self.assertIn(driver.find_element_by_id("issue_detail_attach_get_1").text, temp1.name)
+        self.assertIn(driver.find_element(By.ID, "issue_detail_attach_get_1").text, temp1.name)
         self.assertEqual(issue.attachments.count(), 1)
         attachment = issue.attachments.first()
         self.assertIn(filecontent1, attachment.file.read().decode())
@@ -98,7 +101,7 @@ class AttachmentTest(SeleniumTestCase):
 
         driver.get("{}{}".format(self.live_server_url, reverse('issue:detail',
                                  kwargs={'project': self.project.name_short, 'sqn_i': issue.number})))
-        driver.find_element_by_id("attachment-btn").click()
+        driver.find_element(By.ID, "attachment-btn").click()
 
         # assert that no attachment is created
         self.assertEqual(issue.attachments.count(), 0)

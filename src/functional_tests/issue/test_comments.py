@@ -10,6 +10,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 """
 from django.test import Client
 from lib.selenium_test_case import SeleniumTestCase
+from selenium.webdriver.common.by import By
 from django.urls import reverse
 
 import os
@@ -59,16 +60,16 @@ class CommentsTest(SeleniumTestCase):
                                  kwargs={'project': self.project.name_short, 'sqn_i': issue.number})))
 
         # add comment
-        driver.find_element_by_id("wmd-input-id_text").clear()
-        driver.find_element_by_id("wmd-input-id_text").send_keys("test-comment")
-        driver.find_element_by_name("action").click()
+        driver.find_element(By.ID, "wmd-input-id_text").clear()
+        driver.find_element(By.ID, "wmd-input-id_text").send_keys("test-comment")
+        driver.find_element(By.NAME, "action").click()
 
         # add another comment with attachment
-        driver.find_element_by_id("wmd-input-id_text").clear()
-        driver.find_element_by_id("wmd-input-id_text").send_keys("another comment")
-        driver.find_element_by_id("id_file").clear()
-        driver.find_element_by_id("id_file").send_keys(temp1.name)
-        driver.find_element_by_name("action").click()
+        driver.find_element(By.ID, "wmd-input-id_text").clear()
+        driver.find_element(By.ID, "wmd-input-id_text").send_keys("another comment")
+        driver.find_element(By.ID, "id_file").clear()
+        driver.find_element(By.ID, "id_file").send_keys(temp1.name)
+        driver.find_element(By.NAME, "action").click()
 
         # check count of db objects
         self.assertEqual(issue.attachments.count(), 1)
@@ -76,35 +77,35 @@ class CommentsTest(SeleniumTestCase):
 
         # assert that comments are present
         self.assertEqual("test-comment",
-                         driver.find_element_by_css_selector("div.comment-content > p").text
+                         driver.find_element(By.CSS_SELECTOR, "div.comment-content > p").text
                          )
         self.assertEqual("another comment",
-                         driver.find_element_by_css_selector("#comment2 > div.comment-content > p").text
+                         driver.find_element(By.CSS_SELECTOR, "#comment2 > div.comment-content > p").text
                          )
-        self.assertIn("Attached file: ", driver.find_element_by_css_selector("div.comment-footer").text)
-        self.assertIn(driver.find_element_by_css_selector("div.comment-footer").text.split(": ")[1], temp1.name)
+        self.assertIn("Attached file: ", driver.find_element(By.CSS_SELECTOR, "div.comment-footer").text)
+        self.assertIn(driver.find_element(By.CSS_SELECTOR, "div.comment-footer").text.split(": ")[1], temp1.name)
 
         # assert that attached file is present in attachments list
-        self.assertIn(driver.find_element_by_id("issue_detail_attach_get_1").text, temp1.name)
+        self.assertIn(driver.find_element(By.ID, "issue_detail_attach_get_1").text, temp1.name)
 
         # edit comment
-        driver.find_element_by_id("issue_detail_comment_edit_1").click()
-        driver.find_element_by_id("wmd-input-id_text").clear()
-        driver.find_element_by_id("wmd-input-id_text").send_keys("text-comment")
-        driver.find_element_by_id("comment-btn").click()
+        driver.find_element(By.ID, "issue_detail_comment_edit_1").click()
+        driver.find_element(By.ID, "wmd-input-id_text").clear()
+        driver.find_element(By.ID, "wmd-input-id_text").send_keys("text-comment")
+        driver.find_element(By.ID, "comment-btn").click()
 
         # assert that text was saved
-        self.assertEqual("text-comment", driver.find_element_by_css_selector("div.comment-content > p").text)
-        self.assertEqual("last modified 0 minutes ago", driver.find_element_by_css_selector("em").text)
+        self.assertEqual("text-comment", driver.find_element(By.CSS_SELECTOR, "div.comment-content > p").text)
+        self.assertEqual("last modified 0 minutes ago", driver.find_element(By.CSS_SELECTOR, "em").text)
 
         # delete comment and check
-        driver.find_element_by_id("issue_detail_comment_delete_1").click()
+        driver.find_element(By.ID, "issue_detail_comment_delete_1").click()
         self.assertEqual(issue.comments.count(), 1)
-        self.assertEqual("another comment", driver.find_element_by_css_selector("div.comment-content > p").text)
+        self.assertEqual("another comment", driver.find_element(By.CSS_SELECTOR, "div.comment-content > p").text)
 
         # delete second comment and check that attachment is still present
-        driver.find_element_by_id("issue_detail_comment_delete_1").click()
-        self.assertIn(driver.find_element_by_id("issue_detail_attach_get_1").text, temp1.name)
+        driver.find_element(By.ID, "issue_detail_comment_delete_1").click()
+        self.assertIn(driver.find_element(By.ID, "issue_detail_attach_get_1").text, temp1.name)
         self.assertEqual(issue.comments.count(), 0)
         self.assertEqual(issue.attachments.count(), 1)
 
@@ -127,14 +128,14 @@ class CommentsTest(SeleniumTestCase):
                                  kwargs={'project': self.project.name_short, 'sqn_i': issue.number})))
 
         # add comment
-        driver.find_element_by_id("wmd-input-id_text").clear()
-        driver.find_element_by_id("wmd-input-id_text").send_keys("test-comment")
-        driver.find_element_by_name("action").click()
+        driver.find_element(By.ID, "wmd-input-id_text").clear()
+        driver.find_element(By.ID, "wmd-input-id_text").send_keys("test-comment")
+        driver.find_element(By.NAME, "action").click()
 
         # edit comment with empty text field => should fail
-        driver.find_element_by_id("issue_detail_comment_edit_1").click()
-        driver.find_element_by_id("wmd-input-id_text").clear()
-        driver.find_element_by_id("comment-btn").click()
+        driver.find_element(By.ID, "issue_detail_comment_edit_1").click()
+        driver.find_element(By.ID, "wmd-input-id_text").clear()
+        driver.find_element(By.ID, "comment-btn").click()
         self.assertIn("Edit comment", driver.page_source)
         self.assertEqual(issue.comments.first().text, "test-comment")
         self.assertEqual(issue.comments.count(), 1)

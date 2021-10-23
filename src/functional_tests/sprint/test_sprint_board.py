@@ -10,6 +10,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 """
 from django.test import Client
 from lib.selenium_test_case import SeleniumTestCase
+from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import WebDriverException
@@ -60,15 +61,15 @@ class SprintBoardTest(SeleniumTestCase):
                                                                )))
         self.assertEqual(issue1.kanbancol.position, 0)
         self.assertEqual(issue2.kanbancol.position, 0)
-        driver.find_element_by_link_text("Board").click()
+        driver.find_element(By.LINK_TEXT, "Board").click()
 
         # move issue1 and issue2
-        source_element = driver.find_element_by_id('board_issue_1')
-        dest_element = driver.find_element_by_id('sortable1')
+        source_element = driver.find_element(By.ID, 'board_issue_1')
+        dest_element = driver.find_element(By.ID, 'sortable1')
         ActionChains(driver).drag_and_drop(source_element, dest_element).perform()
 
-        source_element = driver.find_element_by_id('board_issue_2')
-        dest_element = driver.find_element_by_id('sortable2')
+        source_element = driver.find_element(By.ID, 'board_issue_2')
+        dest_element = driver.find_element(By.ID, 'sortable2')
         ActionChains(driver).drag_and_drop(source_element, dest_element).perform()
 
         WebDriverWait(driver, 10).until(ajax_complete,
@@ -82,8 +83,8 @@ class SprintBoardTest(SeleniumTestCase):
 
     def test_board_order_by(self):
 
-        # driver.find_element_by_id("dropdownMenu1").click()
-        # driver.find_element_by_link_text("Sprint 1").click()
+        # driver.find_element(By.ID, "dropdownMenu1").click()
+        # driver.find_element(By.LINK_TEXT, "Sprint 1").click()
 
         # create project and issues
         driver = self.selenium
@@ -106,8 +107,8 @@ class SprintBoardTest(SeleniumTestCase):
         driver.get("{}{}".format(self.live_server_url, reverse('sprint:sprintboard',
                                                                kwargs={'project': project.name_short}
                                                                )))
-        col = driver.find_element_by_id("sortable0")
-        issues = col.find_elements_by_class_name("issuecard")
+        col = driver.find_element(By.ID, "sortable0")
+        issues = col.find_elements(By.CLASS_NAME, "issuecard")
         for i in range(len(issues)-1):
             self.assertEqual(issues[i].get_attribute("id") < issues[i+1].get_attribute("id"), True)
 
@@ -115,8 +116,8 @@ class SprintBoardTest(SeleniumTestCase):
         driver.get("{}{}".format(self.live_server_url, reverse('sprint:sprintboard',
                                                                kwargs={'project': project.name_short}
                                                                ))+"?order_by=priority")
-        col = driver.find_element_by_id("sortable0")
-        issues = col.find_elements_by_class_name("issuecard")
+        col = driver.find_element(By.ID, "sortable0")
+        issues = col.find_elements(By.CLASS_NAME, "issuecard")
         for i in range(len(issues)-1):
             self.assertEqual(issues[i].get_attribute("data-priority") >= issues[i+1].get_attribute("data-priority"),
                              True)
@@ -125,8 +126,8 @@ class SprintBoardTest(SeleniumTestCase):
         driver.get("{}{}".format(self.live_server_url, reverse('sprint:sprintboard',
                                                                kwargs={'project': project.name_short}
                                                                ))+"?order_by=title")
-        col = driver.find_element_by_id("sortable0")
-        issues = col.find_elements_by_class_name("issuecard")
+        col = driver.find_element(By.ID, "sortable0")
+        issues = col.find_elements(By.CLASS_NAME, "issuecard")
         for i in range(len(issues)-1):
             self.assertEqual(issues[i].get_attribute("data-title") <= issues[i+1].get_attribute("data-title"), True)
 
@@ -134,8 +135,8 @@ class SprintBoardTest(SeleniumTestCase):
         driver.get("{}{}".format(self.live_server_url, reverse('sprint:sprintboard',
                                                                kwargs={'project': project.name_short}
                                                                ))+"?order_by=type")
-        col = driver.find_element_by_id("sortable0")
-        issues = col.find_elements_by_class_name("issuecard")
+        col = driver.find_element(By.ID, "sortable0")
+        issues = col.find_elements(By.CLASS_NAME, "issuecard")
         for i in range(len(issues)-1):
             self.assertEqual(issues[i].get_attribute("data-type") <= issues[i+1].get_attribute("data-type"), True)
 
@@ -168,20 +169,20 @@ class SprintBoardTest(SeleniumTestCase):
                                                                ))+"?order_by=priority")
 
         # all issues in col_0 ordered by priority
-        col = driver.find_element_by_id("sortable0")
-        issues = col.find_elements_by_class_name("issuecard")
+        col = driver.find_element(By.ID, "sortable0")
+        issues = col.find_elements(By.CLASS_NAME, "issuecard")
         for i in range(len(issues)-1):
             self.assertEqual(issues[i].get_attribute("data-priority") >= issues[i+1].get_attribute("data-priority"),
                              True)
 
         # move issue2 to col_1
-        source_element = driver.find_element_by_id('board_issue_2')
-        dest_element = driver.find_element_by_id('sortable1')
+        source_element = driver.find_element(By.ID, 'board_issue_2')
+        dest_element = driver.find_element(By.ID, 'sortable1')
         ActionChains(driver).drag_and_drop(source_element, dest_element).perform()
 
         # move issue1 to col_1
-        source_element = driver.find_element_by_id('board_issue_1')
-        dest_element = driver.find_element_by_id('sortable1')
+        source_element = driver.find_element(By.ID, 'board_issue_1')
+        dest_element = driver.find_element(By.ID, 'sortable1')
         ActionChains(driver).drag_and_drop(source_element, dest_element).perform()
 
         # drag and drop implementation of selenium doesn't perform drag and drop like a user would do
@@ -190,15 +191,15 @@ class SprintBoardTest(SeleniumTestCase):
         driver.refresh()
 
         # all issues in col_0 ordered by priority
-        col = driver.find_element_by_id("sortable0")
-        issues = col.find_elements_by_class_name("issuecard")
+        col = driver.find_element(By.ID, "sortable0")
+        issues = col.find_elements(By.CLASS_NAME, "issuecard")
         for i in range(len(issues)-1):
             self.assertEqual(issues[i].get_attribute("data-priority") >= issues[i+1].get_attribute("data-priority"),
                              True)
 
         # all issues in col_1 ordered by priority
-        col = driver.find_element_by_id("sortable1")
-        issues = col.find_elements_by_class_name("issuecard")
+        col = driver.find_element(By.ID, "sortable1")
+        issues = col.find_elements(By.CLASS_NAME, "issuecard")
         for i in range(len(issues)-1):
             self.assertEqual(issues[i].get_attribute("data-priority") >= issues[i+1].get_attribute("data-priority"),
                              True)
@@ -225,8 +226,8 @@ class SprintBoardTest(SeleniumTestCase):
                                                                )))
 
         # 5 issues in col 0
-        col = driver.find_element_by_id("sortable0")
-        issues = col.find_elements_by_class_name("issuecard")
+        col = driver.find_element(By.ID, "sortable0")
+        issues = col.find_elements(By.CLASS_NAME, "issuecard")
         self.assertEqual(len(issues), 5)
 
         issue1.assignee.add(self.user)
@@ -236,6 +237,6 @@ class SprintBoardTest(SeleniumTestCase):
                                                                ))+"?myissues=true")
 
         # 1 issue in col 0
-        col = driver.find_element_by_id("sortable0")
-        issues = col.find_elements_by_class_name("issuecard")
+        col = driver.find_element(By.ID, "sortable0")
+        issues = col.find_elements(By.CLASS_NAME, "issuecard")
         self.assertEqual(len(issues), 1)

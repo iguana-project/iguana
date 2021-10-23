@@ -10,6 +10,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 """
 from django.test import Client
 from lib.selenium_test_case import SeleniumTestCase
+from selenium.webdriver.common.by import By
 from django.urls import reverse
 
 from django.contrib.auth import get_user_model
@@ -62,18 +63,18 @@ class ProjectTest(SeleniumTestCase):
 
     def test_create_project(self):
         self.selenium.get('{}{}'.format(self.live_server_url, reverse('project:create')))
-        create_form = self.selenium.find_element_by_id("id_create_form")
+        create_form = self.selenium.find_element(By.ID, "id_create_form")
         name = 'TestProjekt'
-        create_form.find_element_by_id("id_name").send_keys(name)
-        create_form.find_element_by_id("id_name_short").send_keys('TP')
-        create_form.find_element_by_id("id_description").send_keys('This is a description for our TestProject')
-        create_form.find_element_by_css_selector('input.select2-search__field').send_keys('te')
+        create_form.find_element(By.ID, "id_name").send_keys(name)
+        create_form.find_element(By.ID, "id_name_short").send_keys('TP')
+        create_form.find_element(By.ID, "id_description").send_keys('This is a description for our TestProject')
+        create_form.find_element(By.CSS_SELECTOR, 'input.select2-search__field').send_keys('te')
         # TODO TESTCASE this doesn't work on the create form - y doesn't this work?
-        self.selenium.find_element_by_css_selector(
-                'li.select2-results__option.select2-results__option--highlighted'
-                ).click()
-        create_form.find_element_by_css_selector("input.select2-search__field").send_keys(Keys.ESCAPE)
-        create_form.find_element_by_id('id_submit_create').click()
+        self.selenium.find_element(By.CSS_SELECTOR,
+                                   'li.select2-results__option.select2-results__option--highlighted'
+                                   ).click()
+        create_form.find_element(By.CSS_SELECTOR, "input.select2-search__field").send_keys(Keys.ESCAPE)
+        create_form.find_element(By.ID, 'id_submit_create').click()
         self.assertEqual(self.selenium.title, name)
 
     def test_edit_project(self):
@@ -84,9 +85,9 @@ class ProjectTest(SeleniumTestCase):
 
         self.selenium.get("{}{}".format(self.live_server_url, reverse('project:edit',
                                                                       kwargs={'project': project.name_short})))
-        edit_form = self.selenium.find_element_by_id("id_edit_form")
-        edit_form.find_element_by_id("id_name").send_keys('Renamed')
-        edit_form.find_element_by_id('id_submit_edit').click()
+        edit_form = self.selenium.find_element(By.ID, "id_edit_form")
+        edit_form.find_element(By.ID, "id_name").send_keys('Renamed')
+        edit_form.find_element(By.ID, 'id_submit_edit').click()
         self.assertEqual(self.selenium.title, 'TestProjectRenamed')
 
     def test_warning_at_delete(self):

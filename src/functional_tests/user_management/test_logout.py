@@ -9,6 +9,7 @@ You should have received a copy of the license along with this
 work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 """
 from lib.selenium_test_case import SeleniumTestCase
+from selenium.webdriver.common.by import By
 from django.urls import reverse
 
 from django.contrib.auth import get_user_model
@@ -28,10 +29,10 @@ class LogoutTest(SeleniumTestCase):
 
     def test_logout_after_login(self):
         self.selenium.get("{}{}".format(self.live_server_url, reverse('login')))
-        login_form = self.selenium.find_element_by_id('id_login_form')
-        login_form.find_element_by_id('id_username').send_keys(username)
-        login_form.find_element_by_id('id_password').send_keys(pw)
-        login_form.find_element_by_id('id_submit_login').click()
+        login_form = self.selenium.find_element(By.ID, 'id_login_form')
+        login_form.find_element(By.ID, 'id_username').send_keys(username)
+        login_form.find_element(By.ID, 'id_password').send_keys(pw)
+        login_form.find_element(By.ID, 'id_submit_login').click()
 
         self.selenium.get("{}{}".format(self.live_server_url, reverse('logout')))
         self.assertIn('You have been successfully logged out.', self.selenium.page_source)

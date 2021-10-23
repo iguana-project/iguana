@@ -9,6 +9,7 @@ You should have received a copy of the license along with this
 work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 """
 from lib.selenium_test_case import SeleniumTestCase
+from selenium.webdriver.common.by import By
 from django.core import mail
 from django.urls import reverse
 import re
@@ -54,27 +55,27 @@ class SignUpTest(SeleniumTestCase):
         self.assertNotIn('Not Found', self.selenium.page_source)
         self.assertIn('Sign Up', self.selenium.title)
 
-        register_form = self.selenium.find_element_by_id('id_register_form')
-        register_form.find_element_by_id('id_username')
-        register_form.find_element_by_id('id_email')
-        register_form.find_element_by_id('id_password1')
-        register_form.find_element_by_id('id_password2')
-        register_form.find_element_by_id('id_submit_sign_up')
+        register_form = self.selenium.find_element(By.ID, 'id_register_form')
+        register_form.find_element(By.ID, 'id_username')
+        register_form.find_element(By.ID, 'id_email')
+        register_form.find_element(By.ID, 'id_password1')
+        register_form.find_element(By.ID, 'id_password2')
+        register_form.find_element(By.ID, 'id_submit_sign_up')
 
     # helper function to create a user
     def create_user(self, user_provided, email_provided, password_provided, password_provided_2):
         self.selenium.get("{}{}".format(self.live_server_url, reverse('sign_up')))
 
-        register_form = self.selenium.find_element_by_id('id_register_form')
-        user = register_form.find_element_by_id('id_username')
+        register_form = self.selenium.find_element(By.ID, 'id_register_form')
+        user = register_form.find_element(By.ID, 'id_username')
         user.send_keys(user_provided)
-        # register_form.find_element_by_id('id_username').send_keys(user_provided)
-        email = register_form.find_element_by_id('id_email')
+        # register_form.find_element(By.ID, 'id_username').send_keys(user_provided)
+        email = register_form.find_element(By.ID, 'id_email')
         email.send_keys(email_provided)
-        password = register_form.find_element_by_id('id_password1').send_keys(password_provided)
-        password2 = register_form.find_element_by_id('id_password2').send_keys(password_provided_2)
-        captcha = register_form.find_element_by_id('id_captcha_1').send_keys("PASSED")
-        register_form.find_element_by_id('id_submit_sign_up').click()
+        password = register_form.find_element(By.ID, 'id_password1').send_keys(password_provided)
+        password2 = register_form.find_element(By.ID, 'id_password2').send_keys(password_provided_2)
+        captcha = register_form.find_element(By.ID, 'id_captcha_1').send_keys("PASSED")
+        register_form.find_element(By.ID, 'id_submit_sign_up').click()
 
     def test_create_user(self):
         # create connection to database
@@ -164,7 +165,7 @@ class SignUpTest(SeleniumTestCase):
 
     def test_dissallow_at_in_username_help_text(self):
         self.selenium.get("{}{}".format(self.live_server_url, reverse('sign_up')))
-        helptext = self.selenium.find_element_by_css_selector('.help-block').text
+        helptext = self.selenium.find_element(By.CSS_SELECTOR, '.help-block').text
         self.assertIn("Required. 150 characters or fewer. Letters, digits and ./+/-/_ only.", helptext)
         # maybe the wrong (original) help text is shown
         self.assertNotIn("@", helptext)
@@ -172,12 +173,12 @@ class SignUpTest(SeleniumTestCase):
     # test buttons
     def test_goto_login(self):
         self.selenium.get("{}{}".format(self.live_server_url, reverse('sign_up')))
-        self.selenium.find_element_by_id('id_login_ref').click()
+        self.selenium.find_element(By.ID, 'id_login_ref').click()
         self.assertIn('Login', self.selenium.title)
 
     def test_goto_password_forgotten(self):
         self.selenium.get("{}{}".format(self.live_server_url, reverse('sign_up')))
-        self.selenium.find_element_by_id('id_reset_ref').click()
+        self.selenium.find_element(By.ID, 'id_reset_ref').click()
         self.assertIn('Password Reset', self.selenium.title)
 
     # TODO TESTCASE check delivered password guidelines

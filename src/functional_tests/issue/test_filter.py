@@ -11,6 +11,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 import time
 from django.test import Client
 from lib.selenium_test_case import SeleniumTestCase
+from selenium.webdriver.common.by import By
 from django.urls import reverse
 
 from django.contrib.auth import get_user_model
@@ -45,33 +46,33 @@ class FilterTest(SeleniumTestCase):
 
     def test_filter_title(self):
         response = self.selenium.get(self.live_server_url + reverse('backlog:backlog', kwargs={'project': self.short}))
-        elements = self.selenium.find_elements_by_class_name("backlog-issue")
+        elements = self.selenium.find_elements(By.CLASS_NAME, "backlog-issue")
         self.assertTrue(elements[0].is_displayed())
         self.assertTrue(elements[1].is_displayed())
 
-        filter_box = self.selenium.find_element_by_id("text-filter")
+        filter_box = self.selenium.find_element(By.ID, "text-filter")
         filter_box.send_keys("a")
         self.assertTrue(elements[0].is_displayed())
         self.assertFalse(elements[1].is_displayed())
 
     def test_filter_number(self):
         response = self.selenium.get(self.live_server_url + reverse('backlog:backlog', kwargs={'project': self.short}))
-        elements = self.selenium.find_elements_by_class_name("backlog-issue")
+        elements = self.selenium.find_elements(By.CLASS_NAME, "backlog-issue")
         self.assertTrue(elements[0].is_displayed())
         self.assertTrue(elements[1].is_displayed())
 
-        filter_box = self.selenium.find_element_by_id("text-filter")
+        filter_box = self.selenium.find_element(By.ID, "text-filter")
         filter_box.send_keys("1")
         self.assertTrue(elements[0].is_displayed())
         self.assertFalse(elements[1].is_displayed())
 
     def test_filter_tag(self):
         response = self.selenium.get(self.live_server_url + reverse('backlog:backlog', kwargs={'project': self.short}))
-        elements = self.selenium.find_elements_by_class_name("backlog-issue")
+        elements = self.selenium.find_elements(By.CLASS_NAME, "backlog-issue")
         self.assertTrue(elements[0].is_displayed())
         self.assertTrue(elements[1].is_displayed())
 
-        filter_box = self.selenium.find_element_by_id("text-filter")
+        filter_box = self.selenium.find_element(By.ID, "text-filter")
         filter_box.send_keys("fo")
         self.assertFalse(elements[0].is_displayed())
         self.assertTrue(elements[1].is_displayed())

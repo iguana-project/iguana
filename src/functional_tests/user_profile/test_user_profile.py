@@ -10,6 +10,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 """
 from django.test import Client
 from lib.selenium_test_case import SeleniumTestCase
+from selenium.webdriver.common.by import By
 from django.urls import reverse
 import re
 import time
@@ -38,26 +39,26 @@ class UserProfileTest(SeleniumTestCase):
     def test_change_notifications(self):
         driver = self.selenium
         driver.get(self.live_server_url + reverse('landing_page:home'))
-        driver.find_element_by_id("usermenu").click()
-        driver.find_element_by_link_text("Profile").click()
-        driver.find_element_by_id("notibtn_PRJ").click()
+        driver.find_element(By.ID, "usermenu").click()
+        driver.find_element(By.LINK_TEXT, "Profile").click()
+        driver.find_element(By.ID, "notibtn_PRJ").click()
         time.sleep(0.2)
-        driver.find_element_by_id("notisend_PRJ_Mention").click()
+        driver.find_element(By.ID, "notisend_PRJ_Mention").click()
         self.assertEqual(self.user.get_preference("notify_mail"), '{"PRJ": ["Mention"]}')
         self.assertEqual(driver.page_source.count('glyphicon-remove red'), 4)
         self.assertEqual(driver.page_source.count('glyphicon-ok green'), 1)
         time.sleep(0.2)
-        driver.find_element_by_id("notisend_PRJ_NewIssue").click()
+        driver.find_element(By.ID, "notisend_PRJ_NewIssue").click()
         self.assertEqual(self.user.get_preference("notify_mail"), '{"PRJ": ["Mention", "NewIssue"]}')
         self.assertEqual(driver.page_source.count('glyphicon-remove red'), 3)
         self.assertEqual(driver.page_source.count('glyphicon-ok green'), 2)
         time.sleep(0.2)
-        driver.find_element_by_id("notisend_PRJ_NewComment").click()
+        driver.find_element(By.ID, "notisend_PRJ_NewComment").click()
         self.assertEqual(self.user.get_preference("notify_mail"), '{"PRJ": ["Mention", "NewIssue", "NewComment"]}')
         self.assertEqual(driver.page_source.count('glyphicon-remove red'), 2)
         self.assertEqual(driver.page_source.count('glyphicon-ok green'), 3)
         time.sleep(0.2)
-        driver.find_element_by_id("notisend_PRJ_NewIssue").click()
+        driver.find_element(By.ID, "notisend_PRJ_NewIssue").click()
         self.assertEqual(self.user.get_preference("notify_mail"), '{"PRJ": ["Mention", "NewComment"]}')
         self.assertEqual(driver.page_source.count('glyphicon-remove red'), 3)
         self.assertEqual(driver.page_source.count('glyphicon-ok green'), 2)

@@ -10,6 +10,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 """
 from django.test import Client
 from lib.selenium_test_case import SeleniumTestCase
+from selenium.webdriver.common.by import By
 from django.urls import reverse
 import os
 
@@ -37,16 +38,16 @@ class InviteUsersTest(SeleniumTestCase):
         self.assertIn('Invite new User via email', self.selenium.title)
         self.assertIn('optional additional message', self.selenium.page_source)
         self.assertIn('email of person to be invited', self.selenium.page_source)
-        invite_form = self.selenium.find_element_by_id('invite_friend_form')
-        message = invite_form.find_element_by_id('id_additional_message')
-        email0 = invite_form.find_element_by_id('id_form-0-email')
-        submit = invite_form.find_element_by_id('submit_invite_friends')
+        invite_form = self.selenium.find_element(By.ID, 'invite_friend_form')
+        message = invite_form.find_element(By.ID, 'id_additional_message')
+        email0 = invite_form.find_element(By.ID, 'id_form-0-email')
+        submit = invite_form.find_element(By.ID, 'submit_invite_friends')
 
     def test_email_field_necessary(self):
         # empty form
         self.selenium.get("{}{}".format(self.live_server_url, reverse('invite_users:invite_users')))
-        invite_form = self.selenium.find_element_by_id('invite_friend_form')
-        invite_form.find_element_by_id('submit_invite_friends').click()
+        invite_form = self.selenium.find_element(By.ID, 'invite_friend_form')
+        invite_form.find_element(By.ID, 'submit_invite_friends').click()
 
         self.assertIn('Invite new User via email', self.selenium.page_source)
         self.assertIn('This field is required.', self.selenium.page_source)
@@ -54,10 +55,10 @@ class InviteUsersTest(SeleniumTestCase):
 
         # only fill message => Failure
         self.selenium.get("{}{}".format(self.live_server_url, reverse('invite_users:invite_users')))
-        invite_form = self.selenium.find_element_by_id('invite_friend_form')
-        message = invite_form.find_element_by_id('id_additional_message')
+        invite_form = self.selenium.find_element(By.ID, 'invite_friend_form')
+        message = invite_form.find_element(By.ID, 'id_additional_message')
         message.send_keys('I invite you!')
-        invite_form.find_element_by_id('submit_invite_friends').click()
+        invite_form.find_element(By.ID, 'submit_invite_friends').click()
 
         self.assertIn('Invite new User via email', self.selenium.page_source)
         self.assertIn('This field is required.', self.selenium.page_source)
@@ -66,12 +67,12 @@ class InviteUsersTest(SeleniumTestCase):
     def test_email_field_works(self):
         # fill message and email => Success
         self.selenium.get("{}{}".format(self.live_server_url, reverse('invite_users:invite_users')))
-        invite_form = self.selenium.find_element_by_id('invite_friend_form')
-        message = invite_form.find_element_by_id('id_additional_message')
+        invite_form = self.selenium.find_element(By.ID, 'invite_friend_form')
+        message = invite_form.find_element(By.ID, 'id_additional_message')
         message.send_keys('I invite you!')
         email_send = 'b@b.com'
-        invite_form.find_element_by_id('id_form-0-email').send_keys(email_send)
-        submit = invite_form.find_element_by_id('submit_invite_friends').click()
+        invite_form.find_element(By.ID, 'id_form-0-email').send_keys(email_send)
+        submit = invite_form.find_element(By.ID, 'submit_invite_friends').click()
 
         self.assertNotIn('Invite new User via email', self.selenium.page_source)
         self.assertNotIn('This field is required.', self.selenium.page_source)
@@ -81,10 +82,10 @@ class InviteUsersTest(SeleniumTestCase):
 
         # fill only email => Success
         self.selenium.get("{}{}".format(self.live_server_url, reverse('invite_users:invite_users')))
-        invite_form = self.selenium.find_element_by_id('invite_friend_form')
+        invite_form = self.selenium.find_element(By.ID, 'invite_friend_form')
         email_send = 'b@b.com'
-        invite_form.find_element_by_id('id_form-0-email').send_keys(email_send)
-        submit = invite_form.find_element_by_id('submit_invite_friends').click()
+        invite_form.find_element(By.ID, 'id_form-0-email').send_keys(email_send)
+        submit = invite_form.find_element(By.ID, 'submit_invite_friends').click()
 
         self.assertNotIn('Invite new User via email', self.selenium.page_source)
         self.assertNotIn('This field is required.', self.selenium.page_source)
@@ -96,24 +97,24 @@ class InviteUsersTest(SeleniumTestCase):
         # add email and text, add additional users twice (without filling), invite => success
         # this is also a test for the clean method
         self.selenium.get("{}{}".format(self.live_server_url, reverse('invite_users:invite_users')))
-        invite_form = self.selenium.find_element_by_id('invite_friend_form')
+        invite_form = self.selenium.find_element(By.ID, 'invite_friend_form')
         m = 'I invite you!'
         e0 = 'a@a.com'
         e1 = 'b@b.com'
         e2 = 'c@c.com'
         e3 = 'd@d.com'
         error = 'You entered the same email twice. Each member can be invited only once'
-        invite_form.find_element_by_id('id_additional_message').send_keys(m)
-        invite_form.find_element_by_id('id_form-0-email').send_keys(e0)
-        invite_form.find_element_by_id('submit_invite_more_friends').click()
+        invite_form.find_element(By.ID, 'id_additional_message').send_keys(m)
+        invite_form.find_element(By.ID, 'id_form-0-email').send_keys(e0)
+        invite_form.find_element(By.ID, 'submit_invite_more_friends').click()
         # add third field
-        invite_form = self.selenium.find_element_by_id('invite_friend_form')
-        invite_form.find_element_by_id('submit_invite_more_friends').click()
+        invite_form = self.selenium.find_element(By.ID, 'invite_friend_form')
+        invite_form.find_element(By.ID, 'submit_invite_more_friends').click()
         # check filled stuff and invite
-        invite_form = self.selenium.find_element_by_id('invite_friend_form')
+        invite_form = self.selenium.find_element(By.ID, 'invite_friend_form')
 
-        self.assertIn(m, invite_form.find_element_by_id('id_additional_message').text)
-        invite_form.find_element_by_id('submit_invite_friends').click()
+        self.assertIn(m, invite_form.find_element(By.ID, 'id_additional_message').text)
+        invite_form.find_element(By.ID, 'submit_invite_friends').click()
 
         self.assertIn('Success', self.selenium.title, self.selenium.page_source)
         self.assertIn('You successfully invited:', self.selenium.page_source)
@@ -121,16 +122,19 @@ class InviteUsersTest(SeleniumTestCase):
 
         # add multiple emails with text => success
         self.selenium.get("{}{}".format(self.live_server_url, reverse('invite_users:invite_users')))
-        self.selenium.find_element_by_id('invite_friend_form').find_element_by_id('submit_invite_more_friends').click()
-        self.selenium.find_element_by_id('invite_friend_form').find_element_by_id('submit_invite_more_friends').click()
-        self.selenium.find_element_by_id('invite_friend_form').find_element_by_id('submit_invite_more_friends').click()
+        self.selenium.find_element(By.ID, 'invite_friend_form').find_element(By.ID,
+                                                                             'submit_invite_more_friends').click()
+        self.selenium.find_element(By.ID, 'invite_friend_form').find_element(By.ID,
+                                                                             'submit_invite_more_friends').click()
+        self.selenium.find_element(By.ID, 'invite_friend_form').find_element(By.ID,
+                                                                             'submit_invite_more_friends').click()
 
-        invite_form = self.selenium.find_element_by_id('invite_friend_form')
-        invite_form.find_element_by_id('id_form-0-email').send_keys(e0)
-        invite_form.find_element_by_id('id_form-1-email').send_keys(e1)
-        invite_form.find_element_by_id('id_form-2-email').send_keys(e2)
-        invite_form.find_element_by_id('id_form-3-email').send_keys(e3)
-        invite_form.find_element_by_id('submit_invite_friends').click()
+        invite_form = self.selenium.find_element(By.ID, 'invite_friend_form')
+        invite_form.find_element(By.ID, 'id_form-0-email').send_keys(e0)
+        invite_form.find_element(By.ID, 'id_form-1-email').send_keys(e1)
+        invite_form.find_element(By.ID, 'id_form-2-email').send_keys(e2)
+        invite_form.find_element(By.ID, 'id_form-3-email').send_keys(e3)
+        invite_form.find_element(By.ID, 'submit_invite_friends').click()
 
         self.assertIn('Success', self.selenium.title, self.selenium.page_source)
         self.assertIn('You successfully invited:', self.selenium.page_source)
@@ -141,22 +145,24 @@ class InviteUsersTest(SeleniumTestCase):
 
         # add multiple emails with duplicated emails => failure
         self.selenium.get("{}{}".format(self.live_server_url, reverse('invite_users:invite_users')))
-        self.selenium.find_element_by_id('invite_friend_form').find_element_by_id('submit_invite_more_friends').click()
-        self.selenium.find_element_by_id('invite_friend_form').find_element_by_id('submit_invite_more_friends').click()
+        self.selenium.find_element(By.ID, 'invite_friend_form').find_element(By.ID,
+                                                                             'submit_invite_more_friends').click()
+        self.selenium.find_element(By.ID, 'invite_friend_form').find_element(By.ID,
+                                                                             'submit_invite_more_friends').click()
 
-        invite_form = self.selenium.find_element_by_id('invite_friend_form')
-        invite_form.find_element_by_id('id_form-0-email').send_keys(e0)
-        invite_form.find_element_by_id('id_form-1-email').send_keys(e1)
-        invite_form.find_element_by_id('id_form-2-email').send_keys(e0)
-        invite_form.find_element_by_id('id_additional_message').send_keys(m)
-        invite_form.find_element_by_id('submit_invite_friends').click()
+        invite_form = self.selenium.find_element(By.ID, 'invite_friend_form')
+        invite_form.find_element(By.ID, 'id_form-0-email').send_keys(e0)
+        invite_form.find_element(By.ID, 'id_form-1-email').send_keys(e1)
+        invite_form.find_element(By.ID, 'id_form-2-email').send_keys(e0)
+        invite_form.find_element(By.ID, 'id_additional_message').send_keys(m)
+        invite_form.find_element(By.ID, 'submit_invite_friends').click()
 
         self.assertIn(error, self.selenium.page_source)
         # delete duplicated email and retry => success
-        invite_form = self.selenium.find_element_by_id('invite_friend_form')
-        self.assertIn(m, invite_form.find_element_by_id('id_additional_message').text)
-        invite_form.find_element_by_id('id_form-2-email').clear()
-        invite_form.find_element_by_id('submit_invite_friends').click()
+        invite_form = self.selenium.find_element(By.ID, 'invite_friend_form')
+        self.assertIn(m, invite_form.find_element(By.ID, 'id_additional_message').text)
+        invite_form.find_element(By.ID, 'id_form-2-email').clear()
+        invite_form.find_element(By.ID, 'submit_invite_friends').click()
 
         self.assertIn('Success', self.selenium.title, self.selenium.page_source)
         self.assertIn('You successfully invited:', self.selenium.page_source)
@@ -165,23 +171,25 @@ class InviteUsersTest(SeleniumTestCase):
 
         # same as above, but with an additional 'invite more'
         self.selenium.get("{}{}".format(self.live_server_url, reverse('invite_users:invite_users')))
-        self.selenium.find_element_by_id('invite_friend_form').find_element_by_id('submit_invite_more_friends').click()
+        self.selenium.find_element(By.ID, 'invite_friend_form').find_element(By.ID,
+                                                                             'submit_invite_more_friends').click()
 
-        invite_form = self.selenium.find_element_by_id('invite_friend_form')
-        invite_form.find_element_by_id('id_form-0-email').send_keys(e0)
-        invite_form.find_element_by_id('id_form-1-email').send_keys(e0)
-        invite_form.find_element_by_id('id_additional_message').send_keys(m)
-        invite_form.find_element_by_id('submit_invite_friends').click()
+        invite_form = self.selenium.find_element(By.ID, 'invite_friend_form')
+        invite_form.find_element(By.ID, 'id_form-0-email').send_keys(e0)
+        invite_form.find_element(By.ID, 'id_form-1-email').send_keys(e0)
+        invite_form.find_element(By.ID, 'id_additional_message').send_keys(m)
+        invite_form.find_element(By.ID, 'submit_invite_friends').click()
 
         self.assertIn(error, self.selenium.page_source)
-        self.selenium.find_element_by_id('invite_friend_form').find_element_by_id('submit_invite_more_friends').click()
+        self.selenium.find_element(By.ID, 'invite_friend_form').find_element(By.ID,
+                                                                             'submit_invite_more_friends').click()
 
         self.assertIn(error, self.selenium.page_source)
         # delete duplicated email and retry => success
-        invite_form = self.selenium.find_element_by_id('invite_friend_form')
-        self.assertIn(m, invite_form.find_element_by_id('id_additional_message').text)
-        invite_form.find_element_by_id('id_form-1-email').clear()
-        invite_form.find_element_by_id('submit_invite_friends').click()
+        invite_form = self.selenium.find_element(By.ID, 'invite_friend_form')
+        self.assertIn(m, invite_form.find_element(By.ID, 'id_additional_message').text)
+        invite_form.find_element(By.ID, 'id_form-1-email').clear()
+        invite_form.find_element(By.ID, 'submit_invite_friends').click()
 
         self.assertIn('Success', self.selenium.title, self.selenium.page_source)
         self.assertIn('You successfully invited:', self.selenium.page_source)
@@ -201,16 +209,17 @@ class InviteUsersTest(SeleniumTestCase):
             pass
 
         self.selenium.get("{}{}".format(self.live_server_url, reverse('invite_users:invite_users')))
-        self.selenium.find_element_by_id('invite_friend_form').find_element_by_id('submit_invite_more_friends').click()
+        self.selenium.find_element(By.ID, 'invite_friend_form').find_element(By.ID,
+                                                                             'submit_invite_more_friends').click()
 
-        invite_form = self.selenium.find_element_by_id('invite_friend_form')
+        invite_form = self.selenium.find_element(By.ID, 'invite_friend_form')
         m = 'Hey dude, this platform is awesome. U better check it out.'
         e0 = 'a@a.com'
         e1 = 'b@b.com'
-        invite_form.find_element_by_id('id_additional_message').send_keys(m)
-        invite_form.find_element_by_id('id_form-0-email').send_keys(e0)
-        invite_form.find_element_by_id('id_form-1-email').send_keys(e1)
-        invite_form.find_element_by_id('submit_invite_friends').click()
+        invite_form.find_element(By.ID, 'id_additional_message').send_keys(m)
+        invite_form.find_element(By.ID, 'id_form-0-email').send_keys(e0)
+        invite_form.find_element(By.ID, 'id_form-1-email').send_keys(e1)
+        invite_form.find_element(By.ID, 'submit_invite_friends').click()
 
         self.assertIn('You successfully invited:', self.selenium.page_source)
         self.assertIn(e0, self.selenium.page_source)

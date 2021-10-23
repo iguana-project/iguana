@@ -10,6 +10,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 """
 from django.test import Client
 from lib.selenium_test_case import SeleniumTestCase
+from selenium.webdriver.common.by import By
 from django.urls import reverse
 import re
 
@@ -44,25 +45,25 @@ class TagTest(SeleniumTestCase):
         self.assertIn('Manage Tags', self.selenium.title)
         # delete_form and list of tags aren't present anymore, if there are no tags yet created
         self.assertNotIn('<ul class="list-group>', self.selenium.page_source)
-        create_form = self.selenium.find_element_by_id('id_create-tags')
+        create_form = self.selenium.find_element(By.ID, 'id_create-tags')
 
-        create_form.find_element_by_id('id_tag_text')
-        create_form.find_element_by_id('id_submit_create_tag')
+        create_form.find_element(By.ID, 'id_tag_text')
+        create_form.find_element(By.ID, 'id_submit_create_tag')
 
     def test_tag_name_required(self):
         self.selenium.get("{}{}".format(self.live_server_url, reverse('tag:tag', kwargs={'project': self.p0_short})))
-        create_form = self.selenium.find_element_by_id('id_create-tags')
-        self.assertTrue(create_form.find_element_by_id('id_tag_text').get_attribute('required'))
+        create_form = self.selenium.find_element(By.ID, 'id_create-tags')
+        self.assertTrue(create_form.find_element(By.ID, 'id_tag_text').get_attribute('required'))
 
     def test_tags_are_unique_per_project(self):
         tag = "please_dont_duplicate_me"
         self.selenium.get("{}{}".format(self.live_server_url, reverse('tag:tag', kwargs={'project': self.p0_short})))
-        create_form = self.selenium.find_element_by_id('id_create-tags')
-        create_form.find_element_by_id('id_tag_text').send_keys(tag)
-        create_form.find_element_by_id('id_submit_create_tag').click()
-        create_form = self.selenium.find_element_by_id('id_create-tags')
-        create_form.find_element_by_id('id_tag_text').send_keys(tag)
-        create_form.find_element_by_id('id_submit_create_tag').click()
+        create_form = self.selenium.find_element(By.ID, 'id_create-tags')
+        create_form.find_element(By.ID, 'id_tag_text').send_keys(tag)
+        create_form.find_element(By.ID, 'id_submit_create_tag').click()
+        create_form = self.selenium.find_element(By.ID, 'id_create-tags')
+        create_form.find_element(By.ID, 'id_tag_text').send_keys(tag)
+        create_form.find_element(By.ID, 'id_submit_create_tag').click()
         # expect error message
         self.assertIn('There is already a Tag' + ' "{}" '.format(tag) + 'for this project and you are only ' +
                       'allowed to have it once per project.', self.selenium.page_source)
@@ -77,57 +78,57 @@ class TagTest(SeleniumTestCase):
         tag2 = 'tag2_project0'
         tag3 = 'tag3_project0'
         # create tags
-        create_form = self.selenium.find_element_by_id('id_create-tags')
-        create_form.find_element_by_id('id_tag_text').send_keys(tag0)
-        create_form.find_element_by_id('id_color').send_keys('286090')
-        create_form.find_element_by_id('id_submit_create_tag').click()
+        create_form = self.selenium.find_element(By.ID, 'id_create-tags')
+        create_form.find_element(By.ID, 'id_tag_text').send_keys(tag0)
+        create_form.find_element(By.ID, 'id_color').send_keys('286090')
+        create_form.find_element(By.ID, 'id_submit_create_tag').click()
         self.assertIn(tag0, self.selenium.page_source)
 
-        create_form = self.selenium.find_element_by_id('id_create-tags')
-        create_form.find_element_by_id('id_tag_text').send_keys(tag1)
-        create_form.find_element_by_id('id_color').send_keys('fbec5d')
-        create_form.find_element_by_id('id_submit_create_tag').click()
+        create_form = self.selenium.find_element(By.ID, 'id_create-tags')
+        create_form.find_element(By.ID, 'id_tag_text').send_keys(tag1)
+        create_form.find_element(By.ID, 'id_color').send_keys('fbec5d')
+        create_form.find_element(By.ID, 'id_submit_create_tag').click()
         self.assertIn(tag0, self.selenium.page_source)
         self.assertIn(tag1, self.selenium.page_source)
 
-        create_form = self.selenium.find_element_by_id('id_create-tags')
-        create_form.find_element_by_id('id_tag_text').send_keys(tag2)
-        create_form.find_element_by_id('id_color').send_keys('a94442')
-        create_form.find_element_by_id('id_submit_create_tag').click()
+        create_form = self.selenium.find_element(By.ID, 'id_create-tags')
+        create_form.find_element(By.ID, 'id_tag_text').send_keys(tag2)
+        create_form.find_element(By.ID, 'id_color').send_keys('a94442')
+        create_form.find_element(By.ID, 'id_submit_create_tag').click()
         self.assertIn(tag0, self.selenium.page_source)
         self.assertIn(tag1, self.selenium.page_source)
         self.assertIn(tag2, self.selenium.page_source)
 
         # delete tag0
-        delete_form = self.selenium.find_element_by_id('id_delete-tags')
-        delete_form.find_element_by_id('id_tag_checkbox_'+tag0).click()
-        delete_form.find_element_by_id('id_submit_delete_tags').click()
+        delete_form = self.selenium.find_element(By.ID, 'id_delete-tags')
+        delete_form.find_element(By.ID, 'id_tag_checkbox_'+tag0).click()
+        delete_form.find_element(By.ID, 'id_submit_delete_tags').click()
         self.assertNotIn(tag0, self.selenium.page_source)
         self.assertIn(tag1, self.selenium.page_source)
         self.assertIn(tag2, self.selenium.page_source)
 
         # delete tag2
-        delete_form = self.selenium.find_element_by_id('id_delete-tags')
-        delete_form.find_element_by_id('id_tag_checkbox_'+tag2).click()
-        delete_form.find_element_by_id('id_submit_delete_tags').click()
+        delete_form = self.selenium.find_element(By.ID, 'id_delete-tags')
+        delete_form.find_element(By.ID, 'id_tag_checkbox_'+tag2).click()
+        delete_form.find_element(By.ID, 'id_submit_delete_tags').click()
         self.assertNotIn(tag0, self.selenium.page_source)
         self.assertIn(tag1, self.selenium.page_source)
         self.assertNotIn(tag2, self.selenium.page_source)
 
         # create tag3
-        create_form = self.selenium.find_element_by_id('id_create-tags')
-        create_form.find_element_by_id('id_tag_text').send_keys(tag3)
-        create_form.find_element_by_id('id_color').send_keys('286090')
-        create_form.find_element_by_id('id_submit_create_tag').click()
+        create_form = self.selenium.find_element(By.ID, 'id_create-tags')
+        create_form.find_element(By.ID, 'id_tag_text').send_keys(tag3)
+        create_form.find_element(By.ID, 'id_color').send_keys('286090')
+        create_form.find_element(By.ID, 'id_submit_create_tag').click()
         self.assertNotIn(tag0, self.selenium.page_source)
         self.assertIn(tag1, self.selenium.page_source)
         self.assertNotIn(tag2, self.selenium.page_source)
         self.assertIn(tag3, self.selenium.page_source)
 
         # delete tag1
-        delete_form = self.selenium.find_element_by_id('id_delete-tags')
-        delete_form.find_element_by_id('id_tag_checkbox_'+tag1).click()
-        delete_form.find_element_by_id('id_submit_delete_tags').click()
+        delete_form = self.selenium.find_element(By.ID, 'id_delete-tags')
+        delete_form.find_element(By.ID, 'id_tag_checkbox_'+tag1).click()
+        delete_form.find_element(By.ID, 'id_submit_delete_tags').click()
         self.assertNotIn(tag0, self.selenium.page_source)
         self.assertNotIn(tag1, self.selenium.page_source)
         self.assertNotIn(tag2, self.selenium.page_source)
@@ -140,32 +141,32 @@ class TagTest(SeleniumTestCase):
         tag2 = 'tag2_project0'
         tag3 = 'tag3_project0'
         tag4 = 'tag4_project0'
-        create_form = self.selenium.find_element_by_id('id_create-tags')
-        create_form.find_element_by_id('id_tag_text').send_keys(tag0)
-        create_form.find_element_by_id('id_submit_create_tag').click()
-        create_form = self.selenium.find_element_by_id('id_create-tags')
-        create_form.find_element_by_id('id_tag_text').send_keys(tag1)
-        create_form.find_element_by_id('id_submit_create_tag').click()
-        create_form = self.selenium.find_element_by_id('id_create-tags')
-        create_form.find_element_by_id('id_tag_text').send_keys(tag2)
-        create_form.find_element_by_id('id_submit_create_tag').click()
-        create_form = self.selenium.find_element_by_id('id_create-tags')
-        create_form.find_element_by_id('id_tag_text').send_keys(tag3)
-        create_form.find_element_by_id('id_submit_create_tag').click()
-        create_form = self.selenium.find_element_by_id('id_create-tags')
-        create_form.find_element_by_id('id_tag_text').send_keys(tag4)
-        create_form.find_element_by_id('id_submit_create_tag').click()
+        create_form = self.selenium.find_element(By.ID, 'id_create-tags')
+        create_form.find_element(By.ID, 'id_tag_text').send_keys(tag0)
+        create_form.find_element(By.ID, 'id_submit_create_tag').click()
+        create_form = self.selenium.find_element(By.ID, 'id_create-tags')
+        create_form.find_element(By.ID, 'id_tag_text').send_keys(tag1)
+        create_form.find_element(By.ID, 'id_submit_create_tag').click()
+        create_form = self.selenium.find_element(By.ID, 'id_create-tags')
+        create_form.find_element(By.ID, 'id_tag_text').send_keys(tag2)
+        create_form.find_element(By.ID, 'id_submit_create_tag').click()
+        create_form = self.selenium.find_element(By.ID, 'id_create-tags')
+        create_form.find_element(By.ID, 'id_tag_text').send_keys(tag3)
+        create_form.find_element(By.ID, 'id_submit_create_tag').click()
+        create_form = self.selenium.find_element(By.ID, 'id_create-tags')
+        create_form.find_element(By.ID, 'id_tag_text').send_keys(tag4)
+        create_form.find_element(By.ID, 'id_submit_create_tag').click()
         self.assertIn(tag0, self.selenium.page_source)
         self.assertIn(tag1, self.selenium.page_source)
         self.assertIn(tag2, self.selenium.page_source)
         self.assertIn(tag3, self.selenium.page_source)
         self.assertIn(tag4, self.selenium.page_source)
 
-        delete_form = self.selenium.find_element_by_id('id_delete-tags')
-        delete_form.find_element_by_id('id_tag_checkbox_'+tag0).click()
-        delete_form.find_element_by_id('id_tag_checkbox_'+tag3).click()
-        delete_form.find_element_by_id('id_tag_checkbox_'+tag1).click()
-        delete_form.find_element_by_id('id_submit_delete_tags').click()
+        delete_form = self.selenium.find_element(By.ID, 'id_delete-tags')
+        delete_form.find_element(By.ID, 'id_tag_checkbox_'+tag0).click()
+        delete_form.find_element(By.ID, 'id_tag_checkbox_'+tag3).click()
+        delete_form.find_element(By.ID, 'id_tag_checkbox_'+tag1).click()
+        delete_form.find_element(By.ID, 'id_submit_delete_tags').click()
         self.assertNotIn(tag0, self.selenium.page_source)
         self.assertNotIn(tag1, self.selenium.page_source)
         self.assertIn(tag2, self.selenium.page_source)
@@ -183,7 +184,7 @@ class TagTest(SeleniumTestCase):
         tag2.save()
         tag3.save()
         self.selenium.get("{}{}".format(self.live_server_url, reverse('tag:tag', kwargs={'project': self.p0_short})))
-        self.selenium.find_element_by_id('id_select_all').click()
-        self.selenium.find_element_by_id('id_delete-tags').find_element_by_id('id_submit_delete_tags').click()
+        self.selenium.find_element(By.ID, 'id_select_all').click()
+        self.selenium.find_element(By.ID, 'id_delete-tags').find_element(By.ID, 'id_submit_delete_tags').click()
         for tag in tags:
             self.assertNotIn(tag, self.selenium.page_source)

@@ -10,6 +10,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 """
 from django.test import Client
 from lib.selenium_test_case import SeleniumTestCase
+from selenium.webdriver.common.by import By
 from django.urls import reverse
 from selenium.webdriver.common.keys import Keys
 
@@ -80,77 +81,77 @@ class GitIntegrationTest(SeleniumTestCase):
         remote_repo.index.add([filepath])
         remote_repo_master = remote_repo.index.commit("SLN-1 initial commit")
 
-        driver.find_element_by_id("project_edit").click()
-        driver.find_element_by_link_text("Repositories").click()
-        driver.find_element_by_css_selector("span.glyphicon.glyphicon-plus").click()
-        driver.find_element_by_id("id_url").clear()
-        driver.find_element_by_id("id_url").send_keys('https://dummy-re.po/path')
-        driver.find_element_by_id("id_rsa_priv_path").clear()
-        driver.find_element_by_id("id_rsa_priv_path").send_keys(filepath)
-        driver.find_element_by_id("id_rsa_pub_path").clear()
-        driver.find_element_by_id("id_rsa_pub_path").send_keys(filepath)
-        driver.find_element_by_id("id_submit_create").click()
+        driver.find_element(By.ID, "project_edit").click()
+        driver.find_element(By.LINK_TEXT, "Repositories").click()
+        driver.find_element(By.CSS_SELECTOR, "span.glyphicon.glyphicon-plus").click()
+        driver.find_element(By.ID, "id_url").clear()
+        driver.find_element(By.ID, "id_url").send_keys('https://dummy-re.po/path')
+        driver.find_element(By.ID, "id_rsa_priv_path").clear()
+        driver.find_element(By.ID, "id_rsa_priv_path").send_keys(filepath)
+        driver.find_element(By.ID, "id_rsa_pub_path").clear()
+        driver.find_element(By.ID, "id_rsa_pub_path").send_keys(filepath)
+        driver.find_element(By.ID, "id_submit_create").click()
 
         # set correct repo path
         repo_from_db = Repository.objects.first()
         repo_from_db.url = repo_path
         repo_from_db.save()
 
-        driver.find_element_by_id("project_edit").click()
-        driver.find_element_by_link_text("Repositories").click()
-        self.assertEqual("Repository " + repo_path, driver.find_element_by_id("repo_name_1").text)
-        driver.find_element_by_id("edit_repo_1").click()
-        driver.find_element_by_id("id_submit_edit").click()
-        driver.find_element_by_id("project_edit").click()
-        driver.find_element_by_link_text("Repositories").click()
-        driver.find_element_by_link_text("Repository " + repo_path).click()
-        self.assertEqual("0", driver.find_element_by_id("repo_state").text)
+        driver.find_element(By.ID, "project_edit").click()
+        driver.find_element(By.LINK_TEXT, "Repositories").click()
+        self.assertEqual("Repository " + repo_path, driver.find_element(By.ID, "repo_name_1").text)
+        driver.find_element(By.ID, "edit_repo_1").click()
+        driver.find_element(By.ID, "id_submit_edit").click()
+        driver.find_element(By.ID, "project_edit").click()
+        driver.find_element(By.LINK_TEXT, "Repositories").click()
+        driver.find_element(By.LINK_TEXT, "Repository " + repo_path).click()
+        self.assertEqual("0", driver.find_element(By.ID, "repo_state").text)
 
         # import repo
         repo = self.project.repos.first()
         Frontend.import_new_commits(repo)
 
-        driver.find_element_by_link_text("SLN").click()
-        driver.find_element_by_link_text("SLN-1").click()
+        driver.find_element(By.LINK_TEXT, "SLN").click()
+        driver.find_element(By.LINK_TEXT, "SLN-1").click()
         self.assertEqual("(" + remote_repo_master.hexsha[:7] + ") initial commit",
-                         driver.find_element_by_id("commit_1").text)
+                         driver.find_element(By.ID, "commit_1").text)
 
         # open the commit overview
-        driver.find_element_by_id("commit_1").click()
+        driver.find_element(By.ID, "commit_1").click()
         # wait for the fade-in animation to finish
         sleep(2)
 
         self.assertEqual("initial commit (" + remote_repo_master.hexsha[:7] + ")",
-                         driver.find_element_by_id("title_commit_1").text)
-        self.assertEqual("testfile1", driver.find_element_by_css_selector("td").text)
-        self.assertEqual("1", driver.find_element_by_css_selector("span.label.label-success").text)
-        self.assertEqual("0", driver.find_element_by_css_selector("span.label.label-danger").text)
-        driver.find_element_by_id("diff_btn_1").click()
+                         driver.find_element(By.ID, "title_commit_1").text)
+        self.assertEqual("testfile1", driver.find_element(By.CSS_SELECTOR, "td").text)
+        self.assertEqual("1", driver.find_element(By.CSS_SELECTOR, "span.label.label-success").text)
+        self.assertEqual("0", driver.find_element(By.CSS_SELECTOR, "span.label.label-danger").text)
+        driver.find_element(By.ID, "diff_btn_1").click()
         self.assertIn('<div data-value="@@ -0,0 +1 @@"></div>', driver.page_source)
         self.assertIn('<div data-value="+Testcontent"></div>', driver.page_source)
         driver.get('{}{}'.format(self.live_server_url,
                                  reverse('project:detail', kwargs={'project': self.project.name_short})))
-        driver.find_element_by_id("project_edit").click()
-        driver.find_element_by_link_text("Repositories").click()
-        driver.find_element_by_link_text("Repository " + repo_path).click()
-        self.assertEqual("", driver.find_element_by_css_selector("span.glyphicon.glyphicon-ok").text)
-        self.assertEqual("1", driver.find_element_by_css_selector("div.panel-body > div.row > div.col-md-10").text)
-        driver.find_element_by_id("button_delete").click()
-        driver.find_element_by_id("id_submit_keep").click()
+        driver.find_element(By.ID, "project_edit").click()
+        driver.find_element(By.LINK_TEXT, "Repositories").click()
+        driver.find_element(By.LINK_TEXT, "Repository " + repo_path).click()
+        self.assertEqual("", driver.find_element(By.CSS_SELECTOR, "span.glyphicon.glyphicon-ok").text)
+        self.assertEqual("1", driver.find_element(By.CSS_SELECTOR, "div.panel-body > div.row > div.col-md-10").text)
+        driver.find_element(By.ID, "button_delete").click()
+        driver.find_element(By.ID, "id_submit_keep").click()
 
         # assert that repository was not deleted
         self.assertEqual(self.project.repos.count(), 1)
 
-        driver.find_element_by_link_text("Repositories").click()
-        driver.find_element_by_link_text("Repository " + repo_path).click()
-        self.assertEqual("", driver.find_element_by_css_selector("span.glyphicon.glyphicon-ok").text)
-        self.assertEqual("1", driver.find_element_by_css_selector("div.panel-body > div.row > div.col-md-10").text)
-        driver.find_element_by_id("button_delete").click()
-        driver.find_element_by_id("id_submit_delete").click()
-        driver.find_element_by_link_text("Repositories").click()
+        driver.find_element(By.LINK_TEXT, "Repositories").click()
+        driver.find_element(By.LINK_TEXT, "Repository " + repo_path).click()
+        self.assertEqual("", driver.find_element(By.CSS_SELECTOR, "span.glyphicon.glyphicon-ok").text)
+        self.assertEqual("1", driver.find_element(By.CSS_SELECTOR, "div.panel-body > div.row > div.col-md-10").text)
+        driver.find_element(By.ID, "button_delete").click()
+        driver.find_element(By.ID, "id_submit_delete").click()
+        driver.find_element(By.LINK_TEXT, "Repositories").click()
         self.assertNotIn("Repository " + repo_path, driver.page_source)
-        driver.find_element_by_link_text("Board").click()
-        driver.find_element_by_link_text("SLN-1").click()
+        driver.find_element(By.LINK_TEXT, "Board").click()
+        driver.find_element(By.LINK_TEXT, "SLN-1").click()
         self.assertNotIn("initial commit", driver.page_source)
 
         # login again with developer account and assert that repositories tab is not displayed in settings
@@ -163,7 +164,7 @@ class GitIntegrationTest(SeleniumTestCase):
 
         driver.get('{}{}'.format(self.live_server_url,
                                  reverse('project:detail', kwargs={'project': self.project.name_short})))
-        driver.find_element_by_id("project_edit").click()
+        driver.find_element(By.ID, "project_edit").click()
         self.assertNotIn("Repositories", driver.page_source)
 
         shutil.rmtree(repo_path, ignore_errors=True)

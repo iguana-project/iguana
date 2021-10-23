@@ -10,6 +10,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 """
 from django.test import Client
 from lib.selenium_test_case import SeleniumTestCase
+from selenium.webdriver.common.by import By
 from django.urls import reverse
 
 from django.contrib.auth import get_user_model
@@ -39,9 +40,9 @@ class KanbancolTest(SeleniumTestCase):
         self.selenium.refresh()
         self.selenium.get('{}{}'.format(self.live_server_url, reverse('kanbancol:create',
                                         kwargs={'project': self.short})))
-        field = self.selenium.find_element_by_name("name")
+        field = self.selenium.find_element(By.NAME, "name")
         field.send_keys('Palimpalim')
-        self.selenium.find_element_by_css_selector('.save').click()
+        self.selenium.find_element(By.CSS_SELECTOR, '.save').click()
         self.assertEqual(self.selenium.title, 'Edit asdf')
 
     def test_delete_column_and_test_in_project_edit(self):

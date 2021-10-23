@@ -11,6 +11,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 from django.test import Client
 import time
 from lib.selenium_test_case import SeleniumTestCase
+from selenium.webdriver.common.by import By
 from django.urls import reverse
 
 from unittest.mock import patch
@@ -59,9 +60,9 @@ class SlackTest(SeleniumTestCase):
     def test_issue_create(self, slackmock):
         self.selenium.get('{}{}'.format(self.live_server_url, reverse('issue:create',
                                         kwargs={'project': self.short})))
-        f = self.selenium.find_element_by_id('id_title')
+        f = self.selenium.find_element(By.ID, 'id_title')
         f.send_keys(self.title_name)
-        self.selenium.find_element_by_id('id_submit_create').click()
+        self.selenium.find_element(By.ID, 'id_submit_create').click()
         slackmock.chat_postMessage.assert_called_with(
             channel="channel",
             attachments=[{
@@ -92,13 +93,13 @@ class SlackTest(SeleniumTestCase):
                 )
 
         # open assignee autocomplete field
-        self.selenium.find_element_by_css_selector("input.select2-search__field").click()
+        self.selenium.find_element(By.CSS_SELECTOR, "input.select2-search__field").click()
         # select first result
-        self.selenium.find_elements_by_css_selector('#select2-id_assignee-results li')[0].click()
+        self.selenium.find_elements(By.CSS_SELECTOR, '#select2-id_assignee-results li')[0].click()
         # close autocomplete
-        self.selenium.find_element_by_css_selector("input.select2-search__field").send_keys(Keys.ESCAPE)
+        self.selenium.find_element(By.CSS_SELECTOR, "input.select2-search__field").send_keys(Keys.ESCAPE)
 
-        self.selenium.find_element_by_id('id_submit_edit').click()
+        self.selenium.find_element(By.ID, 'id_submit_edit').click()
         slackmock.chat_postMessage.assert_called_with(
             channel="channel",
             attachments=[{
@@ -131,9 +132,9 @@ class SlackTest(SeleniumTestCase):
                     reverse('issue:detail', kwargs={'project': self.project.name_short, 'sqn_i': issue.number})
                     )
                 )
-        f = self.selenium.find_element_by_id("wmd-input-id_text")
+        f = self.selenium.find_element(By.ID, "wmd-input-id_text")
         f.send_keys(self.comment)
-        self.selenium.find_element_by_name("action").click()
+        self.selenium.find_element(By.NAME, "action").click()
         slackmock.chat_postMessage.assert_called_with(
             channel="channel",
             attachments=[{
