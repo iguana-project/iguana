@@ -13,7 +13,11 @@ from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 
 
-class Filter(models.Model):
+from lib.custom_model import CustomModel
+
+
+# filter for the "Your issues" page
+class Filter(CustomModel):
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              models.CASCADE,
                              verbose_name=_("user"),
@@ -24,3 +28,9 @@ class Filter(models.Model):
     typ = models.CharField(_("Typ"), max_length=99)
     queryset = models.CharField(_("Filter"), max_length=999)
     name = models.CharField(_("Name"), max_length=99)
+
+    def user_has_write_permissions(self, user):
+        return self.user == user
+
+    def user_has_read_permissions(self, user):
+        return self.user == user

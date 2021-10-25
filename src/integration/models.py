@@ -19,9 +19,10 @@ from common.settings import HOST, DEBUG
 
 from django.urls import reverse
 from django.utils.translation import ugettext as _
+from lib.custom_model import CustomModel
 
 
-class Integration(models.Model):
+class Integration(CustomModel):
     project = models.ForeignKey(Project, models.CASCADE, verbose_name=_('project'))
 
     class Meta:
@@ -242,3 +243,9 @@ class SlackIntegration(Integration):
                 'color': 'good',
             }]
         )
+
+    def user_has_write_permissions(self, user):
+        return self.project.is_manager(user)
+
+    def user_has_read_permissions(self, user):
+        return self.project.user_has_read_permission(user)

@@ -97,7 +97,7 @@ def set_timelog_number(sender, instance, *args, **kwargs):
     return
 
 
-class Punch(models.Model):
+class Punch(CustomModel):
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE,
                              verbose_name=_("logger"),
@@ -114,3 +114,9 @@ class Punch(models.Model):
     class Meta:
         verbose_name = _("Punch")
         verbose_name_plural = _("Punches")
+
+    def user_has_write_permissions(self, user):
+        return self.edit_allowed(user)
+
+    def user_has_read_permissions(self, user):
+        return self.issue.project.user_has_read_permissions(user)

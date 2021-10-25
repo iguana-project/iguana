@@ -216,6 +216,7 @@ def set_comment_number(sender, instance, *args, **kwargs):
     return
 
 
+# no CustomModel required since object is used within models.py only
 class IssueQuerySet(models.QuerySet):
     def without_sprint(self):
         return self.filter(sprint__isnull=True)

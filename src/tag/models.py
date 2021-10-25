@@ -14,12 +14,12 @@ from django.db import models
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 
+from lib.custom_model import CustomModel
 from project.models import Project
-
 from search.fieldcheckings import SearchableMixin
 
 
-class Tag(SearchableMixin, models.Model):
+class Tag(SearchableMixin, CustomModel):
     tag_text = models.CharField(_('text'), max_length=32)
 
     # NOTE since there is no allow-null field, you have to provide a default value during makemigrations
@@ -83,5 +83,11 @@ class Tag(SearchableMixin, models.Model):
 
     def get_relative_project(self):
         return self.project.name
+
+    def user_has_write_permissions(self, user):
+        return self.project.user_has_write_permissions(user)
+
+    def user_has_read_permissions(self, user):
+        return self.project.user_has_read_permissions(user)
 
     searchable_fields = ['tag_text']

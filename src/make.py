@@ -1227,5 +1227,5 @@ if __name__ == "__main__":
         if choice_made_and_possible:
             continue
 
-        # call the target with its dependecies
+        # call the target with its dependencies
         target_cls.call_targets(parser, target_cls.argument_values)

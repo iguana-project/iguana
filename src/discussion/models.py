@@ -13,8 +13,10 @@ from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 
 from common import settings
+from lib.custom_model import CustomModel
 
 
+# no need to inherit from CustomModel since it doesn't contain personal information
 class Notitype(models.Model):
     NOTI_TYPES = (
         ('Mention', _("Mention")),
@@ -37,7 +39,7 @@ class Notitype(models.Model):
         return self.type
 
 
-class Notification(models.Model):
+class Notification(CustomModel):
     issue = models.ForeignKey('issue.Issue', models.CASCADE, verbose_name=_('issue'), editable=False)
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -48,7 +50,7 @@ class Notification(models.Model):
         editable=False,
         )
 
-    # updates the value everytime the object is saved
+    # updates the value every time the object is saved
     # due to the m2m_changed signal this is saved also in case of an added type etc.
     latest_modification = models.DateTimeField(auto_now=True)
 
@@ -64,3 +66,9 @@ class Notification(models.Model):
         unique_together = ('issue', 'user')
         # latest updates shall be placed on top
         ordering = ['-latest_modification']
+
+    def user_has_write_permissions(self, user):
+        return self.user == user and self.issue.user_has_read_permissions(user)
+
+    def user_has_read_permissions(self, user):
+        return self.user == user and self.issue.user_has_read_permissions(user)

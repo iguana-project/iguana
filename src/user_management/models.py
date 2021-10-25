@@ -115,7 +115,7 @@ class CustomUser(SearchableMixin, AbstractUser, CustomModel):
         return self == user
 
 
-class UserPreference(models.Model):
+class UserPreference(CustomModel):
     user = models.ForeignKey('CustomUser',
                              models.CASCADE,
                              verbose_name=_("user"),
@@ -132,3 +132,9 @@ class UserPreference(models.Model):
 
     def __str__(self):
         return self.key + ": " + self.value
+
+    def user_has_read_permissions(self, user):
+        return self.user == user
+
+    def user_has_write_permissions(self, user):
+        return self.user == user

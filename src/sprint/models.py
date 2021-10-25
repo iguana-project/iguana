@@ -31,6 +31,7 @@ def get_number_for_sprint(project):
     return retval
 
 
+# no CustomModel required since object is used within models.py only
 class SprintQuerySet(models.QuerySet):
     def get_current_sprints(self):
         return self.filter(startdate__isnull=False, enddate__isnull=True)

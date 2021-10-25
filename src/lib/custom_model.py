@@ -17,9 +17,9 @@ from django.utils.translation import ugettext as _
 
 
 # It is very important to use this version to avoid extra checks on read-access.
-# Therefore one has to import from this file instead of the django.shortcuts version
-# If klass doesn't inherit from CustomModel there is no such function to check the permissions,
-# which results in an error message to be sure the programmer made decisions about that.
+# Therefore they need to imported from this file instead of the django.shortcuts version
+# If a klass doesn't inherit from CustomModel there is no such function to check the permissions,
+# which results in an error message.
 def get_r_object_or_404(user, klass, *args, **kwargs):
     result = get_object_or_404(klass, *args, **kwargs)
     if not isinstance(result, CustomModel) or not result.user_has_read_permissions(user):

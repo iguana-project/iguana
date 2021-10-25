@@ -25,11 +25,13 @@ from django.core.cache import cache
 import json
 
 
+# no CustomModel required since object is used within models.py only
 class ProjectQuerySet(models.QuerySet):
     def latest_projects(self, user):
         return self.all().order_by('updated_at')[:5]
 
 
+# no CustomModel required since object is used within models.py only
 class ProjectManager(models.Manager):
     class Meta:
         verbose_name = _("projectmanager")
