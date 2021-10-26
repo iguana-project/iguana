@@ -28,7 +28,7 @@ class HomeView(ShowMoreMixin, TemplateView):
     If he's logged in, it shows the user dashboard.
     """
     hide_breadcrumbs = True
-    items_per_page = 10
+    items_per_page = 15
 
     def get(self, request, *args, **kwargs):
         # show dashboard if a user is logged in
