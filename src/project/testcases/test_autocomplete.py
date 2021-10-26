@@ -18,6 +18,8 @@ from kanbancol.models import KanbanColumn
 from tag.models import Tag
 from django.contrib.auth import get_user_model
 
+from common.testcases.generic_testcase_helper import redirect_to_login_and_login_required
+
 proj_short = 'PRJ'
 
 
@@ -181,18 +183,18 @@ class AutocompletetTest(TestCase):
 
         # userac
         response = self.client.get(reverse('project:userac'))
-        response_json = response.json()
-        self.assertEqual(len(response_json['results']), 0)
+        # besides the fact that every single one of those should not deliver any results, the LoginRequiredMixin has
+        # been added on top of it. For the demonstration purpose I leave one example of test for json here as a comment
+        with self.assertRaises(ValueError) as expected_assertion:
+            response_json = response.json()
+            self.assertEqual(len(response_json['results']), 0)
+            redirect_to_login_and_login_required(self, 'project:userac')
 
         # tagac
-        response = self.client.get(reverse('project:issueac', kwargs={"project": proj_short}))
-        response_json = response.json()
-        self.assertEqual(len(response_json['results']), 0)
+        redirect_to_login_and_login_required(self, 'project:issueac', address_kwargs={"project": proj_short})
 
         # issueac
-        response = self.client.get(reverse('project:tagac', kwargs={"project": proj_short}))
-        response_json = response.json()
-        self.assertEqual(len(response_json['results']), 0)
+        redirect_to_login_and_login_required(self, 'project:tagac', address_kwargs={"project": proj_short})
 
     # there shall be no results if the user is not part of the project
     def test_not_in_project(self):

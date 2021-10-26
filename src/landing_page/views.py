@@ -21,6 +21,7 @@ from landing_page.actstream_util import unfollow_project
 from project.models import Project
 
 
+# no LoginRequiredMixin since another template (Welcome/home) is rendered for the same url when not logged in
 class HomeView(ShowMoreMixin, TemplateView):
     """
     The landing page.

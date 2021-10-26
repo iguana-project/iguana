@@ -29,7 +29,9 @@ USE_X_ACCEL_REDIRECT = getattr(settings, 'USE_X_ACCEL_REDIRECT', False)
 X_ACCEL_REDIRECT_PREFIX = getattr(settings, 'X_ACCEL_REDIRECT_PREFIX', None)
 
 
-class BreadcrumbView(View):
+# Even though this view is shown only within another view that already should implement the LoginRequiredMixin,
+# it is added here to prevent information leakage due to possible bugs in other places.
+class BreadcrumbView(LoginRequiredMixin, View):
     """
     This View can be used to insert a breadcrumblayer without putting content at
     that layer.
@@ -102,7 +104,9 @@ class CreateFilterView(LoginRequiredMixin, View):
         return HttpResponseRedirect(self.get_success_url())
 
 
-class AutoCompleteView(Select2QuerySetView):
+# Even though this view should only show information dependent on the user logged in and hence the LoginRequiredMixin
+# is not mandatory, it is added here to prevent information leakage due to possible bugs in other places.
+class AutoCompleteView(LoginRequiredMixin, Select2QuerySetView):
     def get_results(self, context):
         return [
             {

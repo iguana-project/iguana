@@ -29,6 +29,9 @@ from django.utils.translation import ugettext as _, ugettext_lazy as _l
 
 
 class KanbanColumnBreadcrumbView(BreadcrumbView):
+    """
+    Adds an additional breadcrumb of the current Kanban column without a hyperlink.
+    """
     # TODO BUG does this need an auth check?
     def get_breadcrumb(self, *args, **kwargs):
         kc = get_object_or_404(KanbanColumn,
