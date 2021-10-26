@@ -16,11 +16,8 @@ from api.views import ProjectSprintsViewSet
 from rest_framework_simplejwt.views import TokenRefreshView
 from api.custom_jwt_auth import CustomTokenObtainPairView
 
+from common.urls import project_pattern, project_pattern_optional, issue_pattern
 app_name = 'api'
-
-project_pattern = r'(?P<project>[0-9a-zA-Z]{1,4})/'
-project_pattern_optional = r'(?P<project>[0-9a-zA-Z]{1,4})?'
-issue_pattern = r'(?P<issue>[0-9]+)/'
 
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet)

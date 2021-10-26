@@ -12,7 +12,7 @@ from django.conf.urls import url, include
 from django.contrib.auth import views as auth_views
 from project import views
 from search import views as se_views
-from common.urls import project_pattern, project_pattern_optional
+from common.urls import project_pattern, project_pattern_optional, issue_pattern_optional
 from .autocomplete import *
 
 app_name = 'project'
@@ -21,7 +21,7 @@ urlpatterns = [
     url(r'^$', views.ProjectListAllView.as_view(), name='list'),
     url(r'^create/?$', views.ProjectCreateView.as_view(), name='create'),
     url(r'^userac/?'+project_pattern_optional+r'/?$', UserAutocompleteView.as_view(), name='userac'),
-    url(r'^issueac/'+project_pattern+r'(?P<issue>[0-9]+)?/?$', IssueAutocompleteView.as_view(), name='issueac'),
+    url(r'^issueac/'+project_pattern+issue_pattern_optional+r'?$', IssueAutocompleteView.as_view(), name='issueac'),
     url(r'^tagac/'+project_pattern_optional+r'/?$', TagAutocompleteView.as_view(), name='tagac'),
     url(r'^kanbanac/'+project_pattern_optional+r'/?$', KanbanAutocompleteView.as_view(), name='kanbanac'),
     url(project_pattern, include([

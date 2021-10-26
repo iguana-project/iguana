@@ -22,6 +22,8 @@ app_name = 'common'
 
 project_pattern = r'(?P<project>[0-9a-zA-Z]{1,4})/'
 project_pattern_optional = r'(?P<project>[0-9a-zA-Z]{1,4})?'
+issue_pattern = r'(?P<issue>[0-9]+)/'
+issue_pattern_optional = r'(?P<issue>[0-9]+)?/'
 
 urlpatterns = [
     url(r'^', include('landing_page.urls')),
