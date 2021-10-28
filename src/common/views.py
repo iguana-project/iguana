@@ -66,7 +66,7 @@ class CreateFilterView(LoginRequiredMixin, View):
         next_url = self.request.POST.get('next')
         if next_url:
             return next_url
-        return reverse('issue:issue_global_view')
+        return reverse('issue:issue_list_all_view')
 
     def post(self, request, *args, **kwargs):
         user = self.request.user

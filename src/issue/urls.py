@@ -24,7 +24,7 @@ issue_sqn_s_pattern = r'(?P<sqn_s>[0-9]+)'
 
 urlpatterns = [
     url(r'^issue/', include([
-        url(r'^$', views.IssueGlobalView.as_view(), name='issue_global_view'),
+        url(r'^$', views.IssueListAllView.as_view(), name='issue_list_all_view'),
         url(r'^prioac/?$', IssuePrioAutocompleteView.as_view(), name='prioac'),
         url(r'^typeac/?$', IssueTypeAutocompleteView.as_view(), name='typeac'),
     ])),

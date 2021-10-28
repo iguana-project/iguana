@@ -80,7 +80,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 		<div class="panel panel-default">
 			<div class="panel-heading">
 					<span style="margin-right:20px">{% trans "Issues assigned to you" %}</span>
-					<a class="btn btn-default" id="manage_issues" href="{% url 'issue:issue_global_view' %}">{% trans "Manage your Issues" %}</a>
+					<a class="btn btn-default" id="manage_issues" href="{% url 'issue:issue_list_all_view' %}">{% trans "Manage your Issues" %}</a>
 			</div>
 			{% if request.user.issues.not_archived.not_done %}
 				<ul class="list-group">

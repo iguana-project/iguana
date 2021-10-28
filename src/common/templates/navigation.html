@@ -28,7 +28,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 				<div class="collapse navbar-collapse">
 					{% if request.user.is_authenticated %}
 					<ul class="nav navbar-nav">
-						<li><a href="{% url 'issue:issue_global_view' %}">{% trans "Issues" %}</a></li>
+						<li><a href="{% url 'issue:issue_list_all_view' %}">{% trans "Issues" %}</a></li>
 						<li><a href="{% url 'project:list' %}">{% trans "Projects" %}</a></li>
 						<li><a id="timelog" href="{% url 'timelog:loginfo' %}">{% trans "Timelog" %}</a></li>
 					</ul>

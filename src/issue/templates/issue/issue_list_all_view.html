@@ -76,7 +76,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 							</button>
 						</div>
 					</div>
-					<input type="hidden" name="typ" value="issue_global_view" />
+					<input type="hidden" name="typ" value="issue_list_all_view" />
 					<input type="hidden" name="string" value={{request.META.QUERY_STRING}} />
 					<input type="hidden" name="next" value="{{request.get_full_path}}&filt=true" />
 				</form>
@@ -84,7 +84,7 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 		</div>
 	</div>
 	{% for filt in request.user.filters.all %}
-		{% if filt.typ == 'issue_global_view' %}
+		{% if filt.typ == 'issue_list_all_view' %}
 			<div class="btn-group btn-group-sm">
 				<a class="btn btn-default {% if filt.queryset|add:"&filt=true" == request.META.QUERY_STRING %} active{% endif %}" href="{{request.path}}{% if filt.queryset|add:"&filt=true" != request.META.QUERY_STRING %}?{{ filt.queryset }}&filt=true{% endif %}">{{ filt.name}}</a>
 				</button>

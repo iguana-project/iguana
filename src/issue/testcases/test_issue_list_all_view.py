@@ -65,7 +65,7 @@ class CreateGlobalTest(TestCase):
         # TODO TESTCASE simplify testcase with view_and_template()
         #      view_and_template(self, , , )
         # TODO which views?
-        #      - url(r'^$', views.IssueGlobalView.as_view(), name='issue_global_view'),
+        #      - url(r'^$', views.IssueListAllView.as_view(), name='issue_list_all_view'),
         #      - url(r'^project/'+project_pattern+r'issue/', include([
         #      -   url(r'assigntome/?$', views.AssignIssueToMeView.as_view(), name='assigntome',),
         #      -   url(r'^rmfromme/?$', views.RemoveIssueFromMeView.as_view(), name='rmfromme',),
@@ -85,7 +85,7 @@ class CreateGlobalTest(TestCase):
         #      redirect_to_login_and_login_required(self, address_pattern, address_kwargs=None, get_kwargs=None,
         #                                 alternate_error_message=None):
         # TODO which views?
-        #      - url(r'^$', views.IssueGlobalView.as_view(), name='issue_global_view'),
+        #      - url(r'^$', views.IssueListAllView.as_view(), name='issue_list_all_view'),
         #      - url(r'^project/'+project_pattern+r'issue/', include([
         #      -   url(r'assigntome/?$', views.AssignIssueToMeView.as_view(), name='assigntome',),
         #      -   url(r'^rmfromme/?$', views.RemoveIssueFromMeView.as_view(), name='rmfromme',),
@@ -104,16 +104,16 @@ class CreateGlobalTest(TestCase):
         issues = self.create_some_issues()
 
         # archived issue is not in context
-        response = self.client.get(reverse('issue:issue_global_view'))
+        response = self.client.get(reverse('issue:issue_list_all_view'))
         self.assertIn(issues[0], response.context['issues'].object_list)
         self.assertNotIn(issues[3], response.context['issues'].object_list)
 
         # done issue is not in context
-        response = self.client.get(reverse('issue:issue_global_view'))
+        response = self.client.get(reverse('issue:issue_list_all_view'))
         self.assertNotIn(issues[2], response.context['issues'].object_list)
 
         # archived/done issue is not in context, done issue is in context
-        response = self.client.get(reverse('issue:issue_global_view'))
+        response = self.client.get(reverse('issue:issue_list_all_view'))
         self.assertIn(issues[0], response.context['issues'].object_list)
         self.assertIn(issues[1], response.context['issues'].object_list)
         self.assertIn(issues[4], response.context['issues'].object_list)
@@ -121,7 +121,7 @@ class CreateGlobalTest(TestCase):
         self.assertNotIn(issues[2], response.context['issues'].object_list)
 
         # filter project
-        response = self.client.get(reverse('issue:issue_global_view')+'?show_done=false'+'&project=PRJ')
+        response = self.client.get(reverse('issue:issue_list_all_view')+'?show_done=false'+'&project=PRJ')
 
         # issue from second project not in context
         self.assertNotIn(issues[4], response.context['issues'].object_list)
@@ -129,7 +129,7 @@ class CreateGlobalTest(TestCase):
         self.assertEqual(2, len(response.context['issues'].object_list))
 
         # filter not existing project
-        response = self.client.get(reverse('issue:issue_global_view')+'?show_done=false'+'&project=PRJ2')
+        response = self.client.get(reverse('issue:issue_list_all_view')+'?show_done=false'+'&project=PRJ2')
         self.assertIn(issues[4], response.context['issues'].object_list)
         self.assertEqual(3, len(response.context['issues'].object_list))
 
@@ -138,75 +138,75 @@ class CreateGlobalTest(TestCase):
         sprint.save()
         issues[0].sprint = sprint
         issues[0].save()
-        response = self.client.get(reverse('issue:issue_global_view') + '?show_done=true' +
+        response = self.client.get(reverse('issue:issue_list_all_view') + '?show_done=true' +
                                    '&project=PRJ&sprint_only=true')
         self.assertEqual(0, len(response.context['issues'].object_list))
         sprint.set_active()
-        response = self.client.get(reverse('issue:issue_global_view') + '?show_done=true' +
+        response = self.client.get(reverse('issue:issue_list_all_view') + '?show_done=true' +
                                    '&project=PRJ&sprint_only=true')
         self.assertEqual(1, len(response.context['issues'].object_list))
         self.assertIn(issues[0], response.context['issues'].object_list)
         sprint.set_inactive()
-        response = self.client.get(reverse('issue:issue_global_view') + '?show_done=true' +
+        response = self.client.get(reverse('issue:issue_list_all_view') + '?show_done=true' +
                                    '&project=PRJ&sprint_only=true')
         self.assertEqual(0, len(response.context['issues'].object_list))
 
         # order_by title
-        response = self.client.get(reverse('issue:issue_global_view') + '?show_done=true' +
+        response = self.client.get(reverse('issue:issue_list_all_view') + '?show_done=true' +
                                    '&order_by=title' + '&project=PRJ')
         self.assertEqual(issues[0], response.context['issues'].object_list.pop(0))
-        response = self.client.get(reverse('issue:issue_global_view') + '?show_done=true' +
+        response = self.client.get(reverse('issue:issue_list_all_view') + '?show_done=true' +
                                    '&order_by=title' + '&project=PRJ&reverse=true')
         self.assertEqual(issues[2], response.context['issues'].object_list.pop(0))
 
         # order_by priority
-        response = self.client.get(reverse('issue:issue_global_view') + '?show_done=true' +
+        response = self.client.get(reverse('issue:issue_list_all_view') + '?show_done=true' +
                                    '&order_by=priority&reverse=false')
         self.assertEqual(issues[4], response.context['issues'].object_list.pop(0))
-        response = self.client.get(reverse('issue:issue_global_view') + '?show_done=true' +
+        response = self.client.get(reverse('issue:issue_list_all_view') + '?show_done=true' +
                                    '&order_by=priority&reverse=true')
         self.assertEqual(issues[0], response.context['issues'].object_list.pop(0))
 
         # order_by type
-        response = self.client.get(reverse('issue:issue_global_view') + '?show_done=true' +
+        response = self.client.get(reverse('issue:issue_list_all_view') + '?show_done=true' +
                                    '&order_by=type&project=PRJ&reverse=false')
         self.assertEqual(3, len(response.context['issues'].object_list))
         self.assertEqual(issues[0], response.context['issues'].object_list.pop(0))
         self.assertEqual(issues[2], response.context['issues'].object_list.pop(1))
-        response = self.client.get(reverse('issue:issue_global_view') + '?show_done=true' +
+        response = self.client.get(reverse('issue:issue_list_all_view') + '?show_done=true' +
                                    '&order_by=type&reverse=true&project=PRJ')
         self.assertEqual(3, len(response.context['issues'].object_list))
         self.assertEqual(issues[2], response.context['issues'].object_list.pop(0))
         self.assertEqual(issues[0], response.context['issues'].object_list.pop(1))
 
         # order_by status
-        response = self.client.get(reverse('issue:issue_global_view') + '?show_done=true' +
+        response = self.client.get(reverse('issue:issue_list_all_view') + '?show_done=true' +
                                    '&order_by=status&project=PRJ')
         self.assertEqual(3, len(response.context['issues'].object_list))
         self.assertEqual(issues[0], response.context['issues'].object_list.pop(0))
         self.assertEqual(issues[2], response.context['issues'].object_list.pop(1))
-        response = self.client.get(reverse('issue:issue_global_view') + '?show_done=true' +
+        response = self.client.get(reverse('issue:issue_list_all_view') + '?show_done=true' +
                                    '&order_by=status&reverse=true&project=PRJ')
         self.assertEqual(3, len(response.context['issues'].object_list))
         self.assertEqual(issues[0], response.context['issues'].object_list.pop(0))
         self.assertEqual(issues[2], response.context['issues'].object_list.pop(1))
 
         # test pagination PageNotInteger exception
-        response = self.client.get(reverse('issue:issue_global_view') +
+        response = self.client.get(reverse('issue:issue_list_all_view') +
                                    '?page=asd' + '&show_done=true', follow=True)
         self.assertEqual(4, len(response.context['issues'].object_list))
 
         # test pagination EmptyPage exception
-        response = self.client.get(reverse('issue:issue_global_view') +
+        response = self.client.get(reverse('issue:issue_list_all_view') +
                                    '?page=5' + '&show_done=true', follow=True)
         self.assertEqual(4, len(response.context['issues'].object_list))
 
     def test_save_filters(self):
         issues = self.create_some_issues()
         vals = {
-                'typ': 'issue_global_view',
+                'typ': 'issue_list_all_view',
         }
-        response = self.client.get(reverse('issue:issue_global_view') + '?show_done=true' +
+        response = self.client.get(reverse('issue:issue_list_all_view') + '?show_done=true' +
                                    '&order_by=status&reverse=true&project=PRJ')
         string = response.request.get('QUERY_STRING')
         vals.update({'string': string, 'name': 'asdf'})

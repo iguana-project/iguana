@@ -63,13 +63,13 @@ def process_order_by(request, issues):
     return issues
 
 
-class IssueGlobalView(LoginRequiredMixin, TemplateView):
-    template_name = 'issue/issue_global_view.html'
+class IssueListAllView(LoginRequiredMixin, TemplateView):
+    template_name = 'issue/issue_list_all_view.html'
     hide_breadcrumbs = True
     paginate_by = 20
 
     def get_context_data(self, **kwargs):
-        context = super(IssueGlobalView, self).get_context_data(**kwargs)
+        context = super(IssueListAllView, self).get_context_data(**kwargs)
 
         proj = self.request.GET.get('project', None)
         show_done = self.request.GET.get('show_done', 'false')
