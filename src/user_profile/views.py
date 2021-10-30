@@ -38,16 +38,18 @@ from lib.activity_permissions import check_activity_permissions
 import json
 
 
-class ToggleNotificationView(LoginRequiredMixin, View):
-    def post(self, request, *args, **kwargs):
-        # receiving:
-        #   shn_p
-        #   notiway (e.g. mail)
-        #   notitype (e.g. NewIssue)
-        #   enabled (1/0)
+class ToggleNotificationView(LoginRequiredMixin, UserPassesTestMixin, View):
+    # receiving:
+    #   shn_p
+    #   notiway (e.g. mail)
+    #   notitype (e.g. NewIssue)
+    #   enabled (1/0)
+    rcvs = ['shn_p', 'notiway', 'notitype', 'enabled']
 
+    def post(self, request, *args, **kwargs):
+        # check whether the user is in given project is already performed in test_func()
+        rcvs = self.rcvs
         # check presence
-        rcvs = ['shn_p', 'notiway', 'notitype', 'enabled']
         if not set(rcvs).issubset(list(self.request.POST.keys())):
             raise Http404()
 
@@ -57,14 +59,6 @@ class ToggleNotificationView(LoginRequiredMixin, View):
             valid_notitypes.append(t[0])
 
         if self.request.POST.get(rcvs[2]) not in valid_notitypes:
-            raise Http404()
-
-        # check that user is in given project
-        projlist = Project.objects.filter(name_short=self.request.POST.get(rcvs[0]))
-        if len(projlist) != 1:
-            raise Http404()
-
-        if not projlist.first().user_has_read_permissions(self.request.user):
             raise Http404()
 
         propname = "notify_" + self.request.POST.get(rcvs[1])
@@ -95,6 +89,15 @@ class ToggleNotificationView(LoginRequiredMixin, View):
         self.request.session['nocollapse'] = self.request.POST.get(rcvs[0])
 
         return redirect(reverse('user_profile:user_profile_page', kwargs={'username': self.request.user.username}))
+
+    def test_func(self):
+        # user needs read permissions for the project
+        rcvs = self.rcvs
+        try:
+            get_r_object_or_404(self.request.user, Project, name_short=self.request.POST.get(rcvs[0]))
+        except Http404:
+            return 0
+        return 1
 
 
 class ShowProfilePageView(LoginRequiredMixin, ShowMoreMixin, DetailView):
