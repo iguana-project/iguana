@@ -116,7 +116,7 @@ class ResultView(LoginRequiredMixin, View):
         try:
             result = SearchFrontend.query(request.POST['expression'], self.request.user)
         except ValueError:
-            # this can happen when less than three chars were given to fullext search
+            # this can happen when less than three chars were given to full text search
             messages.add_message(request, messages.ERROR, _('Please search for at least three characters'))
             result = []
 

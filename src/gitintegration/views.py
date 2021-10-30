@@ -94,7 +94,7 @@ class RepositoryEditView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
                                    )
 
     def test_func(self):
-        # allow access only for managers
+        # allow access only for managers (write access)
         try:
             repo = get_w_object_or_404(self.request.user, Repository,
                                        project__name_short=self.kwargs.get('project'),
@@ -124,7 +124,7 @@ class RepositoryCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
         return super(RepositoryCreateView, self).form_valid(form)
 
     def test_func(self):
-        # allow access only for managers
+        # allow access only for managers (write access)
         try:
             project = get_w_object_or_404(self.request.user, Project,
                                           name_short=self.kwargs.get('project'),
@@ -149,7 +149,7 @@ class RepositoryDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
                                    )
 
     def test_func(self):
-        # allow access only for managers
+        # allow access only for managers (write access)
         try:
             get_w_object_or_404(self.request.user, Project,
                                 name_short=self.kwargs.get('project'),

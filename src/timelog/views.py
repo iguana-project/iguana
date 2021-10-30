@@ -152,6 +152,9 @@ class TimelogDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
 
 class TimelogGetActivityDataView(LoginRequiredMixin, TemplateView):
+    """
+    Personal activity chart on timelog page.
+    """
     template_name = 'timelog/timelog_activity.html'
     hide_breadcrumbs = True
 
@@ -162,6 +165,9 @@ class TimelogD3View(LoginRequiredMixin, TemplateView):
 
 
 class TimelogArchivView(LoginRequiredMixin, TemplateView):
+    """
+    This extends the TimelogLoginfoPerUserView. It doesn't load infinitely but only x amount of entries at once.
+    """
     template_name = 'timelog/timelog_archiv.html'
     hide_breadcrumbs = True
 
