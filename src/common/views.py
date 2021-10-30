@@ -46,6 +46,11 @@ class BreadcrumbView(LoginRequiredMixin, View):
 
 
 class ShowProtectedFilesView(LoginRequiredMixin, View):
+    """
+    This View is basically an internal redirect to deliver files. Since the media directory is 'internal' in the
+    nginx settings, neither the media directory or any of it's content is not accessible via a URL,
+    but only from within Django. Therefore it passes some permission checks first.
+    """
     def get(self, request, content_disposition_type="inline", *args, **kwargs):
         if USE_X_ACCEL_REDIRECT:
             response = HttpResponse('')

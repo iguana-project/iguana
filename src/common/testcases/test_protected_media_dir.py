@@ -40,8 +40,12 @@ class ProtectedMediaDirTest(TestCase):
         # TODO TESTCASE common view and template
         #      use view_and_template()
         # TODO which views?
-        #      - ShowProtectedFilesView - media/avatars
-        #      - ShowProtectedFilesView - media/attachments
+        #      - ShowProtectedFilesView - media/avatars - from a URL - should not deliver any content
+        #      - ShowProtectedFilesView - media/avatars - from Django (by resolving a user page with an image)
+        #                                                 should deliver the avatar
+        #      - ShowProtectedFilesView - media/attachments - from a URL - should not deliver any content
+        #      - ShowProtectedFilesView - media/attachments - from Django (accessing the attachment of an issue
+        #                                                     from the issue detail page) - should deliver the content
         #      - CreateFilterView - ?
         #      - AutoCompleteView - ?
         #      - ...
