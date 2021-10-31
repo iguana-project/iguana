@@ -84,4 +84,20 @@ def redirect_to_login_and_user_doesnt_pass_test(self, address_pattern, address_k
     redirect_to_login_with_expected_message(self, resolved_address, response, expected_message)
 
 
+# UserPassesTestMixin / test_func() - a 404 is expected
+# uses post
+# \param address_pattern The pattern for the reverse lookup that is used to resolve the target address
+# \param address_kwargs Optional additional kwargs arguments that might be needed for the resolving of the address
+# \param get_kwargs Optional additional kwargs for a get request that might be needed
+#        to specify which content is desired
+def user_doesnt_pass_test_and_gets_404(self, address_pattern, address_kwargs=None, get_kwargs=None):
+    resolved_address = reverse(address_pattern, kwargs=address_kwargs)
+    # uses post instead of get
+    if get_kwargs:
+        response = self.client.post(resolved_address, get_kwargs)
+    else:
+        response = self.client.post(resolved_address)
+
+    self.assertEqual(response.status_code, 404)
+
 # TODO add further functions
