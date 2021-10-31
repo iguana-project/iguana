@@ -113,7 +113,9 @@ class Attachment(SearchableMixin, CustomModel):
         return self.issue.project.developer_allowed(user)
 
     def user_has_write_permissions(self, user):
-        return self.creator == user
+        # the check for issue read permission is required as well. One might be the creator of a comment
+        # but not part of the project anymore
+        return self.issue.user_has_read_permissions(user) and self.creator == user
 
     def user_has_read_permissions(self, user):
         return self.issue.user_has_read_permissions(user)
@@ -189,7 +191,9 @@ class Comment(SearchableMixin, CustomModel):
 
     # permission functions
     def user_has_write_permissions(self, user):
-        return self.creator == user
+        # the check for issue read permission is required as well. One might be the creator of a comment
+        # but not part of the project anymore
+        return self.issue.user_has_read_permissions(user) and self.creator == user
 
     def user_has_read_permissions(self, user):
         return self.issue.user_has_read_permissions(user)
