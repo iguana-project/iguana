@@ -108,6 +108,7 @@ class CustomUser(SearchableMixin, AbstractUser, CustomModel):
 
     searchable_fields = ['first_name', 'last_name', 'username']
 
+    # every user profile is public
     def user_has_read_permissions(self, user):
         return True
 

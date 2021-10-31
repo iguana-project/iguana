@@ -48,8 +48,9 @@ class Timelog(CustomModel):
         verbose_name_plural = _("timelogs")
 
     # time logging for a user is allowed by the user itself and by project-managers
+    # modification of time logs is not possible when not part of the project anymore
     def edit_allowed(self, user):
-        if user == self.user or self.issue.project.is_manager(user):
+        if self.issue.project.is_manager(user) or (user == self.user and self.issue.user_has_read_permissions(user)):
             return 1
         return 0
 
