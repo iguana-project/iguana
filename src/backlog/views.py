@@ -61,8 +61,7 @@ class BacklogListView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         return Project.objects.get(name_short=self.kwargs.get('project'))
 
     def test_func(self):
-        return get_r_object_or_404(self.request.user, Project,
-                                   name_short=self.kwargs.get('project')).user_has_read_permissions(self.request.user)
+        return get_r_object_or_404(self.request.user, Project, name_short=self.kwargs.get('project'))
 
     def get_sqn_s(self):
         if self.kwargs.get('sqn_s') and get_r_object_or_404(self.request.user, Sprint,

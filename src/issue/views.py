@@ -126,8 +126,7 @@ class AssignIssueToMeView(LoginRequiredMixin, UserPassesTestMixin, View):
         return redirect(self.get_success_url())
 
     def test_func(self):
-        return get_r_object_or_404(self.request.user, Project,
-                                   name_short=self.kwargs.get('project')).user_has_read_permissions(self.request.user)
+        return get_r_object_or_404(self.request.user, Project, name_short=self.kwargs.get('project'))
 
 
 class RemoveIssueFromMeView(LoginRequiredMixin, UserPassesTestMixin, View):
@@ -156,8 +155,7 @@ class RemoveIssueFromMeView(LoginRequiredMixin, UserPassesTestMixin, View):
         return redirect(self.get_success_url())
 
     def test_func(self):
-        return get_r_object_or_404(self.request.user, Project,
-                                   name_short=self.kwargs.get('project')).user_has_read_permissions(self.request.user)
+        return get_r_object_or_404(self.request.user, Project, name_short=self.kwargs.get('project'))
 
 
 class AddIssueToKanbancolView(LoginRequiredMixin, UserPassesTestMixin, View):
@@ -196,8 +194,7 @@ class AddIssueToKanbancolView(LoginRequiredMixin, UserPassesTestMixin, View):
         return HttpResponseRedirect(success_url)
 
     def test_func(self):
-        return get_r_object_or_404(self.request.user, Project,
-                                   name_short=self.kwargs.get('project')).user_has_read_permissions(self.request.user)
+        return get_r_object_or_404(self.request.user, Project, name_short=self.kwargs.get('project'))
 
 
 class ArchiveSingleIssueView(LoginRequiredMixin, UserPassesTestMixin, View):
@@ -220,8 +217,7 @@ class ArchiveSingleIssueView(LoginRequiredMixin, UserPassesTestMixin, View):
         return HttpResponseRedirect(success_url)
 
     def test_func(self):
-        return get_r_object_or_404(self.request.user, Project,
-                                   name_short=self.kwargs.get('project')).user_has_read_permissions(self.request.user)
+        return get_r_object_or_404(self.request.user, Project, name_short=self.kwargs.get('project'))
 
 
 class UnArchiveSingleIssueView(LoginRequiredMixin, UserPassesTestMixin, View):
@@ -246,8 +242,7 @@ class UnArchiveSingleIssueView(LoginRequiredMixin, UserPassesTestMixin, View):
         return HttpResponseRedirect(success_url)
 
     def test_func(self):
-        return get_r_object_or_404(self.request.user, Project,
-                                   name_short=self.kwargs.get('project')).user_has_read_permissions(self.request.user)
+        return get_r_object_or_404(self.request.user, Project, name_short=self.kwargs.get('project'))
 
 
 class ArchiveMultipleIssueView(LoginRequiredMixin, UserPassesTestMixin, View):
@@ -285,8 +280,7 @@ class ArchiveMultipleIssueView(LoginRequiredMixin, UserPassesTestMixin, View):
         return HttpResponseRedirect(success_url)
 
     def test_func(self):
-        return get_r_object_or_404(self.request.user, Project,
-                                   name_short=self.kwargs.get('project')).user_has_read_permissions(self.request.user)
+        return get_r_object_or_404(self.request.user, Project, name_short=self.kwargs.get('project'))
 
 
 # is accessible via get
@@ -313,9 +307,7 @@ class IssueDetailView(LoginRequiredMixin, UserPassesTestMixin, MultiFormsView):
                                    number=self.kwargs.get('sqn_i'))
 
     def test_func(self):
-        get_r_object_or_404(self.request.user, Project,
-                            name_short=self.kwargs.get('project')).user_has_read_permissions(self.request.user)
-        return 1
+        return get_r_object_or_404(self.request.user, Project, name_short=self.kwargs.get('project'))
 
     def get_breadcrumb(self, *args, **kwargs):
         # self has no request and so no user -> we use get_object_or_404
@@ -440,8 +432,7 @@ class IssueCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
         return form
 
     def test_func(self):
-        return get_r_object_or_404(self.request.user, Project,
-                                   name_short=self.kwargs.get('project')).user_has_read_permissions(self.request.user)
+        return get_r_object_or_404(self.request.user, Project, name_short=self.kwargs.get('project'))
 
     def get_success_url(self):
         return reverse('backlog:backlog', kwargs={'project': self.kwargs['project']})
@@ -469,9 +460,7 @@ class IssueDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         return reverse('backlog:backlog', kwargs={'project': self.kwargs['project']})
 
     def test_func(self):
-        get_w_object_or_404(self.request.user, Project,
-                            name_short=self.kwargs.get('project')).user_has_write_permissions(self.request.user)
-        return 1
+        return get_w_object_or_404(self.request.user, Project, name_short=self.kwargs.get('project'))
 
     def get_object(self):
         return get_r_object_or_404(self.request.user, Issue, project__name_short=self.kwargs.get('project'),
@@ -506,8 +495,7 @@ class IssueEditView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return form
 
     def test_func(self):
-        return get_r_object_or_404(self.request.user, Project,
-                                   name_short=self.kwargs.get('project')).user_has_read_permissions(self.request.user)
+        return get_r_object_or_404(self.request.user, Project, name_short=self.kwargs.get('project'))
 
     def get_object(self):
         return get_r_object_or_404(self.request.user, Issue, project__name_short=self.kwargs.get('project'),
@@ -523,11 +511,11 @@ class IssueEditCommentView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
     def test_func(self):
         # NOTE: even manager are not allowed to change/delete comments of other users
-        return get_r_object_or_404(self.request.user, Comment,
+        return get_w_object_or_404(self.request.user, Comment,
                                    issue__project__name_short=self.kwargs.get('project'),
                                    issue__number=self.kwargs.get('sqn_i'),
                                    seqnum=self.kwargs.get('pk_c')
-                                   ).user_has_write_permissions(self.request.user)
+                                   )
 
     def get_object(self):
         return Comment.objects.get(issue__project__name_short=self.kwargs.get('project'),
@@ -542,11 +530,12 @@ class IssueDeleteCommentView(LoginRequiredMixin, UserPassesTestMixin, DeleteView
     template_name = 'confirm_delete.html'
 
     def test_func(self):
-        return get_r_object_or_404(self.request.user, Comment,
+        # NOTE: even manager are not allowed to change/delete comments of other users
+        return get_w_object_or_404(self.request.user, Comment,
                                    issue__project__name_short=self.kwargs.get('project'),
                                    issue__number=self.kwargs.get('sqn_i'),
                                    seqnum=self.kwargs.get('pk_c')
-                                   ).user_has_write_permissions(self.request.user)
+                                   )
 
     def get_success_url(self):
         # go back to the issue detail view
@@ -579,8 +568,7 @@ class AttachmentDownloadView(LoginRequiredMixin, UserPassesTestMixin, View):
         return sendfile(request, attachment.file.path, attachment=True)
 
     def test_func(self):
-        return get_r_object_or_404(self.request.user, Project,
-                                   name_short=self.kwargs.get('project')).user_has_read_permissions(self.request.user)
+        return get_r_object_or_404(self.request.user, Project, name_short=self.kwargs.get('project'))
 
     def get_object(self):
         return Attachment.objects.get(issue__project__name_short=self.kwargs.get('project'),
@@ -594,11 +582,11 @@ class AttachmentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     template_name = 'confirm_delete.html'
 
     def test_func(self):
-        return get_r_object_or_404(self.request.user, Attachment,
+        return get_w_object_or_404(self.request.user, Attachment,
                                    issue__project__name_short=self.kwargs.get('project'),
                                    issue__number=self.kwargs.get('sqn_i'),
                                    seqnum=self.kwargs.get('sqn_a')
-                                   ).user_has_write_permissions(self.request.user)
+                                   )
 
     def delete(self, request, *args, **kwargs):
         # get the file path to delete it later

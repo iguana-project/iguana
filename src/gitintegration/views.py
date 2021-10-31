@@ -96,10 +96,10 @@ class RepositoryEditView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     def test_func(self):
         # allow access only for managers (write access)
         try:
-            repo = get_w_object_or_404(self.request.user, Repository,
-                                       project__name_short=self.kwargs.get('project'),
-                                       pk=self.kwargs.get('repository'),
-                                       )
+            get_w_object_or_404(self.request.user, Repository,
+                                project__name_short=self.kwargs.get('project'),
+                                pk=self.kwargs.get('repository'),
+                                )
         except Http404:
             return 0
         return 1
@@ -126,9 +126,9 @@ class RepositoryCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     def test_func(self):
         # allow access only for managers (write access)
         try:
-            project = get_w_object_or_404(self.request.user, Project,
-                                          name_short=self.kwargs.get('project'),
-                                          )
+            get_w_object_or_404(self.request.user, Project,
+                                name_short=self.kwargs.get('project'),
+                                )
         except Http404:
             return 0
         return 1
@@ -186,9 +186,9 @@ class FileDiffView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
     def test_func(self):
         # allow access for managers and developers
         try:
-            repo = get_r_object_or_404(self.request.user, Project,
-                                       name_short=self.kwargs.get('project')
-                                       )
+            get_r_object_or_404(self.request.user, Project,
+                                name_short=self.kwargs.get('project')
+                                )
         except Http404:
             return 0
         return 1

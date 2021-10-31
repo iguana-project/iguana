@@ -45,8 +45,7 @@ class NewSprintView(LoginRequiredMixin, UserPassesTestMixin, View):
                                                            }))
 
     def test_func(self):
-        return get_r_object_or_404(self.request.user, Project,
-                                   name_short=self.kwargs.get('project')).developer_allowed(self.request.user)
+        return get_r_object_or_404(self.request.user, Project, name_short=self.kwargs.get('project'))
 
 
 class StartSprintView(LoginRequiredMixin, UserPassesTestMixin, View):
@@ -71,7 +70,7 @@ class StartSprintView(LoginRequiredMixin, UserPassesTestMixin, View):
 
     def test_func(self):
         return get_r_object_or_404(self.request.user, Sprint, project__name_short=self.kwargs.get('project'),
-                                   seqnum=self.kwargs.get('sqn_s')).project.developer_allowed(self.request.user)
+                                   seqnum=self.kwargs.get('sqn_s')).project.user_has_read_permissions(self.request.user)
 
 
 class StopSprintView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
@@ -119,7 +118,7 @@ class StopSprintView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
 
     def test_func(self):
         return get_r_object_or_404(self.request.user, Sprint, project__name_short=self.kwargs.get('project'),
-                                   seqnum=self.kwargs.get('sqn_s')).project.developer_allowed(self.request.user)
+                                   seqnum=self.kwargs.get('sqn_s')).project.user_has_read_permissions(self.request.user)
 
 
 class SprintEditView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
@@ -129,8 +128,7 @@ class SprintEditView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     form_class = SprintForm
 
     def test_func(self):
-        return get_r_object_or_404(self.request.user, Project,
-                                   name_short=self.kwargs.get('project')).developer_allowed(self.request.user)
+        return get_r_object_or_404(self.request.user, Project, name_short=self.kwargs.get('project'))
 
     def get_object(self):
         return get_r_object_or_404(self.request.user, Sprint, project__name_short=self.kwargs.get('project'),
@@ -189,8 +187,7 @@ class SprintboardView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         return get_r_object_or_404(self.request.user, Project, name_short=self.kwargs.get('project'))
 
     def test_func(self):
-        return get_r_object_or_404(self.request.user, Project,
-                                   name_short=self.kwargs.get('project')).user_has_read_permissions(self.request.user)
+        return get_r_object_or_404(self.request.user, Project, name_short=self.kwargs.get('project'))
 
     def get_breadcrumb(self, *args, **kwargs):
         return kwargs['project']
@@ -250,5 +247,4 @@ class ToggleIssueToFromSprintView(LoginRequiredMixin, UserPassesTestMixin, View)
                                                                        'sqn_s': sqn_s}))
 
     def test_func(self):
-        return get_r_object_or_404(self.request.user, Project,
-                                   name_short=self.kwargs.get('project')).developer_allowed(self.request.user)
+        return get_r_object_or_404(self.request.user, Project, name_short=self.kwargs.get('project'))

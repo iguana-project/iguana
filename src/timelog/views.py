@@ -57,8 +57,7 @@ class TimelogCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
 
     def test_func(self):
         try:
-            get_r_object_or_404(self.request.user, Project,
-                                name_short=self.kwargs.get('project')).developer_allowed(self.request.user)
+            get_r_object_or_404(self.request.user, Project, name_short=self.kwargs.get('project'))
         except Http404:
             return 0
         return 1
@@ -90,7 +89,7 @@ class TimelogEditView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
     def test_func(self):
         try:
-            self.get_object().edit_allowed(self.request.user)
+            self.get_object().user_has_write_permissions(self.request.user)
         except Exception:
             return 0
         return 1
@@ -148,7 +147,7 @@ class TimelogDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
             return next_url
 
     def test_func(self):
-        return self.get_object().edit_allowed(self.request.user)
+        return self.get_object().user_has_write_permissions(self.request.user)
 
 
 class TimelogGetActivityDataView(LoginRequiredMixin, TemplateView):
@@ -238,8 +237,7 @@ class PunchView(LoginRequiredMixin, UserPassesTestMixin, View):
 
     def test_func(self):
         try:
-            get_r_object_or_404(self.request.user, Project,
-                                name_short=self.kwargs.get('project')).developer_allowed(self.request.user)
+            get_r_object_or_404(self.request.user, Project, name_short=self.kwargs.get('project'))
         except Http404:
             return 0
         return 1

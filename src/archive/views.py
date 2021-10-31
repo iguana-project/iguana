@@ -77,8 +77,7 @@ class ArchivedIssuesView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         return get_r_object_or_404(self.request.user, Project, name_short=self.kwargs.get('project'))
 
     def test_func(self):
-        return get_r_object_or_404(self.request.user, Project,
-                                   name_short=self.kwargs.get('project')).user_has_read_permissions(self.request.user)
+        return get_r_object_or_404(self.request.user, Project, name_short=self.kwargs.get('project'))
 
     def getItemsUntilPage(self, paginator, pageNumber):
         # for more comments see ShowMoreMixin

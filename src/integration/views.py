@@ -42,7 +42,7 @@ class SlackIntegrationUpdateView(LoginRequiredMixin, UserPassesTestMixin, Update
     def test_func(self):
         try:
             get_w_object_or_404(self.request.user, Project,
-                                name_short=self.kwargs.get('project'))
+                                name_short=self.kwargs.get('project')).is_manager(self.request.user)
         except Http404:
             return 0
         return 1
@@ -66,7 +66,7 @@ class SlackIntegrationDeleteView(LoginRequiredMixin, UserPassesTestMixin, Delete
     def test_func(self):
         try:
             get_w_object_or_404(self.request.user, Project,
-                                name_short=self.kwargs.get('project'))
+                                name_short=self.kwargs.get('project')).is_manager(self.request.user)
         except Http404:
             return 0
         return 1

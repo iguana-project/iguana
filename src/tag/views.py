@@ -69,8 +69,7 @@ class TagView(LoginRequiredMixin, UserPassesTestMixin, View):
     # only developer and manager are allowed to change tag-settings
     def test_func(self):
         try:
-            get_r_object_or_404(self.request.user, Project,
-                                name_short=self.kwargs.get('project')).developer_allowed(self.request.user)
+            get_r_object_or_404(self.request.user, Project, name_short=self.kwargs.get('project'))
         except Http404:
             return 0
         return 1
