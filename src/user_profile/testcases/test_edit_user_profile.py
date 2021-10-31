@@ -23,7 +23,8 @@ from django.contrib.auth import get_user_model
 from user_management.views import LoginView
 from user_profile.views import EditProfilePageView
 
-from common.testcases.generic_testcase_helper import view_and_template, redirect_to_login_and_login_required
+from common.testcases.generic_testcase_helper import view_and_template, redirect_to_login_and_login_required, \
+        user_doesnt_pass_test_and_gets_404
 
 user_name = "user_name"
 test_password = "test1234"
@@ -107,14 +108,7 @@ class EditUserProfileTest(TestCase):
     def test_other_user_edit_page_not_accassible_user_passes_test_mixin(self):
         self.client.logout()
         self.client.force_login(self.user2)
-        # TODO TESTCASE why does this fail at the assertContains(response, 'Please login to see this page.')
-        #               shouldn't that be an expected error message here?
-        # redirect_to_login_and_login_required(self, 'user_profile:edit_profile',
-        #                                      address_kwargs={"username": user_name})
-        response = self.client.get(reverse('user_profile:edit_profile', kwargs={"username": user_name}))
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(response['location'], '/login/?next=' + reverse('user_profile:edit_profile',
-                                                                         kwargs={'username': user_name}))
+        user_doesnt_pass_test_and_gets_404(self, 'user_profile:edit_profile', address_kwargs={"username": user_name})
 
     def test_show_own_user_edit_page(self):
         response = self.client.get(reverse('user_profile:edit_profile', kwargs={"username": user_name}))

@@ -91,8 +91,7 @@ class SearchEditView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
     def test_func(self):
         try:
-            get_w_object_or_404(self.request.user, Search,
-                                pk=self.kwargs.get('sqn_sh')).creator == self.request.user
+            get_w_object_or_404(self.request.user, Search, pk=self.kwargs.get('sqn_sh'))
         except Http404:
             return 0
         return 1
@@ -181,9 +180,9 @@ class MakeSearchPersistentView(LoginRequiredMixin, UserPassesTestMixin, View):
 
     def test_func(self):
         try:
-            search = get_w_object_or_404(self.request.user, Search,
-                                         creator=self.request.user,
-                                         pk=self.request.POST.get('pk'))
+            get_w_object_or_404(self.request.user, Search,
+                                creator=self.request.user,
+                                pk=self.request.POST.get('pk'))
         except Http404:
             return 0
         return 1
@@ -201,9 +200,9 @@ class DelSearchPersistentView(LoginRequiredMixin, UserPassesTestMixin, View):
 
     def test_func(self):
         try:
-            search = get_w_object_or_404(self.request.user, Search,
-                                         creator=self.request.user,
-                                         pk=self.request.POST.get('pk'))
+            get_w_object_or_404(self.request.user, Search,
+                                creator=self.request.user,
+                                pk=self.request.POST.get('pk'))
         except Http404:
             return 0
         return 1

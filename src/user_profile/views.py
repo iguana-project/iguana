@@ -24,7 +24,7 @@ from lib.multiform import MultiFormsView, MultiFormMixin
 
 from actstream.models import actor_stream
 from issue.models import Issue
-from lib.custom_model import get_r_object_or_404
+from lib.custom_model import get_r_object_or_404, get_w_object_or_404
 from lib.show_more_mixin import ShowMoreMixin
 from project.models import Project
 from user_profile.forms import CustomUserChangeForm, CustomPasswordChangeForm
@@ -257,5 +257,4 @@ class EditProfilePageView(LoginRequiredMixin, UserPassesTestMixin, SingleObjectM
 
     def test_func(self):
         # the user can only edit it's own profile
-        user = get_r_object_or_404(self.request.user, get_user_model(), username=self.kwargs.get("username"))
-        return self.request.user.pk == user.pk
+        return get_w_object_or_404(self.request.user, get_user_model(), username=self.kwargs.get("username"))
