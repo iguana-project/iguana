@@ -21,6 +21,7 @@ from project.models import Project
 from django.contrib.auth import get_user_model
 
 from common.settings.common import REPOSITORY_ROOT, BASE_DIR
+from common.testcases.generic_testcase_helper import user_doesnt_pass_test_and_gets_404
 from django.core.exceptions import ValidationError
 
 
@@ -200,15 +201,10 @@ class GitIntegrationTest(TestCase):
         self.project.developer.add(self.user)
         self.project.save()
 
-        response = self.client.post(reverse('project:gitintegration:create',
-                                            kwargs={'project': self.project.name_short}
-                                            ),
-                                    {'url': 'blubber-url',
-                                     'rsa_priv_path': '',
-                                     'rsa_pub_path': '',
-                                     },
-                                    follow=True)
-        self.assertContains(response, "Your account doesn't have access to this page")
+        user_doesnt_pass_test_and_gets_404(self, 'project:gitintegration:create',
+                                           address_kwargs={'project': self.project.name_short},
+                                           get_kwargs={'url': 'blubber-url', 'rsa_priv_path': '', 'rsa_pub_path': ''})
+
         self.project.refresh_from_db()
         self.assertEqual(self.project.repos.count(), 0)
 
@@ -229,28 +225,17 @@ class GitIntegrationTest(TestCase):
                 repo.rsa_pub_path = File(f2)
                 repo.save()
 
-        response = self.client.post(reverse('project:gitintegration:edit',
-                                            kwargs={'project': self.project.name_short,
-                                                    'repository': '1'}
-                                            ),
-                                    {'url': 'blubber',
-                                     'rsa_priv_path': '',
-                                     'rsa_pub_path': '',
-                                     },
-                                    follow=True)
-        self.assertContains(response, "Your account doesn't have access to this page")
+        user_doesnt_pass_test_and_gets_404(self, 'project:gitintegration:edit',
+                                           address_kwargs={'project': self.project.name_short, 'repository': '1'},
+                                           get_kwargs={'url': 'blubber', 'rsa_priv_path': '', 'rsa_pub_path': '', })
+
         self.project.refresh_from_db()
         self.assertEqual(self.project.repos.count(), 1)
         self.assertEqual(self.project.repos.first().url, 'blub-url')
 
-        response = self.client.post(reverse('project:gitintegration:delete',
-                                            kwargs={'project': self.project.name_short,
-                                                    'repository': '1'}
-                                            ),
-                                    {'delete': 'true'},
-                                    follow=True)
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Your account doesn't have access to this page")
+        user_doesnt_pass_test_and_gets_404(self, 'project:gitintegration:delete',
+                                           address_kwargs={'project': self.project.name_short, 'repository': '1'},
+                                           get_kwargs={'delete': 'true'})
         self.project.refresh_from_db()
         self.assertEqual(self.project.repos.count(), 1)
         self.assertEqual(self.project.repos.first().url, 'blub-url')
@@ -361,45 +346,20 @@ class GitIntegrationTest(TestCase):
                                    follow=True)
         self.assertEqual(response.status_code, 404)
 
-        response = self.client.get(reverse('project:gitintegration:detail',
-                                           kwargs={'project': self.project.name_short,
-                                                   'repository': repo.pk}
-                                           ),
-                                   follow=True)
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Your account doesn't have access to this page")
+        user_doesnt_pass_test_and_gets_404(self, 'project:gitintegration:detail',
+                                           address_kwargs={'project': self.project.name_short, 'repository': repo.pk})
 
-        response = self.client.post(reverse('project:gitintegration:create',
-                                            kwargs={'project': self.project.name_short}
-                                            ),
-                                    {'url': 'blubber',
-                                     'rsa_priv_path': '',
-                                     'rsa_pub_path': '',
-                                     },
-                                    follow=True)
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Your account doesn't have access to this page")
+        user_doesnt_pass_test_and_gets_404(self, 'project:gitintegration:create',
+                                           address_kwargs={'project': self.project.name_short},
+                                           get_kwargs={'url': 'blubber', 'rsa_priv_path': '', 'rsa_pub_path': ''})
 
-        response = self.client.post(reverse('project:gitintegration:edit',
-                                            kwargs={'project': self.project.name_short,
-                                                    'repository': repo.pk}
-                                            ),
-                                    {'url': 'blubber',
-                                     'rsa_priv_path': '',
-                                     'rsa_pub_path': '',
-                                     },
-                                    follow=True)
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Your account doesn't have access to this page")
+        user_doesnt_pass_test_and_gets_404(self, 'project:gitintegration:edit',
+                                           address_kwargs={'project': self.project.name_short, 'repository': repo.pk},
+                                           get_kwargs={'url': 'blubber', 'rsa_priv_path': '', 'rsa_pub_path': ''})
 
-        response = self.client.post(reverse('project:gitintegration:delete',
-                                            kwargs={'project': self.project.name_short,
-                                                    'repository': repo.pk}
-                                            ),
-                                    {'delete': 'true'},
-                                    follow=True)
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Your account doesn't have access to this page")
+        user_doesnt_pass_test_and_gets_404(self, 'project:gitintegration:delete',
+                                           address_kwargs={'project': self.project.name_short, 'repository': repo.pk},
+                                           get_kwargs={'delete': 'true'})
 
         # delete the key files from the server
         os.unlink(repo.rsa_priv_path.path)

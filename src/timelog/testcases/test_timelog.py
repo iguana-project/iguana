@@ -13,12 +13,13 @@ from django.urls import reverse
 from django.utils.timezone import now
 from datetime import timedelta
 
-from project.models import Project
+from common.testcases.generic_testcase_helper import user_doesnt_pass_test_and_gets_404
 from issue.models import Issue
 from kanbancol.models import KanbanColumn
-from django.contrib.auth import get_user_model
+from project.models import Project
 from timelog.templatetags.filter import duration
 from timelog.models import Timelog
+from django.contrib.auth import get_user_model
 
 
 class TimelogTest(TestCase):
@@ -264,10 +265,9 @@ class TimelogTest(TestCase):
         self.client.logout()
         self.client.force_login(self.user2)
 
-        response = self.client.get(reverse('issue:logedit',
-                                           kwargs={"project": self.issue.project.name_short,
-                                                   "sqn_i": self.issue.number, "sqn_l": 1}))
-        self.assertEqual(response.status_code, 302)
+        user_doesnt_pass_test_and_gets_404(self, 'issue:logedit',
+                                           address_kwargs={"project": self.issue.project.name_short,
+                                                           "sqn_i": self.issue.number, "sqn_l": 1})
 
     # PROJECT START
     def test_project_detail_timelog_from_different_issuesss_of_project_even_from_other_users(self):

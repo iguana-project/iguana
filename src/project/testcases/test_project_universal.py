@@ -11,8 +11,9 @@ work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
 from django.test import TestCase
 from django.urls import reverse
 
-from project.models import Project
+from common.testcases.generic_testcase_helper import user_doesnt_pass_test_and_gets_404
 from issue.models import Issue
+from project.models import Project
 from django.contrib.auth import get_user_model
 
 project_settings = {
@@ -66,23 +67,17 @@ class ProjectUniversalTest(TestCase):
         project.developer.add(self.user2)
 
         # try to delete as developer => should fail
-        response = self.client.post(reverse('project:delete', kwargs={'project': 'PRJ'}),
-                                    {'delete': 'true'}, follow=True)
-        self.assertContains(response, "Your account doesn't have access to this page")
+        user_doesnt_pass_test_and_gets_404(self, 'project:delete', address_kwargs={'project': 'PRJ'},
+                                           get_kwargs={'delete': 'true'})
         self.assertEqual(Project.objects.filter(name_short='PRJ').count(), 1)
 
         # try to leave as non-member
         project.developer.clear()
-        response = self.client.post(reverse('project:leave', kwargs={'project': 'PRJ'}),
-                                    {'delete': 'true'},
-                                    follow=True)
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Your account doesn't have access to this page")
+        user_doesnt_pass_test_and_gets_404(self, 'project:leave', address_kwargs={'project': 'PRJ'},
+                                           get_kwargs={'delete': 'true'})
 
         # detail view only accessible for members
-        response = self.client.post(reverse('project:detail', kwargs={'project': 'PRJ'}), follow=True)
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Your account doesn't have access to this page")
+        user_doesnt_pass_test_and_gets_404(self, 'project:detail', address_kwargs={'project': 'PRJ'})
 
         # usertimelog not accessible for non-members
         # NOTE dispatch() is called before test_func(), so we receive 404 here
@@ -147,8 +142,9 @@ class ProjectUniversalTest(TestCase):
 
         project['manager'] = (user2.pk)
         response = self.client.post(reverse('project:edit', kwargs={'project': project['name_short']}), project)
-        response = self.client.get(reverse('project:edit', kwargs={'project': project['name_short']}))
-        self.assertEqual(response.status_code, 302)  # logged in user isn't manager anymore
+        self.assertEqual(response.status_code, 302)
+        # logged in user isn't manager anymore
+        user_doesnt_pass_test_and_gets_404(self, 'project:edit', address_kwargs={'project': project['name_short']})
 
         self.client.logout()
         self.client.force_login(user2)

@@ -12,9 +12,10 @@ from django.test import TestCase
 from django.urls import reverse
 from collections import deque
 
-from project.models import Project
+from common.testcases.generic_testcase_helper import user_doesnt_pass_test_and_gets_404
 from issue.models import Issue
 from kanbancol.models import KanbanColumn
+from project.models import Project
 from django.contrib.auth import get_user_model
 
 
@@ -57,8 +58,8 @@ class FormTest(TestCase):
 
         numCols = KanbanColumn.objects.count()
 
-        response = self.client.post(reverse('kanbancol:create', kwargs={'project': self.short}), vals, follow=True)
-        self.assertContains(response, "Your account doesn't have access to this page.")
+        user_doesnt_pass_test_and_gets_404(self, 'kanbancol:create', address_kwargs={'project': self.short},
+                                           get_kwargs=vals)
 
         self.assertEqual(numCols, KanbanColumn.objects.count())
 
@@ -66,23 +67,19 @@ class FormTest(TestCase):
             'name': "Testmodification",
             'type': 'ToDo',
         }
-        response = self.client.post(reverse('kanbancol:update', kwargs={'position': 3, 'project': self.short}),
-                                    vals,
-                                    follow=True)
-        self.assertContains(response, "Your account doesn't have access to this page.")
+        user_doesnt_pass_test_and_gets_404(self, 'kanbancol:update',
+                                           address_kwargs={'position': 3, 'project': self.short},
+                                           get_kwargs=vals)
 
-        response = self.client.post(reverse('kanbancol:delete', kwargs={'position': 3, 'project': self.short}),
-                                    {'delete': 'true'},
-                                    follow=True)
-        self.assertContains(response, "Your account doesn't have access to this page.")
+        user_doesnt_pass_test_and_gets_404(self, 'kanbancol:delete',
+                                           address_kwargs={'position': 3, 'project': self.short},
+                                           get_kwargs={'delete': 'true'})
 
-        response = self.client.post(reverse('kanbancol:movedown', kwargs={'project': self.short, 'position': 1}),
-                                    follow=True)
-        self.assertContains(response, "Your account doesn't have access to this page.")
+        user_doesnt_pass_test_and_gets_404(self, 'kanbancol:movedown',
+                                           address_kwargs={'project': self.short, 'position': 1})
 
-        response = self.client.post(reverse('kanbancol:moveup', kwargs={'project': self.short, 'position': 1}),
-                                    follow=True)
-        self.assertContains(response, "Your account doesn't have access to this page.")
+        user_doesnt_pass_test_and_gets_404(self, 'kanbancol:moveup',
+                                           address_kwargs={'project': self.short, 'position': 1})
 
         self.client.force_login(self.user)
 

@@ -25,7 +25,8 @@ from project.models import Project
 from issue.models import Issue
 from django.contrib.auth import get_user_model
 from common.celery import import_commits
-from common.testcases.generic_testcase_helper import view_and_template, redirect_to_login_and_login_required
+from common.testcases.generic_testcase_helper import view_and_template, redirect_to_login_and_login_required, \
+        user_doesnt_pass_test_and_gets_404
 
 
 class GitFrontendTest(TestCase):
@@ -263,18 +264,14 @@ class GitFrontendTest(TestCase):
 
         # check with insufficient privileges
         self.project.manager.clear()
-        response = self.client.post(reverse('issue:commit_diff',
-                                            kwargs={'project': self.project.name_short,
-                                                    'sqn_i': c.issue.number,
-                                                    }
-                                            ),
-                                    {'filename': list(c.get_changes().keys())[0],
-                                     'repository': repo.pk,
-                                     'commit_sha': c.get_name_short(),
-                                     },
-                                    follow=True)
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Your account doesn't have access to this page")
+        user_doesnt_pass_test_and_gets_404(self, 'issue:commit_diff',
+                                           address_kwargs={'project': self.project.name_short,
+                                                           'sqn_i': c.issue.number,
+                                                           },
+                                           get_kwargs={'filename': list(c.get_changes().keys())[0],
+                                                       'repository': repo.pk,
+                                                       'commit_sha': c.get_name_short(),
+                                                       },)
         self.project.manager.add(self.user)
 
         # post broken data to view

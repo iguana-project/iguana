@@ -25,7 +25,8 @@ from search.models import Search
 from tag.models import Tag
 from issue.models import Issue, Comment
 from django.contrib.auth import get_user_model
-from common.testcases.generic_testcase_helper import view_and_template, redirect_to_login_and_login_required
+from common.testcases.generic_testcase_helper import view_and_template, redirect_to_login_and_login_required, \
+        user_doesnt_pass_test_and_gets_404
 
 
 class SearchTest(TestCase):
@@ -331,9 +332,7 @@ class SearchTest(TestCase):
         self.assertEqual(response.status_code, 404)
 
         # should also work for missing pks
-        response = self.client.post(reverse('search:makepersistent'), {'pk': '2'}, follow=True)
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Your account doesn't have access to this page.")
+        user_doesnt_pass_test_and_gets_404(self, 'search:makepersistent', get_kwargs={'pk': '2'})
 
         # test deleting persistent items
         response = self.client.post(reverse('search:delpersistent'), {'pk': '1'})
@@ -347,9 +346,7 @@ class SearchTest(TestCase):
         self.assertEqual(response.status_code, 404)
 
         # try deleting non-present pk
-        response = self.client.post(reverse('search:delpersistent'), {'pk': '3'}, follow=True)
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Your account doesn't have access to this page.")
+        user_doesnt_pass_test_and_gets_404(self, 'search:delpersistent', get_kwargs={'pk': '3'})
 
     def test_share_with_project_0(self):
         expression = 'User.username ~ "a"'
@@ -381,11 +378,8 @@ class SearchTest(TestCase):
         search.save()
 
         description = 'another description'
-        response = self.client.post(reverse('search:edit', kwargs={'sqn_sh': '1'}),
-                                    {'description': description, 'searchexpression': expression},
-                                    follow=True,
-                                    )
-        self.assertContains(response, "Your account doesn't have access to this page.")
+        user_doesnt_pass_test_and_gets_404(self, 'search:edit', address_kwargs={'sqn_sh': '1'},
+                                           get_kwargs={'description': description, 'searchexpression': expression})
 
         search.refresh_from_db()
         self.assertNotEqual(search.description, description)
@@ -417,8 +411,7 @@ class SearchTest(TestCase):
         search.save()
 
         self.client.force_login(self.user2)
-        response = self.client.post(reverse('project:search', kwargs={'project': 'PRJ'}), follow=True)
-        self.assertContains(response, "Your account doesn't have access to this page.")
+        user_doesnt_pass_test_and_gets_404(self, 'project:search', address_kwargs={'project': 'PRJ'})
 
         self.assertEqual(Search.objects.filter(creator=self.user, persistent=True).count(), 1)
 

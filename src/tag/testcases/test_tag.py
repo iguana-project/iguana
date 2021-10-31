@@ -21,7 +21,8 @@ from project.models import Project
 from tag.models import Tag
 from search.frontend import SearchFrontend
 from django.contrib.auth import get_user_model, login
-from common.testcases.generic_testcase_helper import view_and_template, redirect_to_login_and_login_required
+from common.testcases.generic_testcase_helper import view_and_template, redirect_to_login_and_login_required, \
+        user_doesnt_pass_test_and_gets_404
 
 
 p0_name = 'project0'
@@ -90,10 +91,7 @@ class TagTest(TestCase):
         project2.save()
 
         # we neither add the user as manager nor as developer so there are not the necessary rights to manipulate tags
-        response = self.client.get(reverse('tag:tag', kwargs={'project': proj_short}), follow=True)
-        self.assertContains(response, "Your account doesn't have access to this page. To proceed, please " +
-                                      "login with an account that has access.")
-        self.assertTemplateUsed(response, 'registration/login.html')
+        user_doesnt_pass_test_and_gets_404(self, 'tag:tag', address_kwargs={'project': proj_short})
 
         # developer is good
         project.developer.add(self.user)

@@ -15,7 +15,8 @@ import json
 from django.contrib.auth import get_user_model
 from project.models import Project
 from user_management.views import LoginView
-from common.testcases.generic_testcase_helper import redirect_to_login_and_user_doesnt_pass_test
+from common.testcases.generic_testcase_helper import redirect_to_login_and_user_doesnt_pass_test, \
+        user_doesnt_pass_test_and_gets_404
 
 
 class MotifyNotificationPropsTest(TestCase):
@@ -44,18 +45,14 @@ class MotifyNotificationPropsTest(TestCase):
                                     'notitype': 'NewIssue',
                                     'enabled': '1'},
                                    )
-        self.assertEqual(response.status_code, 302)
-        response = self.client.get(response['location'])
-        # verify the login-required mixin
-        self.assertEqual(response.resolver_match.func.__name__, LoginView.as_view().__name__)
-        self.assertContains(response, 'Your account doesn\'t have access to this page.')
+        self.assertEqual(response.status_code, 404)
 
     def test_notification_all_parameters_are_required(self):
         # all parameters must be set; fails at the UserPassesTestMixin
-        redirect_to_login_and_user_doesnt_pass_test(self, 'user_profile:toggle_notification',
-                                                    address_kwargs={"username": 'a'}, get_kwargs={})
-        redirect_to_login_and_user_doesnt_pass_test(self, 'user_profile:toggle_notification',
-                                                    address_kwargs={"username": 'a'}, get_kwargs={'shn_p': 'BLUB'})
+        user_doesnt_pass_test_and_gets_404(self, 'user_profile:toggle_notification',
+                                           address_kwargs={"username": 'a'}, get_kwargs={})
+        user_doesnt_pass_test_and_gets_404(self, 'user_profile:toggle_notification',
+                                           address_kwargs={"username": 'a'}, get_kwargs={'shn_p': 'BLUB'})
 
     def test_notification_invalid_notitype(self):
         # check invalid notitype
@@ -69,20 +66,20 @@ class MotifyNotificationPropsTest(TestCase):
 
     def test_notification_insufficient_project_permissions(self):
         # check project existing check; fails at the UserPassesTestMixin
-        redirect_to_login_and_user_doesnt_pass_test(self, 'user_profile:toggle_notification',
-                                                    address_kwargs={"username": 'a'},
-                                                    get_kwargs={'shn_p': 'PP',
-                                                                'notiway': 'mail',
-                                                                'notitype': 'NewIssue',
-                                                                'enabled': '1'})
+        user_doesnt_pass_test_and_gets_404(self, 'user_profile:toggle_notification',
+                                           address_kwargs={"username": 'a'},
+                                           get_kwargs={'shn_p': 'PP',
+                                                       'notiway': 'mail',
+                                                       'notitype': 'NewIssue',
+                                                       'enabled': '1'})
 
         # check project membership check; fails at the UserPassesTestMixin
-        redirect_to_login_and_user_doesnt_pass_test(self, 'user_profile:toggle_notification',
-                                                    address_kwargs={"username": 'a'},
-                                                    get_kwargs={'shn_p': 'PRO',
-                                                                'notiway': 'mail',
-                                                                'notitype': 'NewIssue',
-                                                                'enabled': '1'})
+        user_doesnt_pass_test_and_gets_404(self, 'user_profile:toggle_notification',
+                                           address_kwargs={"username": 'a'},
+                                           get_kwargs={'shn_p': 'PRO',
+                                                       'notiway': 'mail',
+                                                       'notitype': 'NewIssue',
+                                                       'enabled': '1'})
 
     def test_modify_notifications_success_cases(self):
         # set NewIssue property to 1

@@ -17,7 +17,8 @@ from project.models import Project
 from integration.models import SlackIntegration
 from django.contrib.auth import get_user_model
 from integration.views import SlackIntegrationOAuthView
-from common.testcases.generic_testcase_helper import view_and_template, redirect_to_login_and_login_required
+from common.testcases.generic_testcase_helper import view_and_template, redirect_to_login_and_login_required, \
+        user_doesnt_pass_test_and_gets_404
 
 
 try:
@@ -64,32 +65,26 @@ class ViewTest(TestCase):
         pass
 
     def test_redirect_to_login_and_login_required(self):
-        self.client.force_login(self.user2)
-        # TODO TESTCASE this uses post - include this in redirect_to_login_required()
-        response = self.client.post(reverse('integration:slack:update', kwargs={'pk': 1, 'project': self.short}),
-                                    {'channel': 'foo'},
-                                    follow=True
-                                    )
-        self.assertContains(response, "Your account doesn't have access to this page")
-
-        si = SlackIntegration.objects.get(pk=self.si.pk)
-        self.assertEqual(si.channel, 'channel')
-
-        # TODO TESTCASE this uses post - include this in redirect_to_login_required()
-        response = self.client.post(reverse('integration:slack:delete', kwargs={'pk': 1, 'project': self.short}),
-                                    {'delete': True},
-                                    follow=True
-                                    )
-        self.assertContains(response, "Your account doesn't have access to this page")
-
-        si = SlackIntegration.objects.get(pk=self.si.pk)
-        self.assertEqual(si.channel, 'channel')
-
-        # TODO TESTCASE SlackIntegrationOAuthView - integration:slack:auth
-
-        self.client.force_login(self.user)
+        # TODO TESTCASE
+        pass
 
     def test_user_passes_test_mixin(self):
+        # non dev can neither update ...
+        self.client.force_login(self.user2)
+        user_doesnt_pass_test_and_gets_404(self, 'integration:slack:update',
+                                           address_kwargs={'pk': 1, 'project': self.short},
+                                           get_kwargs={'channel': 'foo'})
+
+        si = SlackIntegration.objects.get(pk=self.si.pk)
+        self.assertEqual(si.channel, 'channel')
+        # ... nor delete the integration
+        user_doesnt_pass_test_and_gets_404(self, 'integration:slack:delete',
+                                           address_kwargs={'pk': 1, 'project': self.short},
+                                           get_kwargs={'delete': True})
+
+        si = SlackIntegration.objects.get(pk=self.si.pk)
+        self.assertEqual(si.channel, 'channel')
+
         # TODO TESTCASE
         # TODO only devs are allowed to edit an integration
         # TODO how about creation of integrations?
