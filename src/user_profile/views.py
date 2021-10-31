@@ -93,11 +93,7 @@ class ToggleNotificationView(LoginRequiredMixin, UserPassesTestMixin, View):
     def test_func(self):
         # user needs read permissions for the project
         rcvs = self.rcvs
-        try:
-            get_r_object_or_404(self.request.user, Project, name_short=self.request.POST.get(rcvs[0]))
-        except Http404:
-            return 0
-        return 1
+        return get_r_object_or_404(self.request.user, Project, name_short=self.request.POST.get(rcvs[0]))
 
 
 class ShowProfilePageView(LoginRequiredMixin, ShowMoreMixin, DetailView):

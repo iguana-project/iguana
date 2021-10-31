@@ -70,14 +70,10 @@ class RepositoryDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
 
     def test_func(self):
         # allow access for managers and developers
-        try:
-            get_r_object_or_404(self.request.user, Repository,
-                                project__name_short=self.kwargs.get('project'),
-                                pk=self.kwargs.get('repository'),
-                                )
-        except Http404:
-            return 0
-        return 1
+        return get_r_object_or_404(self.request.user, Repository,
+                                   project__name_short=self.kwargs.get('project'),
+                                   pk=self.kwargs.get('repository'),
+                                   )
 
 
 class RepositoryEditView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
@@ -95,14 +91,10 @@ class RepositoryEditView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
     def test_func(self):
         # allow access only for managers (write access)
-        try:
-            get_w_object_or_404(self.request.user, Repository,
-                                project__name_short=self.kwargs.get('project'),
-                                pk=self.kwargs.get('repository'),
-                                )
-        except Http404:
-            return 0
-        return 1
+        return get_w_object_or_404(self.request.user, Repository,
+                                   project__name_short=self.kwargs.get('project'),
+                                   pk=self.kwargs.get('repository'),
+                                   )
 
     def get_success_url(self):
         return reverse('project:detail', kwargs={'project': self.kwargs.get('project')})
@@ -125,13 +117,7 @@ class RepositoryCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
 
     def test_func(self):
         # allow access only for managers (write access)
-        try:
-            get_w_object_or_404(self.request.user, Project,
-                                name_short=self.kwargs.get('project'),
-                                )
-        except Http404:
-            return 0
-        return 1
+        return get_w_object_or_404(self.request.user, Project, name_short=self.kwargs.get('project'))
 
     def get_success_url(self):
         return reverse('project:detail', kwargs={'project': self.kwargs.get('project')})
@@ -150,13 +136,7 @@ class RepositoryDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
     def test_func(self):
         # allow access only for managers (write access)
-        try:
-            get_w_object_or_404(self.request.user, Project,
-                                name_short=self.kwargs.get('project'),
-                                )
-        except Http404:
-            return 0
-        return 1
+        return get_w_object_or_404(self.request.user, Project, name_short=self.kwargs.get('project'))
 
     def delete(self, request, *args, **kwargs):
         if 'delete' in request.POST:
@@ -185,13 +165,7 @@ class FileDiffView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
 
     def test_func(self):
         # allow access for managers and developers
-        try:
-            get_r_object_or_404(self.request.user, Project,
-                                name_short=self.kwargs.get('project')
-                                )
-        except Http404:
-            return 0
-        return 1
+        return get_r_object_or_404(self.request.user, Project, name_short=self.kwargs.get('project'))
 
     def get_context_data(self, **kwargs):
         context = super(FileDiffView, self).get_context_data(**kwargs)

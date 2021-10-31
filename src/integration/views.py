@@ -40,12 +40,8 @@ class SlackIntegrationUpdateView(LoginRequiredMixin, UserPassesTestMixin, Update
         return reverse('project:edit', kwargs={'project': self.kwargs['project']})
 
     def test_func(self):
-        try:
-            get_w_object_or_404(self.request.user, Project,
-                                name_short=self.kwargs.get('project')).is_manager(self.request.user)
-        except Http404:
-            return 0
-        return 1
+        return get_w_object_or_404(self.request.user, Project,
+                                   name_short=self.kwargs.get('project')).is_manager(self.request.user)
 
 
 class SlackIntegrationDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
@@ -64,12 +60,8 @@ class SlackIntegrationDeleteView(LoginRequiredMixin, UserPassesTestMixin, Delete
         return reverse('project:edit', kwargs={'project': self.kwargs['project']})
 
     def test_func(self):
-        try:
-            get_w_object_or_404(self.request.user, Project,
-                                name_short=self.kwargs.get('project')).is_manager(self.request.user)
-        except Http404:
-            return 0
-        return 1
+        return get_w_object_or_404(self.request.user, Project,
+                                   name_short=self.kwargs.get('project')).is_manager(self.request.user)
 
 
 # The authentication happens within this function.

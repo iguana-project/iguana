@@ -96,12 +96,7 @@ class ProjectDetailTimelogView(LoginRequiredMixin, UserPassesTestMixin, Template
         return context
 
     def test_func(self):
-        try:
-            get_r_object_or_404(self.request.user, Project,
-                                name_short=self.kwargs.get('project'))
-        except Http404:
-            return 0
-        return 1
+        return get_r_object_or_404(self.request.user, Project, name_short=self.kwargs.get('project'))
 
 
 class ProjectUserTimelogView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
@@ -143,12 +138,7 @@ class ProjectUserTimelogView(LoginRequiredMixin, UserPassesTestMixin, TemplateVi
         return context
 
     def test_func(self):
-        try:
-            get_r_object_or_404(self.request.user, Project,
-                                name_short=self.kwargs.get('project'))
-        except Http404:
-            return 0
-        return 1
+        return get_r_object_or_404(self.request.user, Project, name_short=self.kwargs.get('project'))
 
 
 class ProjectDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
@@ -173,12 +163,7 @@ class ProjectDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         return Project.objects.filter(name_short=self.kwargs.get('project'))
 
     def test_func(self):
-        try:
-            get_r_object_or_404(self.request.user, Project,
-                                name_short=self.kwargs.get('project'))
-        except Http404:
-            return 0
-        return 1
+        return get_r_object_or_404(self.request.user, Project, name_short=self.kwargs.get('project'))
 
     def get(self, request, *args, **kwargs):
         response = DetailView.get(self, request, *args, **kwargs)
@@ -227,12 +212,7 @@ class ProjectEditView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     breadcrumb = ""
 
     def test_func(self):
-        try:
-            get_w_object_or_404(self.request.user, Project,
-                                name_short=self.kwargs.get('project'))
-        except Http404:
-            return 0
-        return 1
+        return get_w_object_or_404(self.request.user, Project, name_short=self.kwargs.get('project'))
 
     def get_context_data(self, **kwargs):
         context = super(ProjectEditView, self).get_context_data(**kwargs)
@@ -276,12 +256,7 @@ class ProjectDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         return HttpResponseRedirect(reverse('project:edit', kwargs={'project': self.kwargs['project']}))
 
     def test_func(self):
-        try:
-            get_w_object_or_404(self.request.user, Project,
-                                name_short=self.kwargs.get('project'))
-        except Http404:
-            return 0
-        return 1
+        return get_w_object_or_404(self.request.user, Project, name_short=self.kwargs.get('project'))
 
 
 class LeaveProjectView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
@@ -311,9 +286,4 @@ class LeaveProjectView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         return HttpResponseRedirect(reverse('project:edit', kwargs={'project': self.kwargs['project']}))
 
     def test_func(self):
-        try:
-            get_r_object_or_404(self.request.user, Project,
-                                name_short=self.kwargs.get('project'))
-        except Http404:
-            return 0
-        return 1
+        return get_r_object_or_404(self.request.user, Project, name_short=self.kwargs.get('project'))

@@ -53,12 +53,7 @@ class KanbanColumnCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView
         return reverse('project:edit', kwargs={'project': self.kwargs['project']})
 
     def test_func(self):
-        try:
-            get_w_object_or_404(self.request.user, Project,
-                                name_short=self.kwargs.get('project'))
-        except Http404:
-            return 0
-        return 1
+        return get_w_object_or_404(self.request.user, Project, name_short=self.kwargs.get('project'))
 
 
 class KanbanColumnUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
@@ -71,13 +66,9 @@ class KanbanColumnUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView
         return reverse('project:edit', kwargs={'project': self.kwargs['project']})
 
     def test_func(self):
-        try:
-            get_w_object_or_404(self.request.user, KanbanColumn,
-                                project__name_short=self.kwargs.get('project'),
-                                position=self.kwargs.get('position'))
-        except Http404:
-            return 0
-        return 1
+        return get_w_object_or_404(self.request.user, KanbanColumn,
+                                   project__name_short=self.kwargs.get('project'),
+                                   position=self.kwargs.get('position'))
 
     def get_object(self):
         return get_w_object_or_404(self.request.user, KanbanColumn,
@@ -95,13 +86,9 @@ class KanbanColumnUpView(LoginRequiredMixin, UserPassesTestMixin, View):
         return redirect(reverse('project:edit', kwargs={'project': self.kwargs['project']}))
 
     def test_func(self):
-        try:
-            get_w_object_or_404(self.request.user, KanbanColumn,
-                                project__name_short=self.kwargs.get('project'),
-                                position=self.kwargs.get('position'))
-        except Http404:
-            return 0
-        return 1
+        return get_w_object_or_404(self.request.user, KanbanColumn,
+                                   project__name_short=self.kwargs.get('project'),
+                                   position=self.kwargs.get('position'))
 
     def get(self, *args, **kwargs):
         raise Http404
@@ -117,13 +104,9 @@ class KanbanColumnDownView(LoginRequiredMixin, UserPassesTestMixin, View):
         return redirect(reverse('project:edit', kwargs={'project': self.kwargs['project']}))
 
     def test_func(self):
-        try:
-            get_w_object_or_404(self.request.user, KanbanColumn,
-                                project__name_short=self.kwargs.get('project'),
-                                position=self.kwargs.get('position'))
-        except Http404:
-            return 0
-        return 1
+        return get_w_object_or_404(self.request.user, KanbanColumn,
+                                   project__name_short=self.kwargs.get('project'),
+                                   position=self.kwargs.get('position'))
 
     def get(self, *args, **kwargs):
         raise Http404
@@ -154,13 +137,9 @@ class KanbanColumnDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView
         return reverse('project:edit', kwargs={'project': self.kwargs['project']})
 
     def test_func(self):
-        try:
-            get_w_object_or_404(self.request.user, KanbanColumn,
-                                project__name_short=self.kwargs.get('project'),
-                                position=self.kwargs.get('position'))
-        except Http404:
-            return 0
-        return 1
+        return get_w_object_or_404(self.request.user, KanbanColumn,
+                                   project__name_short=self.kwargs.get('project'),
+                                   position=self.kwargs.get('position'))
 
     def get_object(self):
         return get_w_object_or_404(self.request.user, KanbanColumn,

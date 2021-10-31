@@ -56,11 +56,7 @@ class TimelogCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
         return super(TimelogCreateView, self).form_valid(form)
 
     def test_func(self):
-        try:
-            get_r_object_or_404(self.request.user, Project, name_short=self.kwargs.get('project'))
-        except Http404:
-            return 0
-        return 1
+        return get_r_object_or_404(self.request.user, Project, name_short=self.kwargs.get('project'))
 
 
 class TimelogEditView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
@@ -88,11 +84,7 @@ class TimelogEditView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
             return next_url
 
     def test_func(self):
-        try:
-            self.get_object().user_has_write_permissions(self.request.user)
-        except Exception:
-            return 0
-        return 1
+        return self.get_object().user_has_write_permissions(self.request.user)
 
 
 # shows all logs for all projects + issues for the own user
@@ -236,8 +228,4 @@ class PunchView(LoginRequiredMixin, UserPassesTestMixin, View):
         return HttpResponseRedirect(success_url)
 
     def test_func(self):
-        try:
-            get_r_object_or_404(self.request.user, Project, name_short=self.kwargs.get('project'))
-        except Http404:
-            return 0
-        return 1
+        return get_r_object_or_404(self.request.user, Project, name_short=self.kwargs.get('project'))

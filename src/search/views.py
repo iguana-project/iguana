@@ -72,13 +72,7 @@ class ProjectFilterView(LoginRequiredMixin, UserPassesTestMixin, View):
                                  })
 
     def test_func(self):
-        try:
-            project = get_r_object_or_404(self.request.user, Project,
-                                          name_short=self.kwargs.get('project'),
-                                          )
-        except Http404:
-            return 0
-        return 1
+        return get_r_object_or_404(self.request.user, Project, name_short=self.kwargs.get('project'))
 
 
 class SearchEditView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
@@ -90,11 +84,7 @@ class SearchEditView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     success_url = reverse_lazy('search:advanced')
 
     def test_func(self):
-        try:
-            get_w_object_or_404(self.request.user, Search, pk=self.kwargs.get('sqn_sh'))
-        except Http404:
-            return 0
-        return 1
+        return get_w_object_or_404(self.request.user, Search, pk=self.kwargs.get('sqn_sh'))
 
     def get_object(self):
         return get_w_object_or_404(self.request.user, Search,
@@ -179,13 +169,7 @@ class MakeSearchPersistentView(LoginRequiredMixin, UserPassesTestMixin, View):
         return redirect(reverse('search:advanced'))
 
     def test_func(self):
-        try:
-            get_w_object_or_404(self.request.user, Search,
-                                creator=self.request.user,
-                                pk=self.request.POST.get('pk'))
-        except Http404:
-            return 0
-        return 1
+        return get_w_object_or_404(self.request.user, Search, creator=self.request.user, pk=self.request.POST.get('pk'))
 
 
 class DelSearchPersistentView(LoginRequiredMixin, UserPassesTestMixin, View):
@@ -199,13 +183,7 @@ class DelSearchPersistentView(LoginRequiredMixin, UserPassesTestMixin, View):
         return redirect(reverse('search:advanced'))
 
     def test_func(self):
-        try:
-            get_w_object_or_404(self.request.user, Search,
-                                creator=self.request.user,
-                                pk=self.request.POST.get('pk'))
-        except Http404:
-            return 0
-        return 1
+        return get_w_object_or_404(self.request.user, Search, creator=self.request.user, pk=self.request.POST.get('pk'))
 
 
 @register.filter
