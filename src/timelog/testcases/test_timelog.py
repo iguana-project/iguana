@@ -58,6 +58,12 @@ class TimelogTest(TestCase):
         self.issue2.assignee.add(self.user)
         self.time = now().strftime("%Y-%m-%d %H:%M:%S")
 
+        # success logedit_address_kwargs
+        self.sqn_l1_address_kwarg = {"project": self.issue.project.name_short,
+                                     "sqn_i": self.issue.number,
+                                     "sqn_l": 1
+                                     }
+
     def test_view_and_template(self):
         # TODO TESTCASE see invite_users
         #      use view_and_template()
@@ -233,9 +239,7 @@ class TimelogTest(TestCase):
         response = self.client.post(reverse('issue:log', kwargs={"project": self.issue.project.name_short,
                                                                  "sqn_i": self.issue.number}),
                                     {'time': '1h30m', 'created_at': self.time})
-        response = self.client.post(reverse('issue:logdelete', kwargs={"project": self.issue.project.name_short,
-                                                                       "sqn_i": self.issue.number,
-                                                                       "sqn_l": 1}),
+        response = self.client.post(reverse('issue:logdelete', kwargs=self.sqn_l1_address_kwarg),
                                     {'keep': 'true'}, follow=True)
         self.assertTemplateUsed(response, 'timelog/timelog_list_peruser.html')
         self.assertContains(response, "1 Hour and 30 Minutes")
@@ -249,25 +253,28 @@ class TimelogTest(TestCase):
                                                                    "sqn_i": self.issue.number}))
         self.assertContains(response, "1 Day, 1 Hour and 30 Minutes")
 
-        response = self.client.get(reverse('issue:logedit',
-                                           kwargs={"project": self.issue.project.name_short,
-                                                   "sqn_i": self.issue.number, "sqn_l": 1}))
+        response = self.client.get(reverse('issue:logedit', kwargs=self.sqn_l1_address_kwarg))
         self.assertContains(response, "1d 1h 30m")
 
-        response = self.client.post(reverse('issue:logedit', kwargs={"project": self.issue.project.name_short,
-                                                                     "sqn_i": self.issue.number, "sqn_l": 1}),
+        response = self.client.post(reverse('issue:logedit', kwargs=self.sqn_l1_address_kwarg),
                                     {'time': '3h', 'created_at': self.time, 'save_timelog_change': 'true'})
         response = self.client.get(reverse('issue:detail', kwargs={"project": self.issue.project.name_short,
                                                                    "sqn_i": self.issue.number}))
         self.assertContains(response, "3 Hours")
 
-        # test to edit with other user - should not be possible
+    def test_edit_and_delete_as_other_user(self):
+        response = self.client.post(reverse('issue:log', kwargs={"project": self.issue.project.name_short,
+                                                                 "sqn_i": self.issue.number}),
+                                    {'time': '1h30m', 'created_at': self.time})
+        self.assertEqual(str(Timelog.objects.filter(issue=self.issue)[0].time), "1:30:00")
+        # test to edit or delete as other user - should not be possible
         self.client.logout()
         self.client.force_login(self.user2)
 
-        user_doesnt_pass_test_and_gets_404(self, 'issue:logedit',
-                                           address_kwargs={"project": self.issue.project.name_short,
-                                                           "sqn_i": self.issue.number, "sqn_l": 1})
+        user_doesnt_pass_test_and_gets_404(self, 'issue:logedit', address_kwargs=self.sqn_l1_address_kwarg)
+        self.assertEqual(str(Timelog.objects.filter(issue=self.issue)[0].time), "1:30:00")
+        user_doesnt_pass_test_and_gets_404(self, 'issue:logdelete', address_kwargs=self.sqn_l1_address_kwarg)
+        self.assertEqual(str(Timelog.objects.filter(issue=self.issue)[0].time), "1:30:00")
 
     # PROJECT START
     def test_project_detail_timelog_from_different_issuesss_of_project_even_from_other_users(self):
