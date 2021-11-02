@@ -1,0 +1,79 @@
+name: Test & Build
+
+on:
+    push:
+        branches:
+            - master
+            - github_actions
+        tags:
+            - "production-[0-9]+"
+    pull_request:
+
+
+jobs:
+    test:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+
+            - name: Set up Python 3.7
+              uses: actions/setup-python@v2
+              with:
+                  python-version: '3.7'
+
+            - name: Install dependencies
+              run: |
+                  sudo apt-get update -y
+                  sudo apt-get install -y libexempi8 chromium-browser
+            # - name: Install latest Chrome
+            #   uses: browser-actions/setup-chrome@latest
+            # - uses: nanasess/setup-chromedriver@v1.0.5
+
+            - name: Prepare test environment
+              run: |
+                  make development
+                  # requirement for coveralls.io
+                  pip install coveralls
+
+            - name: Run all tests
+              run: make coverage +c
+
+            - name: Publish coverage
+              if: ${{ success() }}
+              run: |
+                  pushd src
+                  coveralls --service=github
+                  popd
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    build:
+        needs: test
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+
+            - name: Set up Docker Buildx
+              uses: docker/setup-buildx-action@v1
+            - name: Login to DockerHub
+              uses: docker/login-action@v1
+              with:
+                  username: ${{ secrets.DOCKERHUB_USERNAME }}
+                  password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+            - name: Determine build target
+              id: build-target
+              run: |
+                  case "$GITHUB_REF" in
+                      refs/tags*)
+                          echo '::set-output name=TARGET::production';;
+                      *)
+                          echo '::set-output name=TARGET::default';;
+                  esac
+            - name: Build and push
+              uses: docker/bake-action@v1
+              with:
+                  files: docker/docker-bake.hcl
+                  targets: ${{ steps.build-target.outputs.TARGET }}
+                  # only push it if the event is not a pull request
+                  # push: ${{ github.event_name != 'pull_request' }}
