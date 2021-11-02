@@ -24,7 +24,7 @@ jobs:
             - name: Install dependencies
               run: |
                   sudo apt-get update -y
-                  sudo apt-get install -y libexempi8 chromium-browser
+                  sudo apt-get install -y libexempi8
             # - name: Install latest Chrome
             #   uses: browser-actions/setup-chrome@latest
             # - uses: nanasess/setup-chromedriver@v1.0.5
