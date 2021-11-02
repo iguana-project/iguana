@@ -1,6 +1,6 @@
 # Iguana
 [![Coverage Status](https://img.shields.io/coveralls/github/iguana-project/iguana/master.svg)](https://coveralls.io/github/iguana-project/iguana?branch=master)
-[![Build Status](https://travis-ci.com/iguana-project/iguana.svg?branch=master)](https://travis-ci.com/iguana-project/iguana)
+[![Test & Build](https://github.com/iguana-project/iguana/actions/workflows/test_and_build.yml/badge.svg)](https://github.com/iguana-project/iguana/actions/workflows/test_and_build.yml)
 ![Django 2.2 support](https://img.shields.io/badge/django-v2.2-blue)
 ![Python >=3.7 required](https://img.shields.io/badge/python-v3.7|3.8|3.9|3.10-blue)
 
