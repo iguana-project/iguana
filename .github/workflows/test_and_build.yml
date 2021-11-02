@@ -4,7 +4,6 @@ on:
     push:
         branches:
             - master
-            - github_actions
         tags:
             - "production-[0-9]+"
     pull_request:
@@ -25,9 +24,6 @@ jobs:
               run: |
                   sudo apt-get update -y
                   sudo apt-get install -y libexempi8
-            # - name: Install latest Chrome
-            #   uses: browser-actions/setup-chrome@latest
-            # - uses: nanasess/setup-chromedriver@v1.0.5
 
             - name: Prepare test environment
               run: |
@@ -76,4 +72,4 @@ jobs:
                   files: docker/docker-bake.hcl
                   targets: ${{ steps.build-target.outputs.TARGET }}
                   # only push it if the event is not a pull request
-                  # push: ${{ github.event_name != 'pull_request' }}
+                  push: ${{ github.event_name != 'pull_request' }}
