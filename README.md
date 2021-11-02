@@ -2,7 +2,7 @@
 [![Coverage Status](https://img.shields.io/coveralls/github/iguana-project/iguana/master.svg)](https://coveralls.io/github/iguana-project/iguana?branch=master)
 [![Build Status](https://travis-ci.com/iguana-project/iguana.svg?branch=master)](https://travis-ci.com/iguana-project/iguana)
 ![Django 2.2 support](https://img.shields.io/badge/django-v2.2-blue)
-![Python >=3.6 required](https://img.shields.io/badge/python-v3.6|3.7|3.8-blue)
+![Python >=3.7 required](https://img.shields.io/badge/python-v3.7|3.8|3.9|3.10-blue)
 
 ## Description
 Iguana is a mixture of a ticket system, an issue tracker and an issue management system, heavily based on basic functions being easy to use. So Iguana can help you to plan the next schedule and have always a nice overview about your current tasks depending on your needs, especially for working in groups. There is a kanban board to keep an eye on the progress until the end of the next planning stage and also a backlog to have the ability for scheduling of long-terms. In combination with a mechanism to log time spent on different tasks individually those are the essential functionalities.
@@ -65,10 +65,10 @@ brew install exempi         # OS X
 
 ##### Setup Python Version
 
-Iguana is currently tested against **Python 3.6**.</br>
-It may be also run on higher versions. But if you run into any problems, please test first if they also occour with Python 3.6.
+Iguana is currently tested against **Python 3.7**.</br>
+It may be also run on higher versions. But if you run into any problems, please test first if they also occour with Python 3.7.
 
-To install Python 3.6 locally (independent from your current system version), you can use [pyenv](https://github.com/pyenv/pyenv). For installation and setting up *pyenv* please stick to their documentation: https://github.com/pyenv/pyenv/wiki
+To install Python 3.7 locally (independent from your current system version), you can use [pyenv](https://github.com/pyenv/pyenv). For installation and setting up *pyenv* please stick to their documentation: https://github.com/pyenv/pyenv/wiki
 
 Once you've got *pyenv* running execute the following command in the main iguana directory:
 
