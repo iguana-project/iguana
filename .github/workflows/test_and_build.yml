@@ -71,5 +71,5 @@ jobs:
               with:
                   files: docker/docker-bake.hcl
                   targets: ${{ steps.build-target.outputs.TARGET }}
-                  # only push it if the event is not a pull request
-                  push: ${{ github.event_name != 'pull_request' }}
+                  # only publish on Docker Hub if there was a push to the repository
+                  push: ${{ github.event_name == 'push' }}
