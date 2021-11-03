@@ -62,9 +62,15 @@ jobs:
               run: |
                   case "$GITHUB_REF" in
                       refs/tags*)
-                          echo '::set-output name=TARGET::production';;
+                          echo '::set-output name=TARGET::production'
+                          # get the current production number
+                          p_num=$(echo "$GITHUB_REF" | sed -E "s/.*production-([0-9]+)/\1/")
+                          echo "::set-output name=PRODUCTION_NUM::$p_num"
+                          ;;
                       *)
-                          echo '::set-output name=TARGET::default';;
+                          echo '::set-output name=TARGET::default'
+                          echo '::set-output name=PRODUCTION_NUM::'
+                          ;;
                   esac
             - name: Build and push
               uses: docker/bake-action@v1
@@ -73,3 +79,5 @@ jobs:
                   targets: ${{ steps.build-target.outputs.TARGET }}
                   # only publish on Docker Hub if there was a push to the repository
                   push: ${{ github.event_name == 'push' }}
+              env:
+                  PRODUCTION_NUM: ${{ steps.build-target.outputs.PRODUCTION_NUM }}
