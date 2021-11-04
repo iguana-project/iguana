@@ -1,10 +1,10 @@
 wheel==0.37.0
 bleach==4.1.0
-celery==5.1.2
+celery==5.2.0
 Django==2.2.24
 django-activity-stream==0.10.0
 django-autocomplete-light==3.5.1
-django-bootstrap3==15.0.0
+django-bootstrap3==21.1
 django-cuser==2017.3.16
 django-bootstrap-datepicker-plus==3.0.5
 django-filter==2.4.0
