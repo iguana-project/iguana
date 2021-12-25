@@ -1,7 +1,7 @@
-wheel==0.37.0
+wheel==0.37.1
 bleach==4.1.0
-celery==5.2.0
-Django==2.2.24
+celery==5.2.1
+Django==2.2.25
 django-activity-stream==0.10.0
 django-autocomplete-light==3.5.1
 django-bootstrap3==21.1
@@ -9,12 +9,12 @@ django-cuser==2017.3.16
 django-bootstrap-datepicker-plus==3.0.5
 django-filter==2.4.0
 django-pagedown==2.2.1
-djangorestframework==3.12.4
+djangorestframework==3.13.1
 djangorestframework-simplejwt==5.0.0
 django-sendfile==0.3.11
 django-simple-captcha==0.5.14
 GitPython==3.1.24
-markdown==3.3.4
+markdown==3.3.6
 markdown-urlize==0.2.0
 markdown-del-ins==1.0.0
 mdx-truly-sane-lists==1.2
