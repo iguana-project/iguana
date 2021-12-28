@@ -15,10 +15,13 @@ jobs:
         steps:
             - uses: actions/checkout@v2
 
-            - name: Set up Python 3.7
+            - name: Read Python version
+              run: |
+                  echo "PYTHON_VERSION=$(cat .python-version)" >> $GITHUB_ENV
+            - name: Set up Python
               uses: actions/setup-python@v2
               with:
-                  python-version: '3.7'
+                  python-version: '${{ env.PYTHON_VERSION }}'
 
             - name: Install dependencies
               run: |
