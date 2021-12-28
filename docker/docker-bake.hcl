@@ -40,7 +40,7 @@ target "t_base" {
     context = "."
     dockerfile = "Dockerfile"
     args = {
-        BASE_IMAGE = notequal("",PYTHON_VERSION) ? "${PYTHON_VERSION}-alpine": "alpine",
+        BASE_IMAGE = notequal("",PYTHON_VERSION) ? "python:${PYTHON_VERSION}-alpine": "python:alpine",
     }
 }
 
