@@ -3,6 +3,12 @@ variable "PRODUCTION_NUM" {
     default=""
 }
 
+// set the Python version, that should be used for the base image
+// it MUST be in the format <major>.<minor>
+variable "PYTHON_VERSION" {
+    default=""
+}
+
 
 // helper function to set the right Docker tag
 function "docker_tag" {
@@ -33,6 +39,9 @@ group "production" {
 target "t_base" {
     context = "."
     dockerfile = "Dockerfile"
+    args = {
+        BASE_IMAGE = notequal("",PYTHON_VERSION) ? "${PYTHON_VERSION}-alpine": "alpine",
+    }
 }
 
 target "t_development" {
