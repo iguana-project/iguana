@@ -14,7 +14,7 @@ djangorestframework-simplejwt==5.0.0
 django-sendfile==0.3.11
 django-simple-captcha==0.5.14
 GitPython==3.1.24
-markdown==3.3.4
+markdown==3.3.6
 markdown-urlize==0.2.0
 markdown-del-ins==1.0.0
 mdx-truly-sane-lists==1.2

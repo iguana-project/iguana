@@ -1,7 +1,7 @@
 ################################################################################
 # global variables
 ################################################################################
-ARG BASE_IMAGE=python:3.7-alpine
+ARG BASE_IMAGE=python:3.8-alpine
 ARG APP_DIR=/iguana
 ARG FILES_DIR=/files
 ARG USE_NGINX=false

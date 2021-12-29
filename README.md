@@ -2,7 +2,7 @@
 [![Coverage Status](https://img.shields.io/coveralls/github/iguana-project/iguana/master.svg)](https://coveralls.io/github/iguana-project/iguana?branch=master)
 [![Test & Build](https://github.com/iguana-project/iguana/actions/workflows/test_and_build.yml/badge.svg)](https://github.com/iguana-project/iguana/actions/workflows/test_and_build.yml)
 ![Django 2.2 support](https://img.shields.io/badge/django-v2.2-blue)
-![Python >=3.7 required](https://img.shields.io/badge/python-v3.7|3.8|3.9|3.10-blue)
+![Python >=3.8 required](https://img.shields.io/badge/python-v3.8|3.9|3.10-blue)
 
 ## Description
 Iguana is a mixture of a ticket system, an issue tracker and an issue management system, heavily based on basic functions being easy to use. So Iguana can help you to plan the next schedule and have always a nice overview about your current tasks depending on your needs, especially for working in groups. There is a kanban board to keep an eye on the progress until the end of the next planning stage and also a backlog to have the ability for scheduling of long-terms. In combination with a mechanism to log time spent on different tasks individually those are the essential functionalities.
@@ -65,10 +65,10 @@ brew install exempi         # OS X
 
 ##### Setup Python Version
 
-Iguana is currently tested against **Python 3.7**.</br>
-It may be also run on higher versions. But if you run into any problems, please test first if they also occour with Python 3.7.
+Iguana is currently tested against **Python 3.8**.</br>
+It may be also run on higher versions. But if you run into any problems, please test first if they also occur with Python 3.8.
 
-To install Python 3.7 locally (independent from your current system version), you can use [pyenv](https://github.com/pyenv/pyenv). For installation and setting up *pyenv* please stick to their documentation: https://github.com/pyenv/pyenv/wiki
+To install Python 3.8 locally (independent from your current system version), you can use [pyenv](https://github.com/pyenv/pyenv). For installation and setting up *pyenv* please stick to their documentation: https://github.com/pyenv/pyenv/wiki
 
 Once you've got *pyenv* running execute the following command in the main iguana directory:
 
@@ -76,9 +76,10 @@ Once you've got *pyenv* running execute the following command in the main iguana
 pyenv install -v $(cat .python-version)
 ```
 
-If everything is correctly setup and if you simply run `python` in your command shell, the python interpreter with the version specified in the `.python-version` file should be started.
+If everything is correctly setup and if you simply run `python` in your command shell, the python interpreter with the version specified in the `.python-version` file should be started. If you already created a virtualenv previously you should delete it and recreate it with the specified python version.
 
-**Common problems using *pyenv*:** Since *pyenv* is compiling every python version other than your system one direct on your PC, it can happen that after some time this version won't work any more. Often there are errors of missing shared libraries or something like that, when you try to start Iguana or the Python interpreter installed by *pyenv*. This can happen e.g. after a system update/upgrade. To solve this issue simply reinstall the Python version with the abovev *pyenv* command.
+
+**Common problems using *pyenv*:** Since *pyenv* is compiling every python version other than your system one direct on your PC, it can happen that after some time this version won't work any more. Often there are errors of missing shared libraries or something like that, when you try to start Iguana or the Python interpreter installed by *pyenv*. This can happen e.g. after a system update/upgrade. To solve this issue simply reinstall the Python version with the above *pyenv* command.
 
 #### Production
 To setup Iguana in a production environment you simply have to call:
@@ -157,7 +158,7 @@ docker exec -d \
 | PUID | 1000 | The ID of the user running Iguana in the container |
 | PGID | 1000 | The group ID of the above user |
 
-But in staging/production environment more configuration should be done by the user! Therefore a [settings.json](files/settings.json) file is placed in the Docker volume after the first run. You can edit this file to your needs (see [Configuration section -> settings.json](README.md#settingsjson)). To apply the canges simply restart the container. Please look especially at the `SECRET_KEY` and `HOST/ALLOWED_HOSTS` settings!
+But in staging/production environment more configuration should be done by the user! Therefore a [settings.json](files/settings.json) file is placed in the Docker volume after the first run. You can edit this file to your needs (see [Configuration section -> settings.json](README.md#settingsjson)). To apply the changes simply restart the container. Please look especially at the `SECRET_KEY` and `HOST/ALLOWED_HOSTS` settings!
 
 If a Nginx server was included in the image (with `USE_NGINX=true`), the `nginx.conf` file can also be found on the Docker volume. But for real production environments, a separate Nginx container is recommended!
 
@@ -272,7 +273,7 @@ in the url. For example `/de/login` instead of `/en/login`.
 
 
 ## Configuration
-Iguana has a lot of settings that can be changed by the user. The settins files are stored in the [src/common/settings](src/common/settings) package. The package structure is:
+Iguana has a lot of settings that can be changed by the user. The settings files are stored in the [src/common/settings](src/common/settings) package. The package structure is:
 
 ```bash
 common/settings
