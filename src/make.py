@@ -789,11 +789,23 @@ class _RequirementsTarget(_Target):
 
             # install the requirements
             _CommonTargets.activate_virtual_environment()
-            # fix for pip versions below 10.0
+
+            # pip randomly changes the location of their internal entrypoint
+            # so try all currently known locations
+            # see: https://github.com/pypa/pip/issues/7498
             try:
-                from pip._internal import main as pipmain
+                from pip._internal.cli.main import main as pipmain
             except ImportError:
-                from pip import main as pipmain
+                try:
+                    from pip._internal.main import main as pipmain
+                except ImportError:
+                    try:
+                        from pip._internal import main as pipmain
+                    except ImportError:
+                        try:
+                            from pip import main as pipmain
+                        except ImportError:
+                            _CommonTargets.exit("Failed to import the pip entrypoint!", 1)
             code = pipmain(["install", "-r", requirements_file])
 
             # check for possible errors
