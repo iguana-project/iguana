@@ -47,6 +47,7 @@ class FormTest(TestCase):
         self.assertEqual(col.user_has_read_permissions(self.user2), True)
         self.assertEqual(col.user_has_write_permissions(self.user2), False)
 
+    # TODO
     def test_views_access_denied(self):
         self.client.force_login(self.user2)
 
@@ -83,6 +84,7 @@ class FormTest(TestCase):
 
         self.client.force_login(self.user)
 
+    # TODO
     def test_up_down_view_get_404(self):
         response = self.client.get(reverse('kanbancol:movedown', kwargs={'project': self.short, 'position': 1}),
                                    follow=True)
@@ -93,6 +95,7 @@ class FormTest(TestCase):
         self.assertEqual(response.status_code, 404)
 
     # TODO TESTCASE split into smaller, independent tests
+    # TODO
     def test_form(self):
         # create
         vals = {
@@ -148,6 +151,7 @@ class FormTest(TestCase):
         self.assertEqual(KanbanColumn.objects.count(), 3)
         self.assertNotContains(response, vals["name"])
 
+    # TODO
     def test_movement(self):
         cols = [
             KanbanColumn.objects.get(name="Todo").name,
@@ -163,7 +167,7 @@ class FormTest(TestCase):
             response = self.client.post(reverse('kanbancol:movedown', kwargs={'project': self.short, 'position': i}))
             self.assertRedirects(response, reverse('project:edit', kwargs={'project': self.short}))
             for i, name in enumerate(cols):
-                self.assertEqual(i, KanbanColumn.objects.get(name=name).position)
+                self.assertEqual(i, KanbanColumn.objects.get(name=name).position, name)
 
         # and the same back up
         for i in range(2, -1, -1):
@@ -173,66 +177,96 @@ class FormTest(TestCase):
             response = self.client.post(reverse('kanbancol:moveup', kwargs={'project': self.short, 'position': i}))
             self.assertRedirects(response, reverse('project:edit', kwargs={'project': self.short}))
             for i, name in enumerate(cols):
-                self.assertEqual(i, KanbanColumn.objects.get(name=name).position)
+                self.assertEqual(i, KanbanColumn.objects.get(name=name).position, name)
 
-    def test_movement_caused_by_create_and_delete(self):
-        todo = KanbanColumn.objects.get(name="Todo")
-        in_progress = KanbanColumn.objects.get(name="In Progress")
-        done = KanbanColumn.objects.get(name="Done")
-        cols = deque([todo.name, in_progress.name, done.name])
+    def test_position_of_default_cols(self):
+        self.assertEqual("Todo", KanbanColumn.objects.get(position=0).name)
+        self.assertEqual("In Progress", KanbanColumn.objects.get(position=1).name)
+        self.assertEqual("Done", KanbanColumn.objects.get(position=2).name)
+
+    # Explicitly tests for the position instead of relying on "order" \mapsto "position"
+    # also tests whether the original ToDo and Done columns can be deleted
+    def test_movement_caused_by_create_and_delete_and_remove_original_todo_and_done_cols(self):
+        todo_name = "Todo"
+        in_progress_name = "In Progress"
+        done_name = "Done"
+        cols = deque([todo_name, in_progress_name, done_name])
 
         # default cols
         for i in range(len(cols)):
-            self.assertEqual(i, KanbanColumn.objects.get(name=cols[i]).position)
+            self.assertEqual(i, KanbanColumn.objects.get(name=cols[i]).position, cols[i])
 
         # creation always appends at the end
-        name = "So effing done"
-        cols.append(name)
-        self.client.post(reverse('kanbancol:create', kwargs={'project': self.short}), {'name': name, 'type': 'Done'})
+        new_col_name = "So effing done"
+        cols.append(new_col_name)
+        self.client.post(reverse('kanbancol:create', kwargs={'project': self.short}),
+                         {'name': new_col_name, 'type': 'Done'})
         for i in range(len(cols)):
-            self.assertEqual(i, KanbanColumn.objects.get(name=cols[i]).position)
+            self.assertEqual(i, KanbanColumn.objects.get(name=cols[i]).position, cols[i])
 
-        # delete todo-col
-        cols.remove(todo.name)
-        # create new ToDo column, so we can delete the other one
-        self.client.post(reverse('kanbancol:create', kwargs={'project': self.short}), {'name': 'ToDo2', 'type': 'ToDo'})
+        # create new ToDo column, so we can delete the original one
+        new_col_name = "ToDo2"
+        cols.append(new_col_name)
+        cols.remove(todo_name)
+        self.client.post(reverse('kanbancol:create', kwargs={'project': self.short}),
+                         {'name': new_col_name, 'type': 'ToDo'})
         self.client.post(reverse('kanbancol:delete', kwargs={'project': self.short, 'position': 0}), {'delete': 'true'})
         for i in range(len(cols)):
-            self.assertEqual(i, KanbanColumn.objects.get(name=cols[i]).position)
+            self.assertEqual(i, KanbanColumn.objects.get(name=cols[i]).position, cols[i])
 
-        # delete rightmost column
-        cols.remove(name)
-        # create new Done column, so we can delete the other one
-        self.client.post(reverse('kanbancol:create', kwargs={'project': self.short}), {'name': 'Done2', 'type': 'Done'})
-        self.client.post(reverse('kanbancol:delete', kwargs={'project': self.short, 'position': 3}))
+        # create new Done column, so we can delete the original one
+        new_col_name = "Done2"
+        cols.append(new_col_name)
+        cols.remove(done_name)
+        self.client.post(reverse('kanbancol:create', kwargs={'project': self.short}),
+                         {'name': new_col_name, 'type': 'Done'})
+        self.client.post(reverse('kanbancol:delete', kwargs={'project': self.short, 'position': 1}), {'delete': 'true'})
         for i in range(len(cols)):
-            self.assertEqual(i, KanbanColumn.objects.get(name=cols[i]).position)
+            self.assertEqual(i, KanbanColumn.objects.get(name=cols[i]).position, cols[i])
 
-    def test_edit_delete_reject_last_todo_or_last_done_column(self):
+    def test_there_has_to_be_at_least_one_todo_and_one_done_column(self):
         vals = {
             'name': "Testmodification",
             'type': 'InProgress',
         }
+        current_columns = list(KanbanColumn.objects.filter(project__name_short=self.short))
+        self.assertEqual(3, len(current_columns))
+
         response = self.client.post(reverse('kanbancol:update',
                                             kwargs={'position': 0, 'project': self.project.name_short}),
                                     vals)
+        # no changes; there has to be at least one column of type ToDo
         self.assertContains(response, 'edit rejected')
+        self.assertEquals(current_columns, list(KanbanColumn.objects.filter(project__name_short=self.short)))
+
         response = self.client.post(reverse('kanbancol:update',
                                             kwargs={'position': 2, 'project': self.project.name_short}),
                                     vals)
+        # no changes; there has to be at least one column of type Done
         self.assertContains(response, 'edit rejected')
+        self.assertEquals(current_columns, list(KanbanColumn.objects.filter(project__name_short=self.short)))
+
         response = self.client.post(reverse('kanbancol:delete',
                                             kwargs={'position': 0, 'project': self.project.name_short}),
                                     {'delete': 'true'},
                                     follow=True)
+        # no changes; there has to be at least one column of type ToDo
         self.assertContains(response, 'delete was rejected')
+        self.assertEquals(current_columns, list(KanbanColumn.objects.filter(project__name_short=self.short)))
+
         response = self.client.post(reverse('kanbancol:delete',
                                             kwargs={'position': 2, 'project': self.project.name_short}),
                                     {'delete': 'true'},
                                     follow=True)
+        # no changes; there has to be at least one column of type Done
         self.assertContains(response, 'delete was rejected')
+        self.assertEquals(current_columns, list(KanbanColumn.objects.filter(project__name_short=self.short)))
+
+        # it is possible to delete all columns of type "InProgress"
         response = self.client.post(reverse('kanbancol:delete',
                                             kwargs={'position': 1, 'project': self.project.name_short}),
                                     {'delete': 'true'},
                                     follow=True)
         self.assertNotContains(response, 'delete was rejected')
+        del(current_columns[1])
+        self.assertEquals(current_columns, list(KanbanColumn.objects.filter(project__name_short=self.short)))
