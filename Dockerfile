@@ -22,9 +22,12 @@ RUN apk add --no-cache \
     jpeg-dev \
     zlib-dev \
     freetype-dev \
+    libffi-dev \
     build-base \
     postgresql-dev \
-    mariadb-connector-c-dev
+    mariadb-connector-c-dev \
+    # needed to build Python cryptography
+    cargo
 
 # build the application
 RUN mkdir $APP_DIR
@@ -68,6 +71,8 @@ RUN apk add --no-cache \
     libmagic \
     freetype \
     libpq \
+    # needed by compiled Python cryptography
+    libgcc \
     logrotate \
     mariadb-connector-c
 
