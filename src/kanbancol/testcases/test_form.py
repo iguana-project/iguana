@@ -84,9 +84,27 @@ class FormTest(TestCase):
 
         self.client.force_login(self.user)
 
-    # TODO
-    def test_up_down_view_get_404(self):
-        response = self.client.get(reverse('kanbancol:movedown', kwargs={'project': self.short, 'position': 1}),
+    def test_up_and_down_view_post_request(self):
+        pre_cols = list(KanbanColumn.objects.filter(project=self.project))
+        # move down
+        expected_cols = [*pre_cols[1:2], *pre_cols[0:1], *pre_cols[2:]]
+        response = self.client.post(reverse('kanbancol:movedown', kwargs={'project': self.short, 'position': 0}),
+                                    follow=True)
+        self.assertEqual(response.status_code, 200)
+        current_cols = list(KanbanColumn.objects.filter(project=self.project))
+        self.assertEqual(current_cols, expected_cols)
+
+        # move up
+        expected_cols = pre_cols
+        response = self.client.post(reverse('kanbancol:moveup', kwargs={'project': self.short, 'position': 1}),
+                                    follow=True)
+        self.assertEqual(response.status_code, 200)
+        current_cols = list(KanbanColumn.objects.filter(project=self.project))
+        self.assertEqual(current_cols, expected_cols)
+
+    def test_up_down_view_get_request_404(self):
+        # There are no kanban columns and hence a move is not possible
+        response = self.client.get(reverse('kanbancol:movedown', kwargs={'project': self.short, 'position': 0}),
                                    follow=True)
         self.assertEqual(response.status_code, 404)
 
@@ -151,7 +169,6 @@ class FormTest(TestCase):
         self.assertEqual(KanbanColumn.objects.count(), 3)
         self.assertNotContains(response, vals["name"])
 
-    # TODO
     def test_movement(self):
         cols = [
             KanbanColumn.objects.get(name="Todo").name,
