@@ -47,40 +47,62 @@ class FormTest(TestCase):
         self.assertEqual(col.user_has_read_permissions(self.user2), True)
         self.assertEqual(col.user_has_write_permissions(self.user2), False)
 
-    # TODO
-    def test_views_access_denied(self):
+    def test_cant_create_new_col_as_dev(self):
         self.client.force_login(self.user2)
-
         vals = {
             'name': "Testcolumn",
             'type': 'ToDo',
             'project': self.project.pk
         }
 
-        numCols = KanbanColumn.objects.count()
-
+        pre_num_cols = KanbanColumn.objects.count()
         user_doesnt_pass_test_and_gets_404(self, 'kanbancol:create', address_kwargs={'project': self.short},
                                            get_kwargs=vals)
+        self.assertEqual(KanbanColumn.objects.count(), pre_num_cols)
 
-        self.assertEqual(numCols, KanbanColumn.objects.count())
+        self.client.force_login(self.user)
+
+    def test_cant_update_col_as_dev(self):
+        self.client.force_login(self.user2)
 
         vals = {
             'name': "Testmodification",
             'type': 'ToDo',
         }
+        pre_cols = list(KanbanColumn.objects.filter(project=self.project))
         user_doesnt_pass_test_and_gets_404(self, 'kanbancol:update',
                                            address_kwargs={'position': 3, 'project': self.short},
                                            get_kwargs=vals)
+        current_cols = list(KanbanColumn.objects.filter(project=self.project))
+        self.assertEqual(current_cols, pre_cols)
 
+        self.client.force_login(self.user)
+
+    def test_cant_delete_col_as_dev(self):
+        self.client.force_login(self.user2)
+
+        pre_cols = list(KanbanColumn.objects.filter(project=self.project))
         user_doesnt_pass_test_and_gets_404(self, 'kanbancol:delete',
                                            address_kwargs={'position': 3, 'project': self.short},
                                            get_kwargs={'delete': 'true'})
+        current_cols = list(KanbanColumn.objects.filter(project=self.project))
+        self.assertEqual(current_cols, pre_cols)
 
+        self.client.force_login(self.user)
+
+    def test_cant_move_col_as_dev(self):
+        self.client.force_login(self.user2)
+
+        pre_cols = list(KanbanColumn.objects.filter(project=self.project))
         user_doesnt_pass_test_and_gets_404(self, 'kanbancol:movedown',
-                                           address_kwargs={'project': self.short, 'position': 1})
+                                           address_kwargs={'project': self.short, 'position': 0})
+        current_cols = list(KanbanColumn.objects.filter(project=self.project))
+        self.assertEqual(current_cols, pre_cols)
 
         user_doesnt_pass_test_and_gets_404(self, 'kanbancol:moveup',
                                            address_kwargs={'project': self.short, 'position': 1})
+        current_cols = list(KanbanColumn.objects.filter(project=self.project))
+        self.assertEqual(current_cols, pre_cols)
 
         self.client.force_login(self.user)
 
@@ -113,7 +135,7 @@ class FormTest(TestCase):
         self.assertEqual(response.status_code, 404)
 
     # TODO TESTCASE split into smaller, independent tests
-    # TODO
+    # TODO 520,522
     def test_form(self):
         # create
         vals = {
