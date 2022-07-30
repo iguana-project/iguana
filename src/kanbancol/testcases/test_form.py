@@ -34,6 +34,12 @@ class FormTest(TestCase):
         cls.project.developer.add(cls.user2)
         cls.project.save()
 
+        cls.vals_testcolumn_todo = {
+            'name': "Testcolumn",
+            'type': 'ToDo',
+            'project': cls.project.pk
+        }
+
     def setUp(self):
         self.client.force_login(self.user)
         # NOTE: these elements get modified by some testcases, so they should NOT be created in setUpTestData()
@@ -49,15 +55,10 @@ class FormTest(TestCase):
 
     def test_cant_create_new_col_as_dev(self):
         self.client.force_login(self.user2)
-        vals = {
-            'name': "Testcolumn",
-            'type': 'ToDo',
-            'project': self.project.pk
-        }
 
         pre_num_cols = KanbanColumn.objects.count()
         user_doesnt_pass_test_and_gets_404(self, 'kanbancol:create', address_kwargs={'project': self.short},
-                                           get_kwargs=vals)
+                                           get_kwargs=self.vals_testcolumn_todo)
         self.assertEqual(KanbanColumn.objects.count(), pre_num_cols)
 
         self.client.force_login(self.user)
@@ -137,21 +138,25 @@ class FormTest(TestCase):
     # TODO TESTCASE split into smaller, independent tests
     # TODO 520,522
     def test_form(self):
+        pre_cols = list(KanbanColumn.objects.filter(project=self.project))
+        pre_num_len = len(pre_cols)
         # create
-        vals = {
-            'name': "Testcolumn",
-            'type': 'ToDo',
-            'project': self.project.pk
-        }
-        response = self.client.post(reverse('kanbancol:create', kwargs={'project': self.short}), vals)
+        response = self.client.post(reverse('kanbancol:create', kwargs={'project': self.short}),
+                                    self.vals_testcolumn_todo)
         self.client.get(reverse("project:edit", kwargs={"project": self.short}))
         self.assertRedirects(response, reverse('project:edit', kwargs={'project': self.short}))
 
         response = self.client.get(response['location'])
         self.assertEqual(response.status_code, 200)
         # We always insert at the end
+        # TODO this check should be part of a selenium TC
         self.assertEqual(response.context['columns'][3].name, "Testcolumn")
         self.assertEqual(str(response.context['columns'][3]), "Testcolumn")
+        # TODO end
+        post_cols = list(KanbanColumn.objects.filter(project=self.project))
+        post_num_len = len(post_cols)
+        self.assertEqual(post_num_len, pre_num_len+1)
+        self.assertEqual(post_cols[post_num_len-1].name, self.vals_testcolumn_todo['name'])
 
         # modify
         vals = {
