@@ -39,6 +39,10 @@ class FormTest(TestCase):
             'type': 'ToDo',
             'project': cls.project.pk
         }
+        cls.vals_testmodification = {
+            'name': "Testmodification",
+            'type': 'ToDo',
+        }
 
     def setUp(self):
         self.client.force_login(self.user)
@@ -107,6 +111,35 @@ class FormTest(TestCase):
 
         self.client.force_login(self.user)
 
+    def test_cant_change_type_of_last_done_col(self):
+        pre_cols = list(KanbanColumn.objects.filter(project=self.project))
+        expected_cols = pre_cols
+        # modify last todo column (should fail)
+        response = self.client.post(reverse('kanbancol:update', kwargs={'position': 0, 'project': self.short}),
+                                    self.vals_testmodification)
+        current_cols = list(KanbanColumn.objects.filter(project=self.project))
+        self.assertEqual(current_cols, expected_cols)
+        # delete last done column (should fail)
+        response = self.client.post(reverse('kanbancol:delete', kwargs={'position': 0, 'project': self.short}),
+                                    {'delete': 'true'})
+        current_cols = list(KanbanColumn.objects.filter(project=self.project))
+        print(current_cols)
+        self.assertEqual(current_cols, expected_cols)
+
+    def test_cant_change_type_of_last_todo_col(self):
+        pre_cols = list(KanbanColumn.objects.filter(project=self.project))
+        expected_cols = pre_cols
+        # modify last done column (should fail)
+        response = self.client.post(reverse('kanbancol:update', kwargs={'position': 2, 'project': self.short}),
+                                    self.vals_testmodification)
+        current_cols = list(KanbanColumn.objects.filter(project=self.project))
+        self.assertEqual(current_cols, expected_cols)
+        # delete last done column (should fail)
+        response = self.client.post(reverse('kanbancol:delete', kwargs={'position': 2, 'project': self.short}),
+                                    {'delete': 'true'})
+        current_cols = list(KanbanColumn.objects.filter(project=self.project))
+        self.assertEqual(current_cols, expected_cols)
+
     def test_up_and_down_view_post_request(self):
         pre_cols = list(KanbanColumn.objects.filter(project=self.project))
         # move down
@@ -135,10 +168,11 @@ class FormTest(TestCase):
                                    follow=True)
         self.assertEqual(response.status_code, 404)
 
-    # TODO TESTCASE split into smaller, independent tests
-    # TODO 520,522
-    def test_form(self):
+    def test_form_create(self):
         pre_cols = list(KanbanColumn.objects.filter(project=self.project))
+        new_col = KanbanColumn(name=self.vals_testcolumn_todo['name'],
+                               type=self.vals_testcolumn_todo['type'],
+                               project=self.project)
         pre_num_len = len(pre_cols)
         # create
         response = self.client.post(reverse('kanbancol:create', kwargs={'project': self.short}),
@@ -152,28 +186,33 @@ class FormTest(TestCase):
         # TODO this check should be part of a selenium TC
         self.assertEqual(response.context['columns'][3].name, "Testcolumn")
         self.assertEqual(str(response.context['columns'][3]), "Testcolumn")
-        # TODO end
-        post_cols = list(KanbanColumn.objects.filter(project=self.project))
-        post_num_len = len(post_cols)
-        self.assertEqual(post_num_len, pre_num_len+1)
-        self.assertEqual(post_cols[post_num_len-1].name, self.vals_testcolumn_todo['name'])
+        # TODO selenium TC end
+        current_cols = list(KanbanColumn.objects.filter(project=self.project))
+        current_num_len = len(current_cols)
+        self.assertEqual(current_num_len, pre_num_len+1)
+        self.assertEqual(current_cols[current_num_len-1].name, self.vals_testcolumn_todo['name'])
 
-        # modify
+    # TODO TESTCASE split into smaller, independent tests
+    # TODO 520,522
+    def test_form(self):
+        pre_cols = list(KanbanColumn.objects.filter(project=self.project))
+        # modify in progress column
         vals = {
             'name': "Testmodification",
             'type': 'ToDo',
         }
-        response = self.client.post(reverse('kanbancol:update', kwargs={'position': 3, 'project': self.short}), vals)
+        response = self.client.post(reverse('kanbancol:update', kwargs={'position': 1, 'project': self.short}), vals)
         self.assertRedirects(response, reverse('project:edit', kwargs={'project': self.short}))
 
         response = self.client.get(response['location'])
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.context['columns'][3].name, "Testmodification")
+        self.assertEqual(response.context['columns'][1].name, vals['name'])
+        post_cols = list(KanbanColumn.objects.filter(project=self.project))
 
         # assign issue to column and try to delete
         issue = Issue(
             title="Test-Issue",
-            kanbancol=KanbanColumn.objects.get(position=3, project__name_short=self.short),
+            kanbancol=KanbanColumn.objects.get(position=1, project__name_short=self.short),
             project=self.project, type="Bug"
         )
         issue.save()
