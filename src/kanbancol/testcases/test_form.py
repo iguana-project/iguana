@@ -70,14 +70,10 @@ class FormTest(TestCase):
     def test_cant_update_col_as_dev(self):
         self.client.force_login(self.user2)
 
-        vals = {
-            'name': "Testmodification",
-            'type': 'ToDo',
-        }
         pre_cols = list(KanbanColumn.objects.filter(project=self.project))
         user_doesnt_pass_test_and_gets_404(self, 'kanbancol:update',
                                            address_kwargs={'position': 3, 'project': self.short},
-                                           get_kwargs=vals)
+                                           get_kwargs=self.vals_testmodification)
         current_cols = list(KanbanColumn.objects.filter(project=self.project))
         self.assertEqual(current_cols, pre_cols)
 
@@ -110,34 +106,6 @@ class FormTest(TestCase):
         self.assertEqual(current_cols, pre_cols)
 
         self.client.force_login(self.user)
-
-    def test_cant_change_type_of_last_done_col(self):
-        pre_cols = list(KanbanColumn.objects.filter(project=self.project))
-        expected_cols = pre_cols
-        # modify last todo column (should fail)
-        response = self.client.post(reverse('kanbancol:update', kwargs={'position': 0, 'project': self.short}),
-                                    self.vals_testmodification)
-        current_cols = list(KanbanColumn.objects.filter(project=self.project))
-        self.assertEqual(current_cols, expected_cols)
-        # delete last done column (should fail)
-        response = self.client.post(reverse('kanbancol:delete', kwargs={'position': 0, 'project': self.short}),
-                                    {'delete': 'true'})
-        current_cols = list(KanbanColumn.objects.filter(project=self.project))
-        self.assertEqual(current_cols, expected_cols)
-
-    def test_cant_change_type_of_last_todo_col(self):
-        pre_cols = list(KanbanColumn.objects.filter(project=self.project))
-        expected_cols = pre_cols
-        # modify last done column (should fail)
-        response = self.client.post(reverse('kanbancol:update', kwargs={'position': 2, 'project': self.short}),
-                                    self.vals_testmodification)
-        current_cols = list(KanbanColumn.objects.filter(project=self.project))
-        self.assertEqual(current_cols, expected_cols)
-        # delete last done column (should fail)
-        response = self.client.post(reverse('kanbancol:delete', kwargs={'position': 2, 'project': self.short}),
-                                    {'delete': 'true'})
-        current_cols = list(KanbanColumn.objects.filter(project=self.project))
-        self.assertEqual(current_cols, expected_cols)
 
     def test_up_and_down_view_post_request(self):
         pre_cols = list(KanbanColumn.objects.filter(project=self.project))
@@ -209,6 +177,45 @@ class FormTest(TestCase):
         self.assertEqual(current_cols[1].name, self.vals_testmodification['name'])
         self.assertEqual(current_cols[1].type, self.vals_testmodification['type'])
 
+    def test_delete_column(self):
+        pre_cols = list(KanbanColumn.objects.filter(project=self.project))
+        expected_cols = [*pre_cols[0:1], *pre_cols[2:3]]
+
+        # try to delete the column used in an issue (supposed to fail)
+        response = self.client.post(reverse('kanbancol:delete', kwargs={'position': 1, 'project': self.short}),
+                                    {'delete': 'true'})
+        self.assertRedirects(response, reverse('project:edit', kwargs={'project': self.short}))
+        current_cols = list(KanbanColumn.objects.filter(project=self.project))
+        self.assertEqual(current_cols, expected_cols)
+
+    def test_cant_change_type_of_last_done_col(self):
+        pre_cols = list(KanbanColumn.objects.filter(project=self.project))
+        expected_cols = pre_cols
+        # modify last todo column (should fail)
+        response = self.client.post(reverse('kanbancol:update', kwargs={'position': 0, 'project': self.short}),
+                                    self.vals_testmodification)
+        current_cols = list(KanbanColumn.objects.filter(project=self.project))
+        self.assertEqual(current_cols, expected_cols)
+        # delete last done column (should fail)
+        response = self.client.post(reverse('kanbancol:delete', kwargs={'position': 0, 'project': self.short}),
+                                    {'delete': 'true'})
+        current_cols = list(KanbanColumn.objects.filter(project=self.project))
+        self.assertEqual(current_cols, expected_cols)
+
+    def test_cant_change_type_of_last_todo_col(self):
+        pre_cols = list(KanbanColumn.objects.filter(project=self.project))
+        expected_cols = pre_cols
+        # modify last done column (should fail)
+        response = self.client.post(reverse('kanbancol:update', kwargs={'position': 2, 'project': self.short}),
+                                    self.vals_testmodification)
+        current_cols = list(KanbanColumn.objects.filter(project=self.project))
+        self.assertEqual(current_cols, expected_cols)
+        # delete last done column (should fail)
+        response = self.client.post(reverse('kanbancol:delete', kwargs={'position': 2, 'project': self.short}),
+                                    {'delete': 'true'})
+        current_cols = list(KanbanColumn.objects.filter(project=self.project))
+        self.assertEqual(current_cols, expected_cols)
+
     def test_cant_delete_column_in_use(self):
         pre_cols = list(KanbanColumn.objects.filter(project=self.project))
         expected_cols = pre_cols
@@ -219,17 +226,6 @@ class FormTest(TestCase):
             project=self.project, type="Bug"
         )
         issue.save()
-
-        # try to delete the column used in an issue (supposed to fail)
-        response = self.client.post(reverse('kanbancol:delete', kwargs={'position': 1, 'project': self.short}),
-                                    {'delete': 'true'})
-        self.assertRedirects(response, reverse('project:edit', kwargs={'project': self.short}))
-        current_cols = list(KanbanColumn.objects.filter(project=self.project))
-        self.assertEqual(current_cols, expected_cols)
-
-    def test_delete_column(self):
-        pre_cols = list(KanbanColumn.objects.filter(project=self.project))
-        expected_cols = [*pre_cols[0:1], *pre_cols[2:3]]
 
         # try to delete the column used in an issue (supposed to fail)
         response = self.client.post(reverse('kanbancol:delete', kwargs={'position': 1, 'project': self.short}),
