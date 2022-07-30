@@ -123,7 +123,6 @@ class FormTest(TestCase):
         response = self.client.post(reverse('kanbancol:delete', kwargs={'position': 0, 'project': self.short}),
                                     {'delete': 'true'})
         current_cols = list(KanbanColumn.objects.filter(project=self.project))
-        print(current_cols)
         self.assertEqual(current_cols, expected_cols)
 
     def test_cant_change_type_of_last_todo_col(self):
@@ -192,24 +191,28 @@ class FormTest(TestCase):
         self.assertEqual(current_num_len, pre_num_len+1)
         self.assertEqual(current_cols[current_num_len-1].name, self.vals_testcolumn_todo['name'])
 
-    # TODO TESTCASE split into smaller, independent tests
-    # TODO 520,522
-    def test_form(self):
+    def test_modify_column(self):
         pre_cols = list(KanbanColumn.objects.filter(project=self.project))
         # modify in progress column
-        vals = {
-            'name': "Testmodification",
-            'type': 'ToDo',
-        }
-        response = self.client.post(reverse('kanbancol:update', kwargs={'position': 1, 'project': self.short}), vals)
+        response = self.client.post(reverse('kanbancol:update', kwargs={'position': 1, 'project': self.short}),
+                                    self.vals_testmodification)
         self.assertRedirects(response, reverse('project:edit', kwargs={'project': self.short}))
 
         response = self.client.get(response['location'])
+        # TODO this is a check for selenium
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.context['columns'][1].name, vals['name'])
-        post_cols = list(KanbanColumn.objects.filter(project=self.project))
+        self.assertEqual(response.context['columns'][1].name, self.vals_testmodification['name'])
+        # TODO END
+        current_cols = list(KanbanColumn.objects.filter(project=self.project))
+        # the comparison of KanbanColumns doesn't take the name into account, hence the additional name and type check
+        self.assertEqual(pre_cols, current_cols)
+        self.assertEqual(current_cols[1].name, self.vals_testmodification['name'])
+        self.assertEqual(current_cols[1].type, self.vals_testmodification['type'])
 
-        # assign issue to column and try to delete
+    def test_cant_delete_column_in_use(self):
+        pre_cols = list(KanbanColumn.objects.filter(project=self.project))
+        expected_cols = pre_cols
+        # use the column in an issue
         issue = Issue(
             title="Test-Issue",
             kanbancol=KanbanColumn.objects.get(position=1, project__name_short=self.short),
@@ -217,23 +220,23 @@ class FormTest(TestCase):
         )
         issue.save()
 
-        self.assertEqual(KanbanColumn.objects.count(), 4)
-
-        response = self.client.post(reverse('kanbancol:delete', kwargs={'position': 3, 'project': self.short}),
+        # try to delete the column used in an issue (supposed to fail)
+        response = self.client.post(reverse('kanbancol:delete', kwargs={'position': 1, 'project': self.short}),
                                     {'delete': 'true'})
         self.assertRedirects(response, reverse('project:edit', kwargs={'project': self.short}))
-        self.assertEqual(KanbanColumn.objects.count(), 4)
+        current_cols = list(KanbanColumn.objects.filter(project=self.project))
+        self.assertEqual(current_cols, expected_cols)
 
-        issue.kanbancol = KanbanColumn.objects.get(position=2, project__name_short=self.short)
-        issue.save()
+    def test_delete_column(self):
+        pre_cols = list(KanbanColumn.objects.filter(project=self.project))
+        expected_cols = [*pre_cols[0:1], *pre_cols[2:3]]
 
-        # delete
-        response = self.client.post(reverse('kanbancol:delete', kwargs={'position': 3, 'project': self.short}),
+        # try to delete the column used in an issue (supposed to fail)
+        response = self.client.post(reverse('kanbancol:delete', kwargs={'position': 1, 'project': self.short}),
                                     {'delete': 'true'})
         self.assertRedirects(response, reverse('project:edit', kwargs={'project': self.short}))
-        response = self.client.get(response['location'])
-        self.assertEqual(KanbanColumn.objects.count(), 3)
-        self.assertNotContains(response, vals["name"])
+        current_cols = list(KanbanColumn.objects.filter(project=self.project))
+        self.assertEqual(current_cols, expected_cols)
 
     def test_movement(self):
         cols = [
