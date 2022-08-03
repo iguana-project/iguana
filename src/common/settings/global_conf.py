@@ -146,33 +146,20 @@ if _backend == "local":
     EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
     EMAIL_FILE_PATH = EMAIL_DIR
     EMAIL_RECIPIENT_IN_TO_HEADER = True
-else:
-    if _backend == "smtp":
-        # Use a SMTP mail server
-        # see https://docs.djangoproject.com/en/1.11/ref/settings/#email-backend
-        EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-        # see https://docs.djangoproject.com/en/1.11/ref/settings/#email-host
-        EMAIL_HOST = get_setting(["email", "smtp", "HOST"])
-        # see https://docs.djangoproject.com/en/1.11/ref/settings/#email-port
-        EMAIL_PORT = int(get_setting(["email", "smtp", "PORT"]))
-        # see https://docs.djangoproject.com/en/1.11/ref/settings/#email-host-user
-        EMAIL_HOST_USER = get_setting(["email", "smtp", "USER"])
-        # see https://docs.djangoproject.com/en/1.11/ref/settings/#email-host-password
-        EMAIL_HOST_PASSWORD = get_setting(["email", "smtp", "PASSWORD"])
-        # see https://docs.djangoproject.com/en/1.11/ref/settings/#email-use-tls
-        EMAIL_USE_TLS = get_setting(["email", "smtp", "USE_TLS"]) in ["true", "True"]
-    elif _backend == "sendgrid":
-        # use SendGrid
-        SENDGRID_API_KEY = get_setting(["email", "SENDGRID_API_KEY"], True, None)
-        # these settings are from the official SendGrid site:
-        #     https://sendgrid.com/docs/for-developers/sending-email/django/
-        # no extra plugin needed for simple mail delivery
-        EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-        EMAIL_HOST = 'smtp.sendgrid.net'
-        EMAIL_HOST_USER = 'apikey'
-        EMAIL_HOST_PASSWORD = SENDGRID_API_KEY
-        EMAIL_PORT = 587
-        EMAIL_USE_TLS = True
+elif _backend == "smtp":
+    # Use a SMTP mail server
+    # see https://docs.djangoproject.com/en/1.11/ref/settings/#email-backend
+    EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+    # see https://docs.djangoproject.com/en/1.11/ref/settings/#email-host
+    EMAIL_HOST = get_setting(["email", "smtp", "HOST"])
+    # see https://docs.djangoproject.com/en/1.11/ref/settings/#email-port
+    EMAIL_PORT = int(get_setting(["email", "smtp", "PORT"]))
+    # see https://docs.djangoproject.com/en/1.11/ref/settings/#email-host-user
+    EMAIL_HOST_USER = get_setting(["email", "smtp", "USER"])
+    # see https://docs.djangoproject.com/en/1.11/ref/settings/#email-host-password
+    EMAIL_HOST_PASSWORD = get_setting(["email", "smtp", "PASSWORD"])
+    # see https://docs.djangoproject.com/en/1.11/ref/settings/#email-use-tls
+    EMAIL_USE_TLS = get_setting(["email", "smtp", "USE_TLS"]) in ["true", "True"]
 
     # see https://docs.djangoproject.com/en/1.11/ref/settings/#std:setting-DEFAULT_FROM_EMAIL
     DEFAULT_FROM_EMAIL = get_setting(["email", "smtp", "FROM_EMAIL_ADDRESS"])

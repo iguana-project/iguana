@@ -37,7 +37,6 @@
     },
     "email": {
         "BACKEND": "local",
-        "SENDGRID_API_KEY": "",
         "smtp": {
             "HOST": "",
             "PORT": "",
