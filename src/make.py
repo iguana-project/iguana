@@ -456,6 +456,26 @@ class _CommonTargets(metaclass=_MetaCommonTargets):
         return requirements_file
 
     @classmethod
+    def import_pipmain(cls):
+        # pip randomly changes the location of their internal entrypoint
+        # so try all currently known locations
+        # see: https://github.com/pypa/pip/issues/7498
+        try:
+            from pip._internal.cli.main import main
+        except ImportError:
+            try:
+                from pip._internal.main import main
+            except ImportError:
+                try:
+                    from pip._internal import main
+                except ImportError:
+                    try:
+                        from pip import main
+                    except ImportError:
+                        _CommonTargets.exit("Failed to import the pip entrypoint!", 1)
+        return main
+
+    @classmethod
     def check_webdriver(cls):
         global WEBDRIVER
         if os.path.isfile(WEBDRIVER_CONF_FILE):
@@ -770,14 +790,17 @@ class _RequirementsTarget(_Target):
     class Check(_Target):
         @classmethod
         def run(cls, *_):
+            # get the pip entrypoint
             _CommonTargets.activate_virtual_environment()
+            pipmain = _CommonTargets.import_pipmain()
 
-            # import piprot
-            from piprot import piprot
-            # get the requirements file
-            requirements_file = _CommonTargets.get_requirements_file()
-            # execute piprot
-            piprot.main([open(requirements_file, 'r')], verbose=True, outdated=True)
+            # install the requirements
+            code = pipmain(["list", "--outdated"])
+
+            # check for possible errors
+            if code != 0:
+                _CommonTargets.exit("Failed while checking for outdated requirements! Please check the errors above.",
+                                    code)
 
     @cmd("install")
     @help("(Re-)Install the requirements.")
@@ -787,25 +810,11 @@ class _RequirementsTarget(_Target):
             # check which requirements should be installed
             requirements_file = _CommonTargets.get_requirements_file()
 
-            # install the requirements
+            # get the pip entrypoint
             _CommonTargets.activate_virtual_environment()
+            pipmain = _CommonTargets.import_pipmain()
 
-            # pip randomly changes the location of their internal entrypoint
-            # so try all currently known locations
-            # see: https://github.com/pypa/pip/issues/7498
-            try:
-                from pip._internal.cli.main import main as pipmain
-            except ImportError:
-                try:
-                    from pip._internal.main import main as pipmain
-                except ImportError:
-                    try:
-                        from pip._internal import main as pipmain
-                    except ImportError:
-                        try:
-                            from pip import main as pipmain
-                        except ImportError:
-                            _CommonTargets.exit("Failed to import the pip entrypoint!", 1)
+            # install the requirements
             code = pipmain(["install", "-r", requirements_file])
 
             # check for possible errors
