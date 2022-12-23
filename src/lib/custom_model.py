@@ -28,12 +28,32 @@ def get_r_object_or_404(user, klass, *args, **kwargs):
     return result
 
 
+# returns 0 If object exists and user has read permission
+# returns 1 Otherwise: either object doesn't exist or user doesn't have read permission on existing object
+def has_r_object_or_zero(user, klass, *args, **kwargs):
+    try:
+        get_r_object_or_404(user, klass, *args, **kwargs)
+    except Http404:
+        return 0
+    return 1
+
+
 def get_w_object_or_404(user, klass, *args, **kwargs):
     result = get_object_or_404(klass, *args, **kwargs)
     if not isinstance(result, CustomModel) or not result.user_has_write_permissions(user):
         raise Http404(_("Either the request object does not exist or you don't have the necessary " +
                         "permissions to access it."))
     return result
+
+
+# returns 0 If object exists and user has write permission
+# returns 1 Otherwise: either object doesn't exist or user doesn't have write permission on existing object
+def has_w_object_or_zero(user, klass, *args, **kwargs):
+    try:
+        get_w_object_or_404(user, klass, *args, **kwargs)
+    except Http404:
+        return 0
+    return 1
 
 
 class __AbstractModelMeta(ABCMeta, type(models.Model)):
