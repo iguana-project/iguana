@@ -193,7 +193,7 @@ class CustomPasswordChangeForm(PasswordChangeForm):
             # ERROR case! one of the new-pw-fields was empty or wrong and is empty now because of the field-clean
             elif n_pw1 == "" or n_pw2 == "":
                 raise ValidationError(_("Either the two password fields didn't match or additional " +
-                                        "restrictions are not fullfilled."))
+                                        "restrictions are not fulfilled."))
             # old-pw-field is not empty and is valid (already has been cleaned and would be empty otherwise)
             else:
                 return cleaned_data

@@ -62,7 +62,7 @@ error_incorrect_old = "Your old password was entered incorrectly. Please enter i
 error_short_new = "This password is too short. It must contain at least 8 characters."
 error_didnt_match = "The two password fields didn&#39;t match."
 error_either_didnt_match_or = "Either the two password fields didn&#39;t " \
-                              "match or additional restrictions are not fullfilled."
+                              "match or additional restrictions are not fulfilled."
 error_too_similar_to = "The password is too similar to "
 
 edit_template = 'user_profile/edit_user_profile.html'
@@ -117,12 +117,18 @@ class EditUserProfileTest(TestCase):
     def test_edit_page_with_get_request_disabled(self):
         pass_dict = {'old_password': test_password, 'new_password1': test_new_password,
                      'new_password2': test_new_password}
+        # get request => should fail
         response = self.client.get(reverse('user_profile:edit_profile', kwargs={"username": user_name}),
                                    pass_dict)
         self.assertEqual(response.status_code, 200)
         self.client.logout()
+        # login with old password should still succeed
+        # NOTE: therefore we need to verify the credentials and use login instead of force_login
         success = self.client.login(username=user_name, password=test_password)
         self.assertTrue(success, "FATAL: password has been changed, maybe it is empty now")
+        # new password should not have been activated
+        failure = self.client.login(username=user_name, password=test_new_password)
+        self.assertFalse(failure, "FATAL: password has been changed to the newly provided one with a get request")
 
     # zero elements in change password => other form is used not change pw
     #                                  => success => redirect to user, without changing pw
@@ -147,12 +153,13 @@ class EditUserProfileTest(TestCase):
                                     new_dict, follow=True)
         # NOTE this doesn't verify whether the file has been uploaded successfully
         self.assertContains(response, new_file_name)
-        self.delete_image_test()
+        self.delete_avatar(new_dict)
         avatar.close()
 
-    # helper function
-    def delete_image_test(self):
-        new_dict = default_dict2.copy()
+    # helper function to delete avatar
+    def delete_avatar(self, used_dict):
+        new_dict = used_dict.copy()
+        new_dict['avatar'] = ''
         new_dict['avatar-clear'] = True
         response = self.client.post(reverse('user_profile:edit_profile', kwargs={"username": user_name}),
                                     new_dict, follow=True)
@@ -194,7 +201,7 @@ class EditUserProfileTest(TestCase):
         self.assertTrue("not an image or a corrupted image" in response.content.decode())
 
     # change password tests NOTE: it is pretty important to do all those tests, because the code is very case dependent
-    # the numers (one, two, three) show how many of those pw-fields are filled
+    # the numbers (one, two, three) show how many of those pw-fields are filled
     # one element: wrong old pw => error => "Your old password was entered incorrectly. Please enter it again."
     def test_ch_pw_one_wrong_old(self):
         new_dict = default_dict.copy()
@@ -333,7 +340,7 @@ class EditUserProfileTest(TestCase):
         self.assertTrue(success, "FATAL: password has been changed, maybe it is empty now")
 
     # two elements: correct old, new_pw1 => error => "The two password fields didn't match."
-    #               => "Either the two password fields didn&#39;t match or additional restrictions are not fullfilled."
+    #               => "Either the two password fields didn&#39;t match or additional restrictions are not fulfilled."
     def test_ch_pw_two_correct_old_pw1(self):
         new_dict = default_dict.copy()
         new_dict['old_password'] = test_password
@@ -386,7 +393,7 @@ class EditUserProfileTest(TestCase):
         self.assertTrue(success, "FATAL: password has been changed, maybe it is empty now")
 
     # three elements: correct old, new_pw1, new_pw2 (different) => error => "The two password fields didn't match."
-    #               => "Either the two password fields didn&#39;t match or additional restrictions are not fullfilled."
+    #               => "Either the two password fields didn&#39;t match or additional restrictions are not fulfilled."
     def test_ch_pw_three_correct_old_pw_1_pw2_different(self):
         new_dict = default_dict.copy()
         new_dict['old_password'] = test_password
@@ -439,7 +446,7 @@ class EditUserProfileTest(TestCase):
         self.assertTrue(success, "FATAL: password has been changed, maybe it is empty now")
 
     # three elements: correct old, new_pw1, new_pw2 (similar to username) => error =>
-    #               => "Either the two password fields didn&#39;t match or additional restrictions are not fullfilled."
+    #               => "Either the two password fields didn&#39;t match or additional restrictions are not fulfilled."
     #               => "The password is too similar to the username."
     def test_ch_pw_three_to_similar_to_username_correct(self):
         new_dict = default_dict.copy()
@@ -460,7 +467,7 @@ class EditUserProfileTest(TestCase):
         self.assertTrue(success, "FATAL: password has been changed, maybe it is empty now")
 
     # three elements: correct old, new_pw1, new_pw2 (similar to email) => error =>
-    #               => "Either the two password fields didn&#39;t match or additional restrictions are not fullfilled."
+    #               => "Either the two password fields didn&#39;t match or additional restrictions are not fulfilled."
     #               => "The password is too similar to the email address."
     def test_ch_pw_three_to_similar_to_email_correct(self):
         new_dict = default_dict.copy()
@@ -480,9 +487,8 @@ class EditUserProfileTest(TestCase):
         success = self.client.login(username=user_name, password=test_password)
         self.assertTrue(success, "FATAL: password has been changed, maybe it is empty now")
 
-    """
     # three elements: correct old, new_pw1, new_pw2 (similar to first name) => error =>
-    #               => "Either the two password fields didn&#39;t match or additional restrictions are not fullfilled."
+    #               => "Either the two password fields didn&#39;t match or additional restrictions are not fulfilled."
     #               => "The password is too similar to the first name."
     def test_ch_pw_three_to_similar_to_first_name_correct(self):
         new_dict = default_dict.copy()
@@ -503,7 +509,7 @@ class EditUserProfileTest(TestCase):
         self.assertTrue(success, "FATAL: password has been changed, maybe it is empty now")
 
     # three elements: correct old, new_pw1, new_pw2 (similar to last name) => error =>
-    #               => "Either the two password fields didn&#39;t match or additional restrictions are not fullfilled."
+    #               => "Either the two password fields didn&#39;t match or additional restrictions are not fulfilled."
     #               => "The password is too similar to the last name."
     def test_ch_pw_three_to_similar_to_last_name_correct(self):
         new_dict = default_dict.copy()
@@ -522,7 +528,6 @@ class EditUserProfileTest(TestCase):
         # NOTE: therefore we need to verify the credentials and use login instead of force_login
         success = self.client.login(username=user_name, password=test_password)
         self.assertTrue(success, "FATAL: password has been changed, maybe it is empty now")
-    """
 
     def test_ch_email_correct(self):
         new_email = "new@email.com"

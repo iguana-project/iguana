@@ -5,7 +5,7 @@ from django.urls import reverse
 from user_management.views import LoginView
 from rest_framework import viewsets
 
-
+# Check whether the provided view and templates are used
 # \param view the view that should be used
 # \param template the template that should be used
 # \param address_pattern the pattern for the reverse lookup that is used to resolve the target address
@@ -64,6 +64,7 @@ def redirect_to_login_and_login_required(self, address_pattern, address_kwargs=N
 
 # UserPassesTestMixin / test_func()
 # uses post
+# Expects insufficient permissions and a redirect to login page
 # \param address_pattern The pattern for the reverse lookup that is used to resolve the target address
 # \param address_kwargs Optional additional kwargs arguments that might be needed for the resolving of the address
 # \param get_kwargs Optional additional kwargs for a get request that might be needed
@@ -86,6 +87,8 @@ def redirect_to_login_and_user_doesnt_pass_test(self, address_pattern, address_k
 
 # UserPassesTestMixin / test_func() - a 404 is expected
 # uses post
+# Expects insufficient permissions and a redirect to 404
+# the 404 doesn't leak the existence of the data/page while an "insufficient permissions" page might do so
 # \param address_pattern The pattern for the reverse lookup that is used to resolve the target address
 # \param address_kwargs Optional additional kwargs arguments that might be needed for the resolving of the address
 # \param get_kwargs Optional additional kwargs for a get request that might be needed
