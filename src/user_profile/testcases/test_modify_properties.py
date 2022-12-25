@@ -35,26 +35,41 @@ class MotifyNotificationPropsTest(TestCase):
         cls.address_kwargs = {"username": 'a'}
         # successful get_kwargs
         # unfortunately pycodestyle doesn't allow noqa comments .... hence the ugly alignment
-        cls.enable_NewIssue = {'shn_p': 'PRJ',
-                               'notiway': 'mail',
-                               'notitype': 'NewIssue',
-                               'enabled': '1'
-                               }
-        cls.enable_NewComment = {'shn_p': 'PRJ',
-                                 'notiway': 'mail',
-                                 'notitype': 'NewComment',
-                                 'enabled': '1'
-                                 }
-        cls.disable_NewIssue = {'shn_p': 'PRJ',
-                                'notiway': 'mail',
-                                'notitype': 'NewIssue',
-                                'enabled': '0'
-                                }
+        cls.enable_NewAttachment = {'shn_p': 'PRJ',
+                                    'notiway': 'mail',
+                                    'notitype': 'NewAttachment',
+                                    'enabled': '1'
+                                    }
         cls.disable_NewAttachment = {'shn_p': 'PRJ',
                                      'notiway': 'mail',
                                      'notitype': 'NewAttachment',
                                      'enabled': '0'
                                      }
+        cls.enable_NewComment = {'shn_p': 'PRJ',
+                                 'notiway': 'mail',
+                                 'notitype': 'NewComment',
+                                 'enabled': '1'
+                                 }
+        cls.disable_NewComment = {'shn_p': 'PRJ',
+                                  'notiway': 'mail',
+                                  'notitype': 'NewComment',
+                                  'enabled': '0'
+                                  }
+        cls.enable_NewIssue = {'shn_p': 'PRJ',
+                               'notiway': 'mail',
+                               'notitype': 'NewIssue',
+                               'enabled': '1'
+                               }
+        cls.disable_NewIssue = {'shn_p': 'PRJ',
+                                'notiway': 'mail',
+                                'notitype': 'NewIssue',
+                                'enabled': '0'
+                                }
+        cls.enable_NewComment_second_prj = {'shn_p': 'PRO',
+                                            'notiway': 'mail',
+                                            'notitype': 'NewComment',
+                                            'enabled': '1'
+                                            }
 
     def setUp(self):
         self.client.force_login(self.user)
@@ -139,40 +154,96 @@ class MotifyNotificationPropsTest(TestCase):
                                            address_kwargs={"username": 'a'},
                                            get_kwargs=wrong_project)
 
-    def test_modify_notifications_success_cases(self):
+    def check_preferences(self, response, project, noti_types):
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(self.user.get_preference('notify_mail'),
+                         '{"'+project+'": '+str(noti_types).replace("'", '"')+'}')
+        # check deserialized data
+        for i in range(len(noti_types)):
+            self.assertEqual(json.loads(self.user.get_preference('notify_mail'))[project][i], noti_types[i])
+
+    # user-profile mail-notification PRJ project for new comment
+    def test_modify_notifications_by_mail_success_case_new_comment(self):
+        # set NewIssue property to 1
+        response = self.client.post(reverse('user_profile:toggle_notification', kwargs={"username": 'a'}),
+                                    self.enable_NewComment, follow=False)
+        self.check_preferences(response, "PRJ", ["NewComment"])
+
+        # redo => shouldn't throw errors
+        response = self.client.post(reverse('user_profile:toggle_notification', kwargs={"username": 'a'}),
+                                    self.enable_NewComment, follow=False)
+        self.check_preferences(response, "PRJ", ["NewComment"])
+
+        # set NewIssue property to 0
+        response = self.client.post(reverse('user_profile:toggle_notification', kwargs={"username": 'a'}),
+                                    self.disable_NewComment, follow=False)
+        # project key remains in list
+        self.check_preferences(response, "PRJ", [])
+
+        # redo => shouldn't throw errors
+        response = self.client.post(reverse('user_profile:toggle_notification', kwargs={"username": 'a'}),
+                                    self.disable_NewComment, follow=False)
+        self.check_preferences(response, "PRJ", [])
+
+    # user-profile mail-notification PRJ project for new issue
+    def test_modify_notifications_by_mail_success_case_new_issue(self):
         # set NewIssue property to 1
         response = self.client.post(reverse('user_profile:toggle_notification', kwargs={"username": 'a'}),
                                     self.enable_NewIssue, follow=False)
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(self.user.get_preference('notify_mail'), '{"PRJ": ["NewIssue"]}')
-        # check deserialized data
-        self.assertEqual(json.loads(self.user.get_preference('notify_mail'))['PRJ'][0], "NewIssue")
+        self.check_preferences(response, "PRJ", ["NewIssue"])
 
-        # set NewComment property to 1
-        response = self.client.post(reverse('user_profile:toggle_notification', kwargs={"username": 'a'}),
-                                    self.enable_NewComment, follow=False)
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(self.user.get_preference('notify_mail'), '{"PRJ": ["NewIssue", "NewComment"]}')
-        self.assertEqual(json.loads(self.user.get_preference('notify_mail'))['PRJ'][1], "NewComment")
-
-        # set inactive property to 0
-        response = self.client.post(reverse('user_profile:toggle_notification', kwargs={"username": 'a'}),
-                                    self.disable_NewAttachment, follow=False)
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(self.user.get_preference('notify_mail'), '{"PRJ": ["NewIssue", "NewComment"]}')
-        self.assertEqual(json.loads(self.user.get_preference('notify_mail'))['PRJ'][1], "NewComment")
-
-        # set active property to 1
+        # redo => shouldn't throw errors
         response = self.client.post(reverse('user_profile:toggle_notification', kwargs={"username": 'a'}),
                                     self.enable_NewIssue, follow=False)
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(self.user.get_preference('notify_mail'), '{"PRJ": ["NewIssue", "NewComment"]}')
-        self.assertEqual(json.loads(self.user.get_preference('notify_mail'))['PRJ'][1], "NewComment")
+        self.check_preferences(response, "PRJ", ["NewIssue"])
 
         # set NewIssue property to 0
         response = self.client.post(reverse('user_profile:toggle_notification', kwargs={"username": 'a'}),
                                     self.disable_NewIssue, follow=False)
+        # project key remains in list
+        self.check_preferences(response, "PRJ", [])
+
+        # redo => shouldn't throw errors
+        response = self.client.post(reverse('user_profile:toggle_notification', kwargs={"username": 'a'}),
+                                    self.disable_NewIssue, follow=False)
+        self.check_preferences(response, "PRJ", [])
+
+    # user-profile mail-notification per project
+    def test_modify_notifications_by_mail_success_case_enable_multiple(self):
+        # set NewIssue property to 1
+        response = self.client.post(reverse('user_profile:toggle_notification', kwargs={"username": 'a'}),
+                                    self.enable_NewIssue, follow=False)
+        self.check_preferences(response, "PRJ", ["NewIssue"])
+
+        # set NewComment property to 1
+        response = self.client.post(reverse('user_profile:toggle_notification', kwargs={"username": 'a'}),
+                                    self.enable_NewComment, follow=False)
+        self.check_preferences(response, "PRJ", ["NewIssue", "NewComment"])
+
+        # set inactive property to 0 => shouldn't change anything and throw no errors
+        response = self.client.post(reverse('user_profile:toggle_notification', kwargs={"username": 'a'}),
+                                    self.disable_NewAttachment, follow=False)
+        self.check_preferences(response, "PRJ", ["NewIssue", "NewComment"])
+
+        # set NewComment property to 1 of second project
+        self.project2.developer.add(self.user)
+        self.project2.save()
+        response = self.client.post(reverse('user_profile:toggle_notification', kwargs={"username": 'a'}),
+                                    self.enable_NewComment_second_prj, follow=False)
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(self.user.get_preference('notify_mail'), '{"PRJ": ["NewComment"]}')
+        noti_types_prj = ["NewIssue", "NewComment"]
+        self.assertEqual(self.user.get_preference('notify_mail'),
+                         '{"PRJ": ["NewIssue", "NewComment"], "PRO": ["NewComment"]}')
         # check deserialized data
-        self.assertEqual(json.loads(self.user.get_preference('notify_mail'))['PRJ'][0], "NewComment")
+        for i in range(len(noti_types_prj)):
+            self.assertEqual(json.loads(self.user.get_preference('notify_mail'))["PRJ"][i], noti_types_prj[i])
+        self.assertEqual(json.loads(self.user.get_preference('notify_mail'))["PRO"][0], "NewComment")
+
+        # set NewComment property of PRJ to 0, should stay for PRO
+        response = self.client.post(reverse('user_profile:toggle_notification', kwargs={"username": 'a'}),
+                                    self.disable_NewComment, follow=False)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(self.user.get_preference('notify_mail'), '{"PRJ": ["NewIssue"], "PRO": ["NewComment"]}')
+        # # check deserialized data
+        self.assertEqual(json.loads(self.user.get_preference('notify_mail'))['PRJ'][0], "NewIssue")
+        self.assertEqual(json.loads(self.user.get_preference('notify_mail'))['PRO'][0], "NewComment")
