@@ -5,7 +5,7 @@
 ![Python >=3.8 required](https://img.shields.io/badge/python-v3.8|3.9|3.10-blue)
 
 ## Description
-Iguana is a mixture of a ticket system, an issue tracker and an issue management system, heavily based on basic functions being easy to use. So Iguana can help you to plan the next schedule and have always a nice overview about your current tasks depending on your needs, especially for working in groups. There is a kanban board to keep an eye on the progress until the end of the next planning stage and also a backlog to have the ability for scheduling of long-terms. In combination with a mechanism to log time spent on different tasks individually those are the essential functionalities.
+Iguana is a mixture of a ticket system, an issue tracker and an issue management system, heavily based on basic functions being easy to use. So Iguana can help you to plan the next schedule and to always have a nice overview about your current tasks depending on your needs, especially for working in groups. There is a kanban board to keep an eye on the progress until the end of the next planning stage and also a backlog to have the ability for scheduling of long-term tasks. In combination with a mechanism to log time spent on different tasks individually those are the essential functionalities.
 
 For more detailed documentation including a list of features see our github documentation page at https://iguana-project.github.io.
 
@@ -19,7 +19,7 @@ For more detailed documentation including a list of features see our github docu
 * [Time-logging](https://iguana-project.github.io/#time-logging)<br />
 	For both issues and projects, where the value for the later one is simply the sum of relative issue-time-logs.
 * Activity charts<br />
-	To keep an eye on the progress of a specific project in both aspects, for time management and amount of activities (e.g. commits). There is an [acitivty overview](https://iguana-project.github.io/demonstration/activity.html#demo-activity_overview) for a project and a [different chart](https://iguana-project.github.io/demonstration/time_logging.html#demo-chart) for the proportion of issues on a single project.
+	To keep an eye on the progress of a specific project in both aspects, for time management and amount of activities (e.g. commits). There is an [activity overview](https://iguana-project.github.io/demonstration/activity.html#demo-activity_overview) for a project and a [different chart](https://iguana-project.github.io/demonstration/time_logging.html#demo-chart) for the proportion of issues on a single project.
 * [Notifications](https://iguana-project.github.io/demonstration/activity.html#navigation)<br />
 	Present multiple ways to notify you for different events. In the future it will be customizable which notifications shall be shown with which feature.
   * [Activity stream](https://iguana-project.github.io/#activity_stream)<br />
@@ -48,14 +48,14 @@ For more detailed documentation including a list of features see our github docu
 ## Installation
 ### Manual
 
-#### Preperation
+#### Preparation
 
 If you want to manually install Iguana, there are some dependencies and actions that must be installed and done before:
 
 ##### Dependencies
 **TODO**: more dependencies required
 
-We generally try to avoid any non-python dependencies but this doesn't always work well. The test cases need the Exempi library so for the [development environment](README.md#Development) this is required and can be installed like [this](https://python-xmp-toolkit.readthedocs.io/en/latest/installation.html#exempi):
+We generally try to avoid any non-python dependencies but this doesn't always work well. The test cases need the *Exempi* library so for the [development environment](README.md#Development) this is required and can be installed like [this](https://python-xmp-toolkit.readthedocs.io/en/latest/installation.html#exempi):
 
 ```bash
 apt-get install libexempi3  # Ubuntu/Debian
@@ -79,7 +79,7 @@ pyenv install -v $(cat .python-version)
 If everything is correctly setup and if you simply run `python` in your command shell, the python interpreter with the version specified in the `.python-version` file should be started. If you already created a virtualenv previously you should delete it and recreate it with the specified python version.
 
 
-**Common problems using *pyenv*:** Since *pyenv* is compiling every python version other than your system one direct on your PC, it can happen that after some time this version won't work any more. Often there are errors of missing shared libraries or something like that, when you try to start Iguana or the Python interpreter installed by *pyenv*. This can happen e.g. after a system update/upgrade. To solve this issue simply reinstall the Python version with the above *pyenv* command.
+**Common problems using *pyenv*:** Since *pyenv* is compiling every python version other than your system one directly on your PC, it can happen that after some time this version won't work any more. Often there are errors of missing shared libraries, when you try to start Iguana or the Python interpreter installed by *pyenv*. This can happen e.g. after a system update/upgrade. To solve this issue simply reinstall the Python version with the above *pyenv* command.
 
 #### Production
 To setup Iguana in a production environment you simply have to call:
@@ -226,7 +226,7 @@ This target configures the webdriver for the functional tests. You can replace `
     Check whether the used requirements are up to date or not.
 
 * **coverage** `[+a <appname>|+f|+c] {report,html,xml,erase}`<br />
-Run the coverage tool on the Django tests. With argument `+a` anapp for which the coverage should be measured can be specified. `+f` measures the coverage for all funtional tests and `+c` performs a measurement across all tests. To get a better output you can run one of the following commands:
+Run the coverage tool on the Django tests. With argument `+a` an app for which the coverage should be measured can be specified. `+f` measures the coverage for all functional tests and `+c` performs a measurement across all tests. To get a better output you can run one of the following commands:
     * **report**<br />
     Get the coverage in text form.
     * **html**<br />
