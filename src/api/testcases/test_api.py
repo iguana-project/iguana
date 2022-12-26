@@ -55,6 +55,20 @@ class ApiTest(APITestCase):
         self.issue_new2 = Issue(title='new_issue_title2', project=self.project)
         self.issue_new2.save()
 
+        # kwargs
+        self.short_name_kwargs = {'name_short': self.project.name_short}
+        self.project_name_kwargs = {'project': self.project.name_short}
+        self.issue_number_kwargs = {'project': self.project.name_short,
+                                    'number': self.issue.number}
+        self.issue_number2_kwargs = {'project': self.project.name_short,
+                                     'issue': self.issue.number}
+        self.timelog_number_kwargs = {'project': self.project.name_short,
+                                      'issue': self.issue.number,
+                                      'number': self.log.number}
+        self.comment_seqnum_kwargs = {'project': self.project.name_short,
+                                      'issue': self.issue.number,
+                                      'seqnum': self.comment.seqnum}
+
     # change user and credentials used for api authorization
     def use_user(self, user_to_be_logged_in):
         # all user use 'c' as password
@@ -150,6 +164,7 @@ class ApiTest(APITestCase):
         self.validate_projects_readable(self.user2, expected_num_of_projects2, [self.project])
         self.validate_projects_readable(self.user3, expected_num_of_projects3, [self.project, project_new2])
 
+    # TODO TESTCASE test model data
     def test_get_timelogs(self):
         response = self.client.get(reverse('api:timelogs-list'))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -160,16 +175,19 @@ class ApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json().get('count'), 2)
 
+    # TODO TESTCASE test model data
     def test_get_users(self):
         response = self.client.get(reverse('api:customuser-list'))
         self.assertEqual(response.json().get('count'), len(CustomUser.objects.all()))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+    # TODO TESTCASE test model data
     def test_get_users_detail(self):
         response = self.client.get(reverse('api:customuser-detail', kwargs={'username': self.user1.username}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn(self.user1.username, response.json().get('username'))
 
+    # TODO TESTCASE test model data
     def test_post_project(self):
         project_data = {
                 'name': 'yoflow',
@@ -181,15 +199,17 @@ class ApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json().get('count'), 2)
 
+    # TODO TESTCASE test model data
     def test_get_project_detail(self):
-        response = self.client.get(reverse('api:project-detail', kwargs={'name_short': self.project.name_short}))
+        response = self.client.get(reverse('api:project-detail', kwargs=self.short_name_kwargs))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+    # TODO TESTCASE test model data
     def test_patch_project_detail(self):
         project_data = {
                 'name': 'yoflow',
                 }
-        response = self.client.patch(reverse('api:project-detail', kwargs={'name_short': self.project.name_short}),
+        response = self.client.patch(reverse('api:project-detail', kwargs=self.short_name_kwargs),
                                      data=project_data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json().get('name'), 'yoflow')
@@ -197,184 +217,174 @@ class ApiTest(APITestCase):
 
         # assert - at least one project manager
         project_data.update({'manager': [], 'developer': []})
-        response = self.client.patch(reverse('api:project-detail', kwargs={'name_short': self.project.name_short}),
+        response = self.client.patch(reverse('api:project-detail', kwargs=self.short_name_kwargs),
                                      data=project_data,
                                      format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
+    # TODO TESTCASE test model data
     def test_put_project_detail(self):
         project_data = {
                 'manager': ['user1'],
                 'name': 'yoflow',
                 }
-        response = self.client.put(reverse('api:project-detail', kwargs={'name_short': self.project.name_short}),
+        response = self.client.put(reverse('api:project-detail', kwargs=self.short_name_kwargs),
                                    data=project_data,
                                    format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json().get('name'), 'yoflow')
 
+    # TODO TESTCASE test model data
     def test_delete_project_detail(self):
-        response = self.client.delete(reverse('api:project-detail', kwargs={'name_short': self.project.name_short}))
+        response = self.client.delete(reverse('api:project-detail', kwargs=self.short_name_kwargs))
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
+    # TODO TESTCASE test model data
     def test_get_project_issues(self):
-        response = self.client.get(reverse('api:project_issues-list', kwargs={'project': self.project.name_short}))
+        response = self.client.get(reverse('api:project_issues-list', kwargs=self.project_name_kwargs))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+    # TODO TESTCASE test model data
     def test_post_project_issues(self):
         issue_data = {
                 'title': 'this is a issue',
                 }
-        response = self.client.post(reverse('api:project_issues-list', kwargs={'project': self.project.name_short}),
+        response = self.client.post(reverse('api:project_issues-list', kwargs=self.project_name_kwargs),
                                     data=issue_data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
+    # TODO TESTCASE test model data
     def test_get_project_timelogs(self):
-        response = self.client.get(reverse('api:project_timelogs-list', kwargs={'project': self.project.name_short}))
+        response = self.client.get(reverse('api:project_timelogs-list', kwargs=self.project_name_kwargs))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+    # TODO TESTCASE test model data
     def test_get_project_issue_detail(self):
-        response = self.client.get(reverse('api:project_issues-detail',
-                                           kwargs={'project': self.project.name_short, 'number': self.issue.number}))
+        response = self.client.get(reverse('api:project_issues-detail', kwargs=self.issue_number_kwargs))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        response = self.client.get(reverse('api:project_issues-list', kwargs={'project': self.project.name_short}))
+        response = self.client.get(reverse('api:project_issues-list', kwargs=self.project_name_kwargs))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+    # TODO TESTCASE test model data
     def test_get_project_timelogs(self):
-        response = self.client.get(reverse('api:project_timelogs-list', kwargs={'project': self.project.name_short}))
+        response = self.client.get(reverse('api:project_timelogs-list', kwargs=self.project_name_kwargs))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+    # TODO TESTCASE test model data
     def test_get_project_issue_detail(self):
-        response = self.client.get(reverse('api:project_issues-detail',
-                                           kwargs={'project': self.project.name_short, 'number': self.issue.number}))
+        response = self.client.get(reverse('api:project_issues-detail', kwargs=self.issue_number_kwargs))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+    # TODO TESTCASE test model data
     def test_put_project_issue_detail(self):
         issue_data = {
                 'title': 'this is a issue',
                 }
-        response = self.client.put(reverse('api:project_issues-detail',
-                                           kwargs={'project': self.project.name_short, 'number': self.issue.number}),
+        response = self.client.put(reverse('api:project_issues-detail', kwargs=self.issue_number_kwargs),
                                    issue_data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json().get('title'), 'this is a issue')
 
+    # TODO TESTCASE test model data
     def test_patch_project_issue_detail(self):
         issue_data = {
                 'title': 'this is a issue',
                 }
-        response = self.client.patch(reverse('api:project_issues-detail',
-                                             kwargs={'project': self.project.name_short, 'number': self.issue.number}),
+        response = self.client.patch(reverse('api:project_issues-detail', kwargs=self.issue_number_kwargs),
                                      issue_data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json().get('title'), 'this is a issue')
 
+    # TODO TESTCASE test model data
     def test_delete_project_issue_detail(self):
-        response = self.client.delete(reverse('api:project_issues-detail',
-                                              kwargs={'project': self.project.name_short, 'number': self.issue.number}))
+        response = self.client.delete(reverse('api:project_issues-detail', kwargs=self.issue_number_kwargs))
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
+    # TODO TESTCASE test model data
     def test_get_project_issue_comments(self):
-        response = self.client.get(reverse('api:project_issues_comments-list',
-                                           kwargs={'project': self.project.name_short, 'issue': self.issue.number}))
+        response = self.client.get(reverse('api:project_issues_comments-list', kwargs=self.issue_number2_kwargs))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+    # TODO TESTCASE test model data
     def test_post_project_issue_comments(self):
         comment_data = {
                 'text': 'good evening'
         }
-        response = self.client.post(reverse('api:project_issues_comments-list',
-                                            kwargs={'project': self.project.name_short, 'issue': self.issue.number}),
+        response = self.client.post(reverse('api:project_issues_comments-list', kwargs=self.issue_number2_kwargs),
                                     comment_data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
+    # TODO TESTCASE test model data
     def test_get_project_issue_timelogs(self):
-        response = self.client.get(reverse('api:project_issues_timelogs-list',
-                                           kwargs={'project': self.project.name_short, 'issue': self.issue.number}))
+        response = self.client.get(reverse('api:project_issues_timelogs-list', kwargs=self.issue_number2_kwargs))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+    # TODO TESTCASE test model data
     def test_post_project_issue_timelogs(self):
         timelog_data = {
                 'time': '2h'
         }
-        response = self.client.post(reverse('api:project_issues_timelogs-list',
-                                            kwargs={'project': self.project.name_short, 'issue': self.issue.number}),
+        response = self.client.post(reverse('api:project_issues_timelogs-list', kwargs=self.issue_number2_kwargs),
                                     timelog_data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
+    # TODO TESTCASE test model data
     def test_get_project_issue_comments_detail(self):
-        response = self.client.get(reverse('api:project_issues_comments-detail',
-                                           kwargs={'project': self.project.name_short,
-                                                   'issue': self.issue.number,
-                                                   'seqnum': self.comment.seqnum}))
+        response = self.client.get(reverse('api:project_issues_comments-detail', kwargs=self.comment_seqnum_kwargs))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+    # TODO TESTCASE test model data
     def test_put_project_issue_comments_detail(self):
         comment_data = {
             'text': 'new content'
                 }
-        response = self.client.put(reverse('api:project_issues_comments-detail',
-                                           kwargs={'project': self.project.name_short,
-                                                   'issue': self.issue.number,
-                                                   'seqnum': self.comment.seqnum}),
+        response = self.client.put(reverse('api:project_issues_comments-detail', kwargs=self.comment_seqnum_kwargs),
                                    comment_data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json().get('text'), 'new content')
 
+    # TODO TESTCASE test model data
     def test_patch_project_issue_comments_detail(self):
         comment_data = {
             'text': 'new content'
                 }
-        response = self.client.patch(reverse('api:project_issues_comments-detail',
-                                             kwargs={'project': self.project.name_short,
-                                                     'issue': self.issue.number,
-                                                     'seqnum': self.comment.seqnum}),
+        response = self.client.patch(reverse('api:project_issues_comments-detail', kwargs=self.comment_seqnum_kwargs),
                                      comment_data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json().get('text'), 'new content')
 
+    # TODO TESTCASE test model data
     def test_delete_project_issue_comments_detail(self):
-        response = self.client.delete(reverse('api:project_issues_comments-detail',
-                                              kwargs={'project': self.project.name_short,
-                                                      'issue': self.issue.number,
-                                                      'seqnum': self.comment.seqnum}))
+        response = self.client.delete(reverse('api:project_issues_comments-detail', kwargs=self.comment_seqnum_kwargs))
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
+    # TODO TESTCASE test model data
     def test_get_project_issue_timelogs_detail(self):
-        response = self.client.get(reverse('api:project_issues_timelogs-detail',
-                                           kwargs={'project': self.project.name_short,
-                                                   'issue': self.issue.number,
-                                                   'number': self.log.number}))
+        response = self.client.get(reverse('api:project_issues_timelogs-detail', kwargs=self.timelog_number_kwargs))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+    # TODO TESTCASE test model data
     def test_put_project_issue_timelogs_detail(self):
         log_data = {
                 'time': '4h10m'
                 }
-        response = self.client.put(reverse('api:project_issues_timelogs-detail',
-                                           kwargs={'project': self.project.name_short,
-                                                   'issue': self.issue.number,
-                                                   'number': self.log.number}),
+        response = self.client.put(reverse('api:project_issues_timelogs-detail', kwargs=self.timelog_number_kwargs),
                                    log_data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json().get('time'), '4h 10m')
 
+    # TODO TESTCASE test model data
     def test_patch_project_issue_timelogs_detail(self):
         log_data = {
                 'time': '4h10m'
                 }
-        response = self.client.patch(reverse('api:project_issues_timelogs-detail',
-                                             kwargs={'project': self.project.name_short,
-                                                     'issue': self.issue.number,
-                                                     'number': self.log.number}),
+        response = self.client.patch(reverse('api:project_issues_timelogs-detail', kwargs=self.timelog_number_kwargs),
                                      log_data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json().get('time'), '4h 10m')
 
+    # TODO TESTCASE test model data
     def test_delete_project_issue_timelogs_detail(self):
-        response = self.client.delete(reverse('api:project_issues_timelogs-detail',
-                                              kwargs={'project': self.project.name_short,
-                                                      'issue': self.issue.number,
-                                                      'number': self.log.number}))
+        response = self.client.delete(reverse('api:project_issues_timelogs-detail', kwargs=self.timelog_number_kwargs))
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
