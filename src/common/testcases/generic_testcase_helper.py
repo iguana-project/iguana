@@ -2,8 +2,8 @@
 # TODO use this everywhere!
 
 from django.urls import reverse
-from user_management.views import LoginView
 from rest_framework import viewsets
+from user_management.views import LoginView
 
 # Check whether the provided view and templates are used
 # \param view the view that should be used
@@ -102,5 +102,20 @@ def user_doesnt_pass_test_and_gets_404(self, address_pattern, address_kwargs=Non
         response = self.client.post(resolved_address)
 
     self.assertEqual(response.status_code, 404)
+
+
+# Checks for how many objects of the given Object-type the user has read permissions for.
+# The number of objects, for which read permissions exists, is returned.
+# \param object_type The Object-type for which the read permissions of the user should be checked for.
+#                    Can be any object-type that provides the function user_has_read_permissions()
+# \param user The user for which the read permissions should be checked for
+# \return The number of objects for which the user has read permissions for
+def number_of_objects_with_read_permission(object_type, user):
+    num = 0
+    for object_element in object_type.objects.all():
+        if object_element.user_has_read_permissions(user):
+            num += 1
+    return (num)
+
 
 # TODO add further functions
