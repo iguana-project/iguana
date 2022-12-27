@@ -16,6 +16,7 @@ from common.testcases.generic_testcase_helper import number_of_objects_with_read
 from project.models import Project
 from issue.models import Issue, Comment
 from timelog.models import Timelog
+from timelog.forms import DurationWidget
 from user_management.models import CustomUser
 from django.contrib.auth import get_user_model
 from django.db.models import Q
@@ -32,6 +33,8 @@ class ApiTest(APITestCase):
         cls.user1 = get_user_model().objects.create_user('user1', 'mail', 'c')
         cls.user2 = get_user_model().objects.create_user('user2', 'othermail', 'c')
         cls.user3 = get_user_model().objects.create_user('user3', 'foothermail', 'c')
+        # needed to transform the internal datetime.timedelta representation to the one used in the api
+        cls.transform_time_format = DurationWidget()
 
     def setUp(self):
         # NOTE: these elements get modified by some testcases, so they should NOT be created in setUpTestData()
@@ -120,6 +123,7 @@ class ApiTest(APITestCase):
         self.validate_issues_assigned(self.user1, list_of_issues1)
         self.validate_issues_assigned(self.user2, list_of_issues2)
 
+    # checks whether the provided user has read access to all provided projects
     def validate_projects_readable(self, user, expected_num_of_projects, list_of_projs):
         self.use_user(user)
         response = self.client.get(reverse('api:project-list'))
@@ -164,16 +168,43 @@ class ApiTest(APITestCase):
         self.validate_projects_readable(self.user2, expected_num_of_projects2, [self.project])
         self.validate_projects_readable(self.user3, expected_num_of_projects3, [self.project, project_new2])
 
-    # TODO TESTCASE test model data
-    def test_get_timelogs(self):
+    # checks timelogs: status code, project name, issue name, user name, time logged
+    # \param user: the user that should have the time logs
+    # \param time_logs: list of time logs
+    def validate_timelogs(self, user, time_logs):
+        self.use_user(user)
         response = self.client.get(reverse('api:timelogs-list'))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.json().get('count'), 1)
+        self.assertEqual(response.json().get('count'), len(time_logs))
+        response_time_logs = response.json().get('results')
+        for i in range(len(time_logs)):
+            response_time_log = response_time_logs[i]
+            time_log = time_logs[i]
+            issue = time_log.issue
+            project_name = issue.project.name_short
+            self.assertRegex("issue-1", r"issue-\d+")
+            # check project and issue of time log
+            self.assertRegex(response_time_log['issue'], project_name + r"-\d+ " + issue.title)
+            # check user name
+            self.assertEqual(response_time_log['user'], user.username)
+            # check time
+            time = self.transform_time_format.format_value(time_log.time)
+            self.assertEqual(response_time_log['time'], time)
+
+    def test_get_timelogs(self):
+        expected_time_logs = [self.log]
+        self.validate_timelogs(self.user1, expected_time_logs)
+
+        # add second time log
         log = Timelog(issue=self.issue_new, user=self.user1, time=datetime.timedelta(hours=2))
         log.save()
-        response = self.client.get(reverse('api:timelogs-list'))
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.json().get('count'), 2)
+        expected_time_logs += [log]
+        self.validate_timelogs(self.user1, expected_time_logs)
+
+        # other user have no entries (shouldn't be visible)
+        expected_time_logs = []
+        self.validate_timelogs(self.user2, expected_time_logs)
+        self.validate_timelogs(self.user3, expected_time_logs)
 
     # TODO TESTCASE test model data
     def test_get_users(self):
