@@ -24,6 +24,7 @@ from django.db.models import Q
 import base64
 import json
 import datetime
+import re
 
 
 class ApiTest(APITestCase):
@@ -88,12 +89,12 @@ class ApiTest(APITestCase):
         # api response
         response = self.client.get(reverse('api:issues-list'))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.json().get('count'), len(list_of_issues))
+        self.assertEqual(response.json()['count'], len(list_of_issues))
         responded_list_of_issues = []
         name_list_of_issues = []
         # get the names of the expected issues and issues returned by the api
         for i in range(len(list_of_issues)):
-            responded_list_of_issues += [response.json().get('results')[i]['title']]
+            responded_list_of_issues += [response.json()['results'][i]['title']]
             name_list_of_issues += [str(list_of_issues[i])]
         # compare the two issue name lists
         self.assertEqual(responded_list_of_issues, name_list_of_issues)
@@ -128,7 +129,7 @@ class ApiTest(APITestCase):
         self.use_user(user)
         response = self.client.get(reverse('api:project-list'))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.json().get('count'), expected_num_of_projects)
+        self.assertEqual(response.json()['count'], expected_num_of_projects)
         self.assertEqual(number_of_objects_with_read_permission(Project, user), expected_num_of_projects)
         # alternative check - the previous one checks whether read permissions are correctly used though
         # read permissions for a project should exist for developer and manager
@@ -175,8 +176,8 @@ class ApiTest(APITestCase):
         self.use_user(user)
         response = self.client.get(reverse('api:timelogs-list'))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.json().get('count'), len(time_logs))
-        response_time_logs = response.json().get('results')
+        self.assertEqual(response.json()['count'], len(time_logs))
+        response_time_logs = response.json()['results']
         for i in range(len(time_logs)):
             response_time_log = response_time_logs[i]
             time_log = time_logs[i]
@@ -206,54 +207,117 @@ class ApiTest(APITestCase):
         self.validate_timelogs(self.user2, expected_time_logs)
         self.validate_timelogs(self.user3, expected_time_logs)
 
-    # TODO TESTCASE test model data
-    def test_get_users(self):
-        response = self.client.get(reverse('api:customuser-list'))
-        self.assertEqual(response.json().get('count'), len(CustomUser.objects.all()))
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+    def get_http_user_url_from_api_response(self, user_response):
+        return re.sub(".*/api/users", "/user", user_response['url'])
 
-    # TODO TESTCASE test model data
+    def test_get_users(self):
+        list_of_users = CustomUser.objects.all()
+        response = self.client.get(reverse('api:customuser-list'))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # even user that are not part of the same project are shown in the list
+        # compare the amount
+        self.assertEqual(response.json()['count'], len(list_of_users))
+        responded_user = response.json()['results']
+        # compare the names and url
+        for i in range(len(responded_user)):
+            # username
+            self.assertEqual(responded_user[i]['username'], list_of_users[i].username)
+            # url
+            self.assertEqual(self.get_http_user_url_from_api_response(responded_user[i]),
+                             list_of_users[i].get_absolute_url())
+
     def test_get_users_detail(self):
         response = self.client.get(reverse('api:customuser-detail', kwargs={'username': self.user1.username}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertIn(self.user1.username, response.json().get('username'))
+        # username
+        self.assertEqual(response.json()['username'], self.user1.username)
+        # url
+        self.assertEqual(self.get_http_user_url_from_api_response(response.json()), self.user1.get_absolute_url())
 
-    # TODO TESTCASE test model data
+    # for each project in the lists compare
+    # the lists of managers, developers, the url, name and short name with the data from the response
+    # \param expected_proj_list the projects expected to be in the list - should be a list
+    # \param proj_list_responded the response from an api project detail call
+    #                            may not be a list when it contains only one project
+    # \param num_proj_responded for this exact case there is a count parameter which should be 1 in that case
+    def validate_project_details(self, expected_proj_list, proj_list_responded, count):
+        # works even when proj_list_responded is not a list
+        self.assertEqual(count, len(expected_proj_list))
+        for i in range(len(expected_proj_list)):
+            # avoid getting key errors (when there is only one project in the response there is no list)
+            if type(proj_list_responded) == list:
+                current_proj_responded = proj_list_responded[i]
+            else:
+                current_proj_responded = proj_list_responded
+            # manager
+            list_of_manager = expected_proj_list[i].manager.all()
+            for j in range(len(list_of_manager)):
+                self.assertEqual(current_proj_responded['manager'][j], list_of_manager[j].username)
+
+            # developer
+            list_of_developer = expected_proj_list[i].developer.all()
+            for j in range(len(list_of_developer)):
+                self.assertEqual(current_proj_responded['developer'][j], list_of_developer[j].username)
+
+            # url
+            responded_url = re.sub(".*/api/projects", "/project", current_proj_responded['url'])
+            expected_url = re.sub("detail", "", expected_proj_list[i].get_absolute_url())
+            self.assertEqual(responded_url, expected_url)
+            # name
+            self.assertEqual(current_proj_responded['name'], expected_proj_list[i].name)
+            # name_short
+            self.assertEqual(current_proj_responded['name_short'], expected_proj_list[i].name_short)
+
     def test_post_project(self):
-        project_data = {
-                'name': 'yoflow',
-                'name_short': 'nanu'
-                }
-        response = self.client.post(reverse('api:project-list'), project_data)
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         response = self.client.get(reverse('api:project-list'))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.json().get('count'), 2)
+        expected_proj_list = [self.project]
+        self.validate_project_details(expected_proj_list, response.json()['results'], response.json()['count'])
+        project_new_name = 'yoflow'
+        project_data = {
+                'name': project_new_name,
+                'name_short': 'nanu'
+                }
+        # this creates a new project
+        response = self.client.post(reverse('api:project-list'), project_data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        # there are two projects now
+        response = self.client.get(reverse('api:project-list'))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        expected_proj_list = Project.objects.all()
+        self.validate_project_details(expected_proj_list, response.json()['results'], response.json()['count'])
 
-    # TODO TESTCASE test model data
     def test_get_project_detail(self):
         response = self.client.get(reverse('api:project-detail', kwargs=self.short_name_kwargs))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.validate_project_details([self.project], response.json(), 1)
 
-    # TODO TESTCASE test model data
     def test_patch_project_detail(self):
+        new_project_name = 'changing the project name'
         project_data = {
-                'name': 'yoflow',
+                'name': new_project_name,
                 }
+        # changes the name of the project
         response = self.client.patch(reverse('api:project-detail', kwargs=self.short_name_kwargs),
                                      data=project_data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.json().get('name'), 'yoflow')
-        self.assertEqual(response.json().get('name_short'), self.project.name_short)
+        # get the project list to get the updated project data - self.project is outdated
+        expected_proj_list = Project.objects.all()
+        self.assertEqual(response.json()['name'], new_project_name)
+        # check that the correct project was modified
+        self.assertEqual(response.json()['name_short'], self.project.name_short)
+        # compare api response with internal data
+        self.validate_project_details([expected_proj_list[0]], response.json(), 1)
 
-        # assert - at least one project manager
-        project_data.update({'manager': [], 'developer': []})
+    def test_patch_project_detail_cant_remove_manager(self):
+        project_data = {'manager': []}
         response = self.client.patch(reverse('api:project-detail', kwargs=self.short_name_kwargs),
                                      data=project_data,
                                      format='json')
+        # patch should have failed since every project requires at least one project manager
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertNotEqual(len(Project.objects.filter(name_short=self.project.name_short)[0].manager.all()), 0)
 
-    # TODO TESTCASE test model data
     def test_put_project_detail(self):
         project_data = {
                 'manager': ['user1'],
@@ -263,12 +327,24 @@ class ApiTest(APITestCase):
                                    data=project_data,
                                    format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.json().get('name'), 'yoflow')
+        self.assertEqual(response.json()['name'], 'yoflow')
+        self.assertEqual(response.json()['manager'], ['user1'])
+        expected_proj_list = Project.objects.all()
+        # compare api response with internal data
+        self.validate_project_details([expected_proj_list[0]], response.json(), 1)
 
-    # TODO TESTCASE test model data
+    # test deletes a project
     def test_delete_project_detail(self):
+        # create a new project first to double check that only the selected project gets deleted
+        new_project = Project(creator=self.user3, name_short='fooo', name="second project")
+        new_project.save()
+        # Either get this as a list - or call bool on expected_proj_list.
+        # Otherwise the ProjectQuerySet is going to be evaluated once more (and hence updates the results)
+        expected_proj_list = list(Project.objects.all()[1:])
         response = self.client.delete(reverse('api:project-detail', kwargs=self.short_name_kwargs))
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        proj_list_post = list(Project.objects.all())
+        self.assertEqual(proj_list_post, expected_proj_list)
 
     # TODO TESTCASE test model data
     def test_get_project_issues(self):
@@ -315,7 +391,7 @@ class ApiTest(APITestCase):
         response = self.client.put(reverse('api:project_issues-detail', kwargs=self.issue_number_kwargs),
                                    issue_data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.json().get('title'), 'this is a issue')
+        self.assertEqual(response.json()['title'], 'this is a issue')
 
     # TODO TESTCASE test model data
     def test_patch_project_issue_detail(self):
@@ -325,7 +401,7 @@ class ApiTest(APITestCase):
         response = self.client.patch(reverse('api:project_issues-detail', kwargs=self.issue_number_kwargs),
                                      issue_data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.json().get('title'), 'this is a issue')
+        self.assertEqual(response.json()['title'], 'this is a issue')
 
     # TODO TESTCASE test model data
     def test_delete_project_issue_detail(self):
@@ -373,7 +449,7 @@ class ApiTest(APITestCase):
         response = self.client.put(reverse('api:project_issues_comments-detail', kwargs=self.comment_seqnum_kwargs),
                                    comment_data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.json().get('text'), 'new content')
+        self.assertEqual(response.json()['text'], 'new content')
 
     # TODO TESTCASE test model data
     def test_patch_project_issue_comments_detail(self):
@@ -383,7 +459,7 @@ class ApiTest(APITestCase):
         response = self.client.patch(reverse('api:project_issues_comments-detail', kwargs=self.comment_seqnum_kwargs),
                                      comment_data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.json().get('text'), 'new content')
+        self.assertEqual(response.json()['text'], 'new content')
 
     # TODO TESTCASE test model data
     def test_delete_project_issue_comments_detail(self):
@@ -403,7 +479,7 @@ class ApiTest(APITestCase):
         response = self.client.put(reverse('api:project_issues_timelogs-detail', kwargs=self.timelog_number_kwargs),
                                    log_data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.json().get('time'), '4h 10m')
+        self.assertEqual(response.json()['time'], '4h 10m')
 
     # TODO TESTCASE test model data
     def test_patch_project_issue_timelogs_detail(self):
@@ -413,7 +489,7 @@ class ApiTest(APITestCase):
         response = self.client.patch(reverse('api:project_issues_timelogs-detail', kwargs=self.timelog_number_kwargs),
                                      log_data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.json().get('time'), '4h 10m')
+        self.assertEqual(response.json()['time'], '4h 10m')
 
     # TODO TESTCASE test model data
     def test_delete_project_issue_timelogs_detail(self):
