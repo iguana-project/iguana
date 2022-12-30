@@ -79,6 +79,20 @@ class ApiTest(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION='Basic ' +
                                 base64.b64encode((str(user_to_be_logged_in)+':c').encode()).decode())
 
+    # compares two lists of issues with each other - one of them is a list of json, the other a list of internal objects
+    # \param issues_responded The issue list in json format returned from an api call
+    # \param issues_internal The issue list from the database
+    def compare_issue_lists(self, issues_responded, issues_internal):
+        self.assertEqual(len(issues_responded), len(issues_internal))
+        for i in range(len(issues_responded)):
+            # title
+            self.assertEqual(issues_responded[i]['title'], issues_internal[i].title)
+            # project
+            self.assertEqual(issues_responded[i]['project'], issues_internal[i].project.name)
+            # assignee
+            self.assertEqual(issues_responded[i]['assignee'],
+                             [issue.username for issue in list(issues_internal[i].assignee.all())])
+
     # check whether the provided user is assigned to the expected amount of issues
     def validate_issues_assigned(self, user, list_of_issues):
         # use the provided user for the api request
@@ -90,14 +104,8 @@ class ApiTest(APITestCase):
         response = self.client.get(reverse('api:issues-list'))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json()['count'], len(list_of_issues))
-        responded_list_of_issues = []
-        name_list_of_issues = []
-        # get the names of the expected issues and issues returned by the api
-        for i in range(len(list_of_issues)):
-            responded_list_of_issues += [response.json()['results'][i]['title']]
-            name_list_of_issues += [str(list_of_issues[i])]
-        # compare the two issue name lists
-        self.assertEqual(responded_list_of_issues, name_list_of_issues)
+        # compare the two lists with each other
+        self.compare_issue_lists(response.json()['results'], list_of_issues)
 
     def test_get_issues(self):
         list_of_issues1 = []
@@ -346,10 +354,31 @@ class ApiTest(APITestCase):
         proj_list_post = list(Project.objects.all())
         self.assertEqual(proj_list_post, expected_proj_list)
 
-    # TODO TESTCASE test model data
     def test_get_project_issues(self):
         response = self.client.get(reverse('api:project_issues-list', kwargs=self.project_name_kwargs))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.json()['count'], len(Issue.objects.filter(project=self.project)))
+        self.compare_issue_lists(response.json()['results'], list(Issue.objects.filter(project=self.project)))
+
+        # create a new project user1 has no access to and get the list
+        new_project_name_short = "newp"
+        new_project_name = "new project"
+        new_project = Project(creator=self.user3, name_short=new_project_name_short, name=new_project_name)
+        new_project.save()
+        new_project.manager.add(self.user3)
+        new_project.developer.add(self.user3)
+        new_issue = Issue(title='new issue for new project', project=new_project)
+        new_issue.save()
+        # user 1 has no access
+        response = self.client.get(reverse('api:project_issues-list', kwargs={'project': new_project_name_short}))
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        # but user3 has
+        self.use_user(self.user3)
+        response = self.client.get(reverse('api:project_issues-list', kwargs={'project': new_project_name_short}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.json()['count'], len(Issue.objects.filter(project=new_project)))
+        self.compare_issue_lists(response.json()['results'], list(Issue.objects.filter(project=new_project)))
 
     # TODO TESTCASE test model data
     def test_post_project_issues(self):
