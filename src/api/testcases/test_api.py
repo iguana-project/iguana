@@ -191,7 +191,6 @@ class ApiTest(APITestCase):
             time_log = time_logs[i]
             issue = time_log.issue
             project_name = issue.project.name_short
-            self.assertRegex("issue-1", r"issue-\d+")
             # check project and issue of time log
             self.assertRegex(response_time_log['issue'], project_name + r"-\d+ " + issue.title)
             # check user name
@@ -380,19 +379,75 @@ class ApiTest(APITestCase):
         self.assertEqual(response.json()['count'], len(Issue.objects.filter(project=new_project)))
         self.compare_issue_lists(response.json()['results'], list(Issue.objects.filter(project=new_project)))
 
-    # TODO TESTCASE test model data
     def test_post_project_issues(self):
+        amount_of_issues_pre = len(Issue.objects.filter(project=self.project))
         issue_data = {
                 'title': 'this is a issue',
                 }
         response = self.client.post(reverse('api:project_issues-list', kwargs=self.project_name_kwargs),
                                     data=issue_data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        # test that the new issue is part of the project
+        self.assertContains(response, issue_data['title'], status_code=201)
+        # test that there is an additional issue
+        amount_of_issues_post = len(Issue.objects.filter(project=self.project))
+        self.assertEqual(amount_of_issues_post, amount_of_issues_pre+1)
 
-    # TODO TESTCASE test model data
     def test_get_project_timelogs(self):
+        # TODO TESTCASE validate_timelogs (or build another helper)
+        # add new user as developer to project
+        new_user = get_user_model().objects.create_user('user4', 'newuser', 'c')
+        new_user.save()
+        self.project.developer.add(new_user)
+        # add timelog for new user - this should be visible by the new user and the manager
+        new_log = Timelog(time=datetime.timedelta(hours=3), user=new_user, issue=self.issue)
+        new_log.save()
+        # new project and timelog for user2
+        new_project_name_short = "newp"
+        new_project_name = "new project"
+        new_project = Project(creator=self.user2, name_short=new_project_name_short, name=new_project_name)
+        new_project.save()
+        new_project.manager.add(self.user2)
+        new_issue = Issue(title='new issue of new proj', project=new_project)
+        new_issue.save()
+        # this timelog should not be visible in the current project self.project
+        new_log_new_proj = Timelog(time=datetime.timedelta(hours=4), user=self.user2, issue=new_issue)
+        new_log_new_proj.save()
+
+        # user1 sees all timelogs of the project since they are manager
         response = self.client.get(reverse('api:project_timelogs-list', kwargs=self.project_name_kwargs))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # get timelogs of user1 and new_user which are the only ones that have times logged on this project
+        timelogs_of_proj = list(Timelog.objects.filter(Q(user=self.user1) | Q(user=new_user)))
+        amount_of_timelogs = len(timelogs_of_proj)
+        self.assertEqual(response.json()['count'], amount_of_timelogs)
+        for i in range(amount_of_timelogs):
+            # issue name
+            # project-number issue
+            print(response.json()['results'][i])
+            print(timelogs_of_proj[i].number)
+            self.assertRegex(response.json()['results'][i]['issue'],
+                             timelogs_of_proj[i].issue.project.name_short +
+                             r"-\d+ " + timelogs_of_proj[i].issue.title)
+            # time
+            self.assertEqual(response.json()['results'][i]['time'],
+                             self.transform_time_format.format_value(timelogs_of_proj[i].time))
+
+        # new user - that is only developer of this project and hence can't see the logs of user1
+        self.use_user(new_user)
+        response = self.client.get(reverse('api:project_timelogs-list', kwargs=self.project_name_kwargs))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        own_timelogs = list(Timelog.objects.filter(user=new_user))
+        amount_of_timelogs = len(own_timelogs)
+        self.assertEqual(response.json()['count'], amount_of_timelogs)
+        # TODO use time checks
+
+        # user2 doesn't have timelogs on this project - only on other projects
+        # also user2 is not a manager and hence shouldn't see any timelogs
+        self.use_user(self.user2)
+        response = self.client.get(reverse('api:project_timelogs-list', kwargs=self.project_name_kwargs))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.json()['count'], 0)
 
     # TODO TESTCASE test model data
     def test_get_project_issue_detail(self):
@@ -400,11 +455,6 @@ class ApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         response = self.client.get(reverse('api:project_issues-list', kwargs=self.project_name_kwargs))
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-    # TODO TESTCASE test model data
-    def test_get_project_timelogs(self):
-        response = self.client.get(reverse('api:project_timelogs-list', kwargs=self.project_name_kwargs))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     # TODO TESTCASE test model data
