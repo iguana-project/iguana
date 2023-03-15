@@ -71,14 +71,14 @@ jobs:
               run: |
                   case "$GITHUB_REF" in
                       refs/tags*)
-                          echo '::set-output name=TARGET::production'
+                          echo "TARGET=production" >> $GITHUB_OUTPUT
                           # get the current production number
                           p_num=$(echo "$GITHUB_REF" | sed -E "s/.*production-([0-9]+)/\1/")
-                          echo "::set-output name=PRODUCTION_NUM::$p_num"
+                          echo "PRODUCTION_NUM=$p_num" >> $GITHUB_OUTPUT
                           ;;
                       *)
-                          echo '::set-output name=TARGET::default'
-                          echo '::set-output name=PRODUCTION_NUM::'
+                          echo "TARGET=default" >> $GITHUB_OUTPUT
+                          echo "PRODUCTION_NUM=" >> $GITHUB_OUTPUT
                           ;;
                   esac
             - name: Build and push
