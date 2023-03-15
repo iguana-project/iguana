@@ -13,7 +13,7 @@ variable "PYTHON_VERSION" {
 // helper function to set the right Docker tag
 function "docker_tag" {
     params = [tag]
-    result = "iguanaproject/iguana:${tag}"
+    result = "ghcr.io/iguana-project/iguana:${tag}"
 }
 
 
