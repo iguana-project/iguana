@@ -1,0 +1,17 @@
+name: Cleanup
+
+on:
+  workflow_run:
+    workflows: [Test & Build]
+    types:
+      - completed
+
+
+jobs:
+    test:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Clean up old images from GH Packaes
+              uses: camargo/delete-untagged-action@v1
+              with:
+                  github-token: ${{ secrets.DELETE_PACKAGES_TOKEN }}
