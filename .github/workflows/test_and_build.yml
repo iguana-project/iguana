@@ -94,3 +94,7 @@ jobs:
                   PRODUCTION_NUM: ${{ steps.build-target.outputs.PRODUCTION_NUM }}
                   PYTHON_VERSION: ${{ env.PYTHON_VERSION }}
                   BUILDX_NO_DEFAULT_ATTESTATIONS: true
+            - name: Clean up old images
+              uses: camargo/delete-untagged-action@v1
+              with:
+                  github-token: ${{ secrets.DELETE_PACKAGES_TOKEN }}
