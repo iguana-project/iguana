@@ -93,19 +93,21 @@ class ApiTest(APITestCase):
             self.assertEqual(issues_responded[i]['assignee'],
                              [issue.username for issue in list(issues_internal[i].assignee.all())])
 
-    # check whether the provided user is assigned to the expected amount of issues
-    def validate_issues_assigned(self, user, list_of_issues):
+    # check whether the provided user is assigned to the expected issues
+    # \param expected_list_of_issues the expected list of issues that should match the
+    #        actual issues the provided user is assigned to
+    def validate_issues_assigned(self, user, expected_list_of_issues):
         # use the provided user for the api request
         self.use_user(user)
         # check assignments on the model data
-        self.assertEqual(list(Issue.objects.filter(assignee=user)), list_of_issues)
+        self.assertEqual(list(Issue.objects.filter(assignee=user)), expected_list_of_issues)
 
         # api response
         response = self.client.get(reverse('api:issues-list'))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.json()['count'], len(list_of_issues))
+        self.assertEqual(response.json()['count'], len(expected_list_of_issues))
         # compare the two lists with each other
-        self.compare_issue_lists(response.json()['results'], list_of_issues)
+        self.compare_issue_lists(response.json()['results'], expected_list_of_issues)
 
     def test_get_issues(self):
         list_of_issues1 = []
@@ -133,57 +135,60 @@ class ApiTest(APITestCase):
         self.validate_issues_assigned(self.user2, list_of_issues2)
 
     # checks whether the provided user has read access to all provided projects
-    def validate_projects_readable(self, user, expected_num_of_projects, list_of_projs):
+    # \param expected_list_of_projs the expected list of projects that should match the
+    #        actual projects the provided user has read access to
+    def validate_projects_readable(self, user, expected_list_of_projs):
         self.use_user(user)
         response = self.client.get(reverse('api:project-list'))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.json()['count'], expected_num_of_projects)
-        self.assertEqual(number_of_objects_with_read_permission(Project, user), expected_num_of_projects)
+        self.assertEqual(response.json()['count'], len(expected_list_of_projs))
+        self.assertEqual(number_of_objects_with_read_permission(Project, user), len(expected_list_of_projs))
         # alternative check - the previous one checks whether read permissions are correctly used though
         # read permissions for a project should exist for developer and manager
-        self.assertEqual(list(Project.objects.filter(Q(developer=user) | Q(manager=user)).distinct()), list_of_projs)
+        self.assertEqual(list(Project.objects.filter(Q(developer=user) | Q(manager=user)).distinct()),
+                         expected_list_of_projs)
 
     def test_get_projects(self):
         # user1 is developer and manager of project - this should only add up to 1 project
-        expected_num_of_projects1 = 1
-        expected_num_of_projects2 = 1
-        expected_num_of_projects3 = 1
-        self.validate_projects_readable(self.user1, expected_num_of_projects1, [self.project])
+        expected_list_of_projs1 = [self.project]
+        expected_list_of_projs2 = [self.project]
+        expected_list_of_projs3 = [self.project]
+        self.validate_projects_readable(self.user1, expected_list_of_projs1)
 
         # user2 is only developer of project
-        self.validate_projects_readable(self.user2, expected_num_of_projects2, [self.project])
+        self.validate_projects_readable(self.user2, expected_list_of_projs2)
 
         # user3 is only manager of project "second project"
-        self.validate_projects_readable(self.user3, expected_num_of_projects3, [self.project])
+        self.validate_projects_readable(self.user3, expected_list_of_projs3)
 
         # add user1 to project_new
         project_new = Project(creator=self.user1, name_short='2nd', name="second project")
         project_new.save()
         project_new.developer.add(self.user1)
         # this should not change the checks for user2 and user3 only for user1
-        expected_num_of_projects1 += 1
-        self.validate_projects_readable(self.user1, expected_num_of_projects1, [self.project, project_new])
-        self.validate_projects_readable(self.user2, expected_num_of_projects2, [self.project])
-        self.validate_projects_readable(self.user3, expected_num_of_projects3, [self.project])
+        expected_list_of_projs1 += [project_new]
+        self.validate_projects_readable(self.user1, expected_list_of_projs1)
+        self.validate_projects_readable(self.user2, expected_list_of_projs2)
+        self.validate_projects_readable(self.user3, expected_list_of_projs3)
 
         project_new2 = Project(creator=self.user3, name_short='3rd', name="third project")
         project_new2.save()
         # being a creator doesn't add read permissions
-        self.validate_projects_readable(self.user3, expected_num_of_projects3, [self.project])
+        self.validate_projects_readable(self.user3, expected_list_of_projs3)
         # add user3 to project_new2 "third project"
         project_new2.manager.add(self.user3)
-        expected_num_of_projects3 += 1
-        self.validate_projects_readable(self.user1, expected_num_of_projects1, [self.project, project_new])
-        self.validate_projects_readable(self.user2, expected_num_of_projects2, [self.project])
-        self.validate_projects_readable(self.user3, expected_num_of_projects3, [self.project, project_new2])
+        expected_list_of_projs3 += [project_new2]
+        self.validate_projects_readable(self.user1, expected_list_of_projs1)
+        self.validate_projects_readable(self.user2, expected_list_of_projs2)
+        self.validate_projects_readable(self.user3, expected_list_of_projs3)
 
     # compares two lists of timelogs with each other - one of them is a list of json,
     #                                                  the other a list of internal objects
     # compares status code, project name, issue name, user name, time logged
     # \param timelogs_responded The timelogs list in json format returned from an api call
     # \param timelogs_internal The timelogs list from the database
-    # \param user=None when all timelogs should only be from that provided user,
-    #        otherwise the comparison takes place with the provided list
+    # \param user=None should be provided when all timelogs_responded should only be from that provided user,
+    #                  otherwise the comparison takes place with the provided timelogs_internal list
     def compare_timelog_lists(self, timelogs_responded, timelogs_internal, user=None):
         self.assertEqual(len(timelogs_responded), len(timelogs_internal))
         for i in range(len(timelogs_responded)):
@@ -259,13 +264,15 @@ class ApiTest(APITestCase):
     # for each project in the lists compare
     # the lists of managers, developers, the url, name and short name with the data from the response
     # \param expected_proj_list the projects expected to be in the list - should be a list
-    # \param proj_list_responded the response from an api project detail call
-    #                            may not be a list when it contains only one project
-    # \param num_proj_responded for this exact case there is a count parameter which should be 1 in that case
-    def validate_project_details(self, expected_proj_list, proj_list_responded, count):
+    # \param proj_list_responded the response from an api project detail call is a list unless there is only one project
+    def validate_project_details(self, expected_proj_list, proj_list_responded):
         # works even when proj_list_responded is not a list
-        self.assertEqual(count, len(expected_proj_list))
-        for i in range(len(expected_proj_list)):
+        if type(proj_list_responded) == list:
+            length_proj_list_responded = len(proj_list_responded)
+        else:
+            length_proj_list_responded = 1
+        self.assertEqual(length_proj_list_responded, len(expected_proj_list))
+        for i in range(length_proj_list_responded):
             # avoid getting key errors (when there is only one project in the response there is no list)
             if type(proj_list_responded) == list:
                 current_proj_responded = proj_list_responded[i]
@@ -294,7 +301,7 @@ class ApiTest(APITestCase):
         response = self.client.get(reverse('api:project-list'))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         expected_proj_list = [self.project]
-        self.validate_project_details(expected_proj_list, response.json()['results'], response.json()['count'])
+        self.validate_project_details(expected_proj_list, response.json()['results'])
         project_new_name = 'yoflow'
         project_data = {
                 'name': project_new_name,
@@ -307,12 +314,12 @@ class ApiTest(APITestCase):
         response = self.client.get(reverse('api:project-list'))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         expected_proj_list = Project.objects.all()
-        self.validate_project_details(expected_proj_list, response.json()['results'], response.json()['count'])
+        self.validate_project_details(expected_proj_list, response.json()['results'])
 
     def test_get_project_detail(self):
         response = self.client.get(reverse('api:project-detail', kwargs=self.short_name_kwargs))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.validate_project_details([self.project], response.json(), 1)
+        self.validate_project_details([self.project], response.json())
 
     def test_patch_project_detail(self):
         new_project_name = 'changing the project name'
@@ -329,7 +336,7 @@ class ApiTest(APITestCase):
         # check that the correct project was modified
         self.assertEqual(response.json()['name_short'], self.project.name_short)
         # compare api response with internal data
-        self.validate_project_details([expected_proj_list[0]], response.json(), 1)
+        self.validate_project_details([expected_proj_list[0]], response.json())
 
     def test_patch_project_detail_cant_remove_manager(self):
         project_data = {'manager': []}
@@ -353,7 +360,7 @@ class ApiTest(APITestCase):
         self.assertEqual(response.json()['manager'], ['user1'])
         expected_proj_list = Project.objects.all()
         # compare api response with internal data
-        self.validate_project_details([expected_proj_list[0]], response.json(), 1)
+        self.validate_project_details([expected_proj_list[0]], response.json())
 
     # test deletes a project
     def test_delete_project_detail(self):
@@ -577,5 +584,8 @@ class ApiTest(APITestCase):
 
     # TODO TESTCASE test model data
     def test_delete_project_issue_timelogs_detail(self):
+        # TODO get pre-timelogs
+        # TODO only own logs should be visible - is already checked somewhere else?
         response = self.client.delete(reverse('api:project_issues_timelogs-detail', kwargs=self.timelog_number_kwargs))
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        # TODO verify the correct log got deleted
