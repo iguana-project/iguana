@@ -164,8 +164,8 @@ for file in `find .. -name "*.sh"`; do
 	fi
 done
 
-# header for scss-files
-for file in `find . -name "*.scss"`; do
+# header for scss-files - ignore non-iguana scss files
+for file in `find common/scss/iguana -name "*.scss"`; do
 	is_license_present $file start_line_of_license "scss"
 	if [ "$start_line_of_license" != 0 ]; then
 		# NOTE: don't set overwrite to false at initialisation - this is bash!

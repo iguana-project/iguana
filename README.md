@@ -250,7 +250,7 @@ Tag the current commit as a production release.
 
 
 ### Styling
-Currently the style is stored in [src/common/scss/iguana.scss](src/common/scss/iguana.scss). To build it run
+Currently the style is stored in [src/common/scss/iguana/iguana.scss](src/common/scss/iguana/iguana.scss). To build it run
 `make css`. For Selenium tests use `StaticLiveServerTestcase` instead of
 `LiveServerTestcase` to make sure static files (like css) are served.
 

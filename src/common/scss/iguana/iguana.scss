@@ -299,9 +299,9 @@ input.tags[type="checkbox"] {
 }
 
 // extend dropdown-menu to work with tribute.js mentions
-@import "bootstrap_custom/custom_bootstrap_variables";
-@import "bootstrap/bootstrap/mixins";
-@import "bootstrap/bootstrap/dropdowns";
+@import "../bootstrap_custom/custom_bootstrap_variables";
+@import "../bootstrap/bootstrap/mixins";
+@import "../bootstrap/bootstrap/dropdowns";
 .dropdown-menu-autocomplete > ul {
     @extend .dropdown-menu;
     
