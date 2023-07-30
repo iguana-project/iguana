@@ -182,9 +182,9 @@ done
 
 # header for js-files
 # those are the js-files we wrote by our own
-js_files=("draw_activity_heatmap.js" "draw_last_seven.js" "filter-issues.js" "draw_bars_project_detail.js" "draw_spark.js")
+js_files=("common/static/js/graphs/draw_activity_heatmap.js" "timelog/static/js/graphs/draw_last_seven.js" "common/static/js/filter-issues.js" "project/static/js/graphs/draw_bars_project_detail.js" "project/static/js/graphs/draw_spark.js")
 for file_name in ${js_files[@]}; do
-	file="common/static/js/$file_name"
+	file="$file_name"
 	# we use the scss-tag here because the syntax for comments is equivalent to scss ones
 	is_license_present $file start_line_of_license "scss"
 	if [ "$start_line_of_license" != 0 ]; then
@@ -199,7 +199,7 @@ for file_name in ${js_files[@]}; do
 done
 
 # logo.svg
-file="common/static/css/logo.svg"
+file="common/static/logo.svg"
 is_license_present $file start_line_of_license "html"
 if [ "$start_line_of_license" != 0 ]; then
 	# NOTE: don't set overwrite to false at initialisation - this is bash!
