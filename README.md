@@ -143,7 +143,7 @@ Three images can be built with the Dockerfile:
 #### Start a container
 Each Iguana docker image can be started with the following command:
 ```bash
-docker exec -d \
+docker run -d \
 	-p 80:8000 \
 	-v <data_directory>:/files \
 	-e TZ=<time zone> \
