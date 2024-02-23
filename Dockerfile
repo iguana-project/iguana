@@ -14,7 +14,14 @@ FROM $BASE_IMAGE AS builder
 
 # variables
 ARG APP_DIR
+ARG USE_NGINX
 ARG VARIANT
+
+# validate build arguments
+RUN if [ "$VARIANT" == "development" ] && [ "$USE_NGINX" == "true" ]; then \
+        >&2 echo  "ERROR: No nginx server allowed in 'development' image!"; \
+        exit 1; \
+    fi
 
 # install dependencies
 RUN apk add --no-cache \
